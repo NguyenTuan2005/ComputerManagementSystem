@@ -1,7 +1,7 @@
 package Model;
 
+import Config.ExcelConfig;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Setter
 public class ComputerManager {
     public static String COMPUTER_MANAGER="ComputerManager";
-    private ArrayList<Computer> computers;
+    public static ArrayList<Computer> computers;
 
     public ComputerManager() {
         this.computers = new ArrayList<>();
@@ -64,11 +64,128 @@ public class ComputerManager {
         return computersFound;
     }
 
+    private void sortByName( int begin , int end ){
+        String  piv = this.computers.get( (end + begin )/2).getName();
+        int l =  begin;
+        int r = end;
+        do {
+            while (this.computers.get(l).getName().compareTo(piv) < 0) {
+                l++;
+            }
+            while (this.computers.get(r).getName().compareTo(piv) > 0) {
+                r--;
+            }
+            if (l <= r) {
+                Computer that = computers.get(l);
+                computers.set(l, computers.get(r));
+                computers.set(r, that);
+                l++;
+                r--;
+            }
+
+        }while ( l <= r );
+
+        if ( l < end){
+            sortByName(l,end);
+        }
+        if (begin < r){
+            sortByName(begin ,r);
+        }
+    }
+
+    private void sortByPrice( int begin , int end ){
+        Long  piv = this.computers.get( (end + begin )/2).getPrice();
+        int l =  begin;
+        int r = end;
+        do {
+            while (this.computers.get(l).getPrice()  < piv ) {
+                l++;
+            }
+            while (this.computers.get(r).getPrice() > piv) {
+                r--;
+            }
+            if (l <= r) {
+                Computer that = computers.get(l);
+                computers.set(l, computers.get(r));
+                computers.set(r, that);
+                l++;
+                r--;
+            }
+
+        }while ( l <= r );
+
+        if ( l < end){
+            sortByPrice(l,end);
+        }
+        if (begin < r){
+            sortByPrice(begin ,r);
+        }
+    }
+
+    private void sortByRam( int begin , int end ){
+        String  piv = this.computers.get( (end + begin )/2).getRam();
+        int l =  begin;
+        int r = end;
+        do {
+            while (this.computers.get(l).getRam().compareTo(piv) < 0) {
+                l++;
+            }
+            while (this.computers.get(r).getRam().compareTo(piv) > 0) {
+                r--;
+            }
+            if (l <= r) {
+                Computer that = computers.get(l);
+                computers.set(l, computers.get(r));
+                computers.set(r, that);
+                l++;
+                r--;
+            }
+
+        }while ( l <= r );
+
+        if ( l < end){
+            sortByRam(l,end);
+        }
+        if (begin < r){
+            sortByRam(begin ,r);
+        }
+    }
+
+    public void sortByRam(){
+        this.sortByRam(0,this.computers.size() - 1);
+    }
+
+
+    public void sortByName(){
+        this.sortByName(0,this.computers.size() - 1);
+    }
+
+    public void sortByPrice(){
+        this.sortByPrice(0,this.computers.size() - 1);
+    }
+
+    public boolean add(Computer computer){
+        for(Computer foundComputer : this.findByName(computer.getName())){
+            if (foundComputer.equals(foundComputer)){
+                return false;
+            }
+        }
+        this.computers.add(computer);
+        return true;
+    }
+
     private void printAll(){
         for( Computer c : this.computers)
             System.out.println(c);
     }
 
+    public static void main(String[] args) {
+        ComputerManager c = new ComputerManager();
+        ExcelConfig excelConfig = new ExcelConfig();
+        excelConfig.readExcelFile("E:\\ComputerManagementSystem\\ComputerManagementSystem\\Computer2024-10-03--03-58-53.xlsx");
+//        excelConfig.createFileExcel(c.getAll());
+        c.printAll();
+    }
 
 
 

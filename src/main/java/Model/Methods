@@ -1,0 +1,12 @@
+
+## Class ComputerManager
+
+setQuanlityByProductCode(String code, int qualityBought )  return boolean
+
+getAll()  return ArrayList<Computer>
+
+findByName(String name ) return ArrayList<Computer>
+
+
+## Class Config
+ createFileExcel(ArrayList<Computer> computers )  return boolean

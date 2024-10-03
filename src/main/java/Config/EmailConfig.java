@@ -45,4 +45,5 @@ public class EmailConfig {
             throw new RuntimeException(e);
         }
     }
+
 }

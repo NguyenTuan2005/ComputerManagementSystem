@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class MenuPanel extends JPanel {
-    JLabel role, name, credit;
+    JLabel role, name;
     JButton productBt, supplierBt, customerBt, stockImportBt, stockExportBt, accountManagementBt, notificationBt, logoutBt, changeInformBt;
     GridBagConstraints gbc;
 
@@ -15,18 +15,16 @@ public class MenuPanel extends JPanel {
         gbc = new GridBagConstraints();
         setBackground(Style.BACKGROUND_COLOR);
 
-
         ComponentTop componentTop = new ComponentTop();
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.weighty = 30;
+        gbc.weighty = 10;
         add(componentTop, gbc);
 
         ComponentButton componentButton = new ComponentButton();
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.weighty = 20;
-        gbc.fill = GridBagConstraints.BOTH;
         add(componentButton, gbc);
 
         ComponentBottom componentBottom = new ComponentBottom();
@@ -41,7 +39,7 @@ public class MenuPanel extends JPanel {
     class ComponentTop extends JPanel {
         public ComponentTop() {
             setLayout(new BorderLayout());
-            setBackground(Style.BACKGROUND_COLOR);
+            setBackground(Style.BACKGROUND_COLOR_FUll_BLUR);
             setBorder(BorderFactory.createEmptyBorder());
             role = new JLabel("Manager");
             role.setFont(new Font("Arial", Font.PLAIN, 25));
@@ -63,68 +61,59 @@ public class MenuPanel extends JPanel {
     class ComponentButton extends JPanel {
         public ComponentButton() {
             setLayout(new GridLayout(0, 1, 0, 20));
-            setBackground(Style.BACKGROUND_COLOR);
+            setBackground(Style.BACKGROUND_COLOR_FUll_BLUR);
 
-            productBt = new JButton("PRODUCT");
+            productBt = new JButton("Product");
             productBt.setFocusable(false);
-            productBt.setBackground(Style.BACKGROUND_COLOR);
-            productBt.setForeground(Style.WORD_COLOR_WHITE);
+            productBt.setBackground(Color.WHITE);
             productBt.setFont(Style.FONT_SIZE);
             productBt.setHorizontalAlignment(SwingConstants.LEFT);
             productBt.setBorderPainted(false);
-
             add(productBt);
 
-            supplierBt = new JButton("SUPPLIER");
+            supplierBt = new JButton("Supplier");
             supplierBt.setFocusable(false);
-            supplierBt.setBackground(Style.BACKGROUND_COLOR);
-            supplierBt.setForeground(Style.WORD_COLOR_WHITE);
+            supplierBt.setBackground(Color.WHITE);
             supplierBt.setFont(Style.FONT_SIZE);
             supplierBt.setHorizontalAlignment(SwingConstants.LEFT);
             supplierBt.setBorderPainted(false);
             add(supplierBt);
 
-            customerBt = new JButton("CUSTOMER");
+            customerBt = new JButton("Customer");
             customerBt.setFocusable(false);
-            customerBt.setBackground(Style.BACKGROUND_COLOR);
-            customerBt.setForeground(Style.WORD_COLOR_WHITE);
+            customerBt.setBackground(Color.WHITE);
             customerBt.setFont(Style.FONT_SIZE);
             customerBt.setHorizontalAlignment(SwingConstants.LEFT);
             customerBt.setBorderPainted(false);
             add(customerBt);
 
-            stockImportBt = new JButton("IMPORT");
+            stockImportBt = new JButton("Import");
             stockImportBt.setFocusable(false);
-            stockImportBt.setBackground(Style.BACKGROUND_COLOR);
-
+            stockImportBt.setBackground(Color.WHITE);
             stockImportBt.setFont(Style.FONT_SIZE);
             stockImportBt.setHorizontalAlignment(SwingConstants.LEFT);
             stockImportBt.setBorderPainted(false);
-            stockImportBt.setForeground(Style.WORD_COLOR_WHITE);
             add(stockImportBt);
 
-            stockExportBt = new JButton("EXPORT");
+            stockExportBt = new JButton("Export");
             stockExportBt.setFocusable(false);
-            stockExportBt.setBackground(Style.BACKGROUND_COLOR);
-            stockExportBt.setForeground(Style.WORD_COLOR_WHITE);
+            stockExportBt.setBackground(Color.WHITE);
             stockExportBt.setFont(Style.FONT_SIZE);
             stockExportBt.setHorizontalAlignment(SwingConstants.LEFT);
             stockExportBt.setBorderPainted(false);
             add(stockExportBt);
 
-            accountManagementBt = new JButton("ACCOUNT");
+            accountManagementBt = new JButton("Account Management");
             accountManagementBt.setFocusable(false);
-            accountManagementBt.setBackground(Style.BACKGROUND_COLOR);
-            accountManagementBt.setForeground(Style.WORD_COLOR_WHITE);
+            accountManagementBt.setBackground(Color.WHITE);
             accountManagementBt.setFont(Style.FONT_SIZE);
             accountManagementBt.setHorizontalAlignment(SwingConstants.LEFT);
             accountManagementBt.setBorderPainted(false);
             add(accountManagementBt);
 
-            notificationBt = new JButton("NOTIFICATION");
+            notificationBt = new JButton("Notification");
             notificationBt.setFocusable(false);
-            notificationBt.setBackground(Style.BACKGROUND_COLOR);
-            notificationBt.setForeground(Style.WORD_COLOR_WHITE);
+            notificationBt.setBackground(Color.WHITE);
             notificationBt.setFont(Style.FONT_SIZE);
             notificationBt.setHorizontalAlignment(SwingConstants.LEFT);
             notificationBt.setBorderPainted(false);
@@ -134,30 +123,24 @@ public class MenuPanel extends JPanel {
 
     class ComponentBottom extends JPanel {
         public ComponentBottom() {
-            setLayout(new GridLayout(3, 1, 0, 10));
-            setBackground(Style.BACKGROUND_COLOR);
+            setLayout(new GridLayout(2, 1, 0, 10));
+            setBackground(Style.BACKGROUND_COLOR_FUll_BLUR);
 
-            changeInformBt = new JButton("CHANGE INFORMATION");
-            changeInformBt.setFocusable(false);
-            changeInformBt.setBackground(Style.BACKGROUND_COLOR);
-            changeInformBt.setFont(Style.FONT_SIZE);
-            changeInformBt.setHorizontalAlignment(SwingConstants.LEFT);
-            changeInformBt.setBorderPainted(false);
-            changeInformBt.setForeground(Style.WORD_COLOR_WHITE);
-            add(changeInformBt);
-
-            logoutBt = new JButton("LOGOUT");
-            logoutBt.setFocusable(false);
-            logoutBt.setBackground(Style.BACKGROUND_COLOR);
+            logoutBt = new JButton("Log Out");
+            logoutBt.setFocusable(true);
+            logoutBt.setBorderPainted(false);
+            logoutBt.setBackground(Color.WHITE);
             logoutBt.setFont(Style.FONT_SIZE);
             logoutBt.setHorizontalAlignment(SwingConstants.LEFT);
-            logoutBt.setBorderPainted(false);
-            logoutBt.setForeground(Style.WORD_COLOR_WHITE);
             add(logoutBt);
 
-            credit = new JLabel("     Group high!");
-            add(credit);
-
+            changeInformBt = new JButton("Change Information");
+            changeInformBt.setFocusable(true);
+            changeInformBt.setBorderPainted(false);
+            changeInformBt.setBackground(Color.WHITE);
+            changeInformBt.setFont(Style.FONT_SIZE);
+            changeInformBt.setHorizontalAlignment(SwingConstants.LEFT);
+            add(changeInformBt);
         }
     }
 

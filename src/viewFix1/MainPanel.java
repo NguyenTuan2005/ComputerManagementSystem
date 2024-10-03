@@ -41,7 +41,7 @@ public class MainPanel extends JPanel {
 
             welcomeLabel = new JLabel("Welcome Manager :)", SwingConstants.CENTER);
             welcomeLabel.setFont(new Font("Arial", Font.BOLD, 60));
-            welcomeLabel.setForeground(Style.BACKGROUND_COLOR);
+            welcomeLabel.setForeground(new Color(0, 128, 255, 150));
 
             add(welcomeLabel, BorderLayout.CENTER);
         }

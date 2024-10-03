@@ -33,5 +33,4 @@ public class Circle extends JComponent {
 		g.fillOval(x, y, diameter, diameter);
 	}
 
-	
 }

@@ -41,8 +41,6 @@ public class LoginFrame extends JFrame {
 
 				}
 			});
-
-
 			
 			add(userRole);
 			add(userRoleTF);
@@ -52,10 +50,7 @@ public class LoginFrame extends JFrame {
 			add(userpwTF);
 			add(login);
 		}
-		
-		
-		
-		
+
 	}
 	
 	public static void main(String[] args) {

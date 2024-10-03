@@ -1,9 +1,8 @@
 package view;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-
-import javax.swing.*;
 
 public class MenuPanel extends JPanel {
     JLabel role, name;
@@ -152,5 +151,11 @@ public class MenuPanel extends JPanel {
     // thiết lập ActionListener cho nút "Nhà cung cấp"
     public void setSupplierButtonListener(ActionListener listener) {
         supplierBt.addActionListener(listener);
+    }
+
+    // Clear all button colors
+    public void setClearButtonColor() {
+        productBt.setBackground(Style.BACKGROUND_COLOR_FUll_BLUR);
+        supplierBt.setBackground(Style.BACKGROUND_COLOR_FUll_BLUR);
     }
 }

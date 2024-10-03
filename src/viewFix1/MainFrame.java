@@ -22,8 +22,8 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mainPanel.showPanel("product");
-                menuPanel.productBt.setBackground(Style.MENU_BUTTON_COLOR_GREEN);
-                menuPanel.supplierBt.setBackground(Style.BACKGROUND_COLOR);
+                menuPanel.productBt.setBackground(new Color(144, 238, 144));
+                menuPanel.supplierBt.setBackground(Color.WHITE);
             }
         });
         menuPanel.setSupplierButtonListener(new ActionListener() {
@@ -31,9 +31,8 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mainPanel.showPanel("supplier");
-                menuPanel.supplierBt.setBackground(Style.MENU_BUTTON_COLOR_GREEN);
-                menuPanel.productBt.setBackground(Style.BACKGROUND_COLOR);
-
+                menuPanel.supplierBt.setBackground(new Color(144, 238, 144));
+                menuPanel.productBt.setBackground(Color.WHITE);
             }
         });
 

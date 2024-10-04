@@ -1,8 +1,8 @@
 package view;
 
-import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 
 public class MainPanel extends JPanel {
     CardLayout cardLayout = new CardLayout();
@@ -129,8 +129,57 @@ public class MainPanel extends JPanel {
 
     // Tuan's Code
     class ExportPanel extends JPanel {
+        GridBagConstraints gbc;
+        JLabel totalLabel, amountLabel;
+        JButton exportButton;
         public ExportPanel() {
+            setLayout(new GridBagLayout());
+            gbc = new GridBagConstraints();
+            gbc.insets = new Insets(10, 10, 10, 10);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+
+            // Labels and text fields
+            addLabelAndTextField("Mã phiếu xuất", gbc);
+            addLabelAndTextField("Người xuất hàng", gbc);
+            addLabelAndTextField("Mã khách hàng", gbc);
+            addLabelAndTextField("Tên Khách Hàng", gbc);
+
+            // Total amount label
+            gbc.gridy++;
+            gbc.gridx = 0;
+            gbc.gridwidth = 2;
+            totalLabel = new JLabel("Tổng Tiền:");
+            totalLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            add(totalLabel, gbc);
+
+            gbc.gridy++;
+            amountLabel = new JLabel("+10,000,000,000 VNĐ");
+            amountLabel.setForeground(Color.BLUE);
+            add(amountLabel, gbc);
+
+            // Export button
+            gbc.gridy++;
+            exportButton = new JButton("XUẤT HÀNG");
+            exportButton.setBackground(Color.GREEN);
+            exportButton.setForeground(Color.WHITE);
+            add(exportButton, gbc);
         }
+
+        private void addLabelAndTextField(String labelText, GridBagConstraints gbc) {
+            gbc.gridx = 0;
+            JLabel label = new JLabel(labelText);
+            add(label, gbc);
+
+            gbc.gridx = 1;
+            JTextField textField = new JTextField(15);
+            textField.setBackground(Color.LIGHT_GRAY);
+            add(textField, gbc);
+
+            gbc.gridy++;
+        }
+
     }
 
     class AccManagePanel extends JPanel {

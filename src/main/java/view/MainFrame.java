@@ -1,10 +1,9 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
 
 public class MainFrame extends JFrame {
     MainPanel mainPanel = new MainPanel();
@@ -33,7 +32,6 @@ public class MainFrame extends JFrame {
                 mainPanel.showPanel("supplier");
                 menuPanel.supplierBt.setBackground(Style.MENU_BUTTON_COLOR_GREEN);
                 menuPanel.productBt.setBackground(Style.BACKGROUND_COLOR);
-
             }
         });
 

@@ -10,10 +10,24 @@ public class MenuPanel extends JPanel {
     JButton productBt, supplierBt, customerBt, stockImportBt, stockExportBt, accountManagementBt, notificationBt, logoutBt, changeInformBt;
     GridBagConstraints gbc;
 
-    private  ImageIcon iconButton;
-    private Image image;
-    private Dimension buttonSize;
-    private Image resizedImage;
+    // set icon cho button
+    private void setIcon(String url, JButton that) {
+        ImageIcon iconButton = new ImageIcon(url);
+        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
+        Dimension buttonSize = that.getPreferredSize();
+        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
+        that.setIcon(new ImageIcon(resizedImage));
+    }
+
+    // format lai dinh dang button
+    private void setFormatButton(JButton that) {
+        that.setFocusable(false);
+        that.setBackground(Style.BACKGROUND_COLOR);
+        that.setForeground(Style.WORD_COLOR_WHITE);
+        that.setFont(Style.FONT_SIZE);
+        that.setHorizontalAlignment(SwingConstants.LEFT);
+        that.setBorderPainted(false);
+    }
 
     public MenuPanel() {
         setLayout(new GridBagLayout());
@@ -66,123 +80,44 @@ public class MenuPanel extends JPanel {
     }
 
     class ComponentButton extends JPanel {
+
         public ComponentButton() {
             setLayout(new GridLayout(0, 1, 0, 20));
             setBackground(Style.BACKGROUND_COLOR);
 
             productBt = new JButton("PRODUCT");
-            productBt.setFocusable(false);
-            productBt.setBackground(Style.BACKGROUND_COLOR);
-            productBt.setForeground(Style.WORD_COLOR_WHITE);
-            productBt.setFont(Style.FONT_SIZE);
-            productBt.setHorizontalAlignment(SwingConstants.LEFT);
-            productBt.setBorderPainted(false);
-
-            iconButton = new ImageIcon("src/main/java/Icon/productIcon.png");
-            image = iconButton.getImage(); // Lấy Image từ ImageIcon
-            buttonSize =productBt.getPreferredSize();
-            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
-            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
-            productBt.setIcon(iconButton);
-
+            setFormatButton(productBt);
+            setIcon("src/main/java/Icon/productIcon.png", productBt);
             add(productBt);
 
             supplierBt = new JButton("SUPPLIER");
-            supplierBt.setFocusable(false);
-            supplierBt.setBackground(Style.BACKGROUND_COLOR);
-            supplierBt.setForeground(Style.WORD_COLOR_WHITE);
-            supplierBt.setFont(Style.FONT_SIZE);
-            supplierBt.setHorizontalAlignment(SwingConstants.LEFT);
-            supplierBt.setBorderPainted(false);
-
-            iconButton = new ImageIcon("src/main/java/Icon/supplierIcon.png");
-            image = iconButton.getImage(); // Lấy Image từ ImageIcon
-            buttonSize =supplierBt.getPreferredSize();
-            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
-            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
-            supplierBt.setIcon(iconButton);
-
+            setFormatButton(supplierBt);
+            setIcon("src/main/java/Icon/supplierIcon.png", supplierBt);
             add(supplierBt);
 
             customerBt = new JButton("CUSTOMER");
-            customerBt.setFocusable(false);
-            customerBt.setBackground(Style.BACKGROUND_COLOR);
-            customerBt.setForeground(Style.WORD_COLOR_WHITE);
-            customerBt.setFont(Style.FONT_SIZE);
-            customerBt.setHorizontalAlignment(SwingConstants.LEFT);
-            customerBt.setBorderPainted(false);
-
-            iconButton = new ImageIcon("src/main/java/Icon/iconCustomer.png");
-            image = iconButton.getImage(); // Lấy Image từ ImageIcon
-            buttonSize =customerBt.getPreferredSize();
-            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
-            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
-            customerBt.setIcon(iconButton);
+            setFormatButton(customerBt);
+            setIcon("src/main/java/Icon/iconCustomer.png", customerBt);
             add(customerBt);
 
             stockImportBt = new JButton("IMPORT");
-            stockImportBt.setFocusable(false);
-            stockImportBt.setBackground(Style.BACKGROUND_COLOR);
-
-            stockImportBt.setFont(Style.FONT_SIZE);
-            stockImportBt.setHorizontalAlignment(SwingConstants.LEFT);
-            stockImportBt.setBorderPainted(false);
-            stockImportBt.setForeground(Style.WORD_COLOR_WHITE);
-
-            iconButton = new ImageIcon("src/main/java/Icon/iconStockImport.png");
-            image = iconButton.getImage(); // Lấy Image từ ImageIcon
-            buttonSize =stockImportBt.getPreferredSize();
-            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
-            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
-            stockImportBt.setIcon(iconButton);
+            setFormatButton(stockImportBt);
+            setIcon("src/main/java/Icon/iconStockImport.png", stockImportBt);
             add(stockImportBt);
 
             stockExportBt = new JButton("EXPORT");
-            stockExportBt.setFocusable(false);
-            stockExportBt.setBackground(Style.BACKGROUND_COLOR);
-            stockExportBt.setForeground(Style.WORD_COLOR_WHITE);
-            stockExportBt.setFont(Style.FONT_SIZE);
-            stockExportBt.setHorizontalAlignment(SwingConstants.LEFT);
-            stockExportBt.setBorderPainted(false);
-
-            iconButton = new ImageIcon("src/main/java/Icon/iconStockExport.png");
-            image = iconButton.getImage(); // Lấy Image từ ImageIcon
-            buttonSize =stockImportBt.getPreferredSize();
-            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
-            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
-            stockExportBt.setIcon(iconButton);
+            setFormatButton(stockExportBt);
+            setIcon("src/main/java/Icon/iconStockExport.png", stockExportBt);
             add(stockExportBt);
 
             accountManagementBt = new JButton("ACCOUNT");
-            accountManagementBt.setFocusable(false);
-            accountManagementBt.setBackground(Style.BACKGROUND_COLOR);
-            accountManagementBt.setForeground(Style.WORD_COLOR_WHITE);
-            accountManagementBt.setFont(Style.FONT_SIZE);
-            accountManagementBt.setHorizontalAlignment(SwingConstants.LEFT);
-            accountManagementBt.setBorderPainted(false);
-
-            iconButton = new ImageIcon("src/main/java/Icon/user_15094854.png");
-            image = iconButton.getImage(); // Lấy Image từ ImageIcon
-            buttonSize =stockImportBt.getPreferredSize();
-            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
-            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
-            accountManagementBt.setIcon(iconButton);
+            setFormatButton(accountManagementBt);
+            setIcon("src/main/java/Icon/user_15094854.png", accountManagementBt);
             add(accountManagementBt);
 
             notificationBt = new JButton("NOTIFICATION");
-            notificationBt.setFocusable(false);
-            notificationBt.setBackground(Style.BACKGROUND_COLOR);
-            notificationBt.setForeground(Style.WORD_COLOR_WHITE);
-            notificationBt.setFont(Style.FONT_SIZE);
-            notificationBt.setHorizontalAlignment(SwingConstants.LEFT);
-            notificationBt.setBorderPainted(false);
-
-            iconButton = new ImageIcon("src/main/java/Icon/iconNotification.png");
-            image = iconButton.getImage(); // Lấy Image từ ImageIcon
-            buttonSize =stockImportBt.getPreferredSize();
-            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
-            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
-            notificationBt.setIcon(iconButton);
+            setFormatButton(notificationBt);
+            setIcon("src/main/java/Icon/iconNotification.png", notificationBt);
             add(notificationBt);
         }
     }
@@ -193,35 +128,13 @@ public class MenuPanel extends JPanel {
             setBackground(Style.BACKGROUND_COLOR);
 
             changeInformBt = new JButton("CHANGE INFORMATION");
-            changeInformBt.setFocusable(false);
-            changeInformBt.setBackground(Style.BACKGROUND_COLOR);
-            changeInformBt.setFont(Style.FONT_SIZE);
-            changeInformBt.setHorizontalAlignment(SwingConstants.LEFT);
-            changeInformBt.setBorderPainted(false);
-            changeInformBt.setForeground(Style.WORD_COLOR_WHITE);
-
-            iconButton = new ImageIcon("src/main/java/Icon/iconChangeInform.png");
-            image = iconButton.getImage(); // Lấy Image từ ImageIcon
-            buttonSize =stockImportBt.getPreferredSize();
-            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
-            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
-            changeInformBt.setIcon(iconButton);
+            setFormatButton(changeInformBt);
+            setIcon("src/main/java/Icon/iconChangeInform.png", changeInformBt);
             add(changeInformBt);
 
             logoutBt = new JButton("LOGOUT");
-            logoutBt.setFocusable(false);
-            logoutBt.setBackground(Style.BACKGROUND_COLOR);
-            logoutBt.setFont(Style.FONT_SIZE);
-            logoutBt.setHorizontalAlignment(SwingConstants.LEFT);
-            logoutBt.setBorderPainted(false);
-            logoutBt.setForeground(Style.WORD_COLOR_WHITE);
-
-            iconButton = new ImageIcon("src/main/java/Icon/exit-sign.png");
-            image = iconButton.getImage(); // Lấy Image từ ImageIcon
-            buttonSize =stockImportBt.getPreferredSize();
-            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
-            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
-            logoutBt.setIcon(iconButton);
+            setFormatButton(logoutBt);
+            setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
             add(logoutBt);
 
             credit = new JLabel("     Group high!");
@@ -239,4 +152,41 @@ public class MenuPanel extends JPanel {
     public void setSupplierButtonListener(ActionListener listener) {
         supplierBt.addActionListener(listener);
     }
+
+    // thiết lập ActionListener cho nút "import"
+    public void setImportButtonListener(ActionListener listener) {
+        stockImportBt.addActionListener(listener);
+    }
+
+    //thiết lập ActionListener cho nút "customer"
+    public void setCustomerButtonListener(ActionListener listener) {
+        customerBt.addActionListener(listener);
+    }
+
+    //thiết lập ActionListener cho nút "Export"
+    public void setStockExportButtonListener(ActionListener listener) {
+        stockExportBt.addActionListener(listener);
+    }
+
+    //thiết lập ActionListener cho nút "account manager"
+    public void setAccountManagementButtonListener(ActionListener listener) {
+        accountManagementBt.addActionListener(listener);
+    }
+
+    //thiết lập ActionListener cho nút "notification"
+    public void setNotificationButtonListener(ActionListener listener) {
+        notificationBt.addActionListener(listener);
+    }
+
+    //thiết lập ActionListener cho nút "change information"
+    public void setChangeInformButtonListener(ActionListener listener) {
+        changeInformBt.addActionListener(listener);
+    }
+
+    //thiết lập ActionListener cho nút "log out"
+    public void setLogoutButtonListener(ActionListener listener) {
+        logoutBt.addActionListener(listener);
+    }
+
+
 }

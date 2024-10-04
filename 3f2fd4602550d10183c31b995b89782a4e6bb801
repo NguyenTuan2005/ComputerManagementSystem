@@ -1,0 +1,131 @@
+[33mcommit 3f2fd4602550d10183c31b995b89782a4e6bb801[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mDuy23130075[m[33m, [m[1;31morigin/Duy23130075[m[33m)[m
+Author: Duy <duynguyenavg@gmail.com>
+Date:   Thu Oct 3 23:57:48 2024 +0700
+
+    duy thêm icon vào nút fix lại size icon
+
+[33mcommit 784d4a32b91caabcb8377af4f9c7253abebeff7e[m
+Merge: 269e0c2 853558b
+Author: Nguyễn Hữu Duy <duynguyenavg@gmail.com>
+Date:   Thu Oct 3 13:17:33 2024 +0700
+
+    Merge pull request #10 from NguyenTuan2005/Tuan
+    
+    Tuan
+
+[33mcommit 269e0c2ae6935b064eabe7003bb42c5a8299b2a8[m
+Merge: 2a86a74 6e05254
+Author: Nguyễn Hữu Duy <duynguyenavg@gmail.com>
+Date:   Thu Oct 3 12:58:10 2024 +0700
+
+    Merge pull request #9 from NguyenTuan2005/main
+    
+    pull code
+
+[33mcommit 853558b174a2324abf09cb25ccc9a11d002c6cac[m[33m ([m[1;31morigin/Tuan[m[33m)[m
+Merge: 42d4e0a 6e05254
+Author: Nguyễn Võ Quốc Tuấn <23130370@st.hcmuaf.edu.vn>
+Date:   Thu Oct 3 12:57:38 2024 +0700
+
+    Merge pull request #8 from NguyenTuan2005/main
+    
+    Pull code
+
+[33mcommit 6e0525428e0c7c53c8fc960a88eb4611c6850a2b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 7afb469 0abc351
+Author: Nguyễn Hữu Duy <duynguyenavg@gmail.com>
+Date:   Thu Oct 3 12:55:37 2024 +0700
+
+    Merge pull request #7 from NguyenTuan2005/HuyHoang_Pb
+    
+    Huy hoang pb
+
+[33mcommit 0abc35199d50836bb345e650a3bcad481149a495[m[33m ([m[1;31morigin/HuyHoang_Pb[m[33m)[m
+Author: HuyHoangPb <huyhoang2875@gmail.com>
+Date:   Thu Oct 3 12:51:50 2024 +0700
+
+    huyhoangPb fix loi giao dien button
+
+[33mcommit e895ac7b2361c0bacb4a2fb6efcb630f9e416148[m
+Merge: d7db145 7afb469
+Author: HuyHoangPb <huyhoang2875@gmail.com>
+Date:   Thu Oct 3 09:18:31 2024 +0700
+
+    Merge pull request #6 from NguyenTuan2005/main
+    
+    pull code
+
+[33mcommit 42d4e0ad2398f1527490e6678de9a8271f01e3fb[m
+Merge: 04bc73e 7afb469
+Author: Nguyễn Võ Quốc Tuấn <23130370@st.hcmuaf.edu.vn>
+Date:   Thu Oct 3 09:16:13 2024 +0700
+
+    Merge pull request #5 from NguyenTuan2005/main
+    
+    Pull code
+
+[33mcommit 7afb4698904538b1b14709e977b035f5a1768195[m
+Merge: 414b9fb 2a86a74
+Author: Nguyễn Võ Quốc Tuấn <23130370@st.hcmuaf.edu.vn>
+Date:   Thu Oct 3 09:14:44 2024 +0700
+
+    Merge pull request #3 from NguyenTuan2005/Duy23130075
+    
+    Create method by Duy đẹp trai :)
+
+[33mcommit 414b9fbffdc740affe61abced89aa00440ee3781[m
+Merge: d7db145 04bc73e
+Author: Nguyễn Võ Quốc Tuấn <23130370@st.hcmuaf.edu.vn>
+Date:   Thu Oct 3 09:13:16 2024 +0700
+
+    Merge pull request #4 from NguyenTuan2005/Tuan
+    
+    Tuan
+
+[33mcommit 2a86a74e4ecf7fba1a3e382b0815cfeeaccb1340[m
+Author: Duy <duynguyenavg@gmail.com>
+Date:   Thu Oct 3 04:03:57 2024 +0700
+
+    tested method of ExcelConfig, create method sendEmail
+
+[33mcommit 04bc73e420a1f8c7c9efbfe3de359e60f28be057[m
+Author: QTuan <23130370@st.hcmuaf.edu.vn>
+Date:   Wed Oct 2 23:16:32 2024 +0700
+
+    Clean code by Tuan
+
+[33mcommit 99ed8552b13dff02435e44e8ee8ea1debf102654[m
+Author: Duy <duynguyenavg@gmail.com>
+Date:   Wed Oct 2 22:43:42 2024 +0700
+
+    Create method by Duy đẹp trai :)
+
+[33mcommit c7abf830f6de1cd98e096ce030d4a146225830bf[m
+Merge: 50b8094 d7db145
+Author: Nguyễn Võ Quốc Tuấn <23130370@st.hcmuaf.edu.vn>
+Date:   Wed Oct 2 18:49:43 2024 +0700
+
+    Merge pull request #2 from NguyenTuan2005/main
+    
+    pull code
+
+[33mcommit d7db1457b5a62b4481598a57d73c8895535cc77a[m
+Merge: 50b8094 c641513
+Author: Nguyễn Hữu Duy <duynguyenavg@gmail.com>
+Date:   Wed Oct 2 17:08:55 2024 +0700
+
+    Merge pull request #1 from NguyenTuan2005/Duy23130075
+    
+    test
+
+[33mcommit c64151390aec71daa99ab22bd44d33d343c1bc12[m
+Author: Duy <duynguyenavg@gmail.com>
+Date:   Wed Oct 2 17:06:51 2024 +0700
+
+    test
+
+[33mcommit 50b80941a4b22418dead6762bbd4840cc1054fa2[m
+Author: QTuan <23130370@st.hcmuaf.edu.vn>
+Date:   Sun Sep 29 20:28:04 2024 +0700
+
+    first commit

@@ -1,10 +1,9 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
 
 public class MainFrame extends JFrame {
     MainPanel mainPanel = new MainPanel();
@@ -22,8 +21,8 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mainPanel.showPanel("product");
-                menuPanel.productBt.setBackground(new Color(144, 238, 144));
-                menuPanel.supplierBt.setBackground(Color.WHITE);
+                menuPanel.productBt.setBackground(Style.MENU_BUTTON_COLOR_GREEN);
+                menuPanel.supplierBt.setBackground(Style.BACKGROUND_COLOR);
             }
         });
         menuPanel.setSupplierButtonListener(new ActionListener() {
@@ -31,8 +30,8 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mainPanel.showPanel("supplier");
-                menuPanel.supplierBt.setBackground(new Color(144, 238, 144));
-                menuPanel.productBt.setBackground(Color.WHITE);
+                menuPanel.supplierBt.setBackground(Style.MENU_BUTTON_COLOR_GREEN);
+                menuPanel.productBt.setBackground(Style.BACKGROUND_COLOR);
             }
         });
 

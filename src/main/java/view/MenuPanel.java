@@ -238,10 +238,4 @@ public class MenuPanel extends JPanel {
     public void setSupplierButtonListener(ActionListener listener) {
         supplierBt.addActionListener(listener);
     }
-
-    // Clear all button colors
-    public void setClearButtonColor() {
-        productBt.setBackground(Style.BACKGROUND_COLOR_FUll_BLUR);
-        supplierBt.setBackground(Style.BACKGROUND_COLOR_FUll_BLUR);
-    }
 }

@@ -9,6 +9,11 @@ public class MenuPanel extends JPanel {
     JButton productBt, supplierBt, customerBt, stockImportBt, stockExportBt, accountManagementBt, notificationBt, logoutBt, changeInformBt;
     GridBagConstraints gbc;
 
+    private  ImageIcon iconButton;
+    private Image image;
+    private Dimension buttonSize;
+    private Image resizedImage;
+
     public MenuPanel() {
         setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -72,6 +77,13 @@ public class MenuPanel extends JPanel {
             productBt.setHorizontalAlignment(SwingConstants.LEFT);
             productBt.setBorderPainted(false);
 
+            iconButton = new ImageIcon("src/main/java/Icon/productIcon.png");
+            image = iconButton.getImage(); // Lấy Image từ ImageIcon
+            buttonSize =productBt.getPreferredSize();
+            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
+            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
+            productBt.setIcon(iconButton);
+
             add(productBt);
 
             supplierBt = new JButton("SUPPLIER");
@@ -81,6 +93,14 @@ public class MenuPanel extends JPanel {
             supplierBt.setFont(Style.FONT_SIZE);
             supplierBt.setHorizontalAlignment(SwingConstants.LEFT);
             supplierBt.setBorderPainted(false);
+
+            iconButton = new ImageIcon("src/main/java/Icon/supplierIcon.png");
+            image = iconButton.getImage(); // Lấy Image từ ImageIcon
+            buttonSize =supplierBt.getPreferredSize();
+            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
+            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
+            supplierBt.setIcon(iconButton);
+
             add(supplierBt);
 
             customerBt = new JButton("CUSTOMER");
@@ -90,6 +110,13 @@ public class MenuPanel extends JPanel {
             customerBt.setFont(Style.FONT_SIZE);
             customerBt.setHorizontalAlignment(SwingConstants.LEFT);
             customerBt.setBorderPainted(false);
+
+            iconButton = new ImageIcon("src/main/java/Icon/iconCustomer.png");
+            image = iconButton.getImage(); // Lấy Image từ ImageIcon
+            buttonSize =customerBt.getPreferredSize();
+            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
+            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
+            customerBt.setIcon(iconButton);
             add(customerBt);
 
             stockImportBt = new JButton("IMPORT");
@@ -100,6 +127,13 @@ public class MenuPanel extends JPanel {
             stockImportBt.setHorizontalAlignment(SwingConstants.LEFT);
             stockImportBt.setBorderPainted(false);
             stockImportBt.setForeground(Style.WORD_COLOR_WHITE);
+
+            iconButton = new ImageIcon("src/main/java/Icon/iconStockImport.png");
+            image = iconButton.getImage(); // Lấy Image từ ImageIcon
+            buttonSize =stockImportBt.getPreferredSize();
+            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
+            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
+            stockImportBt.setIcon(iconButton);
             add(stockImportBt);
 
             stockExportBt = new JButton("EXPORT");
@@ -109,6 +143,13 @@ public class MenuPanel extends JPanel {
             stockExportBt.setFont(Style.FONT_SIZE);
             stockExportBt.setHorizontalAlignment(SwingConstants.LEFT);
             stockExportBt.setBorderPainted(false);
+
+            iconButton = new ImageIcon("src/main/java/Icon/iconStockExport.png");
+            image = iconButton.getImage(); // Lấy Image từ ImageIcon
+            buttonSize =stockImportBt.getPreferredSize();
+            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
+            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
+            stockExportBt.setIcon(iconButton);
             add(stockExportBt);
 
             accountManagementBt = new JButton("ACCOUNT");
@@ -118,6 +159,13 @@ public class MenuPanel extends JPanel {
             accountManagementBt.setFont(Style.FONT_SIZE);
             accountManagementBt.setHorizontalAlignment(SwingConstants.LEFT);
             accountManagementBt.setBorderPainted(false);
+
+            iconButton = new ImageIcon("src/main/java/Icon/user_15094854.png");
+            image = iconButton.getImage(); // Lấy Image từ ImageIcon
+            buttonSize =stockImportBt.getPreferredSize();
+            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
+            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
+            accountManagementBt.setIcon(iconButton);
             add(accountManagementBt);
 
             notificationBt = new JButton("NOTIFICATION");
@@ -127,6 +175,13 @@ public class MenuPanel extends JPanel {
             notificationBt.setFont(Style.FONT_SIZE);
             notificationBt.setHorizontalAlignment(SwingConstants.LEFT);
             notificationBt.setBorderPainted(false);
+
+            iconButton = new ImageIcon("src/main/java/Icon/iconNotification.png");
+            image = iconButton.getImage(); // Lấy Image từ ImageIcon
+            buttonSize =stockImportBt.getPreferredSize();
+            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
+            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
+            notificationBt.setIcon(iconButton);
             add(notificationBt);
         }
     }
@@ -143,6 +198,13 @@ public class MenuPanel extends JPanel {
             changeInformBt.setHorizontalAlignment(SwingConstants.LEFT);
             changeInformBt.setBorderPainted(false);
             changeInformBt.setForeground(Style.WORD_COLOR_WHITE);
+
+            iconButton = new ImageIcon("src/main/java/Icon/iconChangeInform.png");
+            image = iconButton.getImage(); // Lấy Image từ ImageIcon
+            buttonSize =stockImportBt.getPreferredSize();
+            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
+            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
+            changeInformBt.setIcon(iconButton);
             add(changeInformBt);
 
             logoutBt = new JButton("LOGOUT");
@@ -152,6 +214,13 @@ public class MenuPanel extends JPanel {
             logoutBt.setHorizontalAlignment(SwingConstants.LEFT);
             logoutBt.setBorderPainted(false);
             logoutBt.setForeground(Style.WORD_COLOR_WHITE);
+
+            iconButton = new ImageIcon("src/main/java/Icon/exit-sign.png");
+            image = iconButton.getImage(); // Lấy Image từ ImageIcon
+            buttonSize =stockImportBt.getPreferredSize();
+            resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10,  java.awt.Image.SCALE_SMOOTH); // Resize
+            iconButton = new ImageIcon(resizedImage); // Tạo lại ImageIcon với ảnh đã resize
+            logoutBt.setIcon(iconButton);
             add(logoutBt);
 
             credit = new JLabel("     Group high!");

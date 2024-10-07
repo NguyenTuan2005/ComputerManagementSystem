@@ -120,7 +120,7 @@ public class ManagerFrame extends JFrame {
         managerMenuPanel.changeInformBt.setBackground(panelName.equals(ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
 
     }
-    public static void main(String[] args) {
-        new ManagerFrame(new LoginFrame());
-    }
+//    public static void main(String[] args) {
+//        new ManagerFrame(new LoginFrame());
+//    }
 }

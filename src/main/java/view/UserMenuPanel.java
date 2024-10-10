@@ -98,8 +98,9 @@ public class UserMenuPanel extends JPanel {
             add(changeInformBt);
 
             logoutBt = new JButton("LOGOUT");
+
             setFormatButton(logoutBt);
-            logoutBt.setForeground(Color.RED);
+            logoutBt.setForeground(new Color(176, 52, 52));
             logoutBt.setFont(new Font("Arial", Font.BOLD, 15));
             setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
             add(logoutBt);

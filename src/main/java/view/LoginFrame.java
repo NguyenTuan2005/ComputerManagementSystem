@@ -127,7 +127,7 @@ public class LoginFrame extends JFrame {
                     if(userNameField.getText().isEmpty() || passwd.isEmpty()) {
                         JOptionPane.showMessageDialog(loginFrame, "Please fill all the fields", "Error", JOptionPane.ERROR_MESSAGE);
                     } else if (!userManager.isUserExists(String.valueOf(roleComboBox.getSelectedItem()), userNameField.getText(), passwd)) {
-                        JOptionPane.showMessageDialog(loginFrame, "You have entered the wrong username or password, please re-enter!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(loginFrame, "You have entered the Wrong username or password, please re-enter!", "Error", JOptionPane.ERROR_MESSAGE);
                     }else{
                         if (Objects.equals(roleComboBox.getSelectedItem(), "Manager")) {
                             loginFrame.setVisible(false);

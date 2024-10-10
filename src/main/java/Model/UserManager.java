@@ -13,17 +13,17 @@ public class UserManager {
 
 
     public UserManager(){
-        User admin = new User(0,"admin","0000",0,"hduy09092005@gmail.com", "admin" );
-        User user1 = new User(1, "john_doe", "password123", 1, "john.doe@example.com", "123 Main St");
-        User user2 = new User(2, "jane_smith", "qwerty456", 1, "jane.smith@example.com", "456 Oak St");
-        User user3 = new User(3, "mike_jones", "abc123", 1, "mike.jones@example.com", "789 Pine St");
-        User user4 = new User(4, "sara_lee", "password789", 1, "sara.lee@example.com", "321 Cedar St");
-        User user5 = new User(5, "tom_harris", "tommy987", 1, "tom.harris@example.com", "654 Maple St");
-        User user6 = new User(6, "emily_clark", "pass1234", 1, "emily.clark@example.com", "987 Birch St");
-        User user7 = new User(7, "david_wilson", "mypassword1", 1, "david.wilson@example.com", "159 Elm St");
-        User user8 = new User(8, "linda_brown", "linda123", 1, "linda.brown@example.com", "753 Ash St");
-        User user9 = new User(9, "kevin_white", "white456", 1, "kevin.white@example.com", "951 Spruce St");
-        User user10 = new User(10, "nancy_green", "nancy789", 1, "nancy.green@example.com", "852 Willow St");
+        User admin = new User(0,"admin","0000",User.MANAGER_ROLE,"hduy09092005@gmail.com", "admin" );
+        User user1 = new User(1, "Huy_Hoang", "ohyeah", User.MANAGER_ROLE, "huyhoang@gmail.com", "123 Main St");
+        User user2 = new User(2, "huu_duy", "duyvippro", User.MANAGER_ROLE, "jane.smith@example.com", "456 Oak St");
+        User user3 = new User(3, "tuan_nguyen", "pro1234", User.MANAGER_ROLE, "mike.jones@example.com", "789 Pine St");
+        User user4 = new User(5, "dinh_hieu", "abc123", User.User_ROLE, "hieu.harris@example.com", "654 Maple St");
+        User user5 = new User(4, "sara_lee", "password789", User.User_ROLE, "sara.lee@example.com", "321 Cedar St");
+        User user6 = new User(6, "emily_clark", "pass1234", User.User_ROLE, "emily.clark@example.com", "987 Birch St");
+        User user7 = new User(7, "david_wilson", "mypassword1", User.User_ROLE, "david.wilson@example.com", "159 Elm St");
+        User user8 = new User(8, "linda_brown", "linda123", User.User_ROLE, "linda.brown@example.com", "753 Ash St");
+        User user9 = new User(9, "kevin_white", "white456", User.User_ROLE, "kevin.white@example.com", "951 Spruce St");
+        User user10 = new User(10, "a", "a", User.MANAGER_ROLE, "nancy.green@example.com", "852 Willow St");
         this.users = new ArrayList<>();
 
         users.add(admin);
@@ -66,4 +66,14 @@ public class UserManager {
         }
         return null;
     }
+    //method: check user login information
+    public boolean isUserExists(String userRole,String username, String password) {
+        for (User user : users) {
+            if (user.sameRole(userRole) && user.sameName(username) && user.samePassword(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

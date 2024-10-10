@@ -4,35 +4,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class MenuPanel extends JPanel {
+public class ManagerMenuPanel extends JPanel {
+    LoginFrame loginFrame;
+    ManagerFrame managerFrame;
     JLabel role, name, credit;
     JButton productBt, supplierBt, customerBt, stockImportBt, stockExportBt, accountManagementBt, notificationBt, logoutBt, changeInformBt;
     GridBagConstraints gbc;
 
-    // set icon cho button
-    private void setIcon(String url, JButton that) {
-        ImageIcon iconButton = new ImageIcon(url);
-        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
-        Dimension buttonSize = that.getPreferredSize();
-        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
-        that.setIcon(new ImageIcon(resizedImage));
-    }
+    public ManagerMenuPanel(LoginFrame loginFrame, ManagerFrame managerFrame) {
+        this.loginFrame =loginFrame;
+        this.managerFrame =managerFrame;
 
-    // format lai dinh dang button
-    private void setFormatButton(JButton that) {
-        that.setFocusable(false);
-        that.setBackground(Style.BACKGROUND_COLOR);
-        that.setForeground(Style.WORD_COLOR_WHITE);
-        that.setFont(Style.FONT_SIZE);
-        that.setHorizontalAlignment(SwingConstants.LEFT);
-        that.setBorderPainted(false);
-    }
-
-    public MenuPanel() {
         setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         setBackground(Style.BACKGROUND_COLOR);
-
 
         ComponentTop componentTop = new ComponentTop();
         gbc.gridx = 1;
@@ -61,16 +46,16 @@ public class MenuPanel extends JPanel {
             setLayout(new BorderLayout());
             setBackground(Style.BACKGROUND_COLOR);
             setBorder(BorderFactory.createEmptyBorder());
-            role = new JLabel("Manager");
+            role = new JLabel(loginFrame.roleComboBox.getSelectedItem().toString());
             role.setFont(new Font("Arial", Font.PLAIN, 25));
             role.setHorizontalAlignment(JLabel.CENTER);
             role.setForeground(Color.GREEN);
             add(role, BorderLayout.NORTH);
 
-            Circle circle = new Circle(22, 22, 70, new Color(211, 211, 211));
+            Circle circle = new Circle(20, 20, 70, new Color(211, 211, 211));
             add(circle, BorderLayout.CENTER);
 
-            name = new JLabel("Huy Hoang");
+            name = new JLabel(loginFrame.userNameField.getText());
             name.setHorizontalAlignment(JLabel.CENTER);
             name.setForeground(Color.GREEN);
             name.setFont(new Font("Arial", Font.PLAIN, 25));
@@ -79,7 +64,6 @@ public class MenuPanel extends JPanel {
     }
 
     class ComponentButton extends JPanel {
-
         public ComponentButton() {
             setLayout(new GridLayout(0, 1, 0, 20));
             setBackground(Style.BACKGROUND_COLOR);
@@ -133,6 +117,8 @@ public class MenuPanel extends JPanel {
 
             logoutBt = new JButton("LOGOUT");
             setFormatButton(logoutBt);
+            logoutBt.setForeground(new Color(176, 52, 52));
+            logoutBt.setFont(new Font("Arial", Font.BOLD, 15));
             setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
             add(logoutBt);
 
@@ -141,7 +127,24 @@ public class MenuPanel extends JPanel {
 
         }
     }
+    // set icon cho button
+    private void setIcon(String url, JButton that) {
+        ImageIcon iconButton = new ImageIcon(url);
+        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
+        Dimension buttonSize = that.getPreferredSize();
+        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
+        that.setIcon(new ImageIcon(resizedImage));
+    }
 
+    // format lai dinh dang button
+    private void setFormatButton(JButton that) {
+        that.setFocusable(false);
+        that.setBackground(Style.BACKGROUND_COLOR);
+        that.setForeground(Style.WORD_COLOR_WHITE);
+        that.setFont(Style.FONT_SIZE);
+        that.setHorizontalAlignment(SwingConstants.LEFT);
+        that.setBorderPainted(false);
+    }
     // thiết lập ActionListener cho nút "Sản phẩm"
     public void setProductButtonListener(ActionListener listener) {
         productBt.addActionListener(listener);
@@ -171,7 +174,6 @@ public class MenuPanel extends JPanel {
     public void setAccountManagementButtonListener(ActionListener listener) {
         accountManagementBt.addActionListener(listener);
     }
-
     //thiết lập ActionListener cho nút "notification"
     public void setNotificationButtonListener(ActionListener listener) {
         notificationBt.addActionListener(listener);
@@ -186,6 +188,4 @@ public class MenuPanel extends JPanel {
     public void setLogoutButtonListener(ActionListener listener) {
         logoutBt.addActionListener(listener);
     }
-
-
 }

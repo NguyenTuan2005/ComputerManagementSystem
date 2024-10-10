@@ -10,20 +10,6 @@ public class MainFrame extends JFrame {
     MainPanel mainPanel = new MainPanel();
     MenuPanel menuPanel = new MenuPanel();
 
-
-    // setHover tạo hiệu ứng đổi màu cho nút khi nhấn chuột vào
-    private void setHover(String panelName){
-        menuPanel.productBt.setBackground( panelName.equals(MainPanel.PRODUCT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        menuPanel.supplierBt.setBackground(panelName.equals(MainPanel.SUPPLIER_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        menuPanel.customerBt.setBackground(panelName.equals(MainPanel.CUSTOMER_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        menuPanel.stockImportBt.setBackground(panelName.equals(MainPanel.IMPORT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        menuPanel.stockExportBt.setBackground(panelName.equals(MainPanel.EXPORT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        menuPanel.accountManagementBt.setBackground(panelName.equals(MainPanel.ACCMANAGE_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        menuPanel.notificationBt.setBackground(panelName.equals(MainPanel.NOTIFICATION_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        menuPanel.changeInformBt.setBackground(panelName.equals(MainPanel.CHANGE_INFORMATION_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        menuPanel.logoutBt.setBackground(panelName.equals(MainPanel.LOG_OUT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-    }
-
     public MainFrame() {
         setTitle("Computer Management");
         setSize(1200, 650);
@@ -75,8 +61,8 @@ public class MainFrame extends JFrame {
         menuPanel.setAccountManagementButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                mainPanel.showPanel(MainPanel.ACCMANAGE_CONSTRAINT);
-                setHover(MainPanel.ACCMANAGE_CONSTRAINT);
+                mainPanel.showPanel(MainPanel.ACC_MANAGEMENT_CONSTRAINT);
+                setHover(MainPanel.ACC_MANAGEMENT_CONSTRAINT);
             }
         });
 
@@ -107,6 +93,19 @@ public class MainFrame extends JFrame {
         add(mainPanel, BorderLayout.CENTER);
 
         setVisible(true);
+    }
+
+    // setHover tạo hiệu ứng đổi màu cho nút khi nhấn chuột vào
+    private void setHover(String panelName){
+        menuPanel.productBt.setBackground( panelName.equals(MainPanel.PRODUCT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
+        menuPanel.supplierBt.setBackground(panelName.equals(MainPanel.SUPPLIER_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
+        menuPanel.customerBt.setBackground(panelName.equals(MainPanel.CUSTOMER_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
+        menuPanel.stockImportBt.setBackground(panelName.equals(MainPanel.IMPORT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
+        menuPanel.stockExportBt.setBackground(panelName.equals(MainPanel.EXPORT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
+        menuPanel.accountManagementBt.setBackground(panelName.equals(MainPanel.ACC_MANAGEMENT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
+        menuPanel.notificationBt.setBackground(panelName.equals(MainPanel.NOTIFICATION_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
+        menuPanel.changeInformBt.setBackground(panelName.equals(MainPanel.CHANGE_INFORMATION_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
+        menuPanel.logoutBt.setBackground(panelName.equals(MainPanel.LOG_OUT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
     }
 
     public static void main(String[] args) {

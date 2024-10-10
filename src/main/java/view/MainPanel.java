@@ -23,7 +23,7 @@ public class MainPanel extends JPanel {
     static final String CUSTOMER_CONSTRAINT = "customer";
     static final String IMPORT_CONSTRAINT = "import";
     static final String EXPORT_CONSTRAINT = "export";
-    static final String ACCMANAGE_CONSTRAINT = "accManage";
+    static final String ACC_MANAGEMENT_CONSTRAINT = "accManagement";
     static final String NOTIFICATION_CONSTRAINT = "notification";
     static final String CHANGE_INFORMATION_CONSTRAINT ="changeInformation";
     static final String LOG_OUT_CONSTRAINT ="logOut";
@@ -35,7 +35,7 @@ public class MainPanel extends JPanel {
         add(customerPanel, CUSTOMER_CONSTRAINT);
         add(importPanel, IMPORT_CONSTRAINT);
         add(exportPanel, EXPORT_CONSTRAINT);
-        add(accManagePanel, ACCMANAGE_CONSTRAINT);
+        add(accManagePanel, ACC_MANAGEMENT_CONSTRAINT);
         add(notificationPanel, NOTIFICATION_CONSTRAINT);
         add(changeInformationPanel,CHANGE_INFORMATION_CONSTRAINT);
         add(logOutPanel,LOG_OUT_CONSTRAINT);
@@ -239,57 +239,101 @@ public class MainPanel extends JPanel {
 
     // Tuan's Code
     class ExportPanel extends JPanel {
-        GridBagConstraints gbc;
-        JLabel totalLabel, amountLabel;
+        JLabel orderIdLabel, staffLabel, customerIdLabel, customerNameLabel, totalLabel;
+        JTextField orderIdField, staffField, customerIdField, customerNameField;
         JButton exportButton;
+
         public ExportPanel() {
-            setLayout(new GridBagLayout());
-            gbc = new GridBagConstraints();
-            gbc.insets = new Insets(10, 10, 10, 10);
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.gridx = 0;
-            gbc.gridy = 0;
+            setLayout(new BorderLayout());
+            setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
-            // Labels and text fields
-            addLabelAndTextField("Mã phiếu xuất", gbc);
-            addLabelAndTextField("Người xuất hàng", gbc);
-            addLabelAndTextField("Mã khách hàng", gbc);
-            addLabelAndTextField("Tên Khách Hàng", gbc);
+            JPanel rightContainer = new JPanel(new BorderLayout());
+            rightContainer.setPreferredSize(new Dimension(300, 400)); // Adjust size as needed
 
-            // Total amount label
-            gbc.gridy++;
-            gbc.gridx = 0;
-            gbc.gridwidth = 2;
-            totalLabel = new JLabel("Tổng Tiền:");
-            totalLabel.setFont(new Font("Arial", Font.BOLD, 14));
-            add(totalLabel, gbc);
+            InputPanel inputPanel = new InputPanel();
+            BottomPanel bottomPanel = new BottomPanel();
 
-            gbc.gridy++;
-            amountLabel = new JLabel("+10,000,000,000 VNĐ");
-            amountLabel.setForeground(Color.BLUE);
-            add(amountLabel, gbc);
+            rightContainer.add(inputPanel, BorderLayout.CENTER);
+            rightContainer.add(bottomPanel, BorderLayout.SOUTH);
 
-            // Export button
-            gbc.gridy++;
-            exportButton = new JButton("XUẤT HÀNG");
-            exportButton.setBackground(Color.GREEN);
-            exportButton.setForeground(Color.WHITE);
-            add(exportButton, gbc);
+            JSeparator separator = new JSeparator(JSeparator.VERTICAL);
+            separator.setPreferredSize(new Dimension(1, getHeight()));
+
+            JPanel centerPanel = new JPanel(new BorderLayout());
+            centerPanel.add(separator, BorderLayout.EAST);
+
+            add(centerPanel, BorderLayout.CENTER);
+            add(rightContainer, BorderLayout.EAST);
         }
 
-        private void addLabelAndTextField(String labelText, GridBagConstraints gbc) {
-            gbc.gridx = 0;
-            JLabel label = new JLabel(labelText);
-            add(label, gbc);
+        // Inner class for the input fields
+        class InputPanel extends JPanel {
 
-            gbc.gridx = 1;
-            JTextField textField = new JTextField(15);
-            textField.setBackground(Color.LIGHT_GRAY);
-            add(textField, gbc);
+            public InputPanel() {
+                setLayout(new GridLayout(8, 1, 10, 10));
+                setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            gbc.gridy++;
+                // Initialize components
+                orderIdLabel = new JLabel("Mã phiếu xuất");
+                staffLabel = new JLabel("Người xuất hàng");
+                customerIdLabel = new JLabel("Mã khách hàng");
+                customerNameLabel = new JLabel("Tên Khách Hàng");
+
+                orderIdField = new JTextField();
+                staffField = new JTextField();
+                customerIdField = new JTextField();
+                customerNameField = new JTextField();
+
+                JPanel orderLabelPanel = new JPanel(new BorderLayout());
+                orderLabelPanel.add(orderIdLabel, BorderLayout.SOUTH);
+                orderLabelPanel.setOpaque(false);
+
+                JPanel staffLabelPanel = new JPanel(new BorderLayout());
+                staffLabelPanel.add(staffLabel, BorderLayout.SOUTH);
+                staffLabelPanel.setOpaque(false);
+
+                JPanel customerIdLabelPanel = new JPanel(new BorderLayout());
+                customerIdLabelPanel.add(customerIdLabel, BorderLayout.SOUTH);
+                customerIdLabelPanel.setOpaque(false);
+
+                JPanel customerNameLabelPanel = new JPanel(new BorderLayout());
+                customerNameLabelPanel.add(customerNameLabel, BorderLayout.SOUTH);
+                customerNameLabelPanel.setOpaque(false);
+
+                // Add components to panel
+                add(orderLabelPanel);
+                add(orderIdField);
+                add(staffLabelPanel);
+                add(staffField);
+                add(customerIdLabelPanel);
+                add(customerIdField);
+                add(customerNameLabelPanel);
+                add(customerNameField);
+            }
         }
 
+        class BottomPanel extends JPanel {
+
+            public BottomPanel() {
+                setPreferredSize(new Dimension(300, 200));
+                setLayout(new GridLayout(2, 1, 5, 5));
+                setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+                totalLabel = new JLabel("Tổng Tiền: +10,000,000,000 VNĐ");
+                totalLabel.setForeground(new Color(0, 150, 200));
+
+                exportButton = new JButton("XUẤT HÀNG");
+                exportButton.setBackground(new Color(0, 128, 0));
+                exportButton.setForeground(Color.WHITE);
+
+                JPanel totalLabelPanel = new JPanel(new BorderLayout());
+                totalLabelPanel.add(totalLabel, BorderLayout.SOUTH);
+                totalLabelPanel.setOpaque(false);
+
+                add(totalLabelPanel);
+                add(exportButton);
+            }
+        }
     }
 
     class AccManagePanel extends JPanel {

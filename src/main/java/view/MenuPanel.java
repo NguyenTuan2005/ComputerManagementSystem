@@ -9,25 +9,6 @@ public class MenuPanel extends JPanel {
     JButton productBt, supplierBt, customerBt, stockImportBt, stockExportBt, accountManagementBt, notificationBt, logoutBt, changeInformBt;
     GridBagConstraints gbc;
 
-    // set icon cho button
-    private void setIcon(String url, JButton that) {
-        ImageIcon iconButton = new ImageIcon(url);
-        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
-        Dimension buttonSize = that.getPreferredSize();
-        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
-        that.setIcon(new ImageIcon(resizedImage));
-    }
-
-    // format lai dinh dang button
-    private void setFormatButton(JButton that) {
-        that.setFocusable(false);
-        that.setBackground(Style.BACKGROUND_COLOR);
-        that.setForeground(Style.WORD_COLOR_WHITE);
-        that.setFont(Style.FONT_SIZE);
-        that.setHorizontalAlignment(SwingConstants.LEFT);
-        that.setBorderPainted(false);
-    }
-
     public MenuPanel() {
         setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -140,6 +121,25 @@ public class MenuPanel extends JPanel {
             add(credit);
 
         }
+    }
+
+    // set icon cho button
+    private void setIcon(String url, JButton that) {
+        ImageIcon iconButton = new ImageIcon(url);
+        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
+        Dimension buttonSize = that.getPreferredSize();
+        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
+        that.setIcon(new ImageIcon(resizedImage));
+    }
+
+    // format lai dinh dang button
+    private void setFormatButton(JButton that) {
+        that.setFocusable(false);
+        that.setBackground(Style.BACKGROUND_COLOR);
+        that.setForeground(Style.WORD_COLOR_WHITE);
+        that.setFont(Style.FONT_SIZE);
+        that.setHorizontalAlignment(SwingConstants.LEFT);
+        that.setBorderPainted(false);
     }
 
     // thiết lập ActionListener cho nút "Sản phẩm"

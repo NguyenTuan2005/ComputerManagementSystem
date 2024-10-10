@@ -17,6 +17,7 @@ public class ManagerMainPanel extends JPanel {
     NotificationPanel notificationPanel = new NotificationPanel();
     ChangeInformationPanel changeInformationPanel = new ChangeInformationPanel();
 
+
     static final String WELCOME_CONSTRAINT = "welcome";
     static final String PRODUCT_CONSTRAINT = "product";
     static final String SUPPLIER_CONSTRAINT = "supplier";
@@ -216,6 +217,7 @@ public class ManagerMainPanel extends JPanel {
         }
     }
 
+    // Duy's code
     class ImportPanel extends JPanel {
 
         JButton addBt,deleteBt ,editBt,detailsBt,exportBt,searchBt,importBt;
@@ -230,6 +232,7 @@ public class ManagerMainPanel extends JPanel {
             that.setFocusable(false);
             that.setPreferredSize(size);
         }
+
 
         public ImportPanel() {
             // Set layout for the panel
@@ -288,8 +291,8 @@ public class ManagerMainPanel extends JPanel {
             JTable orderTable = new JTable(tableModel);
 
             // Add sample rows (optional)
-            // Object[] rowData = { "001", "Order1", "NC001", "Supplier1", "User1", "Pending" };
-            // tableModel.addRow(rowData);
+             Object[] rowData = { "001", "Order1", "NC001", "Supplier1", "User1", "Pending" };
+             tableModel.addRow(rowData);
 
             // ScrollPane for the table
             JScrollPane scrollPane = new JScrollPane(orderTable);

@@ -10,7 +10,6 @@ public class Style {
     //main frame
     public static final Color ADD_BUTTON_COLOR_GREEN = new Color(100, 218, 77);// màu xanh cho nút thêm sp
     public static final Color DELETE_BUTTON_COLOR_RED = new Color(204, 88, 88);
-
     public static final Font FONT_SIZE = new Font("Arial", Font.PLAIN, 15);
 
     //Login frame

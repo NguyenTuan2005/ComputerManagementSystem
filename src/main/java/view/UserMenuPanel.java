@@ -53,7 +53,7 @@ public class UserMenuPanel extends JPanel {
             role.setForeground(Color.GREEN);
             add(role, BorderLayout.NORTH);
 
-            Circle circle = new Circle(22, 22, 70, new Color(211, 211, 211));
+            Circle circle = new Circle(18, 18, 70, new Color(211, 211, 211));
             add(circle, BorderLayout.CENTER);
 
             name = new JLabel(loginFrame.userNameField.getText());
@@ -98,7 +98,10 @@ public class UserMenuPanel extends JPanel {
             add(changeInformBt);
 
             logoutBt = new JButton("LOGOUT");
+
             setFormatButton(logoutBt);
+            logoutBt.setForeground(new Color(176, 52, 52));
+            logoutBt.setFont(new Font("Arial", Font.BOLD, 15));
             setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
             add(logoutBt);
 

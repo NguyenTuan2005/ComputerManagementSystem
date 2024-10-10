@@ -68,8 +68,8 @@ public class ManagerFrame extends JFrame {
         managerMenuPanel.setAccountManagementButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                managerMainPanel.showPanel(ManagerMainPanel.ACCMANAGE_CONSTRAINT);
-                setHover(ManagerMainPanel.ACCMANAGE_CONSTRAINT);
+                managerMainPanel.showPanel(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
+                setHover(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
             }
         });
 
@@ -115,12 +115,12 @@ public class ManagerFrame extends JFrame {
         managerMenuPanel.customerBt.setBackground(panelName.equals(ManagerMainPanel.CUSTOMER_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
         managerMenuPanel.stockImportBt.setBackground(panelName.equals(ManagerMainPanel.IMPORT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
         managerMenuPanel.stockExportBt.setBackground(panelName.equals(ManagerMainPanel.EXPORT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        managerMenuPanel.accountManagementBt.setBackground(panelName.equals(ManagerMainPanel.ACCMANAGE_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
+        managerMenuPanel.accountManagementBt.setBackground(panelName.equals(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
         managerMenuPanel.notificationBt.setBackground(panelName.equals(ManagerMainPanel.NOTIFICATION_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
         managerMenuPanel.changeInformBt.setBackground(panelName.equals(ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
 
     }
-    public static void main(String[] args) {
-        new ManagerFrame(new LoginFrame());
-    }
+//    public static void main(String[] args) {
+//        new ManagerFrame(new LoginFrame());
+//    }
 }

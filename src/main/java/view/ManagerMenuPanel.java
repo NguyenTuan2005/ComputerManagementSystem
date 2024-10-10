@@ -121,12 +121,12 @@ public class ManagerMenuPanel extends JPanel {
             logoutBt.setFont(new Font("Arial", Font.BOLD, 15));
             setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
             add(logoutBt);
-
             credit = new JLabel("     Group high!");
             add(credit);
 
         }
     }
+
     // set icon cho button
     private void setIcon(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);

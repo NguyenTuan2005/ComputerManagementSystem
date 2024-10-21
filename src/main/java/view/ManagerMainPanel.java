@@ -1,12 +1,11 @@
 package view;
 
-import Model.ComputerManager;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,7 +20,7 @@ public class ManagerMainPanel extends JPanel {
     SupplierPanel supplierPanel = new SupplierPanel();
     CustomerPanel customerPanel = new CustomerPanel();
     InventoryPanel inventoryPanel = new InventoryPanel();
-    AccManagePanel accManagePanel = new AccManagePanel();
+    AccManagementPanel accManagePanel = new AccManagementPanel();
     NotificationPanel notificationPanel = new NotificationPanel();
     ChangeInformationPanel changeInformationPanel = new ChangeInformationPanel();
 
@@ -34,18 +33,18 @@ public class ManagerMainPanel extends JPanel {
     static final String INVENTORY_CONTROL_CONSTRAINT = "inventoryControl";
     static final String IMPORT_CONSTRAINT = "import";
     static final String EXPORT_CONSTRAINT = "export";
-    static final String ACC_MANAGEMENT_CONSTRAINT = "accManage";
+    static final String ACC_MANAGEMENT_CONSTRAINT = "accManagement";
     static final String NOTIFICATION_CONSTRAINT = "notification";
     static final String CHANGE_INFORMATION_CONSTRAINT = "changeInformation";
 
     // create data for column Names
-    static final String[] columnNamesPRODUCT = {"STT", "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", " Đơn Giá", "Loại Máy", "Thương Hiệu",
-            "Hệ Điều Hành", "CPU", "Bộ Nhớ", "RAM", "Xuất Xứ"};
+    static final String[] columnNamesPRODUCT = {"Serial Number", "Product Code", "Product Name", "Quantity", "Unit Price", "Type of Device", "Brand",
+            "Operating System", "CPU", "Storage", "RAM", "Origin"};
     static final String[] columnNamesSUPPLIER ={"Supplier ID:", "Name Supplier:", "Address", "Phone number:", "Email:", "Cooperation Day:"};
 
 
     //main constructor
-    public ManagerMainPanel(LoginFrame loginFrame, ComputerManager computerManager) {
+    public ManagerMainPanel(LoginFrame loginFrame) {
         //tao giao dien
         this.loginFrame = loginFrame;
         welcomePanel = new WelcomePanel();
@@ -73,8 +72,7 @@ public class ManagerMainPanel extends JPanel {
 
         public WelcomePanel() {
             setLayout(new BorderLayout());
-            String userName = loginFrame.userManager.findUserNameByEmail(loginFrame.userEmailField.getText());
-            welcomeLabel = new JLabel("<html><div style='text-align: center;'>Welcome Manager :)<br>" + userName + "<div></html>", SwingConstants.CENTER);
+            welcomeLabel = new JLabel();
             welcomeLabel.setFont(new Font("Arial", Font.BOLD, 60));
             welcomeLabel.setForeground(Style.BACKGROUND_COLOR);
             add(welcomeLabel, BorderLayout.CENTER);
@@ -908,8 +906,94 @@ public class ManagerMainPanel extends JPanel {
     }
 
 
-    class AccManagePanel extends JPanel {
-        public AccManagePanel() {
+    class AccManagementPanel extends JPanel {
+
+        public AccManagementPanel() {
+            setLayout(new BorderLayout());
+
+            ButtonPanel buttonPanel = new ButtonPanel();
+            TablePanel tablePanel = new TablePanel();
+
+            add(buttonPanel, BorderLayout.NORTH);
+            add(tablePanel, BorderLayout.CENTER);
+        }
+
+        // Inner class for button panel
+        class ButtonPanel extends JPanel {
+            JButton addButton, editButton, deleteButton;
+            JButton sortButton, exportButton, importButton;
+            JTextField searchField;
+            JComboBox<String> filterCombo;
+
+            public ButtonPanel() {
+                setBackground(Style.BACKGROUND_COLOR);
+                setBorder(BorderFactory.createLineBorder(Style.WORD_COLOR_WHITE, 10));
+                setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+                setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+                addButton = new JButton("Add");
+                deleteButton = new JButton("Delete");
+                editButton = new JButton("Edit");
+                sortButton = new JButton("Sort");
+                exportButton = new JButton("Export Excel");
+                importButton = new JButton("Import Excel");
+
+                add(addButton);
+                add(deleteButton);
+                add(editButton);
+                add(Box.createHorizontalStrut(10)); // Add some spacing
+                add(sortButton);
+                add(Box.createHorizontalStrut(10));
+                add(exportButton);
+                add(importButton);
+
+                filterCombo = new JComboBox<>(new String[]{"All"});
+                filterCombo.setBackground(Style.WORD_COLOR_WHITE);
+                filterCombo.setPreferredSize(new Dimension(60, 30));
+                searchField = new JTextField(15);
+                searchField.setPreferredSize(new Dimension(130, 30));
+
+                JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                rightPanel.setBackground(Style.BACKGROUND_COLOR);
+                rightPanel.add(filterCombo);
+                rightPanel.add(searchField);
+
+                add(Box.createHorizontalGlue());
+                add(rightPanel);
+            }
+        }
+
+        // Inner class for table panel
+        class TablePanel extends JPanel {
+            JTable table;
+            JScrollPane scrollPane;
+
+            public TablePanel() {
+                setLayout(new BorderLayout());
+
+                String[] columnNames = {"Username", "Role", "Phone Number", "Email", "Created Date"};
+                DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false; // Make table non-editable
+                    }
+                };
+
+                table = new JTable(model);
+                table.setFillsViewportHeight(true);
+                table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+                TableColumnModel columnModel = table.getColumnModel();
+                columnModel.getColumn(0).setPreferredWidth(150); // Username
+                columnModel.getColumn(1).setPreferredWidth(100); // Role
+                columnModel.getColumn(2).setPreferredWidth(120); // Phone
+                columnModel.getColumn(3).setPreferredWidth(200); // Email
+                columnModel.getColumn(4).setPreferredWidth(150); // Created Date
+
+                scrollPane = new JScrollPane(table);
+                scrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                add(scrollPane, BorderLayout.CENTER);
+            }
         }
     }
 

@@ -1,8 +1,5 @@
 package view;
 
-
-import Model.ComputerManager;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,7 +8,6 @@ import java.awt.event.ActionListener;
 public class ManagerFrame extends JFrame {
     ManagerMainPanel managerMainPanel;
     ManagerMenuPanel managerMenuPanel;
-    ComputerManager computerManager;
 
     public ManagerFrame(LoginFrame loginFrame) {
         setTitle("Computer Management");
@@ -23,11 +19,8 @@ public class ManagerFrame extends JFrame {
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
 
 
-            computerManager = new ComputerManager();
-
-
         managerMenuPanel = new ManagerMenuPanel(loginFrame,this);
-        managerMainPanel = new ManagerMainPanel(loginFrame,computerManager);
+        managerMainPanel = new ManagerMainPanel(loginFrame);
 
         add(managerMenuPanel, BorderLayout.WEST);
         add(managerMainPanel, BorderLayout.CENTER);

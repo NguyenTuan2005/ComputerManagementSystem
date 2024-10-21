@@ -1,11 +1,11 @@
 package view;
 
-import Model.UserManager;
-
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
+
 import javax.swing.*;
 
 public class LoginFrame extends JFrame {
@@ -13,7 +13,6 @@ public class LoginFrame extends JFrame {
     CustomerFrame userFrame;
     LoginPanel loginPanel;
     TitlePanel titlePanel;
-    UserManager userManager = new UserManager();
 
     JLabel userRole, userEmail, userpw;
     JTextField userEmailField;
@@ -106,9 +105,6 @@ public class LoginFrame extends JFrame {
                     //xét điều kiện để login
                     if (userEmailField.getText().isEmpty() || passwd.isEmpty()) {
                         JOptionPane.showMessageDialog(loginFrame, "Please fill all the fields", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                    if (!userManager.isUserExists(String.valueOf(roleComboBox.getSelectedItem()), userEmailField.getText(), passwd)) {
-                        JOptionPane.showMessageDialog(loginFrame, "You have entered the Wrong username or password, please re-enter!", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
                         if (Objects.equals(roleComboBox.getSelectedItem(), "Manager")) {
                             loginFrame.setVisible(false);

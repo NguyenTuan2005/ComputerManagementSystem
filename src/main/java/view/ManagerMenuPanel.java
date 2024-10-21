@@ -55,8 +55,7 @@ public class ManagerMenuPanel extends JPanel {
             Circle circle = new Circle(20, 20, 70, new Color(211, 211, 211));
             add(circle, BorderLayout.CENTER);
 
-            String userName = loginFrame.userManager.findUserNameByEmail(loginFrame.userEmailField.getText());
-            name = new JLabel(userName);
+            name = new JLabel();
             name.setHorizontalAlignment(JLabel.CENTER);
             name.setForeground(Color.GREEN);
             name.setFont(new Font("Arial", Font.PLAIN, 25));
@@ -117,7 +116,6 @@ public class ManagerMenuPanel extends JPanel {
             logoutBt.setFont(new Font("Arial", Font.BOLD, 15));
             setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
             add(logoutBt);
-
             credit = new JLabel("     Group high!");
             add(credit);
 

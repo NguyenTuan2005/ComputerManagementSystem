@@ -10,19 +10,13 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class OderDetail {
-    private int idUser;
-    private String productName;
-    private int quality;
-    private boolean isPayment;
-    private Date oderDate;
-    private Date shipDate;
 
-    public OderDetail(int idUser, String productName, int quality, boolean isPayment, Date oderDate, Date shipDate) {
-        this.idUser = idUser;
-        this.productName = productName;
-        this.quality = quality;
-        this.isPayment = isPayment;
-        this.oderDate = oderDate;
-        this.shipDate = shipDate;
-    }
+    private int orderId;
+
+    private int productId;
+
+    private int pricePrice;
+
+    private int quantity;
+
 }

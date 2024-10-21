@@ -47,13 +47,12 @@ public class CustomerMainPanel extends JPanel {
 
         public WelcomePanel() {
             setLayout(new BorderLayout());
-            String userName = loginFrame.userManager.findUserNameByEmail(loginFrame.userEmailField.getText());
-            welcomeLabel = new JLabel("<html><div style='text-align: center;'>Welcome User :O<br>" + userName + "</div></html>", SwingConstants.CENTER);
+
+            welcomeLabel = new JLabel("Welcome Manager :)", SwingConstants.CENTER);
             welcomeLabel.setFont(new Font("Arial", Font.BOLD, 60));
             welcomeLabel.setForeground(Style.BACKGROUND_COLOR);
 
             add(welcomeLabel, BorderLayout.CENTER);
-
         }
     }
 

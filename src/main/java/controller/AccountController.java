@@ -18,7 +18,9 @@ public class AccountController {
         boolean notFound = accounts.isEmpty();
         if ( notFound )
             return false;
+        System.out.println(accounts.get(0));
         return accounts.get(0).sameUsernameAndPassword(username,password) ;
     }
+
 
 }

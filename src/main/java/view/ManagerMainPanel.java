@@ -77,7 +77,6 @@ public class ManagerMainPanel extends JPanel {
             welcomeLabel = new JLabel("<html><div style='text-align: center;'>Welcome Manager :)<br>" + userName + "<div></html>", SwingConstants.CENTER);
             welcomeLabel.setFont(new Font("Arial", Font.BOLD, 60));
             welcomeLabel.setForeground(Style.BACKGROUND_COLOR);
-
             add(welcomeLabel, BorderLayout.CENTER);
         }
     }
@@ -451,9 +450,7 @@ public class ManagerMainPanel extends JPanel {
                     orderInfo = new OrderInfo();
                     add(supplierPn, BorderLayout.CENTER);
                     add(orderInfo, BorderLayout.SOUTH);
-
                 }
-
             }
 
             class SupplierPn extends JPanel {
@@ -504,15 +501,15 @@ public class ManagerMainPanel extends JPanel {
                         GridBagConstraints gbc = new GridBagConstraints();
                         gbc.insets = new Insets(5, 5, 5, 5);
 
-                        // Dòng đầu tiên: Thêm hai nút bấm
-                        clearAllBt = new JButton("Clear All");
-                        clearAllBt.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                for (int i = 0; i < supplierTFArray.length; i++) {
-                                    supplierTFArray[i].setText("");
-                                }
-                            }
-                        });
+//                        clearAllBt = new JButton("Clear All");
+//                        clearAllBt.addActionListener(new ActionListener() {
+//                            public void actionPerformed(ActionEvent e) {
+//                                for (int i = 0; i < supplierTFArray.length; i++) {
+//                                    supplierTFArray[i].setText("");
+//                                }
+//                            }
+//                        });
+                        clearAllBt = createClearAllButton(this);
 
                         addFromListBt = new JButton("Add From Supplier List");
                         addFromListBt.addActionListener(new ActionListener() {
@@ -686,7 +683,7 @@ public class ManagerMainPanel extends JPanel {
                     setBorder(border);
                     setLayout(new BorderLayout());
                     importProductList = new ImportProductList();
-                    add(importProductList, BorderLayout.CENTER);
+                    add(importProductList, BorderLayout.NORTH);
 
                 }
                 class ImportProductList extends JPanel{
@@ -717,6 +714,18 @@ public class ManagerMainPanel extends JPanel {
                         tableHeaderImportProductList.setFont(Style.FONT_HEADER_ROW_TABLE);
                         scrollPaneImportProductList = new JScrollPane(tableImportProductList);
                         add(scrollPaneImportProductList, BorderLayout.CENTER);
+
+                    }
+
+                }
+                class InputProductData extends JPanel{
+                    JButton clearAllBt , addFromListBt, addToImportListBt;
+                    JTextField[] ImportProductDataTF;
+
+
+                    InputProductData(){
+
+
 
                     }
 
@@ -942,12 +951,34 @@ public class ManagerMainPanel extends JPanel {
             table.getColumnModel().getColumn(i).setPreferredWidth(width);
         }
     }
-
     private void setIconSmallButton(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();
         Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
+    }
+    // Phương thức tạo nút Clear All
+    public JButton createClearAllButton(JPanel panel) {
+        JButton clearAllButton = new JButton("Clear All");
+
+        // Lắng nghe sự kiện khi nút được nhấn
+        clearAllButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearTextFields(panel);
+            }
+        });
+
+        return clearAllButton;
+    }
+    // Phương thức xóa các JTextField trong panel
+    private void clearTextFields(JPanel panel) {
+        // Lặp qua tất cả các thành phần trong panel để kiếm textfield cần xóa
+        for (Component comp : panel.getComponents()) {
+            if (comp instanceof JTextField) {
+                ((JTextField) comp).setText("");
+            }
+        }
     }
 }

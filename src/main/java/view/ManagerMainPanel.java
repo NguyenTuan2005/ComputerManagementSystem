@@ -1,9 +1,16 @@
 package view;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 public class ManagerMainPanel extends JPanel {
     LoginFrame loginFrame;
@@ -12,25 +19,33 @@ public class ManagerMainPanel extends JPanel {
     ProductPanel productPanel = new ProductPanel();
     SupplierPanel supplierPanel = new SupplierPanel();
     CustomerPanel customerPanel = new CustomerPanel();
-    ImportPanel importPanel = new ImportPanel();
-    ExportPanel exportPanel = new ExportPanel();
+    InventoryPanel inventoryPanel = new InventoryPanel();
     AccManagementPanel accManagePanel = new AccManagementPanel();
     NotificationPanel notificationPanel = new NotificationPanel();
     ChangeInformationPanel changeInformationPanel = new ChangeInformationPanel();
 
-
+    //create constraint to switch between panels
     static final String WELCOME_CONSTRAINT = "welcome";
     static final String PRODUCT_CONSTRAINT = "product";
     static final String SUPPLIER_CONSTRAINT = "supplier";
     static final String CUSTOMER_CONSTRAINT = "customer";
+    static final String INVENTORY_CONSTRAINT = "inventory";
+    static final String INVENTORY_CONTROL_CONSTRAINT = "inventoryControl";
     static final String IMPORT_CONSTRAINT = "import";
     static final String EXPORT_CONSTRAINT = "export";
     static final String ACC_MANAGEMENT_CONSTRAINT = "accManagement";
     static final String NOTIFICATION_CONSTRAINT = "notification";
     static final String CHANGE_INFORMATION_CONSTRAINT = "changeInformation";
 
-    //constructor
+    // create data for column Names
+    static final String[] columnNamesPRODUCT = {"Serial Number", "Product Code", "Product Name", "Quantity", "Unit Price", "Type of Device", "Brand",
+            "Operating System", "CPU", "Storage", "RAM", "Origin"};
+    static final String[] columnNamesSUPPLIER ={"Supplier ID:", "Name Supplier:", "Address", "Phone number:", "Email:", "Cooperation Day:"};
+
+
+    //main constructor
     public ManagerMainPanel(LoginFrame loginFrame) {
+        //tao giao dien
         this.loginFrame = loginFrame;
         welcomePanel = new WelcomePanel();
         setLayout(cardLayout);
@@ -38,12 +53,13 @@ public class ManagerMainPanel extends JPanel {
         add(productPanel, PRODUCT_CONSTRAINT);
         add(supplierPanel, SUPPLIER_CONSTRAINT);
         add(customerPanel, CUSTOMER_CONSTRAINT);
-        add(importPanel, IMPORT_CONSTRAINT);
-        add(exportPanel, EXPORT_CONSTRAINT);
+        add(inventoryPanel, INVENTORY_CONSTRAINT);
         add(accManagePanel, ACC_MANAGEMENT_CONSTRAINT);
         add(notificationPanel, NOTIFICATION_CONSTRAINT);
         add(changeInformationPanel, CHANGE_INFORMATION_CONSTRAINT);
+
         cardLayout.show(this, WELCOME_CONSTRAINT);
+
     }
 
     public void showPanel(String panelName) {
@@ -56,8 +72,7 @@ public class ManagerMainPanel extends JPanel {
 
         public WelcomePanel() {
             setLayout(new BorderLayout());
-
-            welcomeLabel = new JLabel("<html><div style='text-align: center;'>Welcome Manager :)<br>" + loginFrame.userNameField.getText() + "<div></html>", SwingConstants.CENTER);
+            welcomeLabel = new JLabel();
             welcomeLabel.setFont(new Font("Arial", Font.BOLD, 60));
             welcomeLabel.setForeground(Style.BACKGROUND_COLOR);
 
@@ -67,14 +82,16 @@ public class ManagerMainPanel extends JPanel {
 
     //Hoang's code
     class ProductPanel extends JPanel {
+        ToolPanel toolPanel = new ToolPanel();
         JButton addBt, modifyBt, deleteBt, sortBt, exportExcelBt, importExcelBt, searchBt;
         JTextField findText;
-        JTable table;
-        DefaultTableModel model;
-        JScrollPane scrollBar;
 
-        ToolPanel toolPanel = new ToolPanel();
         TablePanel tablePanel = new TablePanel();
+        JTable tableProduct;
+        DefaultTableModel modelProductTable;
+        JTableHeader tableProductHeader;
+        JScrollPane scrollPaneProductTable;
+        JTabbedPane tabbedPaneProductTable;
 
         public ProductPanel() {
             setLayout(new BorderLayout());
@@ -87,31 +104,32 @@ public class ManagerMainPanel extends JPanel {
             public ToolPanel() {
                 setLayout(new FlowLayout());
                 setLayout(new FlowLayout(FlowLayout.CENTER));
+                setBackground(Style.BACKGROUND_COLOR);
                 addBt = new JButton("+ Add");
-                setStyleButton(addBt, Style.ADD_BUTTON_COLOR_GREEN, new Dimension(80, 30));
+                setStyleButton(addBt, Style.FONT_SIZE, Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.LEFT, new Dimension(80, 30));
 
                 modifyBt = new JButton("Modify");
-                setStyleButton(modifyBt, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(80, 30));
+                setStyleButton(modifyBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(80, 30));
 
                 deleteBt = new JButton("- Delete");
-                setStyleButton(deleteBt, Style.DELETE_BUTTON_COLOR_RED, new Dimension(90, 30));
+                setStyleButton(deleteBt, Style.FONT_SIZE, Color.white, Style.DELETE_BUTTON_COLOR_RED, SwingConstants.LEFT, new Dimension(90, 30));
 
                 sortBt = new JButton("Sort Asc");
-                setStyleButton(sortBt, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(100, 30));
+                setStyleButton(sortBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(100, 30));
 
 
                 exportExcelBt = new JButton("Export Excel");
-                setStyleButton(exportExcelBt, Style.ADD_BUTTON_COLOR_GREEN, new Dimension(120, 30));
+                setStyleButton(exportExcelBt, Style.FONT_SIZE, Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.LEFT, new Dimension(120, 30));
 
                 importExcelBt = new JButton("Import Excel");
-                setStyleButton(importExcelBt, Style.ADD_BUTTON_COLOR_GREEN, new Dimension(120, 30));
+                setStyleButton(importExcelBt, Style.FONT_SIZE, Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.LEFT, new Dimension(120, 30));
 
                 findText = new JTextField();
                 findText.setPreferredSize(new Dimension(180, 30));
                 findText.setFont(Style.FONT_SIZE);
 
                 searchBt = new JButton("Search");
-                setStyleButton(searchBt, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(85, 30));
+                setStyleButton(searchBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(85, 30));
 
                 add(addBt);
                 add(modifyBt);
@@ -126,15 +144,42 @@ public class ManagerMainPanel extends JPanel {
 
         public class TablePanel extends JPanel {
             public TablePanel() {
-                // tao bang du lieu
-                String[] header = {"STT", "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", " Đơn Giá", "Loại Máy", "Thương Hiệu",
-                        "Hệ Điều Hành", "CPU", "Bộ Nhớ", "RAM", "Xuất Xứ"};
-                model = new DefaultTableModel(header, 0);
-                table = new JTable(model);
-                scrollBar = new JScrollPane(table);
-                scrollBar.setPreferredSize(new Dimension(1000, 550));
-                this.add(scrollBar);
+                setLayout(new BorderLayout());
+                setBackground(Style.BACKGROUND_COLOR);
+
+                String[] rowData = {"1", "LP20", "Laptop ASUS TUF Gaming FX516PE", String.valueOf(650), String.valueOf(23990000L), "Laptop", "China", "Window", "Intel Core i5 12450H", String.valueOf(512), "8 GB", "Vietnam"};
+
+                tableProduct = new JTable(modelProductTable);
+                tableProduct.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                tableProduct.getTableHeader().setResizingAllowed(true);
+                tableProduct.setRowHeight(30);
+                tableProduct.setFont(Style.FONT_TEXT_TABLE);
+                // thêm model lưu dữ liệu cho bảng
+                modelProductTable = new DefaultTableModel(columnNamesPRODUCT,0) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false; // Không cho phép chỉnh sửa bất kỳ ô nào
+                    }
+                };
+                tableProduct.setModel(modelProductTable);
+                resizeColumnWidth(tableProduct, 150);
+
+                modelProductTable.addRow(rowData);
+
+                tableProductHeader = tableProduct.getTableHeader();// chỉnh tên các cột
+                tableProductHeader.setBackground(Color.LIGHT_GRAY);
+                tableProductHeader.setForeground(Color.BLACK);
+                tableProductHeader.setReorderingAllowed(false); // Không cho di chuyển cột khi giữ và kéo
+                tableProductHeader.setFont(Style.FONT_HEADER_ROW_TABLE);
+                scrollPaneProductTable = new JScrollPane(tableProduct);
+
+
+                tabbedPaneProductTable = new JTabbedPane();
+                tabbedPaneProductTable.setFont(Style.FONT_HEADER_ROW_TABLE);
+                tabbedPaneProductTable.addTab("Products for Sale", scrollPaneProductTable);
+                add(tabbedPaneProductTable, BorderLayout.CENTER);
             }
+
         }
     }
 
@@ -160,31 +205,32 @@ public class ManagerMainPanel extends JPanel {
 
             public ToolPanel() {
                 setLayout(new FlowLayout(FlowLayout.CENTER));
+                setBackground(Style.BACKGROUND_COLOR);
                 addBt = new JButton("+ Add");
-                setStyleButton(addBt, Style.ADD_BUTTON_COLOR_GREEN, new Dimension(80, 30));
+                setStyleButton(addBt, Style.FONT_SIZE, Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.LEFT, new Dimension(80, 30));
 
                 modifyBt = new JButton("Modify");
-                setStyleButton(modifyBt, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(80, 30));
+                setStyleButton(modifyBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(80, 30));
 
                 deleteBt = new JButton("- Delete");
-                setStyleButton(deleteBt, Style.DELETE_BUTTON_COLOR_RED, new Dimension(90, 30));
+                setStyleButton(deleteBt, Style.FONT_SIZE, Color.white, Style.DELETE_BUTTON_COLOR_RED, SwingConstants.LEFT, new Dimension(90, 30));
 
                 sortBt = new JButton("Sort Asc");
-                setStyleButton(sortBt, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(100, 30));
+                setStyleButton(sortBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(100, 30));
 
 
                 exportExcelBt = new JButton("Export Excel");
-                setStyleButton(exportExcelBt, Style.ADD_BUTTON_COLOR_GREEN, new Dimension(120, 30));
+                setStyleButton(exportExcelBt, Style.FONT_SIZE, Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.LEFT, new Dimension(120, 30));
 
                 importExcelBt = new JButton("Import Excel");
-                setStyleButton(importExcelBt, Style.ADD_BUTTON_COLOR_GREEN, new Dimension(120, 30));
+                setStyleButton(importExcelBt, Style.FONT_SIZE, Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.LEFT, new Dimension(120, 30));
 
                 findText = new JTextField();
                 findText.setPreferredSize(new Dimension(180, 30));
                 findText.setFont(Style.FONT_SIZE);
 
                 searchBt = new JButton("Search");
-                setStyleButton(searchBt, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(85, 30));
+                setStyleButton(searchBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(85, 30));
 
                 add(addBt);
                 add(modifyBt);
@@ -199,11 +245,14 @@ public class ManagerMainPanel extends JPanel {
 
         public class TablePanel extends JPanel {
             public TablePanel() {
+                setBackground(Style.BACKGROUND_COLOR);
                 // tao bang du lieu
                 String[] header = {"STT", "Mã Nhà Cung Cấp", "Tên Nhà Cung Cấp", "Email", "Số Điện Thoại", "Địa chỉ", "Người Liên Hệ",
                         "Số Điện Thoại Người Liên Hệ", "Mã Số Thuế", "Ngày Hợp Tác"};
                 model = new DefaultTableModel(header, 0);
                 table = new JTable(model);
+
+
                 scrollBar = new JScrollPane(table);
                 scrollBar.setPreferredSize(new Dimension(1000, 550));
                 this.add(scrollBar);
@@ -223,193 +272,630 @@ public class ManagerMainPanel extends JPanel {
         }
     }
 
-    // Duy's code
-    class ImportPanel extends JPanel {
 
-        JButton addBt, deleteBt, editBt, detailsBt, exportBt, searchBt, importBt;
-        JTextField findText;
+    // Hoang's Code
+    class InventoryPanel extends JPanel { // m
+        InventoryControlPanel inventoryControlPanel;
+        ImportPanel importPanel;
+        ExportPanel exportPanel;
+        CardLayout cardLayoutInventory;
 
-        private static void setStyleButton(JButton that, Color color, Dimension size) {
-            that.setBackground(color);
-            that.setFont(Style.FONT_SIZE);
-            that.setHorizontalAlignment(SwingConstants.LEFT);
-            that.setBorderPainted(false);
-            that.setForeground(Color.white);
-            that.setFocusable(false);
-            that.setPreferredSize(size);
+        InventoryPanel() {
+            cardLayoutInventory = new CardLayout();
+            setLayout(cardLayoutInventory);
+
+            importPanel = new ImportPanel();
+            exportPanel = new ExportPanel();
+            inventoryControlPanel = new InventoryControlPanel();
+
+            add(inventoryControlPanel, INVENTORY_CONTROL_CONSTRAINT);
+            add(importPanel, IMPORT_CONSTRAINT);
+            add(exportPanel, EXPORT_CONSTRAINT);
+
+            cardLayoutInventory.show(this, INVENTORY_CONTROL_CONSTRAINT);
         }
 
-
-        public ImportPanel() {
-            // Set layout for the panel
-            setLayout(new BorderLayout());
-
-            // Panel for buttons
-            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            buttonPanel.setBackground(Style.BACKGROUND_COLOR);
-            addBt = new JButton("+ Thêm Mới");
-            setStyleButton(addBt, Color.GREEN, new Dimension(100, 30));
-
-            deleteBt = new JButton("- Xóa Đơn");
-            setStyleButton(deleteBt, Color.red, new Dimension(100, 30));
-
-            editBt = new JButton("Sửa Đơn");
-            setStyleButton(editBt, Color.CYAN, new Dimension(80, 30));
-
-            detailsBt = new JButton("Thông tin chi tiết");
-            setStyleButton(detailsBt, Color.CYAN, new Dimension(120, 30));
-
-            exportBt = new JButton("Export Excel");
-            setStyleButton(exportBt, new Color(0, 0, 0), new Dimension(120, 30));
-
-            importBt = new JButton("Import Excel");
-            setStyleButton(importBt, new Color(0, 0, 0), new Dimension(120, 30));
-
-            findText = new JTextField("search", 20);
-            findText.setPreferredSize(new Dimension(200, 30)); // chiều rộng 200, chiều cao 30
-
-            searchBt = new JButton("Search");
-            setStyleButton(searchBt, new Color(0, 0, 0), new Dimension(90, 30));
-            // Đặt căn chỉnh văn bản (có thể là SwingConstants.LEFT, SwingConstants.CENTER, SwingConstants.RIGHT)
-            findText.setHorizontalAlignment(JTextField.LEFT); // Căn giữa văn bản
-
-            // Add buttons to the button panel
-            buttonPanel.add(addBt);
-            buttonPanel.add(deleteBt);
-            buttonPanel.add(editBt);
-            buttonPanel.add(detailsBt);
-            buttonPanel.add(importBt);
-            buttonPanel.add(exportBt);
-            buttonPanel.add(findText);
-            buttonPanel.add(searchBt);
-//            buttonPanel.setBorder(BorderFactory.createTitledBorder("APPLICATION"));
-
-            // Add button panel to the top of the main panel
-            add(buttonPanel, BorderLayout.NORTH);
-
-            // Table to display order list
-            String[] columnNames = {
-                    "Mã Phiếu Nhập", "Tên Đơn Hàng", "Mã Nhà Cung Cấp",
-                    "Tên Nhà Cung Cấp", "Người Nhập", "Tình Trạng"
-            };
-
-            DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
-            JTable orderTable = new JTable(tableModel);
-
-            // Add sample rows (optional)
-             Object[] rowData = { "001", "Order1", "NC001", "Supplier1", "User1", "Pending" };
-             tableModel.addRow(rowData);
-
-            // ScrollPane for the table
-            JScrollPane scrollPane = new JScrollPane(orderTable);
-
-            // Label for the order list
-//            JLabel orderListLabel = new JLabel("Danh Sách Đơn Hàng", JLabel.CENTER);
-//            orderListLabel.setFont(new Font("Arial", Font.BOLD, 14));
-
-            // Add components to the main panel
-//            add(orderListLabel, BorderLayout.CENTER);
-            add(scrollPane, BorderLayout.CENTER);
-        }
-    }
-
-    // Tuan's Code
-    class ExportPanel extends JPanel {
-        JLabel orderIdLabel, staffLabel, customerIdLabel, customerNameLabel, totalLabel;
-        JTextField orderIdField, staffField, customerIdField, customerNameField;
-        JButton exportButton;
-
-        public ExportPanel() {
-            setLayout(new BorderLayout());
-            setBorder(BorderFactory.createLineBorder(Color.GRAY));
-
-            JPanel rightContainer = new JPanel(new BorderLayout());
-            rightContainer.setPreferredSize(new Dimension(300, 400)); // Adjust size as needed
-
-            InputPanel inputPanel = new InputPanel();
-            BottomPanel bottomPanel = new BottomPanel();
-
-            rightContainer.add(inputPanel, BorderLayout.CENTER);
-            rightContainer.add(bottomPanel, BorderLayout.SOUTH);
-
-            JSeparator separator = new JSeparator(JSeparator.VERTICAL);
-            separator.setPreferredSize(new Dimension(1, getHeight()));
-
-            JPanel centerPanel = new JPanel(new BorderLayout());
-            centerPanel.add(separator, BorderLayout.EAST);
-
-            add(centerPanel, BorderLayout.CENTER);
-            add(rightContainer, BorderLayout.EAST);
+        public void showPanelInInventory(String panelName) {
+            cardLayoutInventory.show(this, panelName); // method chuyển đổi giữa các panel
         }
 
-        // Inner class for the input fields
-        class InputPanel extends JPanel {
+        // panel chứa các chức năng tương tác của inventory
+        class InventoryControlPanel extends JPanel {
+            ToolPanel toolPanel;
+            TablePanel tablePanel;
 
-            public InputPanel() {
-                setLayout(new GridLayout(8, 1, 10, 10));
-                setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            InventoryControlPanel() {
+                setLayout(new BorderLayout());
+                toolPanel = new ToolPanel();
+                tablePanel = new TablePanel();
 
-                // Initialize components
-                orderIdLabel = new JLabel("Order ID:");
-                staffLabel = new JLabel("Staff:");
-                customerIdLabel = new JLabel("Customer ID:");
-                customerNameLabel = new JLabel("Customer Name:");
 
-                orderIdField = new JTextField();
-                staffField = new JTextField();
-                customerIdField = new JTextField();
-                customerNameField = new JTextField();
+                add(toolPanel, BorderLayout.NORTH);
+                add(tablePanel, BorderLayout.CENTER);
+            }
 
-                JPanel orderLabelPanel = new JPanel(new BorderLayout());
-                orderLabelPanel.add(orderIdLabel, BorderLayout.SOUTH);
-                orderLabelPanel.setOpaque(false);
+            class ToolPanel extends JPanel {
+                JButton importProduct, exportProduct, searchBt;
+                JTextField searchTextField;
 
-                JPanel staffLabelPanel = new JPanel(new BorderLayout());
-                staffLabelPanel.add(staffLabel, BorderLayout.SOUTH);
-                staffLabelPanel.setOpaque(false);
+                public ToolPanel() {
+                    importProduct = new JButton("Import Product");
+                    importProduct.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            showPanelInInventory(IMPORT_CONSTRAINT);
+                        }
+                    });
+                    exportProduct = new JButton("Export Product");
+                    exportProduct.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            showPanelInInventory(EXPORT_CONSTRAINT);
+                        }
+                    });
+                    add(importProduct);
+                    add(exportProduct);
+                    searchTextField = new JTextField("Search");
+                    searchTextField.setPreferredSize(new Dimension(250, 30));
+                    searchTextField.setFont(Style.FONT_TEXT_CUSTOMER);
+                    searchTextField.setForeground(Color.GRAY);
+                    // Thêm FocusListener để kiểm soát khi người dùng nhấn và rời khỏi JTextField
+                    searchTextField.addFocusListener(new FocusListener() {
+                        @Override
+                        public void focusGained(FocusEvent e) {
+                            // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ "Search", nó sẽ biến mất
+                            if (searchTextField.getText().equals("Search")) {
+                                searchTextField.setText("");
+                                searchTextField.setForeground(Color.BLACK);
+                            }
+                        }
 
-                JPanel customerIdLabelPanel = new JPanel(new BorderLayout());
-                customerIdLabelPanel.add(customerIdLabel, BorderLayout.SOUTH);
-                customerIdLabelPanel.setOpaque(false);
+                        @Override
+                        public void focusLost(FocusEvent e) {
+                            // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ "Search"
+                            if (searchTextField.getText().isEmpty()) {
+                                searchTextField.setForeground(Color.GRAY);
+                                searchTextField.setText("Search");
+                            }
+                        }
+                    });
+                    add(searchTextField);
+                    searchBt = new JButton();
+                    setStyleButton(searchBt, Style.FONT_TEXT_CUSTOMER, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(68, 30));
+                    setIconSmallButton("src/main/java/Icon/search_Icon.png", searchBt);
+                    add(searchBt);
+                }
+            }
 
-                JPanel customerNameLabelPanel = new JPanel(new BorderLayout());
-                customerNameLabelPanel.add(customerNameLabel, BorderLayout.SOUTH);
-                customerNameLabelPanel.setOpaque(false);
+            class TablePanel extends JPanel {
+                JTabbedPane tabbedPaneMain;
 
-                add(orderLabelPanel);
-                add(orderIdField);
-                add(staffLabelPanel);
-                add(staffField);
-                add(customerIdLabelPanel);
-                add(customerIdField);
-                add(customerNameLabelPanel);
-                add(customerNameField);
+                JTable tableInventory, tableImport, tableExport;
+                DefaultTableModel modelInventory, modelImport, modelExport;
+                JScrollPane scrollPaneInventory, scrollPaneImport, scrollPaneExport;
+
+                TablePanel() {
+                    setLayout(new BorderLayout());
+                    // tạo bảng lưu dữ liệu cho inventory
+                    String[] rowData = {"1", "LP20", "Laptop ASUS TUF Gaming FX516PE", String.valueOf(650), String.valueOf(23990000L), "Laptop", "China", "Window", "Intel Core i5 12450H", String.valueOf(512), "8 GB", "Vietnam"};
+
+                    tableInventory = new JTable();
+                    scrollPaneInventory = createScrollPaneForTable(tableInventory, columnNamesPRODUCT);
+                    modelInventory = (DefaultTableModel) tableInventory.getModel();
+                    modelInventory.addRow(rowData);
+
+                    tableImport = new JTable();
+                    scrollPaneImport = createScrollPaneForTable(tableImport, columnNamesPRODUCT);
+                    modelImport = (DefaultTableModel) tableImport.getModel();
+
+
+                    tableExport = new JTable();
+                    scrollPaneExport = createScrollPaneForTable(tableExport, columnNamesPRODUCT);
+                    modelExport = (DefaultTableModel) tableExport.getModel();
+
+
+                    tabbedPaneMain = new JTabbedPane();
+                    tabbedPaneMain.setFont(Style.FONT_HEADER_ROW_TABLE);
+                    tabbedPaneMain.addTab("Inventory", scrollPaneInventory);
+                    tabbedPaneMain.addTab("Import Product List", scrollPaneImport);
+                    tabbedPaneMain.addTab("Export Product List", scrollPaneExport);
+                    add(tabbedPaneMain);
+                }
+
+                public JScrollPane createScrollPaneForTable(JTable tableThat, String[] columnNames) {
+                    tableThat.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                    tableThat.getTableHeader().setResizingAllowed(true);
+                    tableThat.setRowHeight(30);
+                    tableThat.setFont(Style.FONT_TEXT_TABLE);
+                    tableThat.setModel(new DefaultTableModel(columnNames,0) {
+                        @Override
+                        public boolean isCellEditable(int row, int column) {
+                            return false; // Không cho phép chỉnh sửa
+                        }
+                    });
+                    resizeColumnWidth(tableThat, 150);
+
+                    JTableHeader tableHeader = tableThat.getTableHeader();// chỉnh tên các cột
+                    tableHeader.setBackground(Color.LIGHT_GRAY);
+                    tableHeader.setForeground(Color.BLACK);
+                    tableHeader.setReorderingAllowed(false); // Không cho di chuyển cột khi giữ và kéo
+                    tableHeader.setFont(Style.FONT_HEADER_ROW_TABLE);
+                    return new JScrollPane(tableThat);
+                }
+
+
             }
         }
 
-        class BottomPanel extends JPanel {
+        class ImportPanel extends JPanel {
+            LeftPn leftPn;
+            RightPn rightPn;
 
-            public BottomPanel() {
-                setPreferredSize(new Dimension(300, 200));
-                setLayout(new GridLayout(2, 1, 5, 5));
-                setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            ImportPanel() {
+                setLayout(new GridLayout(1, 2));
+                leftPn = new LeftPn();
+                rightPn = new RightPn();
+                add(leftPn);
+                add(rightPn);
 
-                totalLabel = new JLabel("Total: +10,000,000,000 VNĐ");
-                totalLabel.setForeground(new Color(0, 150, 200));
-
-                exportButton = new JButton("EXPORT");
-                exportButton.setBackground(Style.CONFIRM_BUTTON_COLOR_GREEN);
-                exportButton.setForeground(Color.WHITE);
-
-                JPanel totalLabelPanel = new JPanel(new BorderLayout());
-                totalLabelPanel.add(totalLabel, BorderLayout.SOUTH);
-                totalLabelPanel.setOpaque(false);
-
-                add(totalLabelPanel);
-                add(exportButton);
             }
+
+            // panel chung chứa ( panel thông tin nhà cung cấp | panel mã đơn hàng, người đăt )
+            class LeftPn extends JPanel {
+                SupplierPn supplierPn;
+                OrderInfo orderInfo;
+
+                LeftPn() {
+                    setLayout(new BorderLayout());
+                    supplierPn = new SupplierPn();
+                    orderInfo = new OrderInfo();
+                    add(supplierPn, BorderLayout.CENTER);
+                    add(orderInfo, BorderLayout.SOUTH);
+
+                }
+
+            }
+
+            class SupplierPn extends JPanel {
+                AddNewSupplierPn addNewSupplierPn;
+                AddSupplierFromListPn addSupplierFromListPn;
+                CardLayout cardLayoutSupplierPn;
+
+                JButton addFromListBt, clearAllBt, addBt, backBt;
+
+                JTextField SupplierIDTF, nameSupplierTF, addressSupplierTF, phoneSupplierTF, emailSupplierTF, cooperationDayTF,
+                        productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF;
+
+                JTextField[] supplierTFArray = {SupplierIDTF, nameSupplierTF, addressSupplierTF, phoneSupplierTF, emailSupplierTF, cooperationDayTF};
+                JTextField[] productTFArray = {productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF};
+                static final String ADD_NEW_SUPPLIER_CONSTRAINT = "addNewSupplier";
+                static final String ADD_SUPPLIER_FROM_LIST_CONSTRAINT = "addSupplierFromList";
+
+                SupplierPn() {
+                    Border border = BorderFactory.createTitledBorder(
+                            BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3), // Đường viền
+                            "Supplier", // Tiêu đề
+                            TitledBorder.LEFT, // Canh trái
+                            TitledBorder.TOP, // Canh trên
+                            new Font("Arial", Font.BOLD, 20), // Phông chữ và kiểu chữ
+                            Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE // Màu chữ
+                    );
+                    setBorder(border);
+
+                    addNewSupplierPn = new AddNewSupplierPn();
+                    addSupplierFromListPn = new AddSupplierFromListPn();
+
+                    cardLayoutSupplierPn = new CardLayout();
+                    setLayout(cardLayoutSupplierPn);
+
+                    cardLayoutSupplierPn.show(this, ADD_NEW_SUPPLIER_CONSTRAINT);
+
+                    add(addNewSupplierPn, ADD_NEW_SUPPLIER_CONSTRAINT);
+                    add(addSupplierFromListPn, ADD_SUPPLIER_FROM_LIST_CONSTRAINT);
+
+                }
+                public void showPanelAddSupplier(String panelName) {
+                    cardLayoutSupplierPn.show(this, panelName); // method chuyển đổi giữa các panel
+                }
+
+                class AddNewSupplierPn extends JPanel {
+                    AddNewSupplierPn() {
+                        setLayout(new GridBagLayout());
+                        GridBagConstraints gbc = new GridBagConstraints();
+                        gbc.insets = new Insets(5, 5, 5, 5);
+
+                        // Dòng đầu tiên: Thêm hai nút bấm
+                        clearAllBt = new JButton("Clear All");
+                        clearAllBt.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                for (int i = 0; i < supplierTFArray.length; i++) {
+                                    supplierTFArray[i].setText("");
+                                }
+                            }
+                        });
+
+                        addFromListBt = new JButton("Add From Supplier List");
+                        addFromListBt.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                showPanelAddSupplier(ADD_SUPPLIER_FROM_LIST_CONSTRAINT);
+                            }
+                        });
+
+                        gbc.gridx = 0;
+                        gbc.gridy = 0;
+                        gbc.gridwidth = 1; // mỗi nút bấm chiếm 1 cột
+                        add(clearAllBt, gbc);
+
+                        gbc.gridx = 1;
+                        gbc.gridy = 0;
+                        add(addFromListBt, gbc);
+
+                        // Thiết lập GridBagConstraints cho các label và text field
+                        gbc.fill = GridBagConstraints.HORIZONTAL;
+                        gbc.gridwidth = 1;
+
+                        // Danh sách các label
+                        String[] labels = {"Supplier ID:", "Name Supplier:", "Address", "Phone number:", "Email:", "Cooperation Day:"};
+
+                        for (int i = 0; i < labels.length; i++) {
+                            gbc.gridx = 0; // Cột 1: Label
+                            gbc.gridy = i + 1; // Bắt đầu từ dòng thứ 2
+                            gbc.gridwidth = 1;
+                            gbc.fill = GridBagConstraints.BOTH;
+                            gbc.anchor = GridBagConstraints.WEST;
+                            JLabel lb =new JLabel(labels[i]);
+                            lb.setFont(Style.FONT_TEXT_LOGIN_FRAME);
+                            lb.setPreferredSize(new Dimension(180, 40));
+                            add(new JLabel(labels[i]), gbc);
+
+
+                            gbc.gridx = 1; // Cột 2: TextField
+                            gbc.anchor = GridBagConstraints.EAST;
+                            supplierTFArray[i] = new JTextField(20);
+                            supplierTFArray[i].setPreferredSize(new Dimension(300,40));
+                            supplierTFArray[i].setFont(Style.FONT_TEXT_LOGIN_FRAME);
+                            add(supplierTFArray[i], gbc);
+                        }
+
+
+                    }
+                }
+
+                class AddSupplierFromListPn extends JPanel {
+                    JTable tableGetDataSupplier;
+                    DefaultTableModel modelGetDataSupplier;
+                    JTableHeader tableHeaderGetDataSupplier;
+                    JScrollPane scrollPaneGetDataSupplierTable;
+                    AddSupplierFromListPn() {
+                        setLayout(new GridBagLayout());
+                        GridBagConstraints gbc = new GridBagConstraints();
+                        gbc.insets = new Insets(5, 5, 5, 5);
+
+                        gbc.gridx = 0; // Cột đầu tiên
+                        gbc.gridy = 0; // Dòng đầu tiên
+                        gbc.gridwidth = 1; // Mỗi nút bấm chiếm 1 cột
+                        gbc.fill = GridBagConstraints.BOTH; // Nút sẽ lấp đầy cả không gian
+                        gbc.weightx = 0.5; // Phân bổ chiều rộng đều cho cả hai nút
+                        gbc.weighty = 0.0;
+
+                        backBt = new JButton("Back");// nút quay trở lại form thêm mới sản phẩm
+                        backBt.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                showPanelAddSupplier(ADD_NEW_SUPPLIER_CONSTRAINT);
+                            }
+                        });
+                        add(backBt, gbc);
+
+                        gbc.gridx = 1; // Cột thứ hai
+                        gbc.fill = GridBagConstraints.BOTH;
+                        addBt = new JButton("Add to Form");// nút thêm nhà cung cấp từ bảng vào form
+                        add(addBt, gbc);
+
+                        // thêm bảng chứa dữ liệu cảu supplier vào để trích xuất ra form
+
+                        tableGetDataSupplier = new JTable();
+                        tableGetDataSupplier.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                        tableGetDataSupplier.getTableHeader().setResizingAllowed(true);
+                        tableGetDataSupplier.setRowHeight(30);
+                        tableGetDataSupplier.setFont(Style.FONT_TEXT_TABLE);
+                        resizeColumnWidth(tableGetDataSupplier, 120);
+                        // tạo model lưu dữ liệu cho bảng
+                        modelGetDataSupplier = new DefaultTableModel(columnNamesSUPPLIER,0) {
+                            @Override
+                            public boolean isCellEditable(int row, int column) {
+                                return false; // Không cho phép chỉnh sửa bất kỳ ô nào
+                            }
+                        };
+                        tableGetDataSupplier.setModel(modelGetDataSupplier);
+
+                        tableHeaderGetDataSupplier = tableGetDataSupplier.getTableHeader();// chỉnh tên các cột
+                        tableHeaderGetDataSupplier.setBackground(Color.LIGHT_GRAY);
+                        tableHeaderGetDataSupplier.setForeground(Color.BLACK);
+                        tableHeaderGetDataSupplier.setReorderingAllowed(false); // Không cho di chuyển cột khi giữ và kéo
+                        tableHeaderGetDataSupplier.setFont(Style.FONT_HEADER_ROW_TABLE);
+                        scrollPaneGetDataSupplierTable = new JScrollPane(tableGetDataSupplier);
+                        gbc.gridx = 0; // Quay lại cột đầu tiên
+                        gbc.gridy = 1; // Dòng thứ hai
+                        gbc.gridwidth = 2; // JTable chiếm cả 2 cột
+                        gbc.fill = GridBagConstraints.BOTH; // JTable lấp đầy cả chiều rộng và chiều cao
+                        gbc.weightx = 1.0; // Phân bổ chiều rộng cho JTable
+                        gbc.weighty = 1.0;
+                        add(scrollPaneGetDataSupplierTable, gbc);
+
+                    }
+
+                }
+            }
+
+            class OrderInfo extends JPanel {
+                JLabel receiptNoteCode, receiptNoteCreator;
+                JTextField receiptNoteCodeTF, receiptNoteCreatorTF;
+
+                OrderInfo() {
+                    setLayout(new GridLayout(2, 2));
+                    setPreferredSize(new Dimension(300, 80));
+
+                    receiptNoteCode = new JLabel("Receipt Note Code:");
+                    formatLabel(receiptNoteCode, Style.FONT_TEXT_LOGIN_FRAME, Color.black);
+
+                    receiptNoteCreator = new JLabel("Receipt Note Creator:");
+                    formatLabel(receiptNoteCreator, Style.FONT_TEXT_LOGIN_FRAME, Color.black);
+
+                    receiptNoteCodeTF = new JTextField(20);
+                    formatTextField(receiptNoteCodeTF, Style.FONT_TEXT_LOGIN_FRAME, Color.black, new Dimension(200, 30));
+
+                    receiptNoteCreatorTF = new JTextField(20);
+                    formatTextField(receiptNoteCreatorTF, Style.FONT_TEXT_LOGIN_FRAME, Color.black, new Dimension(200, 30));
+
+                    add(receiptNoteCode);
+                    add(receiptNoteCodeTF);
+                    add(receiptNoteCreator);
+                    add(receiptNoteCreatorTF);
+                }
+            }
+
+
+            //panel chứa thông tin sản phẩm cần mua, xác nhận thanh toán
+            class RightPn extends JPanel {
+                ProductPn productPn;
+                PaymentConfirmationPn paymentConfirmationPn;
+
+                RightPn() {
+                    setLayout(new BorderLayout());
+                    productPn = new ProductPn();
+                    paymentConfirmationPn = new PaymentConfirmationPn();
+
+                    add(productPn, BorderLayout.CENTER);
+                    add(paymentConfirmationPn, BorderLayout.SOUTH);
+                }
+            }
+
+            class ProductPn extends JPanel {
+                ImportProductList importProductList;
+                ProductPn() {
+                    Border border = BorderFactory.createTitledBorder(
+                            BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3), // Đường viền
+                            "Product", // Tiêu đề
+                            TitledBorder.LEFT, // Canh trái
+                            TitledBorder.TOP, // Canh trên
+                            new Font("Arial", Font.BOLD, 20), // Phông chữ và kiểu chữ
+                            Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE // Màu chữ
+                    );
+                    setBorder(border);
+                    setLayout(new BorderLayout());
+                    importProductList = new ImportProductList();
+                    add(importProductList, BorderLayout.CENTER);
+
+                }
+                class ImportProductList extends JPanel{
+                    JTable tableImportProductList;
+                    DefaultTableModel modelImportProductList;
+                    JTableHeader tableHeaderImportProductList;
+                    JScrollPane scrollPaneImportProductList;
+                    ImportProductList(){
+                        tableImportProductList = new JTable();
+                        tableImportProductList.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                        tableImportProductList.getTableHeader().setResizingAllowed(true);
+                        tableImportProductList.setRowHeight(20);
+                        tableImportProductList.setFont(Style.FONT_TEXT_TABLE);
+                        resizeColumnWidth(tableImportProductList, 120);
+                        // tạo model lưu dữ liệu cho bảng
+                        modelImportProductList = new DefaultTableModel(columnNamesSUPPLIER,0) {
+                            @Override
+                            public boolean isCellEditable(int row, int column) {
+                                return false; // Không cho phép chỉnh sửa bất kỳ ô nào
+                            }
+                        };
+                        tableImportProductList.setModel(modelImportProductList);
+
+                        tableHeaderImportProductList = tableImportProductList.getTableHeader();// chỉnh tên các cột
+                        tableHeaderImportProductList.setBackground(Color.LIGHT_GRAY);
+                        tableHeaderImportProductList.setForeground(Color.BLACK);
+                        tableHeaderImportProductList.setReorderingAllowed(false); // Không cho di chuyển cột khi giữ và kéo
+                        tableHeaderImportProductList.setFont(Style.FONT_HEADER_ROW_TABLE);
+                        scrollPaneImportProductList = new JScrollPane(tableImportProductList);
+                        add(scrollPaneImportProductList, BorderLayout.CENTER);
+
+                    }
+
+                }
+
+
+            }
+            class PaymentConfirmationPn extends JPanel {
+                JLabel totalPrice, totalPriceValue;
+                JButton cancelBt, importBt;
+
+                PaymentConfirmationPn() {
+                    setLayout(new GridLayout(2, 2));
+                    setPreferredSize(new Dimension(300, 80));
+
+                    totalPrice = new JLabel("Total Price:");
+                    formatLabel(totalPrice, Style.FONT_TEXT_LOGIN_FRAME, Color.black);
+                    totalPriceValue = new JLabel(" $1000000000");
+                    formatLabel(totalPriceValue, Style.FONT_BUTTON_LOGIN_FRAME, Color.RED);
+
+
+                    cancelBt = new JButton("Cancel");
+                    setStyleButton(cancelBt, Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.DELETE_BUTTON_COLOR_RED, SwingConstants.CENTER, new Dimension(200, 40));
+                    cancelBt.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            showPanelInInventory(INVENTORY_CONTROL_CONSTRAINT);
+                        }
+                    });
+
+                    importBt = new JButton("Import");
+                    setStyleButton(importBt, Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(200, 40));
+
+                    add(totalPrice);
+                    add(totalPriceValue);
+                    add(cancelBt);
+                    add(importBt);
+                }
+            }
+
+
+        }
+
+        class ExportPanel extends JPanel {
+            LeftPn leftPn;
+            RightPn rightPn;
+
+            ExportPanel() {
+                setLayout(new GridLayout(1, 2));
+                leftPn = new LeftPn();
+                rightPn = new RightPn();
+                add(leftPn);
+                add(rightPn);
+
+            }
+
+            // panel chung chứa ( panel thông tin khách hàng | panel mã đơn hàng, người đăt )
+            class LeftPn extends JPanel {
+                CustomerPn customerPn;
+                OrderInfo orderInfo;
+
+                LeftPn() {
+                    setLayout(new BorderLayout());
+                    customerPn = new CustomerPn();
+                    orderInfo = new OrderInfo();
+                    add(customerPn, BorderLayout.CENTER);
+                    add(orderInfo, BorderLayout.SOUTH);
+
+                }
+
+            }
+
+            class CustomerPn extends JPanel {
+                CustomerPn() {
+                    Border border = BorderFactory.createTitledBorder(
+                            BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3), // Đường viền
+                            "Customer", // Tiêu đề
+                            TitledBorder.LEFT, // Canh trái
+                            TitledBorder.TOP, // Canh trên
+                            new Font("Arial", Font.BOLD, 20), // Phông chữ và kiểu chữ
+                            Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE // Màu chữ
+                    );
+                    setBorder(border);
+                }
+            }
+
+            class OrderInfo extends JPanel {
+                JLabel receiptNoteCode, receiptNoteCreator;
+                JTextField receiptNoteCodeTF, receiptNoteCreatorTF;
+
+                OrderInfo() {
+                    setLayout(new GridLayout(2, 2));
+                    setPreferredSize(new Dimension(300, 80));
+
+                    receiptNoteCode = new JLabel("Receipt Note Code:");
+                    formatLabel(receiptNoteCode, Style.FONT_TEXT_LOGIN_FRAME, Color.black);
+
+                    receiptNoteCreator = new JLabel("Receipt Note Creator:");
+                    formatLabel(receiptNoteCreator, Style.FONT_TEXT_LOGIN_FRAME, Color.black);
+
+                    receiptNoteCodeTF = new JTextField(20);
+                    formatTextField(receiptNoteCodeTF, Style.FONT_TEXT_LOGIN_FRAME, Color.black, new Dimension(200, 30));
+
+                    receiptNoteCreatorTF = new JTextField(20);
+                    formatTextField(receiptNoteCreatorTF, Style.FONT_TEXT_LOGIN_FRAME, Color.black, new Dimension(200, 30));
+
+                    add(receiptNoteCode);
+                    add(receiptNoteCodeTF);
+                    add(receiptNoteCreator);
+                    add(receiptNoteCreatorTF);
+                }
+            }
+
+
+            //panel chứa thông tin sản phẩm cần mua, xác nhận thanh toán
+            class RightPn extends JPanel {
+                ProductPn productPn;
+                PaymentConfirmationPn paymentConfirmationPn;
+
+                RightPn() {
+                    setLayout(new BorderLayout());
+                    productPn = new ProductPn();
+                    paymentConfirmationPn = new PaymentConfirmationPn();
+
+                    add(productPn, BorderLayout.CENTER);
+                    add(paymentConfirmationPn, BorderLayout.SOUTH);
+                }
+            }
+
+            class ProductPn extends JPanel {
+                ProductPn() {
+                    Border border = BorderFactory.createTitledBorder(
+                            BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3), // Đường viền
+                            "Product", // Tiêu đề
+                            TitledBorder.LEFT, // Canh trái
+                            TitledBorder.TOP, // Canh trên
+                            new Font("Arial", Font.BOLD, 20), // Phông chữ và kiểu chữ
+                            Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE // Màu chữ
+                    );
+                    setBorder(border);
+                }
+
+            }
+
+            class PaymentConfirmationPn extends JPanel {
+                JLabel totalPrice, totalPriceValue;
+                JButton cancelBt, importBt;
+
+                PaymentConfirmationPn() {
+                    setLayout(new GridLayout(2, 2));
+                    setPreferredSize(new Dimension(300, 80));
+
+                    totalPrice = new JLabel("Total Price:");
+                    formatLabel(totalPrice, Style.FONT_TEXT_LOGIN_FRAME, Color.black);
+
+
+                    totalPriceValue = new JLabel(" $1000000000");
+                    formatLabel(totalPriceValue, Style.FONT_BUTTON_LOGIN_FRAME, Color.RED);
+
+
+                    cancelBt = new JButton("Cancel");
+                    setStyleButton(cancelBt, Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.DELETE_BUTTON_COLOR_RED, SwingConstants.CENTER, new Dimension(200, 40));
+                    cancelBt.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            showPanelInInventory(INVENTORY_CONTROL_CONSTRAINT);
+                        }
+                    });
+
+                    importBt = new JButton("Export");
+                    setStyleButton(importBt, Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(200, 40));
+
+                    add(totalPrice);
+                    add(totalPriceValue);
+                    add(cancelBt);
+                    add(importBt);
+                }
+            }
+
+
         }
     }
+
 
     class AccManagementPanel extends JPanel {
 
@@ -437,17 +923,11 @@ public class ManagerMainPanel extends JPanel {
                 setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
                 addButton = new JButton("Add");
-                setStyleButton(addButton, Style.ADD_BUTTON_COLOR_GREEN, new Dimension(80, 30));
                 deleteButton = new JButton("Delete");
-                setStyleButton(deleteButton, Style.DELETE_BUTTON_COLOR_RED, new Dimension(80, 30));
                 editButton = new JButton("Edit");
-                setStyleButton(editButton, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(80, 30));
                 sortButton = new JButton("Sort");
-                setStyleButton(sortButton, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(80, 30));
                 exportButton = new JButton("Export Excel");
-                setStyleButton(exportButton, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(130, 30));
                 importButton = new JButton("Import Excel");
-                setStyleButton(importButton, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(130, 30));
 
                 add(addButton);
                 add(deleteButton);
@@ -513,24 +993,45 @@ public class ManagerMainPanel extends JPanel {
         }
     }
 
-    //nut cuoi
+    //nut thong tin
     class ChangeInformationPanel extends JPanel {
         public ChangeInformationPanel() {
         }
     }
 
-    class LogOutPanel extends JPanel {
-        public LogOutPanel() {
+    private static void formatLabel(JLabel that, Font font, Color color) {
+        that.setFont(font);
+        that.setForeground(color);
+    }
+
+    public static void formatTextField(JTextField that, Font font, Color color, Dimension size) {
+        that.setFont(font);
+        that.setForeground(color);
+        that.setPreferredSize(size);
+    }
+
+    private static void setStyleButton(JButton that, Font font, Color textColor, Color backgroundColor, int textPosition, Dimension size) {
+        that.setFont(font);
+        that.setForeground(textColor);
+        that.setBackground(backgroundColor);
+        that.setHorizontalAlignment(textPosition);
+        that.setBorderPainted(false);
+        that.setFocusable(false);
+        that.setPreferredSize(size);
+    }
+
+    // thay đổi kích thước của cột trong bảng
+    public void resizeColumnWidth(JTable table, int width) {
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setPreferredWidth(width);
         }
     }
 
-    private static void setStyleButton(JButton that, Color color, Dimension size) {
-        that.setBackground(color);
-        that.setFont(Style.FONT_SIZE);
-        that.setHorizontalAlignment(SwingConstants.LEFT);
-        that.setBorderPainted(false);
-        that.setForeground(Color.white);
-        that.setFocusable(false);
-        that.setPreferredSize(size);
+    private void setIconSmallButton(String url, JButton that) {
+        ImageIcon iconButton = new ImageIcon(url);
+        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
+        Dimension buttonSize = that.getPreferredSize();
+        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
+        that.setIcon(new ImageIcon(resizedImage));
     }
 }

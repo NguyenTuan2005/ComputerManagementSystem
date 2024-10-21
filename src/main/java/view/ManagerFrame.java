@@ -1,6 +1,5 @@
 package view;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,7 +18,8 @@ public class ManagerFrame extends JFrame {
         setLayout(new BorderLayout());
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
 
-        managerMenuPanel =new ManagerMenuPanel(loginFrame,this);
+
+        managerMenuPanel = new ManagerMenuPanel(loginFrame,this);
         managerMainPanel = new ManagerMainPanel(loginFrame);
 
         add(managerMenuPanel, BorderLayout.WEST);
@@ -40,11 +40,11 @@ public class ManagerFrame extends JFrame {
             }
         });
 
-        managerMenuPanel.setImportButtonListener(new ActionListener() {
+        managerMenuPanel.setInventoryButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                managerMainPanel.showPanel(ManagerMainPanel.IMPORT_CONSTRAINT);
-                setHover(ManagerMainPanel.IMPORT_CONSTRAINT);
+                managerMainPanel.showPanel(ManagerMainPanel.INVENTORY_CONSTRAINT);
+                setHover(ManagerMainPanel.INVENTORY_CONSTRAINT);
             }
         });
 
@@ -56,14 +56,6 @@ public class ManagerFrame extends JFrame {
             }
         });
 
-        managerMenuPanel.setStockExportButtonListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                managerMainPanel.showPanel(ManagerMainPanel.EXPORT_CONSTRAINT);
-                setHover(ManagerMainPanel.EXPORT_CONSTRAINT);
-
-            }
-        });
 
         managerMenuPanel.setAccountManagementButtonListener(new ActionListener() {
             @Override
@@ -106,21 +98,32 @@ public class ManagerFrame extends JFrame {
 
         });
 
+
         setVisible(true);
     }
     // setHover tạo hiệu ứng đổi màu cho nút khi nhấn chuột vào
-    private void setHover(String panelName){
-        managerMenuPanel.productBt.setBackground( panelName.equals(ManagerMainPanel.PRODUCT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        managerMenuPanel.supplierBt.setBackground(panelName.equals(ManagerMainPanel.SUPPLIER_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        managerMenuPanel.customerBt.setBackground(panelName.equals(ManagerMainPanel.CUSTOMER_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        managerMenuPanel.stockImportBt.setBackground(panelName.equals(ManagerMainPanel.IMPORT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        managerMenuPanel.stockExportBt.setBackground(panelName.equals(ManagerMainPanel.EXPORT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        managerMenuPanel.accountManagementBt.setBackground(panelName.equals(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        managerMenuPanel.notificationBt.setBackground(panelName.equals(ManagerMainPanel.NOTIFICATION_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-        managerMenuPanel.changeInformBt.setBackground(panelName.equals(ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
-
+    private void setHover(String panelName) {
+        JButton[] buttons = {
+                managerMenuPanel.productBt,
+                managerMenuPanel.supplierBt,
+                managerMenuPanel.customerBt,
+                managerMenuPanel.inventoryBt,
+                managerMenuPanel.accountManagementBt,
+                managerMenuPanel.notificationBt,
+                managerMenuPanel.changeInformBt
+        };
+        String[] constraints = {
+                ManagerMainPanel.PRODUCT_CONSTRAINT,
+                ManagerMainPanel.SUPPLIER_CONSTRAINT,
+                ManagerMainPanel.CUSTOMER_CONSTRAINT,
+                ManagerMainPanel.INVENTORY_CONSTRAINT,
+                ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT,
+                ManagerMainPanel.NOTIFICATION_CONSTRAINT,
+                ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT
+        };
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i].setBackground(panelName.equals(constraints[i]) ? Style.MENU_BUTTON_COLOR_GREEN : Style.BACKGROUND_COLOR);
+        }
     }
-//    public static void main(String[] args) {
-//        new ManagerFrame(new LoginFrame());
-//    }
+
 }

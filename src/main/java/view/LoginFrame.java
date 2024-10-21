@@ -12,11 +12,12 @@ public class LoginFrame extends JFrame {
     LoginPanel loginPanel;
     TitlePanel titlePanel;
 
-    JLabel userRole, userName, userpw;
-    JTextField userNameField;
+    JLabel userRole, userEmail, userpw;
+    JTextField userEmailField;
     JPasswordField passwdField;
     JComboBox<String> roleComboBox;
-    JButton loginBt,showHidePasswdBt,forgotPasswdBt;
+    JButton loginBt, forgotPasswdBt;
+    JCheckBox showPasswdCB;
 
     LoginFrame() {
         setLayout(new BorderLayout());
@@ -36,71 +37,54 @@ public class LoginFrame extends JFrame {
 
     public class LoginPanel extends JPanel {
         LoginFrame loginFrame;
+
         LoginPanel(LoginFrame loginFrame) {
             this.loginFrame = loginFrame;
 
             setLayout(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(2, 5, 2, 5);// căn chỉnh kích thước các thành phần cho vừa với khung (*top,bottom)
             gbc.anchor = GridBagConstraints.CENTER;
-            gbc.insets = new Insets(5, 5, 5, 5); // Tạo khoảng cách giữa các thành phần
-            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.weightx = 0;
 
+            // Tạo các thành phần
             userRole = new JLabel("User Role:");
             formatField(userRole);
-            gbc.anchor = GridBagConstraints.CENTER;
-            gbc.gridy = 0;
-            add(userRole, gbc);
 
-            String[] roles = {"User", "Manager"};
+            String[] roles = {"Customer", "Manager"};
             roleComboBox = new JComboBox<>(roles);
             formatField(roleComboBox);
-            gbc.gridy = 1;
-            add(roleComboBox, gbc);
 
-            userName = new JLabel("User Name:");
-            formatField(userName);
-            gbc.gridy =2;
-            add(userName, gbc);
+            userEmail = new JLabel("User Email:");
+            formatField(userEmail);
 
-            userNameField = new JTextField();
-            formatField(userNameField);
-            gbc.gridy =3;
-            add(userNameField, gbc);
+            userEmailField = new JTextField();
+            formatField(userEmailField);
 
             userpw = new JLabel("Password:");
             formatField(userpw);
-            gbc.gridy =4;
-            add(userpw, gbc);
 
             passwdField = new JPasswordField();
             formatField(passwdField);
             passwdField.setEchoChar('*');
-            gbc.gridy =5;
-            add(passwdField, gbc);
-            //nút hiện/ẩn mật khẩu
-            showHidePasswdBt = new JButton("Show");
-            formatButton(showHidePasswdBt,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.FONT_TEXT_LOGIN_FRAME,new Dimension(85, 30));
 
-            showHidePasswdBt.addActionListener(new ActionListener() {
-                private boolean isHidden = true;
-
+            showPasswdCB = new JCheckBox("Show Password");
+            showPasswdCB.setPreferredSize(new Dimension(300, 20));
+            showPasswdCB.setFocusPainted(false);
+            showPasswdCB.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (isHidden) {
+                    if (showPasswdCB.isSelected()) {
                         passwdField.setEchoChar((char) 0); // Hiện mật khẩu
-                        showHidePasswdBt.setText("Hide");
                     } else {
                         passwdField.setEchoChar('*'); // Ẩn mật khẩu
-                        showHidePasswdBt.setText("Show");
                     }
-                    isHidden = !isHidden;
                 }
             });
 
-            add(showHidePasswdBt, gbc);
-
             forgotPasswdBt = new JButton("Forgot Password?");
-            formatButton(forgotPasswdBt,Color.WHITE,new Font("Arial", Font.PLAIN, 12),new Dimension(100,22));
+            formatButton(forgotPasswdBt, Color.WHITE, new Font("Arial", Font.PLAIN, 12), new Dimension(300, 22));
             forgotPasswdBt.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             forgotPasswdBt.addActionListener(new ActionListener() {
                 @Override
@@ -108,40 +92,62 @@ public class LoginFrame extends JFrame {
                     JOptionPane.showMessageDialog(loginFrame, "Please check the UserManager Class or message the Manager!", "Xui:))", JOptionPane.INFORMATION_MESSAGE);
                 }
             });
-            gbc.gridy =6;
-            add(forgotPasswdBt, gbc);
-
 
             loginBt = new JButton("Login");
-            formatButton(loginBt,Style.CONFIRM_BUTTON_COLOR_GREEN,Style.FONT_BUTTON_LOGIN_FRAME,new Dimension(250, 42));
-
+            formatButton(loginBt, Style.CONFIRM_BUTTON_COLOR_GREEN, Style.FONT_BUTTON_LOGIN_FRAME, new Dimension(300, 42));
             loginBt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     char[] passwordArray = passwdField.getPassword();//lấy mật khẩu ra và chuyển thành chuỗi
                     String passwd = new String(passwordArray);
                     //xét điều kiện để login
-                    if(userNameField.getText().isEmpty() || passwd.isEmpty()) {
+                    if (userEmailField.getText().isEmpty() || passwd.isEmpty()) {
                         JOptionPane.showMessageDialog(loginFrame, "Please fill all the fields", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
                         if (Objects.equals(roleComboBox.getSelectedItem(), "Manager")) {
                             loginFrame.setVisible(false);
                             managerFrame = new ManagerFrame(loginFrame);
-                        } else if (Objects.equals(roleComboBox.getSelectedItem(), "User")) {
+                        } else if (Objects.equals(roleComboBox.getSelectedItem(), "Customer")) {
                             loginFrame.setVisible(false);
                             userFrame = new CustomerFrame(loginFrame);
                         }
                     }
                 }
             });
-            gbc.gridy =7;
-            add(loginBt,gbc);
 
+            // Thêm các thành phần vào panel
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            add(userRole, gbc);
+
+            gbc.gridy = 1;
+            add(roleComboBox,gbc);
+
+            gbc.gridy = 2;
+            add(userEmail, gbc);
+
+            gbc.gridy = 3;
+            add(userEmailField, gbc);
+
+            gbc.gridy = 4;
+            add(userpw, gbc);
+
+            gbc.gridy = 5;
+            add(passwdField, gbc);
+
+            gbc.gridy = 6;
+            add(showPasswdCB, gbc);
+
+            gbc.gridy = 7;
+            add(forgotPasswdBt, gbc);
+
+            gbc.gridy = 8;
+            add(loginBt, gbc);
         }
     }
 
     public static class TitlePanel extends JPanel {
-        JLabel title,fitAva;
+        JLabel title, fitAva;
         ImageIcon fitIcon;
 
         public TitlePanel() {
@@ -162,17 +168,19 @@ public class LoginFrame extends JFrame {
         }
     }
 
-    public void formatField(JComponent that){
-        that.setPreferredSize(new Dimension(250, 35));
+    public void formatField(JComponent that) {
+        that.setPreferredSize(new Dimension(300, 35));
         that.setFont(Style.FONT_TEXT_LOGIN_FRAME);
     }
-    public void formatButton(JButton button,Color background,Font font,Dimension size){
+
+    public void formatButton(JButton button, Color background, Font font, Dimension size) {
         button.setBackground(background);
         button.setForeground(Color.WHITE);
         button.setFont(font);
         button.setPreferredSize(size);
         button.setFocusable(false);
     }
+
 
     public static void main(String[] args) {
         new LoginFrame();

@@ -3,7 +3,7 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 
-public class UserMainPanel extends JPanel {
+public class CustomerMainPanel extends JPanel {
     LoginFrame loginFrame;
     CardLayout cardLayout ;
     WelcomePanel welcomePanel;
@@ -18,7 +18,7 @@ public class UserMainPanel extends JPanel {
     static final String NOTIFICATION_CONSTRAINT = "notification";
     static final String PURCHASED_CONSTRAINT = "purchased";
     //constructor
-    public UserMainPanel(LoginFrame loginFrame) {
+    public CustomerMainPanel(LoginFrame loginFrame) {
         this.loginFrame = loginFrame;
         cardLayout = new CardLayout();
         welcomePanel = new WelcomePanel();

@@ -38,7 +38,7 @@ public class ManagerMainPanel extends JPanel {
     static final String CHANGE_INFORMATION_CONSTRAINT = "changeInformation";
 
     // create data for column Names
-    static final String[] columnNamesPRODUCT = {"Serial Number", "Product Code", "Product Name", "Quantity", "Unit Price", "Type of Device", "Brand",
+    static final String[] columnNamesPRODUCT = {"Serial Number", "ProductID", "Product Name", "Quantity", "Unit Price", "Type of Device", "Brand",
             "Operating System", "CPU", "Storage", "RAM", "Origin"};
     static final String[] columnNamesSUPPLIER ={"Supplier ID:", "Name Supplier:", "Address", "Phone number:", "Email:", "Cooperation Day:"};
 

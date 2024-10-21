@@ -32,4 +32,9 @@ public class Account {
         this.managerId = managerId;
     }
 
+    public Account(String password, String username, String email) {
+        this.password = password;
+        this.username = username;
+        this.email = email;
+    }
 }

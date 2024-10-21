@@ -12,7 +12,7 @@ public class LoginFrame extends JFrame {
     UserFrame userFrame;
     LoginPanel loginPanel;
     TitlePanel titlePanel;
-    UserManager userManager = new UserManager();
+//    UserManager userManager = new UserManager();
 
     JLabel userRole, userName, userpw;
     JTextField userNameField;
@@ -125,16 +125,16 @@ public class LoginFrame extends JFrame {
                     //xét điều kiện để login
                     if(userNameField.getText().isEmpty() || passwd.isEmpty()) {
                         JOptionPane.showMessageDialog(loginFrame, "Please fill all the fields", "Error", JOptionPane.ERROR_MESSAGE);
-                    } else if (!userManager.isUserExists(String.valueOf(roleComboBox.getSelectedItem()), userNameField.getText(), passwd)) {
-                        JOptionPane.showMessageDialog(loginFrame, "You have entered the Wrong username or password, please re-enter!", "Error", JOptionPane.ERROR_MESSAGE);
-                    }else{
-                        if (Objects.equals(roleComboBox.getSelectedItem(), "Manager")) {
-                            loginFrame.setVisible(false);
-                            managerFrame = new ManagerFrame(loginFrame);
-                        } else if (Objects.equals(roleComboBox.getSelectedItem(), "User")) {
-                            loginFrame.setVisible(false);
-                            userFrame = new UserFrame(loginFrame);
-                        }
+//                    } else if (!userManager.isUserExists(String.valueOf(roleComboBox.getSelectedItem()), userNameField.getText(), passwd)) {
+//                        JOptionPane.showMessageDialog(loginFrame, "You have entered the Wrong username or password, please re-enter!", "Error", JOptionPane.ERROR_MESSAGE);
+//                    }else{
+//                        if (Objects.equals(roleComboBox.getSelectedItem(), "Manager")) {
+//                            loginFrame.setVisible(false);
+//                            managerFrame = new ManagerFrame(loginFrame);
+//                        } else if (Objects.equals(roleComboBox.getSelectedItem(), "User")) {
+//                            loginFrame.setVisible(false);
+//                            userFrame = new UserFrame(loginFrame);
+//                        }
                     }
                 }
             });

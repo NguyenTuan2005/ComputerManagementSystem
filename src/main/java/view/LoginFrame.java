@@ -1,5 +1,7 @@
 package view;
 
+import dao.AccountDAO;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -101,6 +103,7 @@ public class LoginFrame extends JFrame {
                     char[] passwordArray = passwdField.getPassword();//lấy mật khẩu ra và chuyển thành chuỗi
                     String passwd = new String(passwordArray);
                     //xét điều kiện để login
+                    // controller
 
 
                 }

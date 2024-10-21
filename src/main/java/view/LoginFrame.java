@@ -1,16 +1,16 @@
 package view;
 
 import Model.UserManager;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 
-import javax.swing.*;
-
 public class LoginFrame extends JFrame {
     ManagerFrame managerFrame;
-    UserFrame userFrame;
+    CustomerFrame userFrame;
     LoginPanel loginPanel;
     TitlePanel titlePanel;
     UserManager userManager = new UserManager();
@@ -134,7 +134,7 @@ public class LoginFrame extends JFrame {
                             managerFrame = new ManagerFrame(loginFrame);
                         } else if (Objects.equals(roleComboBox.getSelectedItem(), "User")) {
                             loginFrame.setVisible(false);
-                            userFrame = new UserFrame(loginFrame);
+                            userFrame = new CustomerFrame(loginFrame);
                         }
                     }
                 }

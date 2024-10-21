@@ -4,14 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class UserMenuPanel extends JPanel {
+public class CustomerMenuPanel extends JPanel {
     LoginFrame loginFrame;
-    UserFrame userFrame;
+    CustomerFrame userFrame;
     JLabel role, name, credit;
     JButton productCatalogBt, purchasedBt, notificationBt, changeInformBt, logoutBt;
     GridBagConstraints gbc;
 
-    public UserMenuPanel(LoginFrame loginFrame, UserFrame userFrame) {
+    public CustomerMenuPanel(LoginFrame loginFrame, CustomerFrame userFrame) {
         this.loginFrame = loginFrame;
         this.userFrame = userFrame;
         setLayout(new GridBagLayout());

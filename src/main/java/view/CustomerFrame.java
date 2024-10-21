@@ -5,10 +5,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class UserFrame extends JFrame {
-    UserMainPanel userMainPanel;
-    UserMenuPanel userMenuPanel;
-    public UserFrame(LoginFrame loginFrame){
+public class CustomerFrame extends JFrame {
+    CustomerMainPanel userMainPanel;
+    CustomerMenuPanel userMenuPanel;
+    public CustomerFrame(LoginFrame loginFrame){
         setTitle("Computer Management");
         setSize(1200, 650);
         setResizable(true);
@@ -17,8 +17,8 @@ public class UserFrame extends JFrame {
         setLocationRelativeTo(null);
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
 
-        userMenuPanel =new UserMenuPanel(loginFrame,this);
-        userMainPanel = new UserMainPanel(loginFrame);
+        userMenuPanel =new CustomerMenuPanel(loginFrame,this);
+        userMainPanel = new CustomerMainPanel(loginFrame);
         add(userMenuPanel, BorderLayout.WEST);
         add(userMainPanel, BorderLayout.CENTER);
 
@@ -26,23 +26,23 @@ public class UserFrame extends JFrame {
         userMenuPanel.setProductCatalogBtListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                userMainPanel.showPanel(UserMainPanel.PRODUCT_CATALOG_CONSTRAINT);
-                setHover(UserMainPanel.PRODUCT_CATALOG_CONSTRAINT);
+                userMainPanel.showPanel(CustomerMainPanel.PRODUCT_CATALOG_CONSTRAINT);
+                setHover(CustomerMainPanel.PRODUCT_CATALOG_CONSTRAINT);
             }
         });
 
         userMenuPanel.setPurchasedBtListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                userMainPanel.showPanel(UserMainPanel.PURCHASED_CONSTRAINT);
-                setHover(UserMainPanel.PURCHASED_CONSTRAINT);
+                userMainPanel.showPanel(CustomerMainPanel.PURCHASED_CONSTRAINT);
+                setHover(CustomerMainPanel.PURCHASED_CONSTRAINT);
             }
         });
         userMenuPanel.setNotificationBtListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                userMainPanel.showPanel(UserMainPanel.NOTIFICATION_CONSTRAINT);
-                setHover(UserMainPanel.NOTIFICATION_CONSTRAINT);
+                userMainPanel.showPanel(CustomerMainPanel.NOTIFICATION_CONSTRAINT);
+                setHover(CustomerMainPanel.NOTIFICATION_CONSTRAINT);
             }
         });
         // thêm sự kiện cho nút logout
@@ -60,7 +60,7 @@ public class UserFrame extends JFrame {
         setVisible(true);
     }
     private void setHover(String panelName){
-        userMenuPanel.productCatalogBt.setBackground( panelName.equals(UserMainPanel.PRODUCT_CATALOG_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
+        userMenuPanel.productCatalogBt.setBackground( panelName.equals(CustomerMainPanel.PRODUCT_CATALOG_CONSTRAINT) ?Style.MENU_BUTTON_COLOR_GREEN:Style.BACKGROUND_COLOR);
 
 
     }

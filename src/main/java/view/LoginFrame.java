@@ -6,8 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 
-import javax.swing.*;
-
 public class LoginFrame extends JFrame {
     ManagerFrame managerFrame;
     CustomerFrame userFrame;
@@ -15,7 +13,7 @@ public class LoginFrame extends JFrame {
     TitlePanel titlePanel;
 
     JLabel userRole, userEmail, userpw;
-    JTextField userEmailField;
+    JTextField nameAndEmailInputField;
     JPasswordField passwdField;
     JComboBox<String> roleComboBox;
     JButton loginBt, forgotPasswdBt;
@@ -54,15 +52,27 @@ public class LoginFrame extends JFrame {
             userRole = new JLabel("User Role:");
             formatField(userRole);
 
-            String[] roles = {"Customer", "Manager"};
-            roleComboBox = new JComboBox<>(roles);
-            formatField(roleComboBox);
-
             userEmail = new JLabel("User Email:");
             formatField(userEmail);
 
-            userEmailField = new JTextField();
-            formatField(userEmailField);
+            String[] roles = {"Customer", "Manager"};
+            roleComboBox = new JComboBox<>(roles);
+            formatField(roleComboBox);
+            roleComboBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Cập nhật nội dung của JLabel khi chọn một mục trong JComboBox
+                    String selectedItem = (String) roleComboBox.getSelectedItem();
+                    if(selectedItem.equals("Manager")) {
+                        userEmail.setText("User Name:");
+                    }else{
+                        userEmail.setText("User Email:");
+                    }
+                }
+            });
+
+            nameAndEmailInputField = new JTextField();
+            formatField(nameAndEmailInputField);
 
             userpw = new JLabel("Password:");
             formatField(userpw);
@@ -103,7 +113,7 @@ public class LoginFrame extends JFrame {
                     char[] passwordArray = passwdField.getPassword();//lấy mật khẩu ra và chuyển thành chuỗi
                     String passwd = new String(passwordArray);
                     //xét điều kiện để login
-                    if (userEmailField.getText().isEmpty() || passwd.isEmpty()) {
+                    if (nameAndEmailInputField.getText().isEmpty() || passwd.isEmpty()) {
                         JOptionPane.showMessageDialog(loginFrame, "Please fill all the fields", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
                         if (Objects.equals(roleComboBox.getSelectedItem(), "Manager")) {
@@ -123,13 +133,13 @@ public class LoginFrame extends JFrame {
             add(userRole, gbc);
 
             gbc.gridy = 1;
-            add(roleComboBox,gbc);
+            add(roleComboBox, gbc);
 
             gbc.gridy = 2;
             add(userEmail, gbc);
 
             gbc.gridy = 3;
-            add(userEmailField, gbc);
+            add(nameAndEmailInputField, gbc);
 
             gbc.gridy = 4;
             add(userpw, gbc);

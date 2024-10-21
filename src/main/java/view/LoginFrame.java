@@ -1,5 +1,8 @@
 package view;
 
+import controller.AccountController;
+import dao.AccountDAO;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,11 +16,13 @@ public class LoginFrame extends JFrame {
     TitlePanel titlePanel;
 
     JLabel userRole, userEmail, userpw;
-    JTextField userEmailField;
+    JTextField nameAndEmailInputField;
     JPasswordField passwdField;
     JComboBox<String> roleComboBox;
     JButton loginBt, forgotPasswdBt;
     JCheckBox showPasswdCB;
+    final String manager = "Manager";
+    final String customer = "Customer";
 
     LoginFrame() {
         setLayout(new BorderLayout());
@@ -52,15 +57,27 @@ public class LoginFrame extends JFrame {
             userRole = new JLabel("User Role:");
             formatField(userRole);
 
-            String[] roles = {"Customer", "Manager"};
-            roleComboBox = new JComboBox<>(roles);
-            formatField(roleComboBox);
-
             userEmail = new JLabel("User Email:");
             formatField(userEmail);
+// data
+            String[] roles = {customer, manager};
+            roleComboBox = new JComboBox<>(roles);
+            formatField(roleComboBox);
+            roleComboBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Cập nhật nội dung của JLabel khi chọn một mục trong JComboBox
+                    String selectedItem = (String) roleComboBox.getSelectedItem();
+                    if (selectedItem.equals("Manager")) {
+                        userEmail.setText("User Name:");
+                    } else {
+                        userEmail.setText("User Email:");
+                    }
+                }
+            });
 
-            userEmailField = new JTextField();
-            formatField(userEmailField);
+            nameAndEmailInputField = new JTextField();
+            formatField(nameAndEmailInputField);
 
             userpw = new JLabel("Password:");
             formatField(userpw);
@@ -98,20 +115,34 @@ public class LoginFrame extends JFrame {
             loginBt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    char[] passwordArray = passwdField.getPassword();//lấy mật khẩu ra và chuyển thành chuỗi
-                    String passwd = new String(passwordArray);
+                    char[] passwordArray = passwdField.getPassword();
+                    String password = new String(passwordArray);
+                    String username = nameAndEmailInputField.getText();
                     //xét điều kiện để login
-                    if (userEmailField.getText().isEmpty() || passwd.isEmpty()) {
-                        JOptionPane.showMessageDialog(loginFrame, "Please fill all the fields", "Error", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        if (Objects.equals(roleComboBox.getSelectedItem(), "Manager")) {
-                            loginFrame.setVisible(false);
-                            managerFrame = new ManagerFrame(loginFrame);
-                        } else if (Objects.equals(roleComboBox.getSelectedItem(), "Customer")) {
-                            loginFrame.setVisible(false);
-                            userFrame = new CustomerFrame(loginFrame);
+                    AccountController accountController = new AccountController();
+                    String role = (String) roleComboBox.getSelectedItem();
+
+                    switch (role) {
+                        case manager: {
+                            System.out.println(accountController.isValidAccount(username, password));
+                            if (accountController.isValidAccount(username, password)){
+                                loginFrame.setVisible(false);
+                                managerFrame = new ManagerFrame(loginFrame);
+                            } else {
+                                JOptionPane.showMessageDialog(loginFrame, "You have entered the Wrong username or password, please try again!", "Error", JOptionPane.ERROR_MESSAGE);
+                                nameAndEmailInputField.setText("");
+                                passwdField.setText("");
+                            }
+                            break;
                         }
+                        case customer: {
+
+                            break;
+                        }
+
                     }
+
+
                 }
             });
 
@@ -121,13 +152,13 @@ public class LoginFrame extends JFrame {
             add(userRole, gbc);
 
             gbc.gridy = 1;
-            add(roleComboBox,gbc);
+            add(roleComboBox, gbc);
 
             gbc.gridy = 2;
             add(userEmail, gbc);
 
             gbc.gridy = 3;
-            add(userEmailField, gbc);
+            add(nameAndEmailInputField, gbc);
 
             gbc.gridy = 4;
             add(userpw, gbc);

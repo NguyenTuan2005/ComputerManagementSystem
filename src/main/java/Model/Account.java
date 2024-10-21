@@ -32,4 +32,13 @@ public class Account {
         this.managerId = managerId;
     }
 
+    public Account(String password, String username, String email) {
+        this.password = password;
+        this.username = username;
+        this.email = email;
+    }
+
+    public boolean sameUsernameAndPassword( String username , String password ){
+        return this.username.equals(username) && this.password.equals(password);
+    }
 }

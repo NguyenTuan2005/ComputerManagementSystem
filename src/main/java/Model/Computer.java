@@ -48,4 +48,8 @@ public class Computer {
     public boolean equalProductCode(String code){
         return this.productCode.equals(code);
     }
+
+    public String[] getAllData(){
+        return new String[]{this.productCode, this.name, String.valueOf(this.quality), String.valueOf(this.price), this.style, this.brand, this.operatingSystem,this.cpu,String.valueOf(memory), this.ram, this.madeIn};
+    }
 }

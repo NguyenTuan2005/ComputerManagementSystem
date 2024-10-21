@@ -16,10 +16,10 @@ public class User {
     private String email;
     private String address;
     public static final String MANAGER_ROLE = "Manager";
-    public static final String User_ROLE = "User";
+    public static final String Customer_ROLE = "Customer";
 
-    public boolean sameName(String name){
-        return this.userName.equals(name);
+    public boolean sameEmail(String email){
+        return this.email.equals(email);
     }
     public boolean samePassword(String passwd){
         return this.password.equals(passwd);

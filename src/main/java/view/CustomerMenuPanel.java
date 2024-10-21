@@ -4,14 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class UserMenuPanel extends JPanel {
+public class CustomerMenuPanel extends JPanel {
     LoginFrame loginFrame;
-    UserFrame userFrame;
+    CustomerFrame userFrame;
     JLabel role, name, credit;
     JButton productCatalogBt, purchasedBt, notificationBt, changeInformBt, logoutBt;
     GridBagConstraints gbc;
 
-    public UserMenuPanel(LoginFrame loginFrame, UserFrame userFrame) {
+    public CustomerMenuPanel(LoginFrame loginFrame, CustomerFrame userFrame) {
         this.loginFrame = loginFrame;
         this.userFrame = userFrame;
         setLayout(new GridBagLayout());
@@ -56,7 +56,8 @@ public class UserMenuPanel extends JPanel {
             Circle circle = new Circle(18, 18, 70, new Color(211, 211, 211));
             add(circle, BorderLayout.CENTER);
 
-            name = new JLabel(loginFrame.userNameField.getText());
+            String userName = loginFrame.userManager.findUserNameByEmail(loginFrame.userEmailField.getText());
+            name = new JLabel(userName);
             name.setHorizontalAlignment(JLabel.CENTER);
             name.setForeground(Color.GREEN);
             name.setFont(new Font("Arial", Font.PLAIN, 25));
@@ -69,6 +70,7 @@ public class UserMenuPanel extends JPanel {
         public ComponentButton() {
             setLayout(new GridLayout(0, 1, 0, 20));
             setBackground(Style.BACKGROUND_COLOR);
+
             productCatalogBt = new JButton("PRODUCT CATALOG");
             setFormatButton(productCatalogBt);
             setIcon("src/main/java/Icon/cartIcon.png", productCatalogBt);
@@ -79,7 +81,7 @@ public class UserMenuPanel extends JPanel {
             setFormatButton(purchasedBt);
             add(purchasedBt);
 
-            notificationBt = new JButton("CART");
+            notificationBt = new JButton("NOTIFICATION");
             setFormatButton(notificationBt);
             setIcon("src/main/java/Icon/iconNotification.png", notificationBt);
             add(notificationBt);

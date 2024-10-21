@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class ComputerManager {
-    public static String COMPUTER_MANAGER = "ComputerManager";
     public static ArrayList<Computer> computers;
 
     public ComputerManager() {
@@ -45,7 +44,6 @@ public class ComputerManager {
                 computers.get(i).setQuality(qualityNow - qualityBought);
                 return true;
             }
-
         }
         return false;
     }
@@ -53,6 +51,7 @@ public class ComputerManager {
     public ArrayList<Computer> getAll() {
         return computers;
     }
+
 
     public ArrayList<Computer> findByName(String name) {
 
@@ -98,10 +97,10 @@ public class ComputerManager {
         int l = begin;
         int r = end;
         do {
-            while (this.computers.get(l).getPrice() < pivot) {
+            while (computers.get(l).getPrice() < pivot) {
                 l++;
             }
-            while (this.computers.get(r).getPrice() > pivot) {
+            while (computers.get(r).getPrice() > pivot) {
                 r--;
             }
             if (l <= r) {

@@ -8,12 +8,12 @@ public class ManagerMenuPanel extends JPanel {
     LoginFrame loginFrame;
     ManagerFrame managerFrame;
     JLabel role, name, credit;
-    JButton productBt, supplierBt, customerBt, stockImportBt, stockExportBt, accountManagementBt, notificationBt, logoutBt, changeInformBt;
+    JButton productBt, supplierBt, customerBt, inventoryBt, accountManagementBt, notificationBt, logoutBt, changeInformBt;
     GridBagConstraints gbc;
 
     public ManagerMenuPanel(LoginFrame loginFrame, ManagerFrame managerFrame) {
-        this.loginFrame =loginFrame;
-        this.managerFrame =managerFrame;
+        this.loginFrame = loginFrame;
+        this.managerFrame = managerFrame;
 
         setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -55,7 +55,8 @@ public class ManagerMenuPanel extends JPanel {
             Circle circle = new Circle(20, 20, 70, new Color(211, 211, 211));
             add(circle, BorderLayout.CENTER);
 
-            name = new JLabel(loginFrame.userNameField.getText());
+            String userName = loginFrame.userManager.findUserNameByEmail(loginFrame.userEmailField.getText());
+            name = new JLabel(userName);
             name.setHorizontalAlignment(JLabel.CENTER);
             name.setForeground(Color.GREEN);
             name.setFont(new Font("Arial", Font.PLAIN, 25));
@@ -83,15 +84,10 @@ public class ManagerMenuPanel extends JPanel {
             setIcon("src/main/java/Icon/iconCustomer.png", customerBt);
             add(customerBt);
 
-            stockImportBt = new JButton("IMPORT");
-            setFormatButton(stockImportBt);
-            setIcon("src/main/java/Icon/iconStockImport.png", stockImportBt);
-            add(stockImportBt);
-
-            stockExportBt = new JButton("EXPORT");
-            setFormatButton(stockExportBt);
-            setIcon("src/main/java/Icon/iconStockExport.png", stockExportBt);
-            add(stockExportBt);
+            inventoryBt = new JButton("INVENTORY");
+            setFormatButton(inventoryBt);
+            setIcon("src/main/java/Icon/inventory_Icon.png", inventoryBt);
+            add(inventoryBt);
 
             accountManagementBt = new JButton("ACCOUNT");
             setFormatButton(accountManagementBt);
@@ -127,12 +123,13 @@ public class ManagerMenuPanel extends JPanel {
 
         }
     }
+
     // set icon cho button
     private void setIcon(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();
-        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
+        Image resizedImage = image.getScaledInstance(buttonSize.height - 5, buttonSize.height - 5, java.awt.Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
     }
 
@@ -145,6 +142,7 @@ public class ManagerMenuPanel extends JPanel {
         that.setHorizontalAlignment(SwingConstants.LEFT);
         that.setBorderPainted(false);
     }
+
     // thiết lập ActionListener cho nút "Sản phẩm"
     public void setProductButtonListener(ActionListener listener) {
         productBt.addActionListener(listener);
@@ -155,19 +153,14 @@ public class ManagerMenuPanel extends JPanel {
         supplierBt.addActionListener(listener);
     }
 
-    // thiết lập ActionListener cho nút "import"
-    public void setImportButtonListener(ActionListener listener) {
-        stockImportBt.addActionListener(listener);
+    // thiết lập ActionListener cho nút "inventory"
+    public void setInventoryButtonListener(ActionListener listener) {
+        inventoryBt.addActionListener(listener);
     }
 
     //thiết lập ActionListener cho nút "customer"
     public void setCustomerButtonListener(ActionListener listener) {
         customerBt.addActionListener(listener);
-    }
-
-    //thiết lập ActionListener cho nút "Export"
-    public void setStockExportButtonListener(ActionListener listener) {
-        stockExportBt.addActionListener(listener);
     }
 
     //thiết lập ActionListener cho nút "account manager"

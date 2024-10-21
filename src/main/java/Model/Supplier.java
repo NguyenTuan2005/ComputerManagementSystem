@@ -1,4 +1,5 @@
 package Model;
 
-public class Provider {
+public class Supplier {
+    public Supplier() {};
 }

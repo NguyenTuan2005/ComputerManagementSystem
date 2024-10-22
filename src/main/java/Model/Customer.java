@@ -27,4 +27,8 @@ public class Customer {
         this.address = address;
         this.password = password;
     }
+
+    public boolean samePasswordAndEmail(String email, String password) {
+        return  this.email.equals(email) && this.password.equals(password);
+    }
 }

@@ -14,12 +14,12 @@ public class AccountController {
     }
 
     public boolean isValidAccount(String username , String password ){
-        ArrayList<Account> accounts = accountDAO.findByName(username);
-        boolean notFound = accounts.isEmpty();
-        if ( notFound )
+        Account account = accountDAO.findOneByName(username);
+
+        if ( account == null )
             return false;
-        System.out.println(accounts.get(0));
-        return accounts.get(0).sameUsernameAndPassword(username,password) ;
+        System.out.println(account);
+        return account.sameUsernameAndPassword(username,password) ;
     }
 
 

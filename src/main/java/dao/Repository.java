@@ -13,6 +13,8 @@ public interface Repository<T> {
 
     ArrayList<T> findByName(String name);
 
+    T findOneByName(String name);
+
     T update(T t);
 
     boolean remove(int id);

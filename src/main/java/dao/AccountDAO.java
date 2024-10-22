@@ -115,6 +115,26 @@ public class AccountDAO implements Repository<Account> {
         return  accounts;
     }
 
+    @Override
+    public Account findOneByName(String name) {
+
+        String sql = " SELECT * FROM account WHERE username LIKE ?";
+        try{
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, "%"+name+"%");
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()){
+                Account account = new Account();
+                setAccountParameter(rs,account);
+                System.out.println("run here");
+             return  account;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void main(String[] args) throws SQLException {
         AccountDAO accountDAO = new AccountDAO();
         accountDAO.update(new Account("123","root","duynguyenavg@gmail.com"));

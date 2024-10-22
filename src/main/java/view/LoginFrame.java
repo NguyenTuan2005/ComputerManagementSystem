@@ -1,6 +1,7 @@
 package view;
 
 import controller.AccountController;
+import controller.CustomerController;
 import dao.AccountDAO;
 
 import javax.swing.*;
@@ -118,31 +119,41 @@ public class LoginFrame extends JFrame {
                     char[] passwordArray = passwdField.getPassword();
                     String password = new String(passwordArray);
                     String username = nameAndEmailInputField.getText();
+                    String email =  nameAndEmailInputField.getText();
                     //xét điều kiện để login
-                    AccountController accountController = new AccountController();
+
                     String role = (String) roleComboBox.getSelectedItem();
 
                     switch (role) {
                         case manager: {
+                            AccountController accountController = new AccountController();
                             System.out.println(accountController.isValidAccount(username, password));
                             if (accountController.isValidAccount(username, password)){
                                 loginFrame.setVisible(false);
                                 managerFrame = new ManagerFrame(loginFrame);
-                            } else {
-                                JOptionPane.showMessageDialog(loginFrame, "You have entered the Wrong username or password, please try again!", "Error", JOptionPane.ERROR_MESSAGE);
-                                nameAndEmailInputField.setText("");
-                                passwdField.setText("");
-                            }
+                            } else
+                                sayError("You have entered the Wrong username or password, please try again!");
+
                             break;
                         }
                         case customer: {
-
+                            CustomerController customerController = new CustomerController();
+                            if (customerController.isValidAccount(email ,password)){
+                                loginFrame.setVisible(false);
+                                userFrame = new CustomerFrame(loginFrame);
+                            } else
+                                sayError("You have entered the Wrong email or password, please try again!");
                             break;
                         }
 
                     }
 
 
+                }
+                private void sayError( String message){
+                    JOptionPane.showMessageDialog(loginFrame, message, "Error", JOptionPane.ERROR_MESSAGE);
+                    nameAndEmailInputField.setText("");
+                    passwdField.setText("");
                 }
             });
 

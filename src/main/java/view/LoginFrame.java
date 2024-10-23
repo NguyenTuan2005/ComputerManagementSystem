@@ -1,5 +1,9 @@
 package view;
 
+import controller.AccountController;
+import controller.CustomerController;
+import dao.AccountDAO;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,6 +22,8 @@ public class LoginFrame extends JFrame {
     JComboBox<String> roleComboBox;
     JButton loginBt, forgotPasswdBt;
     JCheckBox showPasswdCB;
+    final String manager = "Manager";
+    final String customer = "Customer";
 
     LoginFrame() {
         setLayout(new BorderLayout());
@@ -54,8 +60,8 @@ public class LoginFrame extends JFrame {
 
             userEmail = new JLabel("User Email:");
             formatField(userEmail);
-
-            String[] roles = {"Customer", "Manager"};
+// data
+            String[] roles = {customer, manager};
             roleComboBox = new JComboBox<>(roles);
             formatField(roleComboBox);
             roleComboBox.addActionListener(new ActionListener() {
@@ -63,9 +69,9 @@ public class LoginFrame extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     // Cập nhật nội dung của JLabel khi chọn một mục trong JComboBox
                     String selectedItem = (String) roleComboBox.getSelectedItem();
-                    if(selectedItem.equals("Manager")) {
+                    if (selectedItem.equals("Manager")) {
                         userEmail.setText("User Name:");
-                    }else{
+                    } else {
                         userEmail.setText("User Email:");
                     }
                 }
@@ -110,10 +116,44 @@ public class LoginFrame extends JFrame {
             loginBt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    char[] passwordArray = passwdField.getPassword();//lấy mật khẩu ra và chuyển thành chuỗi
-                    String passwd = new String(passwordArray);
+                    char[] passwordArray = passwdField.getPassword();
+                    String password = new String(passwordArray);
+                    String username = nameAndEmailInputField.getText();
+                    String email =  nameAndEmailInputField.getText();
                     //xét điều kiện để login
 
+                    String role = (String) roleComboBox.getSelectedItem();
+
+                    switch (role) {
+                        case manager: {
+                            AccountController accountController = new AccountController();
+                            System.out.println(accountController.isValidAccount(username, password));
+                            if (accountController.isValidAccount(username, password)){
+                                loginFrame.setVisible(false);
+                                managerFrame = new ManagerFrame(loginFrame);
+                            } else
+                                sayError("You have entered the Wrong username or password, please try again!");
+
+                            break;
+                        }
+                        case customer: {
+                            CustomerController customerController = new CustomerController();
+                            if (customerController.isValidAccount(email ,password)){
+                                loginFrame.setVisible(false);
+                                userFrame = new CustomerFrame(loginFrame);
+                            } else
+                                sayError("You have entered the Wrong email or password, please try again!");
+                            break;
+                        }
+
+                    }
+
+
+                }
+                private void sayError( String message){
+                    JOptionPane.showMessageDialog(loginFrame, message, "Error", JOptionPane.ERROR_MESSAGE);
+                    nameAndEmailInputField.setText("");
+                    passwdField.setText("");
                 }
             });
 

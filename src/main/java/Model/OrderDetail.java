@@ -9,13 +9,14 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OderDetail {
+@AllArgsConstructor
+public class OrderDetail {
 
     private int orderId;
 
     private int productId;
 
-    private int pricePrice;
+    private int unitPrice;
 
     private int quantity;
 

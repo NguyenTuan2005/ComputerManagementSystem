@@ -10,7 +10,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Suppliers {
+public class Supplier {
 
     private int id;
 
@@ -24,7 +24,7 @@ public class Suppliers {
 
     private Date contactDate;
 
-    public Suppliers(String companyName, String email, String phoneNumber, String address, Date contactDate) {
+    public Supplier(String companyName, String email, String phoneNumber, String address, Date contactDate) {
         this.companyName = companyName;
         this.email = email;
         this.phoneNumber = phoneNumber;

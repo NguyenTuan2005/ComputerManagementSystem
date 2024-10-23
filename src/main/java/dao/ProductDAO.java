@@ -96,6 +96,24 @@ public class ProductDAO implements Repository<Product> {
         return products;
     }
 
+    @Override
+    public Product findOneByName(String name) {
+        try {
+            String sql = "SELECT * FROM product WHERE name LIKE ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, "%" + name + "%");
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                return mapResultSetToProduct(rs);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      *  note Id
      * @param product

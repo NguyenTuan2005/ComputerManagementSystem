@@ -37,4 +37,8 @@ public class Account {
         this.username = username;
         this.email = email;
     }
+
+    public boolean sameUsernameAndPassword( String username , String password ){
+        return this.username.equals(username) && this.password.equals(password);
+    }
 }

@@ -40,7 +40,7 @@ public class ManagerMainPanel extends JPanel {
     // create data for column Names
     static final String[] columnNamesPRODUCT = {"Serial Number", "Product Code", "Product Name", "Quantity", "Unit Price", "Type of Device", "Brand",
             "Operating System", "CPU", "Storage", "RAM", "Origin"};
-    static final String[] columnNamesSUPPLIER ={"Supplier ID:", "Name Supplier:", "Address", "Phone number:", "Email:", "Cooperation Day:"};
+    static final String[] columnNamesSUPPLIER = {"Supplier ID:", "Name Supplier:", "Address", "Phone number:", "Email:", "Cooperation Day:"};
 
 
     //main constructor
@@ -154,7 +154,7 @@ public class ManagerMainPanel extends JPanel {
                 tableProduct.setRowHeight(30);
                 tableProduct.setFont(Style.FONT_TEXT_TABLE);
                 // thêm model lưu dữ liệu cho bảng
-                modelProductTable = new DefaultTableModel(columnNamesPRODUCT,0) {
+                modelProductTable = new DefaultTableModel(columnNamesPRODUCT, 0) {
                     @Override
                     public boolean isCellEditable(int row, int column) {
                         return false; // Không cho phép chỉnh sửa bất kỳ ô nào
@@ -404,7 +404,7 @@ public class ManagerMainPanel extends JPanel {
                     tableThat.getTableHeader().setResizingAllowed(true);
                     tableThat.setRowHeight(30);
                     tableThat.setFont(Style.FONT_TEXT_TABLE);
-                    tableThat.setModel(new DefaultTableModel(columnNames,0) {
+                    tableThat.setModel(new DefaultTableModel(columnNames, 0) {
                         @Override
                         public boolean isCellEditable(int row, int column) {
                             return false; // Không cho phép chỉnh sửa
@@ -489,6 +489,7 @@ public class ManagerMainPanel extends JPanel {
                     add(addSupplierFromListPn, ADD_SUPPLIER_FROM_LIST_CONSTRAINT);
 
                 }
+
                 public void showPanelAddSupplier(String panelName) {
                     cardLayoutSupplierPn.show(this, panelName); // method chuyển đổi giữa các panel
                 }
@@ -539,7 +540,7 @@ public class ManagerMainPanel extends JPanel {
                             gbc.gridwidth = 1;
                             gbc.fill = GridBagConstraints.BOTH;
                             gbc.anchor = GridBagConstraints.WEST;
-                            JLabel lb =new JLabel(labels[i]);
+                            JLabel lb = new JLabel(labels[i]);
                             lb.setFont(Style.FONT_TEXT_LOGIN_FRAME);
                             lb.setPreferredSize(new Dimension(180, 40));
                             add(new JLabel(labels[i]), gbc);
@@ -548,7 +549,7 @@ public class ManagerMainPanel extends JPanel {
                             gbc.gridx = 1; // Cột 2: TextField
                             gbc.anchor = GridBagConstraints.EAST;
                             supplierTFArray[i] = new JTextField(20);
-                            supplierTFArray[i].setPreferredSize(new Dimension(300,40));
+                            supplierTFArray[i].setPreferredSize(new Dimension(300, 40));
                             supplierTFArray[i].setFont(Style.FONT_TEXT_LOGIN_FRAME);
                             add(supplierTFArray[i], gbc);
                         }
@@ -562,6 +563,7 @@ public class ManagerMainPanel extends JPanel {
                     DefaultTableModel modelGetDataSupplier;
                     JTableHeader tableHeaderGetDataSupplier;
                     JScrollPane scrollPaneGetDataSupplierTable;
+
                     AddSupplierFromListPn() {
                         setLayout(new GridBagLayout());
                         GridBagConstraints gbc = new GridBagConstraints();
@@ -597,7 +599,7 @@ public class ManagerMainPanel extends JPanel {
                         tableGetDataSupplier.setFont(Style.FONT_TEXT_TABLE);
                         resizeColumnWidth(tableGetDataSupplier, 120);
                         // tạo model lưu dữ liệu cho bảng
-                        modelGetDataSupplier = new DefaultTableModel(columnNamesSUPPLIER,0) {
+                        modelGetDataSupplier = new DefaultTableModel(columnNamesSUPPLIER, 0) {
                             @Override
                             public boolean isCellEditable(int row, int column) {
                                 return false; // Không cho phép chỉnh sửa bất kỳ ô nào
@@ -669,6 +671,7 @@ public class ManagerMainPanel extends JPanel {
 
             class ProductPn extends JPanel {
                 ImportProductList importProductList;
+
                 ProductPn() {
                     Border border = BorderFactory.createTitledBorder(
                             BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3), // Đường viền
@@ -684,27 +687,28 @@ public class ManagerMainPanel extends JPanel {
                     add(importProductList, BorderLayout.NORTH);
 
                 }
-                class ImportProductList extends JPanel{
+
+                class ImportProductList extends JPanel {
                     JTable tableImportProductList;
                     DefaultTableModel modelImportProductList;
                     JTableHeader tableHeaderImportProductList;
                     JScrollPane scrollPaneImportProductList;
-                    ImportProductList(){
+
+                    ImportProductList() {
                         tableImportProductList = new JTable();
                         tableImportProductList.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
                         tableImportProductList.getTableHeader().setResizingAllowed(true);
                         tableImportProductList.setRowHeight(20);
                         tableImportProductList.setFont(Style.FONT_TEXT_TABLE);
-                        resizeColumnWidth(tableImportProductList, 120);
+                        resizeColumnWidth(tableImportProductList, 180);
                         // tạo model lưu dữ liệu cho bảng
-                        modelImportProductList = new DefaultTableModel(columnNamesSUPPLIER,0) {
+                        modelImportProductList = new DefaultTableModel(columnNamesPRODUCT, 0) {
                             @Override
                             public boolean isCellEditable(int row, int column) {
                                 return false; // Không cho phép chỉnh sửa bất kỳ ô nào
                             }
                         };
                         tableImportProductList.setModel(modelImportProductList);
-
                         tableHeaderImportProductList = tableImportProductList.getTableHeader();// chỉnh tên các cột
                         tableHeaderImportProductList.setBackground(Color.LIGHT_GRAY);
                         tableHeaderImportProductList.setForeground(Color.BLACK);
@@ -713,16 +717,39 @@ public class ManagerMainPanel extends JPanel {
                         scrollPaneImportProductList = new JScrollPane(tableImportProductList);
                         add(scrollPaneImportProductList, BorderLayout.CENTER);
 
+
                     }
 
                 }
-                class InputProductData extends JPanel{
-                    JButton clearAllBt , addFromListBt, addToImportListBt;
+
+                class InputProductData extends JPanel {
+                    JButton clearAllBt, addFromListBt, addToImportListBt;
                     JTextField[] ImportProductDataTF;
 
 
-                    InputProductData(){
+                    InputProductData() {
+                        setLayout(new GridBagLayout());
+                        GridBagConstraints gbc = new GridBagConstraints();
 
+                        gbc.insets = new Insets(10, 10, 10, 10); // Khoảng cách giữa các thành phần
+                        gbc.fill = GridBagConstraints.HORIZONTAL;
+                        gbc.weightx = 1.0;
+
+                        clearAllBt = new JButton("Clear All");
+                        addFromListBt = new JButton("Add From List");
+                        addToImportListBt = new JButton("Add To Import List");
+
+                        gbc.gridx = 0;
+                        gbc.gridy = 0;
+                        add(clearAllBt, gbc);
+
+                        // Nút 2
+                        gbc.gridx = 1;
+                        add(addFromListBt, gbc);
+
+                        // Nút 3
+                        gbc.gridx = 2;
+                        add(addToImportListBt, gbc);
 
 
                     }
@@ -731,6 +758,7 @@ public class ManagerMainPanel extends JPanel {
 
 
             }
+
             class PaymentConfirmationPn extends JPanel {
                 JLabel totalPrice, totalPriceValue;
                 JButton cancelBt, importBt;
@@ -1035,6 +1063,7 @@ public class ManagerMainPanel extends JPanel {
             table.getColumnModel().getColumn(i).setPreferredWidth(width);
         }
     }
+
     private void setIconSmallButton(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
@@ -1042,6 +1071,7 @@ public class ManagerMainPanel extends JPanel {
         Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
     }
+
     // Phương thức tạo nút Clear All
     public JButton createClearAllButton(JPanel panel) {
         JButton clearAllButton = new JButton("Clear All");
@@ -1056,6 +1086,7 @@ public class ManagerMainPanel extends JPanel {
 
         return clearAllButton;
     }
+
     // Phương thức xóa các JTextField trong panel
     private void clearTextFields(JPanel panel) {
         // Lặp qua tất cả các thành phần trong panel để kiếm textfield cần xóa

@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.RoundRectangle2D;
 import java.util.Objects;
 
 public class LoginFrame extends JFrame {
@@ -110,8 +111,7 @@ public class LoginFrame extends JFrame {
             loginBt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    char[] passwordArray = passwdField.getPassword();//lấy mật khẩu ra và chuyển thành chuỗi
-                    String passwd = new String(passwordArray);
+                    String passwd = new String(passwdField.getPassword());   //lấy mật khẩu ra và chuyển thành chuỗi
                     //xét điều kiện để login
                     if (nameAndEmailInputField.getText().isEmpty() || passwd.isEmpty()) {
                         JOptionPane.showMessageDialog(loginFrame, "Please fill all the fields", "Error", JOptionPane.ERROR_MESSAGE);
@@ -192,7 +192,6 @@ public class LoginFrame extends JFrame {
         button.setPreferredSize(size);
         button.setFocusable(false);
     }
-
 
     public static void main(String[] args) {
         new LoginFrame();

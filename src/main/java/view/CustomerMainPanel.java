@@ -139,8 +139,6 @@ public class CustomerMainPanel extends JPanel {
                 gbc.insets = new Insets(5, 15, 0, 10);
                 add(cartBt, gbc);
             }
-
-
         }
 
         class DisplayProductPanel extends JPanel {

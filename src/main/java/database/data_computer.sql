@@ -70,3 +70,18 @@ VALUES
 (4, 'Lenovo Yoga 9i', 3, 45000000, '2-in-1 Laptop', 'Lenovo', 'Windows 11', 'Intel Core i7', '1TB SSD', '16GB', 'China', 'In Stock');
 
 
+insert into manager(fullname,address,birthday,phone_number)
+values ('James Nguyen','nlu tpHCM','09-09-2005','0398167244')
+     ,('Henry Phan','nlu tpHCM','07-28-2005','0978234879')
+     ,('Thaniel Nguyen','nlu tpHCM','04-21-2005','0936482635');
+
+
+insert into account(username ,password,email,create_date, manage_id)
+values
+    ('admin','123','duynguyenavg@gmail.com','10-21-2024',1)
+     ,('james','123','23130075@gmail.com','10-21-2024',2)
+     ,('henry','123','23130117@gmail.com','10-21-2024',3)
+     ,('thaniel','123','23130370@gmail.com','10-21-2024',4);
+select *from account
+
+

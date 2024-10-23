@@ -113,17 +113,7 @@ public class LoginFrame extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     String passwd = new String(passwdField.getPassword());   //lấy mật khẩu ra và chuyển thành chuỗi
                     //xét điều kiện để login
-                    if (nameAndEmailInputField.getText().isEmpty() || passwd.isEmpty()) {
-                        JOptionPane.showMessageDialog(loginFrame, "Please fill all the fields", "Error", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        if (Objects.equals(roleComboBox.getSelectedItem(), "Manager")) {
-                            loginFrame.setVisible(false);
-                            managerFrame = new ManagerFrame(loginFrame);
-                        } else if (Objects.equals(roleComboBox.getSelectedItem(), "Customer")) {
-                            loginFrame.setVisible(false);
-                            userFrame = new CustomerFrame(loginFrame);
-                        }
-                    }
+
                 }
             });
 

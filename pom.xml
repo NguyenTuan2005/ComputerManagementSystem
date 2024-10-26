@@ -44,12 +44,11 @@
         </dependency>
 
 
-
-        <!-- Nếu cần thêm các thư viện khác, như Spring -->
-
-
-
-        <!-- JDBC Driver for PostgreSQL (hoặc MySQL tùy theo database bạn dùng) -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>

@@ -73,6 +73,13 @@ CREATE TABLE account (
                          create_date DATE
 );
 
+create table image(
+                        id serial primary key
+                        ,product_id int  references product(id)
+                        , alt varchar
+                        , url varchar not null
+);
+
 ALTER TABLE account ADD CONSTRAINT account_email_unique UNIQUE(email);
 
 ALTER TABLE account ADD CONSTRAINT username_unique UNIQUE(username);

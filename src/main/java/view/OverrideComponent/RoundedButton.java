@@ -37,7 +37,7 @@ public class RoundedButton extends JButton {
         }
 
         // Vẽ hình chữ nhật bo tròn
-        g2.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
+        g2.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 30, 30));
 
         // Thiết lập màu chữ
         setForeground(textColor);

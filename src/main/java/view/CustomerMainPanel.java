@@ -2,12 +2,15 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 
 public class CustomerMainPanel extends JPanel {
-    LoginFrame loginFrame;
+    JPanel containerPanel;
+    OldLoginFrame loginFrame;
     CardLayout cardLayout;
     WelcomePanel welcomePanel;
     ProductCatalogPanel productCatalogPanel;
@@ -22,7 +25,7 @@ public class CustomerMainPanel extends JPanel {
     static final String CHANGE_INFORMATION_CONSTRAINT = "changeInformation";
 
     //constructor
-    public CustomerMainPanel(LoginFrame loginFrame) {
+    public CustomerMainPanel() {
         this.loginFrame = loginFrame;
         cardLayout = new CardLayout();
         welcomePanel = new WelcomePanel();
@@ -48,10 +51,18 @@ public class CustomerMainPanel extends JPanel {
         public WelcomePanel() {
             setLayout(new BorderLayout());
 
-            welcomeLabel = new JLabel("Welcome Manager :)", SwingConstants.CENTER);
+            welcomeLabel = new JLabel("Welcome Customer:)", SwingConstants.CENTER);
             welcomeLabel.setFont(new Font("Arial", Font.BOLD, 60));
             welcomeLabel.setForeground(Style.BACKGROUND_COLOR);
 
+            JButton bt = new JButton("Let's get started  -->");
+            setStyleButton(bt,Style.FONT_BUTTON_CUSTOMER,Style.WORD_COLOR_WHITE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,SwingConstants.CENTER,new Dimension(300, 50));
+            bt.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    showPanel(PRODUCT_CATALOG_CONSTRAINT);
+                }
+            });
+            add(bt, BorderLayout.SOUTH);
             add(welcomeLabel, BorderLayout.CENTER);
         }
     }
@@ -120,7 +131,7 @@ public class CustomerMainPanel extends JPanel {
                 add(searchTextField, gbc);
 
                 searchBt = new JButton();
-                setStyleButton(searchBt, Style.FONT_TEXT_CUSTOMER, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.WORD_COLOR_WHITE,SwingConstants.LEFT, new Dimension(68, 40));
+                setStyleButton(searchBt, Style.FONT_TEXT_CUSTOMER, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(68, 40));
                 setIconSmallButton("src/main/java/Icon/search_Icon.png", searchBt);
                 gbc.gridx = 2;
                 gbc.weightx = 0;
@@ -129,10 +140,15 @@ public class CustomerMainPanel extends JPanel {
                 add(searchBt, gbc);
 
                 cartBt = new JButton("Cart");
-                setStyleButton(cartBt, Style.FONT_BUTTON_CUSTOMER, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.WORD_COLOR_WHITE,SwingConstants.LEFT, new Dimension(80, 80));
+                setStyleButton(cartBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(80, 80));
                 setIconBigButton("src/main/java/Icon/cartIcon.png", cartBt);
                 cartBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 cartBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                cartBt.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        addNewPanel(containerPanel);
+                    }
+                });
                 gbc.gridx = 3;
                 gbc.weightx = 1.0;
                 gbc.anchor = GridBagConstraints.LINE_END;
@@ -142,54 +158,45 @@ public class CustomerMainPanel extends JPanel {
         }
 
         class DisplayProductPanel extends JPanel {
-            JPanel containerPanel;
             JScrollPane scrollPane;
-            ArrayList<JPanel> panelList = new ArrayList<>() ;
+            ArrayList<JPanel> panelList = new ArrayList<>();
+            JPanel product1;
+
             DisplayProductPanel() {
                 setLayout(new BorderLayout());
                 //panel chính chứa các panel khác
                 containerPanel = new JPanel();
-                containerPanel.setLayout(new GridLayout(6, 3, 5, 5));
+                containerPanel.setLayout(new GridLayout(0, 3, 5, 5));
 
-                for (int i = 1; i <= 18; i++) {
-                    JPanel panel = new JPanel();
-                    panel.setPreferredSize(new Dimension(300, 400)); // kích thước của 1 ô hiện sp
-//                    JLabel productImage = new JLabel("Product " + i);
-//                    panel.add(productImage);
-                    if(i%2==0){
-                        panel.setBackground(Color.GRAY);
-                    }
+                addNewPanel(containerPanel);
 
-                    panelList.add(panel);
-                    containerPanel.add(panel);
-                }
+
+
+
+
+
                 // tao sp dau tien hehe:))
 
-                ImageIcon icon = new ImageIcon("src/main/java/Icon/laptopAsus1.jpg");
-                Image img = icon.getImage(); // Lấy Image từ ImageIcon
-                Image scaledImg = img.getScaledInstance(250, 250, Image.SCALE_SMOOTH); // Thay đổi kích thước ảnh
-                ImageIcon scaledIcon = new ImageIcon(scaledImg);
+                JLabel productImage1 =createImageForProduct("src/main/java/Icon/laptopAsus1.jpg",250,250);
 
-                JLabel productImage = new JLabel(scaledIcon);
-                productImage.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                 JLabel productName = new JLabel("Laptop asus vip pro max super ultra");
                 productName.setFont(Style.FONT_TEXT_CUSTOMER);
                 productName.setAlignmentX(Component.CENTER_ALIGNMENT);
-                JLabel productPrice = new JLabel("$" +2000);
-                productPrice.setFont(new Font("Arial",1,25));
+                JLabel productPrice = new JLabel("$" + 2000);
+                productPrice.setFont(new Font("Arial", 1, 25));
                 productPrice.setForeground(new Color(100, 218, 77));
 
 
-                panelList.get(0).setLayout(new BoxLayout(panelList.get(0), BoxLayout.Y_AXIS));
-                panelList.get(0).add(productImage);
-                panelList.get(0).add(productName);
-                panelList.get(0).add(productPrice);
 
+//                panelList.get(0).setLayout(new BoxLayout(panelList.get(0), BoxLayout.Y_AXIS));
+//                panelList.get(0).add(productImage);
+//                panelList.get(0).add(productName);
+//                panelList.get(0).add(productPrice);
 
 
                 scrollPane = new JScrollPane(containerPanel);
-                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
                 add(scrollPane, BorderLayout.CENTER);
             }
 
@@ -228,7 +235,7 @@ public class CustomerMainPanel extends JPanel {
         that.setIcon(new ImageIcon(resizedImage));
     }
 
-    private static void setStyleButton(JButton that, Font font,Color textColor, Color backgroundColor, int textPosition, Dimension size) {
+    private static void setStyleButton(JButton that, Font font, Color textColor, Color backgroundColor, int textPosition, Dimension size) {
         that.setBackground(backgroundColor);
         that.setFont(font);
         that.setHorizontalAlignment(textPosition);
@@ -237,6 +244,32 @@ public class CustomerMainPanel extends JPanel {
         that.setFocusable(false);
         that.setPreferredSize(size);
     }
+
+    // tạo ảnh cho sản phẩm
+    private static JLabel createImageForProduct(String filePath, int width, int height) {
+        ImageIcon icon = new ImageIcon(filePath);
+        Image img = icon.getImage(); // Lấy Image từ ImageIcon
+        Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH); // Thay đổi kích thước ảnh
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+
+        JLabel lbImage = new JLabel(scaledIcon);
+        lbImage.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return lbImage;
+    }
+
+    private void addNewPanel(JPanel containerPanel) {
+        JPanel newPanel = new JPanel();
+        newPanel.setPreferredSize(new Dimension(150, 150));
+        newPanel.setBackground(new Color((int)(Math.random() * 0x1000000))); // Màu ngẫu nhiên
+        newPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        // Thêm panel mới vào containerPanel và cập nhật giao diện
+        containerPanel.add(newPanel);
+        containerPanel.revalidate();
+        containerPanel.repaint();
+    }
+
+
 
 
 }

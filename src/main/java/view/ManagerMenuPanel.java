@@ -1,5 +1,7 @@
 package view;
 
+import Config.CurrentUser;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -53,13 +55,13 @@ public class ManagerMenuPanel extends JPanel {
 //            role.setHorizontalAlignment(JLabel.CENTER);
 //            role.setForeground(Color.GREEN);
 //            add(role, BorderLayout.NORTH);
-            avatar = new CircularImage("src/main/java/Icon/dragon_Icon.png",60,60);
+            avatar = new CircularImage(CurrentUser.URL+"",60,60);
             avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(avatar);
 
-            name = new JLabel("Put your name in here");
+            name = new JLabel(CurrentUser.USER_NAME+" ");
             name.setAlignmentX(Component.CENTER_ALIGNMENT);
-            name.setForeground(Color.GREEN);
+            name.setForeground(Style.WORD_COLOR_WHITE);
             name.setFont(new Font("Arial", Font.PLAIN, 25));
 
 
@@ -126,8 +128,8 @@ public class ManagerMenuPanel extends JPanel {
         }
     }
 
-    // set icon cho button
-    private void setIcon(String url, JButton that) {
+    // set icon cho button duy đã tại conflict tại đây >>>
+    public static  void setIcon(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();

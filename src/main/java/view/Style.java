@@ -16,6 +16,9 @@ public class Style {
     public static final Color CANCEL_BUTTON_COLOR_RED = new Color(143, 66, 66);
 
 
+    // product frame
+    public static final Font FONT_SIZE_BUTTON = new Font("Arial", Font.PLAIN, 15);
+
     //Login frame
     public static final Font FONT_BUTTON_LOGIN_FRAME = new Font("Arial", Font.BOLD, 24);
     public static final Font FONT_TEXT_LOGIN_FRAME = new Font("Arial", Font.PLAIN, 20);

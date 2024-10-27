@@ -144,7 +144,7 @@ public class ProductDAO implements Repository<Product> {
         product.setSuppliersId(rs.getInt("suppliers_id"));
         product.setName(rs.getString("name"));
         product.setQuality(Integer.parseInt(rs.getString("quality")));
-        product.setPrice(rs.getDouble("price"));
+        product.setPrice(rs.getInt("price"));
         product.setGenre(rs.getString("genre"));
         product.setBrand(rs.getString("brand"));
         product.setOperatingSystem(rs.getString("operating_system"));

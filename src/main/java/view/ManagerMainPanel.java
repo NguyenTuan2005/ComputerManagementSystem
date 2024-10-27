@@ -1,5 +1,10 @@
 package view;
 
+import Model.Product;
+import controller.ProductController;
+import dao.ProductDAO;
+import org.apache.poi.ss.formula.functions.DProduct;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -10,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ManagerMainPanel extends JPanel {
     OldLoginFrame loginFrame;
@@ -78,11 +85,10 @@ public class ManagerMainPanel extends JPanel {
             add(welcomeLabel, BorderLayout.CENTER);
         }
     }
-
-    //Hoang's code
+//duy    //Hoang's code
     class ProductPanel extends JPanel {
         ToolPanel toolPanel = new ToolPanel();
-        JButton addBt, modifyBt, deleteBt, sortBt, exportExcelBt, importExcelBt, searchBt;
+        JButton addBt, modifyBt, deleteBt, sortBt, exportExcelBt, importExcelBt, searchBt , reloadBt;
         JTextField findText;
 
         TablePanel tablePanel = new TablePanel();
@@ -92,17 +98,22 @@ public class ManagerMainPanel extends JPanel {
         JScrollPane scrollPaneProductTable;
         JTabbedPane tabbedPaneProductTable;
 
+
+        private ProductController productController;
+
         public ProductPanel() {
             setLayout(new BorderLayout());
             add(toolPanel, BorderLayout.NORTH);
             add(tablePanel, BorderLayout.CENTER);
+            productController = new ProductController();
+
         }
 
         public class ToolPanel extends JPanel {
 
             public ToolPanel() {
                 setLayout(new FlowLayout());
-                setLayout(new FlowLayout(FlowLayout.CENTER));
+                setLayout(new FlowLayout(FlowLayout.LEFT));
                 setBackground(Style.BACKGROUND_COLOR);
                 addBt = new JButton("+ Add");
                 setStyleButton(addBt, Style.FONT_SIZE, Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.LEFT, new Dimension(80, 30));
@@ -130,38 +141,75 @@ public class ManagerMainPanel extends JPanel {
                 searchBt = new JButton("Search");
                 setStyleButton(searchBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(85, 30));
 
+
+                reloadBt = new JButton();
+                setStyleButton(reloadBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(60, 30));
+                ManagerMenuPanel.setIcon("src/main/java/Icon/reload-icon.png",reloadBt);
+
                 add(addBt);
-                add(modifyBt);
                 add(deleteBt);
+                add(modifyBt);
                 add(sortBt);
                 add(exportExcelBt);
                 add(importExcelBt);
                 add(findText);
                 add(searchBt);
+                add(reloadBt);
+                searchBt.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println(findText.getText());
+                        ArrayList<Product> products = productController.find(findText.getText());
+                        TablePanel.upDataTable(products, modelProductTable);
+
+                    }
+                });
             }
+
+
+
+
         }
 
         public class TablePanel extends JPanel {
             public TablePanel() {
                 setLayout(new BorderLayout());
                 setBackground(Style.BACKGROUND_COLOR);
-
+                productController = new ProductController();
                 // data test thử:))
-                String[] rowData = {"1", "LP20", "Laptop ASUS TUF Gaming FX516PE", String.valueOf(650), String.valueOf(23990000L), "Laptop", "China", "Window", "Intel Core i5 12450H", String.valueOf(512), "8 GB", "Vietnam"};
-
+                ArrayList<Product> products = productController.getAll();
+                String[][] rowData =  Product.getDateOnTable(products);
+//                String [] product =(String) products.toArray();
 
                 tableProduct = createTable(modelProductTable, tableProductHeader, columnNamesPRODUCT);
                 tableProduct.setRowHeight(30);
                 resizeColumnWidth(tableProduct, 150);
 
-                modelProductTable = (DefaultTableModel) tableProduct.getModel(); // create model to store table data
-                modelProductTable.addRow(rowData);
+                modelProductTable = (DefaultTableModel) tableProduct.getModel();
+
+                ArrayList<Product> productsDemo = productController.getAll();
+                upDataTable(productsDemo,modelProductTable);
+
+//                modelProductTable.add
 
                 scrollPaneProductTable = new JScrollPane(tableProduct);
                 tabbedPaneProductTable = createTabbedPane(scrollPaneProductTable, "Product for Sales", Style.FONT_HEADER_ROW_TABLE);
 
                 add(tabbedPaneProductTable, BorderLayout.CENTER);
             }
+            public static void removeDataTable( DefaultTableModel modelProductTable ){
+                modelProductTable.setRowCount(0);
+            }
+            public static void upDataTable(ArrayList<Product> products , DefaultTableModel modelProductTable) {
+
+                String[][] rowData =  Product.getDateOnTable(products);
+                TablePanel.removeDataTable(modelProductTable);
+                for(int i=0; i<rowData.length ; i++){
+                    modelProductTable.addRow(rowData[i]);
+                    System.out.println(products.get(i));
+                }
+            }
+
 
         }
     }

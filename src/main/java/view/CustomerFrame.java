@@ -9,7 +9,8 @@ public class CustomerFrame extends JFrame {
     CustomerMainPanel customerMainPanel;
     CustomerMenuPanel customerMenuPanel;
 
-    public CustomerFrame(LoginFrame loginFrame) {
+    public CustomerFrame() {
+//    public CustomerFrame(LoginFrame loginFrame) {
         setTitle("Computer Management");
         setSize(1200, 650);
         setResizable(true);
@@ -18,8 +19,8 @@ public class CustomerFrame extends JFrame {
         setLocationRelativeTo(null);
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
 
-        customerMenuPanel = new CustomerMenuPanel(loginFrame, this);
-        customerMainPanel = new CustomerMainPanel(loginFrame);
+        customerMenuPanel = new CustomerMenuPanel();
+        customerMainPanel = new CustomerMainPanel();
         add(customerMenuPanel, BorderLayout.WEST);
         add(customerMainPanel, BorderLayout.CENTER);
 
@@ -54,7 +55,7 @@ public class CustomerFrame extends JFrame {
                         JOptionPane.YES_NO_OPTION);
                 if (confirmed == JOptionPane.YES_OPTION) {
                     setVisible(false);
-                    loginFrame.setVisible(true);
+
                 }
             }
         });
@@ -81,4 +82,7 @@ public class CustomerFrame extends JFrame {
         }
     }
 
+    public static void main(String[] args) {
+        new CustomerFrame();
+    }
 }

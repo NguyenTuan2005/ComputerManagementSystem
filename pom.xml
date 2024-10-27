@@ -43,13 +43,18 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>5.8.0</version> <!-- Chọn phiên bản mới nhất -->
+        </dependency>
 
 
-        <!-- Nếu cần thêm các thư viện khác, như Spring -->
-
-
-
-        <!-- JDBC Driver for PostgreSQL (hoặc MySQL tùy theo database bạn dùng) -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>

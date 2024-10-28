@@ -1,6 +1,9 @@
 package Model;
 
 import lombok.*;
+import org.postgresql.gss.GSSOutputStream;
+
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -17,7 +20,7 @@ public class Product {
 
     private int quality;
 
-    private double price;
+    private int price;
 
     private String genre;
 
@@ -35,7 +38,7 @@ public class Product {
 
     private String status;
 
-    public Product(int suppliersId, String name, int quality, double price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status) {
+    public Product(int suppliersId, String name, int quality, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status) {
         this.suppliersId = suppliersId;
         this.name = name;
         this.quality = quality;
@@ -49,4 +52,30 @@ public class Product {
         this.madeIn = madeIn;
         this.status = status;
     }
+    private  String [] convertToArray(int serial){
+        String []  result =  {String.valueOf(serial)
+                ,String.valueOf(id)
+                , name
+                , String.valueOf(quality)
+                , Integer.toString(price)
+                , genre
+                , brand
+                , operatingSystem
+                , cpu
+                , memory
+                , ram
+                , madeIn
+                , status };
+        System.out.println(Double.toString(price));
+        return result;
+    }
+
+    public static String [][] getDateOnTable(ArrayList<Product> products){
+        String [][] datas = new String[products.size()][];
+        for (int i = 0; i < products.size() ; i++) {
+            datas[i]= products.get(i).convertToArray(i);
+        }
+        return datas;
+    }
+    
 }

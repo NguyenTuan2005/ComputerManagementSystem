@@ -21,16 +21,14 @@ public class Order {
 
     private Date orderDate;
 
-    private Date shipDate;
-
     private String status;
 
-    public Order(int managerId, int customerId, String shipAddress, Date orderDate, Date shipDate, String status) {
+    public Order(int managerId, int customerId, String shipAddress, Date orderDate, String status) {
         this.managerId = managerId;
         this.customerId = customerId;
         ShipAddress = shipAddress;
         this.orderDate = orderDate;
-        this.shipDate = shipDate;
         this.status = status;
     }
+
 }

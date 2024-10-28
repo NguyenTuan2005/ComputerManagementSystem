@@ -5,13 +5,13 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class CustomerMenuPanel extends JPanel {
-    LoginFrame loginFrame;
+    OldLoginFrame loginFrame;
     CustomerFrame userFrame;
     JLabel role, name, credit;
     JButton productCatalogBt, purchasedBt, notificationBt, changeInformBt, logoutBt;
     GridBagConstraints gbc;
 
-    public CustomerMenuPanel(LoginFrame loginFrame, CustomerFrame userFrame) {
+    public CustomerMenuPanel() {
         this.loginFrame = loginFrame;
         this.userFrame = userFrame;
         setLayout(new GridBagLayout());
@@ -47,14 +47,13 @@ public class CustomerMenuPanel extends JPanel {
             setLayout(new BorderLayout());
             setBackground(Style.BACKGROUND_COLOR);
             setBorder(BorderFactory.createEmptyBorder());
-            role = new JLabel(loginFrame.roleComboBox.getSelectedItem().toString());
+            role = new JLabel("Hello baby");
             role.setFont(new Font("Arial", Font.PLAIN, 25));
             role.setHorizontalAlignment(JLabel.CENTER);
             role.setForeground(Color.GREEN);
             add(role, BorderLayout.NORTH);
 
-            Circle circle = new Circle(18, 18, 70, new Color(211, 211, 211));
-            add(circle, BorderLayout.CENTER);
+
 
             name = new JLabel();
             name.setHorizontalAlignment(JLabel.CENTER);

@@ -1,17 +1,21 @@
 package view;
 
+import Config.CurrentUser;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class ManagerMenuPanel extends JPanel {
-    LoginFrame loginFrame;
+    OldLoginFrame loginFrame;
     ManagerFrame managerFrame;
     JLabel role, name, credit;
+    CircularImage avatar;
     JButton productBt, supplierBt, customerBt, inventoryBt, accountManagementBt, notificationBt, logoutBt, changeInformBt;
     GridBagConstraints gbc;
 
-    public ManagerMenuPanel(LoginFrame loginFrame, ManagerFrame managerFrame) {
+//    public ManagerMenuPanel(LoginFrame loginFrame, ManagerFrame managerFrame) {
+    public ManagerMenuPanel() {
         this.loginFrame = loginFrame;
         this.managerFrame = managerFrame;
 
@@ -43,23 +47,25 @@ public class ManagerMenuPanel extends JPanel {
 
     class ComponentTop extends JPanel {
         public ComponentTop() {
-            setLayout(new BorderLayout());
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBackground(Style.BACKGROUND_COLOR);
             setBorder(BorderFactory.createEmptyBorder());
-            role = new JLabel(loginFrame.roleComboBox.getSelectedItem().toString());
-            role.setFont(new Font("Arial", Font.PLAIN, 25));
-            role.setHorizontalAlignment(JLabel.CENTER);
-            role.setForeground(Color.GREEN);
-            add(role, BorderLayout.NORTH);
+//            role = new JLabel(loginFrame.roleComboBox.getSelectedItem().toString());
+//            role.setFont(new Font("Arial", Font.PLAIN, 25));
+//            role.setHorizontalAlignment(JLabel.CENTER);
+//            role.setForeground(Color.GREEN);
+//            add(role, BorderLayout.NORTH);
+            avatar = new CircularImage(CurrentUser.URL+"",60,60);
+            avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
+            add(avatar);
 
-            Circle circle = new Circle(20, 20, 70, new Color(211, 211, 211));
-            add(circle, BorderLayout.CENTER);
-
-            name = new JLabel();
-            name.setHorizontalAlignment(JLabel.CENTER);
-            name.setForeground(Color.GREEN);
+            name = new JLabel(CurrentUser.USER_NAME+" ");
+            name.setAlignmentX(Component.CENTER_ALIGNMENT);
+            name.setForeground(Style.WORD_COLOR_WHITE);
             name.setFont(new Font("Arial", Font.PLAIN, 25));
-            add(name, BorderLayout.SOUTH);
+
+
+            add(name);
         }
     }
 
@@ -122,8 +128,8 @@ public class ManagerMenuPanel extends JPanel {
         }
     }
 
-    // set icon cho button
-    private void setIcon(String url, JButton that) {
+    // set icon cho button duy đã tại conflict tại đây >>>
+    public static  void setIcon(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();

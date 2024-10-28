@@ -9,7 +9,8 @@ public class ManagerFrame extends JFrame {
     ManagerMainPanel managerMainPanel;
     ManagerMenuPanel managerMenuPanel;
 
-    public ManagerFrame(LoginFrame loginFrame) {
+//    public ManagerFrame(LoginFrame loginFrame) {
+    public ManagerFrame() {
         setTitle("Computer Management");
         setSize(1200, 650);
         setResizable(true);
@@ -19,9 +20,10 @@ public class ManagerFrame extends JFrame {
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
 
 
-        managerMenuPanel = new ManagerMenuPanel(loginFrame,this);
-        managerMainPanel = new ManagerMainPanel(loginFrame);
-
+//        managerMenuPanel = new ManagerMenuPanel(loginFrame,this);
+//        managerMainPanel = new ManagerMainPanel(loginFrame);
+        managerMainPanel = new ManagerMainPanel();
+        managerMenuPanel = new ManagerMenuPanel();
         add(managerMenuPanel, BorderLayout.WEST);
         add(managerMainPanel, BorderLayout.CENTER);
         // thêm sự kiện cho các nút để chuyển màn hình tương tác ở menu
@@ -90,12 +92,10 @@ public class ManagerFrame extends JFrame {
 
                 if (confirmed == JOptionPane.YES_OPTION) {
                     setVisible(false);
-                    loginFrame.setVisible(true);
+//                    loginFrame.setVisible(true);
                 }
 
             }
-
-
         });
 
 
@@ -126,4 +126,8 @@ public class ManagerFrame extends JFrame {
         }
     }
 
+
+    public static void main(String[] args) {
+        new ManagerFrame();
+    }
 }

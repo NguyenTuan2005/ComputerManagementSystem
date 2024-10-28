@@ -27,6 +27,7 @@ public class Style {
     public static final Color CONFIRM_BUTTON_COLOR_GREEN = new Color(20, 133, 20);
 //    public static final Color CONFIRM_BUTTON_COLOR_GREEN = new Color(53, 225, 53);  //old green
     public static  final Color WORD_COLOR_WHITE = new Color(255,255,255);
+    public static  final Color WORD_COLOR_BLACK = new Color(0,0,0);
     public static final Font FONT_TITLE_LOGIN_FRAME = new Font("Arial", Font.BOLD, 40);
 
     //customer frame

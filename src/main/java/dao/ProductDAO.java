@@ -80,7 +80,8 @@ public class ProductDAO implements Repository<Product> {
 
     @Override
     public ArrayList<Product> findByName(String name) {
-        String sql = "SELECT * FROM product WHERE name LIKE ?";
+//        LOWER(product_name) LIKE LOWER('%từ_khóa_tìm_kiếm%')
+        String sql = "SELECT * FROM  product WHERE LOWER(name) LIKE LOWER(?)";
         ArrayList<Product> products = new ArrayList<>();
         try {
             preparedStatement = connection.prepareStatement(sql);
@@ -99,7 +100,7 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product findOneByName(String name) {
         try {
-            String sql = "SELECT * FROM product WHERE name LIKE ?";
+            String sql = "SELECT * FROM product WHERE LOWER(name) LIKE LOWER(?)";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, "%" + name + "%");
             ResultSet rs = preparedStatement.executeQuery();

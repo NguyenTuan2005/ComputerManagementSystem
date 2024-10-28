@@ -218,7 +218,7 @@ public class CustomerMainPanel extends JPanel {
             add(new JLabel("Cart is Coming soonnnnnnn!"));
         }
     }
-
+    // duy
     private void setIconBigButton(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
@@ -226,15 +226,15 @@ public class CustomerMainPanel extends JPanel {
         Image resizedImage = image.getScaledInstance(buttonSize.height - 35, buttonSize.height - 35, java.awt.Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
     }
-
-    private void setIconSmallButton(String url, JButton that) {
+    // duy
+    public static void setIconSmallButton(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();
         Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
     }
-
+    // duy
     private static void setStyleButton(JButton that, Font font, Color textColor, Color backgroundColor, int textPosition, Dimension size) {
         that.setBackground(backgroundColor);
         that.setFont(font);

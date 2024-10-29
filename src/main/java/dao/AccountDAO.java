@@ -77,23 +77,20 @@ public class AccountDAO implements Repository<Account> {
     public ArrayList<Account> getAll() throws SQLException {
         String sql = " SELECT *FROM account ";
         ArrayList<Account> accounts = new ArrayList<>();
-        try{
+        try {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
-            while (rs.next()){
+            while (rs.next()) {
                 Account account = new Account();
-                setAccountParameter(rs,account);
+                setAccountParameter(rs, account);
                 accounts.add(account);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return accounts;
 
     }
-
-
-
 
     @Override
     public ArrayList<Account> findByName(String name) {

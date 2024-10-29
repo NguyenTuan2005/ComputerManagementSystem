@@ -1,5 +1,6 @@
 package view;
 
+import Config.CurrentUser;
 import controller.AccountController;
 import controller.CustomerController;
  
@@ -358,33 +359,41 @@ public class LoginFrame extends JFrame {
             signInButton.setForeground(Color.WHITE);
             signInButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+                    String username= nameField.getText();
+                    String password= new String( passwdFieldSignin.getPassword());
+                    String email ="";
                     switch ((String) roleComboBox.getSelectedItem()) {
                         case MANAGER_ROLE: {
-                            loginFrame.setVisible(false);
-                            managerFrame =new ManagerFrame();
-//                            AccountController accountController = new AccountController();
-//                            System.out.println(accountController.isValidAccount(username, password));
-//                            if (accountController.isValidAccount(username, password)){
-//                                loginFrame.setVisible(false);
-//                                managerFrame = new ManagerFrame();
-//                            } else
-//                                sayError("You have entered the Wrong username or password, please try again!");
-//
-//                            break;
+
+                            AccountController accountController = new AccountController();
+                            System.out.println(accountController.isValidAccount(username, password));
+                            if (accountController.isValidAccount(username, password)){
+                                loginFrame.setVisible(false);
+                                managerFrame = new ManagerFrame();
+                            } else {
+                                sayError("You have entered the Wrong username or password, please try again!");
+                                loginFrame.setVisible(true);
+                            }
+                            break;
                         }
                         case CUSTOMER_ROLE: {
                             loginFrame.setVisible(false);
-//                            customerFrame =new CustomerFrame();
-//                            CustomerController customerController = new CustomerController();
-//                            if (customerController.isValidAccount(email ,password)){
-//                                loginFrame.setVisible(false);
+                            CustomerController customerController = new CustomerController();
+                            if (customerController.isValidAccount(email ,password)){
+                                loginFrame.setVisible(false);
+                                managerFrame = new ManagerFrame();
 //                                userFrame = new CustomerFrame(loginFrame);
-//                            } else
-//                                sayError("You have entered the Wrong email or password, please try again!");
-//                            break;
+                            } else
+                                sayError("You have entered the Wrong email or password, please try again!");
+                            break;
                         }
 
                     }
+                }
+                private void sayError( String message){
+                    JOptionPane.showMessageDialog(loginFrame, message, "Error", JOptionPane.ERROR_MESSAGE);
+                    passwdFieldSignin.setText("");
+                    nameField.setText("");
                 }
             });
 

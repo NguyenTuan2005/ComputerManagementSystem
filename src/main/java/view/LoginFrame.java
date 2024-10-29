@@ -1,8 +1,7 @@
 package view;
 
-import controller.AccountController;
-import controller.CustomerController;
-import view.OverrideComponent.RoundedButton;
+import view.OtherComponent.CircularImage;
+import view.OtherComponent.RoundedButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,7 +53,7 @@ public class LoginFrame extends JFrame {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBorder(BorderFactory.createEmptyBorder(0, 50, 50, 50));
 
-            fitAva = new CircularImage("src/main/java/Icon/fit_nlu_logo.jpg",180,180);
+            fitAva = new CircularImage("src/main/java/Icon/fit_nlu_logo.jpg",180,180,false);
             fitAva.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             welcomeLabel = new JLabel(SignInGreeting);

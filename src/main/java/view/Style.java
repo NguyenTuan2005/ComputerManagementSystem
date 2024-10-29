@@ -9,6 +9,7 @@ public class Style {
 
     //manager frame
     public static final Font FONT_SIZE = new Font("Arial", Font.PLAIN, 15);
+    public static final Font FONT_SIZE_MENU_BUTTON = new Font("Arial", Font.BOLD, 15);
     public static final Font FONT_TEXT_TABLE = new Font("Arial", Font.PLAIN, 16);
     public static final Font FONT_HEADER_ROW_TABLE = new Font("Arial", Font.BOLD, 16);
     public static final Color ADD_BUTTON_COLOR_GREEN = new Color(100, 218, 77);// màu xanh cho nút thêm sp
@@ -29,4 +30,6 @@ public class Style {
     //customer frame
     public static final Font FONT_TEXT_CUSTOMER = new Font("Arial", Font.PLAIN, 18);
     public static final Font FONT_BUTTON_CUSTOMER = new Font("Arial", Font.BOLD, 16);
+    public static final Font FONT_TITLE_PRODUCT = new Font("Arial", Font.BOLD, 24);
+
 }

@@ -249,7 +249,7 @@ public class ManagerMainPanel extends JPanel {
 
 
     class CustomerPanel extends JPanel {
-        JButton addBt, deleteBt, editBt, importExcelBt, exportExcelBt, sortAscBt,sortDescBt, searchBt;
+        JButton addBt, deleteBt, editBt, importExcelBt, exportExcelBt, sortAscBt,sortDescBt, searchBt, refreshBt;
         JTextField searchTextField;
 
         final String[] customerColumnNames ={"Serial Number","Customer ID:", "Customer Name:", "Phone number:", "Email", "Address:", "Order Date:"};
@@ -268,7 +268,8 @@ public class ManagerMainPanel extends JPanel {
             gbc.gridy = 0;  // hàng đầu tiên
             gbc.weightx = 1.0;
             //row 1; 6 tool button
-            addBt = new JButton("Add New Customer");
+            addBt = new JButton("Add New");
+            setStyleButton(addBt,Style.FONT_SIZE,Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(80, 30));
             addBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
 
@@ -277,7 +278,8 @@ public class ManagerMainPanel extends JPanel {
             gbc.gridx =0;
             add(addBt,gbc);
 
-            deleteBt = new JButton("Delete Customer");
+            deleteBt = new JButton("Delete");
+            setStyleButton(deleteBt,Style.FONT_SIZE,Color.white, Style.DELETE_BUTTON_COLOR_RED, SwingConstants.CENTER, new Dimension(100, 30));
             deleteBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
 
@@ -287,6 +289,7 @@ public class ManagerMainPanel extends JPanel {
             add(deleteBt,gbc);
 
             editBt = new JButton("Edit Info");
+            setStyleButton(editBt,Style.FONT_SIZE,Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(80, 30));
             editBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
 
@@ -295,45 +298,60 @@ public class ManagerMainPanel extends JPanel {
             gbc.gridx =2;
             add(editBt,gbc);
 
-            importExcelBt = new JButton("Import Excel");
-            importExcelBt.addActionListener(new ActionListener() {
+            refreshBt = new JButton("Refresh");
+            setStyleButton(refreshBt,Style.FONT_SIZE,Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(100, 30));
+            refreshBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
 
                 }
             });
             gbc.gridx =3;
+            add(refreshBt,gbc);
+
+            importExcelBt = new JButton("Import Excel");
+            setStyleButton(importExcelBt,Style.FONT_SIZE,Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(100, 30));
+            importExcelBt.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+
+                }
+            });
+            gbc.gridx =0;
+            gbc.gridy =1;
             add(importExcelBt,gbc);
 
             exportExcelBt = new JButton("Export Excel");
+            setStyleButton(exportExcelBt,Style.FONT_SIZE,Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(100, 30));
             exportExcelBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
 
                 }
             });
-            gbc.gridx =4;
+            gbc.gridx =1;
             add(exportExcelBt,gbc);
 
             sortAscBt = new JButton("Sort Ascending");
+            setStyleButton(sortAscBt,Style.FONT_SIZE,Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(100, 30));
             sortAscBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
 
                 }
             });
-            gbc.gridx =5;
+            gbc.gridx =2;
             add(sortAscBt,gbc);
 
             sortDescBt = new JButton("Sort descending");
+            setStyleButton(sortDescBt,Style.FONT_SIZE,Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(100, 30));
             sortDescBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
 
                 }
             });
-            gbc.gridx =6;
+            gbc.gridx =3;
             add(sortDescBt,gbc);
 
             // row 2: textfield and search button
-            gbc.gridx = 2;
-            gbc.gridy = 1;
+            gbc.gridx = 4;
+            gbc.gridy = 0;
             gbc.gridwidth = 2;  // TextField chiếm 3 cột (cột 2, 3, 4)
             gbc.weightx = 1.0;  // giúp TextField giãn khi khung phóng to
             gbc.anchor = GridBagConstraints.CENTER;
@@ -362,6 +380,7 @@ public class ManagerMainPanel extends JPanel {
             });
             add(searchTextField,gbc);
 
+
             searchBt = new JButton();
             setStyleButton(searchBt, Style.FONT_TEXT_CUSTOMER, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(68, 38));
             setIconSmallButton("src/main/java/Icon/search_Icon.png", searchBt);
@@ -370,8 +389,9 @@ public class ManagerMainPanel extends JPanel {
 
                 }
             });
-            gbc.gridx = 4;  // cột 5 (do GridBagLayout tính từ 0)
-            gbc.gridwidth = 1;  // chỉ chiếm 1 cột
+            gbc.gridx = 6;
+            gbc.gridy = 0;
+            gbc.gridwidth = 1;
             add(searchBt, gbc);
         // add table
             tableCustomer = createTable(modelCustomer,headerCustomer, customerColumnNames);

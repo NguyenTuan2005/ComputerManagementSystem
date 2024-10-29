@@ -1,5 +1,7 @@
 package view;
 
+import view.OtherComponent.CircularImage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -53,15 +55,16 @@ public class ManagerMenuPanel extends JPanel {
 //            role.setHorizontalAlignment(JLabel.CENTER);
 //            role.setForeground(Color.GREEN);
 //            add(role, BorderLayout.NORTH);
-            avatar = new CircularImage("src/main/java/Icon/dragon_Icon.png",60,60);
+            avatar = new CircularImage("src/main/java/img/anhDuyVipPro.png",80,80,true);
             avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(avatar);
 
-            name = new JLabel("Put your name in here");
+            name = new JLabel("DDARGoon");
             name.setAlignmentX(Component.CENTER_ALIGNMENT);
-            name.setForeground(Color.GREEN);
-            name.setFont(new Font("Arial", Font.PLAIN, 25));
-
+//            name.setForeground(new Color(9, 105, 6));
+//            name.setForeground(new Color(6, 68, 3));
+            name.setForeground(new Color(7, 59, 3));
+            name.setFont(new Font("Arial", Font.BOLD, 25));
 
             add(name);
         }
@@ -140,7 +143,7 @@ public class ManagerMenuPanel extends JPanel {
         that.setFocusable(false);
         that.setBackground(Style.BACKGROUND_COLOR);
         that.setForeground(Style.WORD_COLOR_WHITE);
-        that.setFont(Style.FONT_SIZE);
+        that.setFont(Style.FONT_SIZE_MENU_BUTTON);
         that.setHorizontalAlignment(SwingConstants.LEFT);
         that.setBorderPainted(false);
     }

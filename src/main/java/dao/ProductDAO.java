@@ -45,7 +45,7 @@ public class ProductDAO implements Repository<Product> {
 
     @Override
     public Product findById(int id) {
-        String sql = "SELECT * FROM product WHERE id = ?";
+        String sql = "SELECT * FROM product WHERE id = ? AND delete_row = 1";
         Product product = new Product();
         ArrayList<Product> products = new ArrayList<>();
         try {
@@ -64,7 +64,8 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public ArrayList<Product> getAll() {
         ArrayList<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM product";
+        String sql = "SELECT * FROM product WHERE delete_row = 1";
+
         try {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
@@ -81,7 +82,7 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public ArrayList<Product> findByName(String name) {
 //        LOWER(product_name) LIKE LOWER('%từ_khóa_tìm_kiếm%')
-        String sql = "SELECT * FROM  product WHERE LOWER(name) LIKE LOWER(?)";
+        String sql = "SELECT * FROM  product WHERE LOWER(name) LIKE LOWER(?) AND delete_row = 1";
         ArrayList<Product> products = new ArrayList<>();
         try {
             preparedStatement = connection.prepareStatement(sql);
@@ -100,7 +101,7 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product findOneByName(String name) {
         try {
-            String sql = "SELECT * FROM product WHERE LOWER(name) LIKE LOWER(?)";
+            String sql = "SELECT * FROM product WHERE LOWER(name) LIKE LOWER(?) AND delete_row = 1";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, "%" + name + "%");
             ResultSet rs = preparedStatement.executeQuery();
@@ -124,7 +125,7 @@ public class ProductDAO implements Repository<Product> {
     public Product update(Product product) {
         try {
             String sql = "UPDATE product SET suppliers_id = ?, name = ?, quality = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? WHERE id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement = connection.prepareStatement(sql);
             setProductParameters(preparedStatement, product);
             preparedStatement.setInt(13,product.getId());
             preparedStatement.executeUpdate();
@@ -134,6 +135,20 @@ public class ProductDAO implements Repository<Product> {
         return product;
     }
 
+    public void setDeleteRow(int id , boolean status){
+        //UPDATE product SET delete_row = 0 WHERE id = 3
+        String sql = "UPDATE product SET delete_row = ? WHERE id = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, status?1:0);
+            preparedStatement.setInt(2,id);
+            preparedStatement.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Deprecated
     @Override
     public boolean remove(int id) {
         return false;
@@ -154,6 +169,7 @@ public class ProductDAO implements Repository<Product> {
         product.setRam(rs.getString("ram"));
         product.setMadeIn(rs.getString("made_in"));
         product.setStatus(rs.getString("status"));
+        product.setDeleteRow(rs.getInt("delete_row"));
         return product;
     }
 
@@ -170,6 +186,11 @@ public class ProductDAO implements Repository<Product> {
         preparedStatement.setString(10, product.getRam());
         preparedStatement.setString(11, product.getMadeIn());
         preparedStatement.setString(12, product.getStatus());
+    }
+
+    public static void main(String[] args) {
+        ProductDAO p = new ProductDAO();
+        p.setDeleteRow(3, false);
     }
 
 }

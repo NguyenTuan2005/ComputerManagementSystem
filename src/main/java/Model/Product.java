@@ -38,7 +38,9 @@ public class Product {
 
     private String status;
 
-    public Product(int suppliersId, String name, int quality, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status) {
+    private int deleteRow;
+
+    public Product(int suppliersId, String name, int quality, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status,int deleteRow) {
         this.suppliersId = suppliersId;
         this.name = name;
         this.quality = quality;
@@ -51,6 +53,7 @@ public class Product {
         this.ram = ram;
         this.madeIn = madeIn;
         this.status = status;
+        this.deleteRow= deleteRow;
     }
     private  String [] convertToArray(int serial){
         String []  result =  {String.valueOf(serial)
@@ -66,7 +69,7 @@ public class Product {
                 , ram
                 , madeIn
                 , status };
-        System.out.println(Double.toString(price));
+//        System.out.println(Double.toString(price));
         return result;
     }
 

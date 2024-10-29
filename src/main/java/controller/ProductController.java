@@ -20,6 +20,10 @@ public class ProductController {
         return productDAO.getAll();
     }
 
+    public void setDeleteRow(int id , boolean status){
+        productDAO.setDeleteRow(id,status);
+    }
+
     public static void main(String[] args) {
         ProductController p = new ProductController();
         System.out.println(p.getAll());

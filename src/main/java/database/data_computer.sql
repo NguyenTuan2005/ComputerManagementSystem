@@ -71,17 +71,18 @@ VALUES
 
 
 insert into manager(fullname,address,birthday,phone_number)
-values ('James Nguyen','nlu tpHCM','09-09-2005','0398167244')
+values ('admin', 'nlu tpHCM','09-09-2005','0398167244')
+     ,('James Nguyen','nlu tpHCM','09-09-2005','0398167244')
      ,('Henry Phan','nlu tpHCM','07-28-2005','0978234879')
      ,('Thaniel Nguyen','nlu tpHCM','04-21-2005','0936482635');
 
 
 insert into account(username ,password,email,create_date, manage_id)
-values
-    ('admin','123','duynguyenavg@gmail.com','10-21-2024',1)
-     ,('james','123','23130075@gmail.com','10-21-2024',2)
-     ,('henry','123','23130117@gmail.com','10-21-2024',3)
-     ,('thaniel','123','23130370@gmail.com','10-21-2024',4);
-select *from account
+values -- password is "123"
+    ('admin','$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO','duynguyenavg@gmail.com','10-21-2024',1)
+     ,('james','$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO','23130075@gmail.com','10-21-2024',2)
+     ,('henry','$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO','23130117@gmail.com','10-21-2024',3)
+     ,('thaniel','$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO','23130370@gmail.com','10-21-2024',4);
+select *from account;
 
 

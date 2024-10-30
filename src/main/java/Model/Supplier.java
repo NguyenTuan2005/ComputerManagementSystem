@@ -2,6 +2,7 @@ package Model;
 
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 @ToString
@@ -30,5 +31,25 @@ public class Supplier {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.contactDate = contactDate;
+    }
+
+    public static String [][] getData(ArrayList<Supplier> suppliers){
+        String [][] datas = new String[suppliers.size()][];
+        for (int i = 0; i < suppliers.size() ; i++) {
+            datas[i]= suppliers.get(i).convertToArray(i);
+        }
+        return datas;
+    }
+
+    private String[] convertToArray(int serial) {
+        String[] result = {String.valueOf(serial),
+                            String.valueOf(id),
+                            companyName,
+                            email,
+                            phoneNumber,
+                            address,
+                            String.valueOf(contactDate)
+        };
+        return result;
     }
 }

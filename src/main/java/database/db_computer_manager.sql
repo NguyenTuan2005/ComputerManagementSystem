@@ -33,7 +33,7 @@ CREATE TABLE manager (
                          fullname VARCHAR(255),
                          address VARCHAR(255),
                          birthday DATE,
-                         phone_number VARCHAR(10)
+                         phone_number  VARCHAR(10)
 );
 
 CREATE TABLE customer (

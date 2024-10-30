@@ -1,5 +1,7 @@
 package view;
 
+import Config.CurrentUser;
+
 import view.OtherComponent.CircularImage;
 import javax.swing.*;
 import java.awt.*;
@@ -58,9 +60,9 @@ public class ManagerMenuPanel extends JPanel {
             avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(avatar);
 
-            name = new JLabel("Put your name in here");
+            name = new JLabel(CurrentUser.USER_NAME+" ");
             name.setAlignmentX(Component.CENTER_ALIGNMENT);
-            name.setForeground(Color.GREEN);
+            name.setForeground(Style.WORD_COLOR_WHITE);
             name.setFont(new Font("Arial", Font.PLAIN, 25));
 
 

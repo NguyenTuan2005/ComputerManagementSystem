@@ -1,5 +1,6 @@
 package view;
 
+import Config.CurrentUser;
 import controller.AccountController;
 import controller.CustomerController;
 import view.OtherComponent.CircularImage;
@@ -24,10 +25,8 @@ public class LoginFrame extends JFrame {
     final String SignUpGreeting = "Hello!";
     final String SignInGreeting = "Welcome back!";
 
-
     static final String CUSTOMER_ROLE ="Customer";
     static final String MANAGER_ROLE ="Manager";
-
 
     LoginFrame() {
         setLayout(new BorderLayout());

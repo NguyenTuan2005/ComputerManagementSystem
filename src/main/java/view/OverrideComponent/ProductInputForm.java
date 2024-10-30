@@ -232,19 +232,19 @@ public class ProductInputForm extends JFrame{
 
     private void addStyledComponents(JPanel panel, GridBagConstraints gbc) {
         Object[][] components = {
-//                {"Mã sản phẩm:", txtId},
-                {"Mã nhà cung cấp:", cmbSupplierId}, // Sử dụng JComboBox
-                {"Tên sản phẩm:", txtName},
-                {"Chất lượng:", txtQuality},
-                {"Giá:", txtPrice},
-                {"Thể loại:", txtGenre},
-                {"Thương hiệu:", txtBrand},
-                {"Hệ điều hành:", txtOS},
+
+                {"Suppler name:", cmbSupplierId},
+                {"Product name:", txtName},
+                {"Quality:", txtQuality},
+                {"Unit price:", txtPrice},
+                {"Genre:", txtGenre},
+                {"Brand:", txtBrand},
+                {"Operating system :", txtOS},
                 {"CPU:", txtCPU},
-                {"Bộ nhớ:", txtMemory},
+                {"Memory:", txtMemory},
                 {"RAM:", txtRAM},
-                {"Nơi sản xuất:", txtMadeIn},
-                {"Trạng thái:", cmbStatus}
+                {"Made in:", txtMadeIn},
+                {"Status:", cmbStatus}
         };
 
         int gridy = 0;

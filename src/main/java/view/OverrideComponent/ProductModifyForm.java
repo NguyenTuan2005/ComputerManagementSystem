@@ -174,7 +174,7 @@ public class ProductModifyForm extends JFrame {
         setCompany(suppliers, companyNames);
         firstDataOfCompany = ProductConfig.getKeyByValue(suppliersMap, product.getSuppliersId());
         firstDataOfStatus = product.getStatus();
-        System.out.println(firstDataOfCompany+"lkasjdhlaSKJFDHLAKSFDS");
+//        System.out.println(firstDataOfCompany+"lkasjdhlaSKJFDHLAKSFDS");
 
         cmbSupplierId = new JComboBox<>(companyNames);
         cmbSupplierId.setSelectedItem(firstDataOfCompany);
@@ -260,18 +260,18 @@ public class ProductModifyForm extends JFrame {
     private void addStyledComponents(JPanel panel, GridBagConstraints gbc) {
         Object[][] components = {
 //                {"Mã sản phẩm:", txtId},
-                {"Mã nhà cung cấp:", cmbSupplierId}, // Sử dụng JComboBox
-                {"Tên sản phẩm:", txtName},
-                {"Chất lượng:", txtQuality},
-                {"Giá:", txtPrice},
-                {"Thể loại:", txtGenre},
-                {"Thương hiệu:", txtBrand},
-                {"Hệ điều hành:", txtOS},
+                {"Suppler name:", cmbSupplierId}, // Sử dụng JComboBox
+                {"Product name:", txtName},
+                {"Quality:", txtQuality},
+                {"Unit price:", txtPrice},
+                {"Genre:", txtGenre},
+                {"Brand:", txtBrand},
+                {"Operating system :", txtOS},
                 {"CPU:", txtCPU},
-                {"Bộ nhớ:", txtMemory},
+                {"Memory:", txtMemory},
                 {"RAM:", txtRAM},
-                {"Nơi sản xuất:", txtMadeIn},
-                {"Trạng thái:", cmbStatus}
+                {"Made in:", txtMadeIn},
+                {"Status:", cmbStatus}
         };
 
         int gridy = 0;

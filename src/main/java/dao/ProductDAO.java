@@ -1,6 +1,7 @@
 package dao;
 
 import Config.DatabaseConfig;
+import Config.ProductConfig;
 import Model.Product;
 
 import java.sql.*;
@@ -192,7 +193,8 @@ public class ProductDAO implements Repository<Product> {
 
     public static void main(String[] args) {
         ProductDAO p = new ProductDAO();
-        p.setDeleteRow(3, false);
+//        System.out.println(p.getAll());
+        ProductConfig.exportToExcel(p.getAll(),"demo");
     }
 
 }

@@ -1,5 +1,11 @@
 package view;
 
+import Config.ButtonConfig;
+import Model.Product;
+import controller.ProductController;
+import dao.ProductDAO;
+import org.apache.poi.ss.formula.functions.DProduct;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -10,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ManagerMainPanel extends JPanel {
     OldLoginFrame loginFrame;
@@ -78,11 +86,10 @@ public class ManagerMainPanel extends JPanel {
             add(welcomeLabel, BorderLayout.CENTER);
         }
     }
-
-    //Hoang's code
+//duy    //Hoang's code
     class ProductPanel extends JPanel {
         ToolPanel toolPanel = new ToolPanel();
-        JButton addBt, modifyBt, deleteBt, sortBt, exportExcelBt, importExcelBt, searchBt;
+        JButton addBt, modifyBt, deleteBt, sortBt, exportExcelBt, importExcelBt, searchBt , reloadBt;
         JTextField findText;
 
         TablePanel tablePanel = new TablePanel();
@@ -92,76 +99,215 @@ public class ManagerMainPanel extends JPanel {
         JScrollPane scrollPaneProductTable;
         JTabbedPane tabbedPaneProductTable;
 
+        JPanel searchPanel , applicationPanel , mainPanel;
+        private static ProductController productController= new ProductController();
+        private  static   ArrayList<Product> productsAll = productController.getAll();
+
+
         public ProductPanel() {
             setLayout(new BorderLayout());
+            toolPanel.setBorder(BorderFactory.createTitledBorder("Tools"));
             add(toolPanel, BorderLayout.NORTH);
             add(tablePanel, BorderLayout.CENTER);
+
+
+
         }
 
         public class ToolPanel extends JPanel {
 
             public ToolPanel() {
-                setLayout(new FlowLayout());
-                setLayout(new FlowLayout(FlowLayout.CENTER));
-                setBackground(Style.BACKGROUND_COLOR);
-                addBt = new JButton("+ Add");
-                setStyleButton(addBt, Style.FONT_SIZE, Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.LEFT, new Dimension(80, 30));
+//                setLayout(new FlowLayout());
+                setLayout(new BorderLayout());
+                setBackground(Style.WORD_COLOR_WHITE);
+                addBt = new JButton("Add");
+                setStyleButton(addBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addBt);
+                addBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                addBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+
 
                 modifyBt = new JButton("Modify");
-                setStyleButton(modifyBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(80, 30));
+                setStyleButton(modifyBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", modifyBt );
+                modifyBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                modifyBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
-                deleteBt = new JButton("- Delete");
-                setStyleButton(deleteBt, Style.FONT_SIZE, Color.white, Style.DELETE_BUTTON_COLOR_RED, SwingConstants.LEFT, new Dimension(90, 30));
+                deleteBt = new JButton("Delete");
+                setStyleButton(deleteBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt);
+                deleteBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                deleteBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
+
+                //demo
                 sortBt = new JButton("Sort Asc");
-                setStyleButton(sortBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(100, 30));
+                setStyleButton(sortBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", sortBt);
+                sortBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                sortBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
 
                 exportExcelBt = new JButton("Export Excel");
-                setStyleButton(exportExcelBt, Style.FONT_SIZE, Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.LEFT, new Dimension(120, 30));
+                setStyleButton(exportExcelBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", exportExcelBt);
+                exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
                 importExcelBt = new JButton("Import Excel");
-                setStyleButton(importExcelBt, Style.FONT_SIZE, Color.white, Style.ADD_BUTTON_COLOR_GREEN, SwingConstants.LEFT, new Dimension(120, 30));
+                setStyleButton(importExcelBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", importExcelBt);
+                importExcelBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                importExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
                 findText = new JTextField();
-                findText.setPreferredSize(new Dimension(180, 30));
-                findText.setFont(Style.FONT_SIZE);
+                formatTextField(findText,new Font("Arial" ,0,24),Style.WORD_COLOR_BLACK,new Dimension(250, 45));
+                findText.addFocusListener(new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ "Search", nó sẽ biến mất
+                        if (findText.getText().equals("Search by name")) {
+                            findText.setText("");
+                            findText.setForeground(Color.BLACK);
+                        }
+                    }
 
-                searchBt = new JButton("Search");
-                setStyleButton(searchBt, Style.FONT_SIZE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(85, 30));
+                    @Override
+                    public void focusLost(FocusEvent e) {
+                        // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ "Search"
+                        if (findText.getText().isEmpty()) {
+                            findText.setForeground(Color.GRAY);
+                            findText.setText("Search by name");
+                        }
+                    }
+                });
 
-                add(addBt);
-                add(modifyBt);
-                add(deleteBt);
-                add(sortBt);
-                add(exportExcelBt);
-                add(importExcelBt);
-                add(findText);
-                add(searchBt);
+                searchBt = new JButton();
+                setStyleButton(searchBt, Style.FONT_SIZE, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
+                ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png",searchBt);
+
+                reloadBt = new JButton("reload");
+                setStyleButton( reloadBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                ButtonConfig.setIconBigButton("src/main/java/Icon/reload-icon.png",  reloadBt);
+                reloadBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                reloadBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+
+                searchPanel = new JPanel(new FlowLayout());
+                searchPanel.add(findText);
+                searchPanel.add(searchBt);
+                searchPanel.setBackground(Style.WORD_COLOR_WHITE);
+
+                applicationPanel = new JPanel(new FlowLayout());
+
+
+                applicationPanel.add(addBt);
+//                applicationPanel.add(ButtonConfig.createVerticalSeparator());
+                applicationPanel.add(deleteBt);
+                applicationPanel.add(ButtonConfig.createVerticalSeparator());
+                applicationPanel.add(modifyBt);
+//                applicationPanel.add(ButtonConfig.createVerticalSeparator());
+                applicationPanel.add(sortBt);
+                applicationPanel.add(ButtonConfig.createVerticalSeparator());
+                applicationPanel.add(exportExcelBt);
+//                applicationPanel.add(ButtonConfig.createVerticalSeparator());
+                applicationPanel.add(importExcelBt);
+                applicationPanel.add(ButtonConfig.createVerticalSeparator());
+                applicationPanel.add(reloadBt);
+                applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
+
+// layout
+                mainPanel = new JPanel(new GridBagLayout());
+                mainPanel.setBackground(Style.BACKGROUND_COLOR);
+                GridBagConstraints gbc = new GridBagConstraints();
+
+                // Cấu hình cho panel trái (căn về bên trái)
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                gbc.weightx = 1;
+                gbc.anchor = GridBagConstraints.WEST;
+                mainPanel.add(applicationPanel, gbc);
+
+                gbc.gridx = 1;
+                gbc.gridy = 0;
+                gbc.weightx = 0;
+                gbc.anchor = GridBagConstraints.EAST;
+                mainPanel.add(searchPanel, gbc);
+                mainPanel.setBackground(Style.WORD_COLOR_WHITE);
+
+                add(mainPanel);
+
+                // find application
+                searchBt.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println(findText.getText());
+                        if (findText.getText().trim().isEmpty())
+                            return;
+                        ArrayList<Product> products = productController.find(findText.getText().trim());
+                        if(products.isEmpty()){
+                            JOptionPane.showMessageDialog(tablePanel,"có caái ni");
+                            return;
+                        }
+                        TablePanel.upDataTable(products, modelProductTable);
+
+                    }
+                });
+
+                // reload application
+                reloadBt.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        TablePanel.upDataTable(productsAll, modelProductTable);
+                    }
+                });
             }
+
+
+
+
         }
 
         public class TablePanel extends JPanel {
             public TablePanel() {
                 setLayout(new BorderLayout());
-                setBackground(Style.BACKGROUND_COLOR);
-
+                setBackground(Style.WORD_COLOR_WHITE );
+                productController = new ProductController();
                 // data test thử:))
-                String[] rowData = {"1", "LP20", "Laptop ASUS TUF Gaming FX516PE", String.valueOf(650), String.valueOf(23990000L), "Laptop", "China", "Window", "Intel Core i5 12450H", String.valueOf(512), "8 GB", "Vietnam"};
-
+                ArrayList<Product> products = productController.getAll();
+                String[][] rowData =  Product.getDateOnTable(products);
+//                String [] product =(String) products.toArray();
 
                 tableProduct = createTable(modelProductTable, tableProductHeader, columnNamesPRODUCT);
                 tableProduct.setRowHeight(30);
                 resizeColumnWidth(tableProduct, 150);
 
-                modelProductTable = (DefaultTableModel) tableProduct.getModel(); // create model to store table data
-                modelProductTable.addRow(rowData);
+                modelProductTable = (DefaultTableModel) tableProduct.getModel();
 
+                ArrayList<Product> productsDemo = productController.getAll();
+                upDataTable(productsDemo,modelProductTable);
+
+//                modelProductTable.add
+                
                 scrollPaneProductTable = new JScrollPane(tableProduct);
                 tabbedPaneProductTable = createTabbedPane(scrollPaneProductTable, "Product for Sales", Style.FONT_HEADER_ROW_TABLE);
 
                 add(tabbedPaneProductTable, BorderLayout.CENTER);
             }
+            public static void removeDataTable( DefaultTableModel modelProductTable ){
+                modelProductTable.setRowCount(0);
+            }
+            public static void upDataTable(ArrayList<Product> products , DefaultTableModel modelProductTable) {
+
+                String[][] rowData =  Product.getDateOnTable(products);
+                TablePanel.removeDataTable(modelProductTable);
+                for(int i=0; i<rowData.length ; i++){
+                    modelProductTable.addRow(rowData[i]);
+                    System.out.println(products.get(i));
+                }
+            }
+
 
         }
     }
@@ -1767,7 +1913,7 @@ public class ManagerMainPanel extends JPanel {
 
         // Thiết lập table header
         tableHeader = table.getTableHeader();
-        tableHeader.setBackground(Color.LIGHT_GRAY);
+        tableHeader.setBackground(Style.MENU_BUTTON_COLOR_GREEN);
         tableHeader.setForeground(Color.BLACK);
         tableHeader.setReorderingAllowed(false);
         tableHeader.setFont(Style.FONT_HEADER_ROW_TABLE);
@@ -1783,5 +1929,7 @@ public class ManagerMainPanel extends JPanel {
         tabbedPane.setFocusable(false);
         return tabbedPane;
     }
+
+
 
 }

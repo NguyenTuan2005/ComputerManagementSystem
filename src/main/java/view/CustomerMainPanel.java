@@ -1,6 +1,7 @@
 package view;
 
 import Model.Product;
+import controller.ProductController;
 import view.OtherComponent.ToastNotification;
 
 import javax.swing.*;
@@ -9,17 +10,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
 
 public class CustomerMainPanel extends JPanel {
-
-    private JPanel containerPanel;
+    JPanel containerPanel;
     OldLoginFrame loginFrame;
-    CardLayout cardLayoutMain;
+    CardLayout cardLayout;
     WelcomePanel welcomePanel;
     ProductCatalogPanel productCatalogPanel;
     NotificationPanel notificationPanel;
     PurchasedPanel purchasedPanel;
-    int currentIndex = 0;
+
 
     static final String WELCOME_CONSTRAINT = "welcome";
     static final String PRODUCT_CATALOG_CONSTRAINT = "catalog";
@@ -30,27 +31,23 @@ public class CustomerMainPanel extends JPanel {
     //constructor
     public CustomerMainPanel() {
         this.loginFrame = loginFrame;
-        cardLayoutMain = new CardLayout();
+        cardLayout = new CardLayout();
         welcomePanel = new WelcomePanel();
         productCatalogPanel = new ProductCatalogPanel();
         notificationPanel = new NotificationPanel();
         purchasedPanel = new PurchasedPanel();
-        setLayout(cardLayoutMain);
+        setLayout(cardLayout);
         add(welcomePanel, WELCOME_CONSTRAINT);
         add(productCatalogPanel, PRODUCT_CATALOG_CONSTRAINT);
         add(purchasedPanel, PURCHASED_CONSTRAINT);
         add(notificationPanel, NOTIFICATION_CONSTRAINT);
 
-        cardLayoutMain.show(this, WELCOME_CONSTRAINT);
+        cardLayout.show(this, WELCOME_CONSTRAINT);
     }
 
     public void showPanel(String panelName) {
-        cardLayoutMain.show(this, panelName);
+        cardLayout.show(this, panelName);
     }
-
-//    public void showProduct(String title) {
-//        cardLayoutDisplayProduct.show(this, title);
-//    }
 
     class WelcomePanel extends JPanel {
         JLabel welcomeLabel, userNameForWelcome;
@@ -80,6 +77,8 @@ public class CustomerMainPanel extends JPanel {
         JButton cartBt, searchBt;
         JLabel shopName;
         JTextField searchTextField;
+        private static ProductController productController = new ProductController();
+        private static ArrayList<Product> productsAll = productController.getAll();
 
         public ProductCatalogPanel() {
             setLayout(new BorderLayout());
@@ -183,121 +182,118 @@ public class CustomerMainPanel extends JPanel {
 
             public void showProduct(String title) {
                 cardLayoutDisplayProduct.show(this, title);
-            };
+            }
+
 
             class DisplayProductList extends JPanel {
                 DisplayProductList() {
-                    setLayout(new BorderLayout());
                     //panel chính chứa các panel khác
+                    setLayout(new BorderLayout());
                     containerPanel = new JPanel(new GridBagLayout());
 
                     String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
                     String[] filePaths1 = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
-                    Product product1 = new Product(1, "Asus Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock");
-                    Product product2 = new Product(1, "MacBook Air M2 2023", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock");
-                    Product product3 = new Product(1, "MacBook Air M2 2023", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock");
-                    Product product4 = new Product(1, "MacBook Air M2 2023 super ultra pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock");
-                    Product product5 = new Product(1, "MacBook Air M2 2023 super ultra pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock");
-                    Product product6 = new Product(1, "MacBook Air M2 2023 super ultra pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock");
-                    Product product7 = new Product(1, "MacBook Air M2 2023 super ultra pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock");
-                    Product product8 = new Product(1, "MacBook Air M2 2023 super ultra pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock");
-
+                    Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock");
                     JPanel p1 = createNewPanel(filePaths, product1);
-                    JPanel p2 = createNewPanel(filePaths1, product2);
-                    JPanel p3 = createNewPanel(filePaths, product3);
-                    JPanel p4 = createNewPanel(filePaths, product4);
-                    JPanel p5 = createNewPanel(filePaths, product5);
-                    JPanel p6 = createNewPanel(filePaths, product6);
-                    JPanel p7 = createNewPanel(filePaths, product7);
-                    JPanel p8 = createNewPanel(filePaths, product8);
-
-
                     addNewPanelToContainer(p1);
-                    addNewPanelToContainer(p2);
-                    addNewPanelToContainer(p3);
-                    addNewPanelToContainer(p4);
-                    addNewPanelToContainer(p5);
-                    addNewPanelToContainer(p6);
-                    addNewPanelToContainer(p7);
-                    addNewPanelToContainer(p8);
+
+                    JPanel[] panels = new JPanel[10];
+
+
+                    for (int i = 0; i < panels.length; i++) {
+                        panels[i] = createNewPanel(filePaths1, productsAll.get(i));
+                        addNewPanelToContainer(panels[i]);
+                    }
 
 
                     scrollPane = new JScrollPane(containerPanel);
                     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
                     add(scrollPane, BorderLayout.CENTER);
+
                 }
             }
-
-
             class DisplaySingleProductPn extends JPanel {
-                JLabel image, productName;
-                JButton addToCart, backBt;
-
-
+                JLabel image, productName, price, status;
+                JButton addToCart, backBt, previousBt, nextBt;
                 Product product;
+
                 DisplaySingleProductPn() {
 //                    this.product =product;
-                    setLayout(new GridBagLayout());
-                    setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2));
-
+                    setLayout(new GridLayout(1, 3));
+                    JPanel imagePn = new JPanel(new GridBagLayout());
                     GridBagConstraints gbc = new GridBagConstraints();
-                    gbc.insets = new Insets(5, 5, 10, 5);
-                    backBt = new JButton("Back");
+                    gbc.insets = new Insets(5, 5, 5, 5);
+
+                    backBt = new JButton("Back");// button back to catalog screen
                     backBt.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             showProduct("list");
                         }
                     });
+                    JPanel backPn = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    backPn.add(backBt);
                     gbc.gridx = 0;
                     gbc.gridy = 0;
                     gbc.gridwidth = 1;
-                    add(backBt,gbc);
+                    imagePn.add(backPn, gbc);
 
-                    image = new JLabel(createImageForProduct("src/main/java/Icon/laptopAsus1.jpg",250,250));
-
-                    image.setHorizontalAlignment(JLabel.CENTER);
+                    image = new JLabel(createImageForProduct("src/main/java/Icon/laptopAsus1.jpg", 400, 400));// create image of product
                     gbc.gridx = 0;
-                    gbc.gridy = 1;
-                    gbc.gridwidth = 2;
-                    gbc.anchor = GridBagConstraints.CENTER;
-                    add(image, gbc);
+                    gbc.gridy = 2;
+                    gbc.gridwidth = 4;
+                    imagePn.add(image, gbc);
 
+                    // 2 button switching between product image
+                    previousBt = new JButton("Previous");
+                    setStyleButton(previousBt, Style.FONT_BUTTON_CUSTOMER, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, SwingConstants.CENTER, new Dimension(150, 30));
+                    nextBt = new JButton("Next");
+                    setStyleButton(nextBt, Style.FONT_BUTTON_CUSTOMER, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, SwingConstants.CENTER, new Dimension(150, 30));
+                    JPanel switchPn = new JPanel(new FlowLayout(FlowLayout.CENTER));
+                    switchPn.add(previousBt);
+                    switchPn.add(nextBt);
+                    gbc.gridx = 0;
+                    gbc.gridy = 3;
+                    gbc.gridwidth = 4;
+                    imagePn.add(switchPn, gbc);
+                    add(imagePn);
 
-                    JPanel centerPanel = new JPanel();
-                    centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS)); // Sắp xếp theo chiều dọc
-                    centerPanel.add(new JLabel("Product ID: labsdkhafhkahfvyavf"));
-                    centerPanel.add(new JLabel("Product Name: àddkhchawvfjwevjhds"));
-                    centerPanel.add(new JLabel("Price: ằefssadf"));
-                    centerPanel.add(new JLabel("Quantity:àasffadfasdf"));
-                    centerPanel.add(new JLabel("Description:âfsdfasffafs"));
-                    gbc.gridx =2;
-                    gbc.gridy = 1;
-                    gbc.gridwidth = 2;
-                    gbc.anchor = GridBagConstraints.CENTER;
-                    add(centerPanel, gbc);
+                    // display more details of product
+                    JPanel productDetailsPn = new JPanel(new GridLayout(8, 1));
+                    productDetailsPn.setPreferredSize(new Dimension(200, 500));
 
+                    JLabel spaceLabel = new JLabel("");
+                    spaceLabel.setPreferredSize(new Dimension(200, 60));
+                    productDetailsPn.add(spaceLabel);
 
-                    JPanel rightPanel = new JPanel();
-                    rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS)); // Sắp xếp theo chiều dọc
-                    JLabel infoLabel = new JLabel("Thông tin thêm");
-                    JButton actionButton = new JButton("Add to Cart");
-                    rightPanel.add(infoLabel);
-                    rightPanel.add(Box.createVerticalStrut(10)); // Khoảng cách giữa label và button
-                    rightPanel.add(actionButton);
-                    gbc.gridx =4;
-                    gbc.gridy = 1;
-                    gbc.gridwidth = 2;
-                    gbc.anchor = GridBagConstraints.CENTER;
-                    add(rightPanel, gbc);
+                    String[] attributes = {"Brand: ", "Operating System: ", "CPU: ", "Memory: ", "RAM: ", "Made In: ", "Genre: "};
 
+                    productName = new JLabel("<html>" + " Asus Ultra Vip pro super hehe :O " + "<html>");
+                    productName.setFont(Style.FONT_BUTTON_LOGIN_FRAME);
+                    productDetailsPn.add(productName);
+
+                    for (int i = 0; i < attributes.length; i++) {
+                        JLabel lb = new JLabel(attributes[i] + ": " + "unknown");
+                        lb.setFont(Style.FONT_TEXT_LOGIN_FRAME);
+                        productDetailsPn.add(lb);
+                    }
+                    add(productDetailsPn);
+                    //payment pn
+                    JPanel paymentPn = new JPanel(new BoxLayout(this,BoxLayout.Y_AXIS));
+
+                    price = new JLabel("$ "+" 100000000");
+                    price.setFont(Style.FONT_BUTTON_LOGIN_FRAME);
+                    price.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                    paymentPn.add(price);
+
+                    status = new JLabel("<html>Status: <br>"+"in stock"+"<html>");
+                    status.setFont(Style.FONT_BUTTON_LOGIN_FRAME);
+
+                    paymentPn.add(status);
 
 
                 }
-
-
             }
-
 
             class AddToCartPn extends JPanel {
                 JButton backBt;
@@ -318,8 +314,6 @@ public class CustomerMainPanel extends JPanel {
         public PurchasedPanel() {
             setLayout(new BorderLayout());
             add(new JLabel("PurchasedPanel is Coming soonnnnnnn!"));
-
-
         }
     }
 
@@ -331,22 +325,23 @@ public class CustomerMainPanel extends JPanel {
         }
     }
 
-    private void setIconBigButton(String filePath, JButton that) {
-        ImageIcon iconButton = new ImageIcon(filePath);
+    private void setIconBigButton(String url, JButton that) {
+        ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();
         Image resizedImage = image.getScaledInstance(buttonSize.height - 35, buttonSize.height - 35, java.awt.Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
     }
 
-    private void setIconSmallButton(String filePath, JButton that) {
-        ImageIcon iconButton = new ImageIcon(filePath);
+    private void setIconSmallButton(String url, JButton that) {
+        ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();
         Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
     }
 
+    // duy
     private static void setStyleButton(JButton that, Font font, Color textColor, Color backgroundColor, int textPosition, Dimension size) {
         that.setBackground(backgroundColor);
         that.setFont(font);
@@ -365,7 +360,6 @@ public class CustomerMainPanel extends JPanel {
         return new ImageIcon(scaledImg);
     }
 
-
     public void addNewPanelToContainer(JPanel panel) {
         panel.setPreferredSize(new Dimension(320, 550));
         panel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE));
@@ -380,7 +374,7 @@ public class CustomerMainPanel extends JPanel {
         this.containerPanel.repaint();
     }
 
-    // panel hiện thị từng sản phẩm
+    // panel chứa thông tin từng sản phẩm
     public JPanel createNewPanel(String[] filePaths, Product product) {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -430,7 +424,7 @@ public class CustomerMainPanel extends JPanel {
         panel.add(switchPn, gbc);
 
         // Từ hàng thứ hai: thông tin sản phẩm (căn giữa)
-        JLabel productName = new JLabel("<html>" + product.getName() + "<html>");
+        JLabel productName = new JLabel("<html>" + product.getName() + "<html>");// product Name
         productName.setFont(Style.FONT_TITLE_PRODUCT);
         gbc.gridx = 0;
         gbc.gridwidth = 2;

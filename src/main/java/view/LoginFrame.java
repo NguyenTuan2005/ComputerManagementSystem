@@ -1,5 +1,7 @@
 package view;
 
+import controller.AccountController;
+import controller.CustomerController;
 import view.OtherComponent.CircularImage;
 import view.OtherComponent.RoundedButton;
 
@@ -22,8 +24,10 @@ public class LoginFrame extends JFrame {
     final String SignUpGreeting = "Hello!";
     final String SignInGreeting = "Welcome back!";
 
+
     static final String CUSTOMER_ROLE ="Customer";
     static final String MANAGER_ROLE ="Manager";
+
 
     LoginFrame() {
         setLayout(new BorderLayout());
@@ -55,6 +59,7 @@ public class LoginFrame extends JFrame {
 
             fitAva = new CircularImage("src/main/java/Icon/fit_nlu_logo.jpg",180,180,false);
             fitAva.setAlignmentX(Component.CENTER_ALIGNMENT);
+
 
             welcomeLabel = new JLabel(SignInGreeting);
             welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -245,6 +250,7 @@ public class LoginFrame extends JFrame {
         }
     }
 
+
     class SignInPanel extends JPanel {
         private LoginFrame loginFrame;
 
@@ -261,6 +267,7 @@ public class LoginFrame extends JFrame {
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(10, 10, 10, 10);
             gbc.fill = GridBagConstraints.HORIZONTAL;
+
 
             // Sign In label
             signInLabel = new JLabel("       Sign In");
@@ -350,33 +357,41 @@ public class LoginFrame extends JFrame {
             signInButton.setForeground(Color.WHITE);
             signInButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+                    String username= nameField.getText();
+                    String password= new String( passwdFieldSignin.getPassword());
+                    String email ="";
                     switch ((String) roleComboBox.getSelectedItem()) {
                         case MANAGER_ROLE: {
-                            loginFrame.setVisible(false);
-                            managerFrame =new ManagerFrame();
-//                            AccountController accountController = new AccountController();
-//                            System.out.println(accountController.isValidAccount(username, password));
-//                            if (accountController.isValidAccount(username, password)){
-//                                loginFrame.setVisible(false);
-//                                managerFrame = new ManagerFrame();
-//                            } else
-//                                sayError("You have entered the Wrong username or password, please try again!");
-//
-//                            break;
+
+                            AccountController accountController = new AccountController();
+                            System.out.println(accountController.isValidAccount(username, password));
+                            if (accountController.isValidAccount(username, password)){
+                                loginFrame.setVisible(false);
+                                managerFrame = new ManagerFrame();
+                            } else {
+                                sayError("You have entered the Wrong username or password, please try again!");
+                                loginFrame.setVisible(true);
+                            }
+                            break;
                         }
                         case CUSTOMER_ROLE: {
                             loginFrame.setVisible(false);
-//                            customerFrame =new CustomerFrame();
-//                            CustomerController customerController = new CustomerController();
-//                            if (customerController.isValidAccount(email ,password)){
-//                                loginFrame.setVisible(false);
+                            CustomerController customerController = new CustomerController();
+                            if (customerController.isValidAccount(email ,password)){
+                                loginFrame.setVisible(false);
+                                managerFrame = new ManagerFrame();
 //                                userFrame = new CustomerFrame(loginFrame);
-//                            } else
-//                                sayError("You have entered the Wrong email or password, please try again!");
-//                            break;
+                            } else
+                                sayError("You have entered the Wrong email or password, please try again!");
+                            break;
                         }
 
                     }
+                }
+                private void sayError( String message){
+                    JOptionPane.showMessageDialog(loginFrame, message, "Error", JOptionPane.ERROR_MESSAGE);
+                    passwdFieldSignin.setText("");
+                    nameField.setText("");
                 }
             });
 

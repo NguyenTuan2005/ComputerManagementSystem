@@ -29,6 +29,7 @@ public class CircularImage extends JLabel {
 		}
 	}
 
+
 	private BufferedImage createCircularImage(BufferedImage image, BufferedImage tickImage, int width, int height) {
 		int diameter = Math.min(width, height);
 

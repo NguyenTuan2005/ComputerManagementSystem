@@ -242,7 +242,7 @@ public class LoginFrame extends JFrame {
             signUpButton = new RoundedButton("Sign Up");
             formatRoundedButton(signUpButton, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.FONT_BUTTON_LOGIN_FRAME, new Dimension(200, 40));
             signUpButton.setBackground(new Color(0, 153, 102));
-            signUpButton.setForeground(Color.WHITE);
+            signUpButton.setForeground(Style.WORD_COLOR_WHITE);
             signUpButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     JOptionPane.showMessageDialog(loginFrame, "Em chưa làm:(((", "", JOptionPane.INFORMATION_MESSAGE);

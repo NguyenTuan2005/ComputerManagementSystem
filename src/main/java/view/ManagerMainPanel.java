@@ -5,7 +5,12 @@ import Model.Product;
 import Model.Supplier;
 import controller.ProductController;
 import view.OverrideComponent.ProductInputForm;
+<<<<<<< HEAD
+import view.OverrideComponent.ProductModifyForm;
+
+=======
 import controller.SupplierController;
+>>>>>>> 4f9b9b4a950543efb47d22c487e1bfb89410df03
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -145,7 +150,23 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", modifyBt );
                 modifyBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 modifyBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                modifyBt.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int selectedRow = tableProduct.getSelectedRow();
+                        int columnIndex = 1;
+                        if (selectedRow != -1) {
+                            Object value = tableProduct.getValueAt(selectedRow, columnIndex);
 
+                            int productId = Integer.parseInt(value.toString());
+                            System.out.println("delete row : "+productId);
+                            SwingUtilities.invokeLater(() -> {
+                                new ProductModifyForm(productsAll.get(selectedRow)).setVisible(true);
+                            });
+
+                        }
+                    }
+                });
                 deleteBt = new JButton("Delete");
                 ButtonConfig.addButtonHoverEffect(deleteBt,Style.BUTTON_COLOR_HOVER,Style.WORD_COLOR_WHITE);
                 setStyleButton(deleteBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));

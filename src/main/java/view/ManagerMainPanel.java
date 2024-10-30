@@ -4,6 +4,7 @@ import Config.ButtonConfig;
 import Model.Product;
 import Model.Supplier;
 import controller.ProductController;
+import view.OverrideComponent.ProductInputForm;
 import controller.SupplierController;
 
 import javax.swing.*;
@@ -104,12 +105,6 @@ public class ManagerMainPanel extends JPanel {
         private  static   ArrayList<Product> productsAll = reloadData(productController);
 
 //       String [] sortsStyle = {"SORT BY PRICE", "SORT BY RAM", "SORT BY MEMORY", "SORT BY NAME"};
-
-
-
-
-
-
         // reload method
         private static ArrayList<Product> reloadData( ProductController productController ){
             return productController.getAll();
@@ -132,18 +127,27 @@ public class ManagerMainPanel extends JPanel {
                 setLayout(new BorderLayout());
                 setBackground(Style.WORD_COLOR_WHITE);
                 addBt = new JButton("Add");
+                ButtonConfig.addButtonHoverEffect(addBt,Style.BUTTON_COLOR_HOVER,Style.WORD_COLOR_WHITE);
                 setStyleButton(addBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addBt);
                 addBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 addBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                addBt.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        new ProductInputForm();
+                    }
+                });
 
                 modifyBt = new JButton("Modify");
+                ButtonConfig.addButtonHoverEffect(modifyBt,Style.BUTTON_COLOR_HOVER,Style.WORD_COLOR_WHITE);
                 setStyleButton(modifyBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", modifyBt );
                 modifyBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 modifyBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
                 deleteBt = new JButton("Delete");
+                ButtonConfig.addButtonHoverEffect(deleteBt,Style.BUTTON_COLOR_HOVER,Style.WORD_COLOR_WHITE);
                 setStyleButton(deleteBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt);
                 deleteBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
@@ -160,11 +164,6 @@ public class ManagerMainPanel extends JPanel {
                             int productId = Integer.parseInt(value.toString());
                             productController.setDeleteRow(productId , false);
                             modelProductTable.removeRow(selectedRow);
-
-
-
-
-
                         }
                     }
                 });
@@ -172,6 +171,7 @@ public class ManagerMainPanel extends JPanel {
 
                 //demo
                 sortBt = new JButton("Sort Asc");
+                ButtonConfig.addButtonHoverEffect(sortBt,Style.BUTTON_COLOR_HOVER,Style.WORD_COLOR_WHITE);
                 setStyleButton(sortBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/request-quote.238x256.png", sortBt);
                 sortBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
@@ -179,12 +179,14 @@ public class ManagerMainPanel extends JPanel {
 
 
                 exportExcelBt = new JButton("Export Excel");
+                ButtonConfig.addButtonHoverEffect(exportExcelBt,Style.BUTTON_COLOR_HOVER,Style.WORD_COLOR_WHITE);
                 setStyleButton(exportExcelBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt);
                 exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
                 importExcelBt = new JButton("Import Excel");
+                ButtonConfig.addButtonHoverEffect(importExcelBt,Style.BUTTON_COLOR_HOVER,Style.WORD_COLOR_WHITE);
                 setStyleButton(importExcelBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-export-excel-50.png", importExcelBt);
                 importExcelBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
@@ -223,10 +225,12 @@ public class ManagerMainPanel extends JPanel {
                 });
 
                 searchBt = new JButton();
+                ButtonConfig.addButtonHoverEffect(searchBt,Style.BUTTON_COLOR_HOVER,Style.WORD_COLOR_WHITE);
                 setStyleButton(searchBt, Style.FONT_SIZE, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
                 ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png",searchBt);
 
                 reloadBt = new JButton("reload");
+                ButtonConfig.addButtonHoverEffect(reloadBt,Style.BUTTON_COLOR_HOVER,Style.WORD_COLOR_WHITE);
                 setStyleButton( reloadBt , Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/reload-icon.png",  reloadBt);
                 reloadBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang

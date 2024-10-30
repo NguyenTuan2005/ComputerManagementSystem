@@ -1,4 +1,5 @@
-package view;
+package view.OverrideComponent;
+import Config.ButtonConfig;
 import Model.Product;
 import Model.Supplier;
 import dao.ProductDAO;
@@ -9,15 +10,13 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ProductInputForm extends JFrame {
-    private JTextField txtId;
-    private JComboBox<String> cmbSupplierId; // Thay txtSupplierId thành JComboBox
+public class ProductInputForm extends JFrame{
+
+    private JComboBox<String> cmbSupplierId;
     private JTextField txtName;
     private JTextField txtQuality;
     private JTextField txtPrice;
@@ -31,7 +30,12 @@ public class ProductInputForm extends JFrame {
     private JComboBox<String> cmbStatus;
     private JButton btnSave;
     private JButton btnClear;
+    private JButton btnExit;
     private SupplierDAO supplierDAO;
+    private ProductDAO productDAO;
+    private int supplierId ;
+
+    private Map<String,Integer> suppliersMap;
 
     // Định nghĩa các màu sắc
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
@@ -42,39 +46,48 @@ public class ProductInputForm extends JFrame {
     private final Color BUTTON_HOVER_COLOR = new Color(52, 152, 219);
 
     public ProductInputForm() {
-        // Thiết lập JFrame
-        setTitle("QUẢN LÝ SẢN PHẨM");
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setUndecorated(true);
+        setTitle("Add product");
+        setSize(900, 750);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
-        getContentPane().setBackground(BACKGROUND_COLOR);
+        setVisible(true);
 
-        // Tạo panel chính
+        getContentPane().setBackground(BACKGROUND_COLOR);
+        setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
+//        setSize(800,800);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Custom behavior when trying to close the window
+                JOptionPane.showMessageDialog(null, "Use the Save or Reload button to manage the window.");
+            }
+        });
+//        setUndecorated(true);
+
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(BACKGROUND_COLOR);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Panel tiêu đề
+
         JPanel titlePanel = createTitlePanel();
 
-        // Panel nội dung
+
         JPanel contentPanel = createContentPanel();
 
-        // Panel nút
+
         JPanel buttonPanel = createButtonPanel();
 
-        // Thêm các panel vào panel chính
         mainPanel.add(titlePanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         mainPanel.add(contentPanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         mainPanel.add(buttonPanel);
 
-        // Thêm panel chính vào JFrame
-        add(new JScrollPane(mainPanel));
+        add(mainPanel);
 
-        // Cài đặt look and feel
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             SwingUtilities.updateComponentTreeUI(this);
@@ -83,11 +96,12 @@ public class ProductInputForm extends JFrame {
         }
     }
 
+
     private JPanel createTitlePanel() {
         JPanel panel = new JPanel();
         panel.setBackground(BACKGROUND_COLOR);
 
-        JLabel titleLabel = new JLabel("THÔNG TIN SẢN PHẨM");
+        JLabel titleLabel = new JLabel("PRODUCT INFORMATION");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(PRIMARY_COLOR);
         panel.add(titleLabel);
@@ -107,18 +121,15 @@ public class ProductInputForm extends JFrame {
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Khởi tạo components với style
         initializeStyledComponents();
 
-        // Thêm components vào panel với layout
         addStyledComponents(panel, gbc);
 
         return panel;
     }
 
     private void initializeStyledComponents() {
-        // Khởi tạo các JTextField còn lại
-        txtId = createStyledTextField();
+
         txtName = createStyledTextField();
         txtQuality = createStyledTextField();
         txtPrice = createStyledTextField();
@@ -130,29 +141,45 @@ public class ProductInputForm extends JFrame {
         txtRAM = createStyledTextField();
         txtMadeIn = createStyledTextField();
         supplierDAO = new SupplierDAO();
+        productDAO = new ProductDAO();
 
         // Khởi tạo JComboBox cho Supplier ID với các lựa chọn
         ArrayList<Supplier> suppliers = supplierDAO.getAll();
+        suppliersMap= new HashMap<>();
+        setMapCompany(suppliers, suppliersMap);
+        String [] companyNames = new String[suppliers.size()];
+        setCompany(suppliers, companyNames);
 
-        String[] supplierOptions = {"Supplier1", "Supplier2", "Supplier3"};
-
-        cmbSupplierId = new JComboBox<>(supplierOptions);
+        cmbSupplierId = new JComboBox<>(companyNames);
         cmbSupplierId.setFont(new Font("Arial", Font.PLAIN, 14));
-
+        cmbSupplierId.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                supplierId  = suppliersMap.get(cmbSupplierId.getSelectedItem());
+                System.out.println( supplierId );
+            }
+        });
 
         // Khởi tạo ComboBox trạng thái
-        String[] statusOptions = {"Đang bán", "Ngừng bán", "Hết hàng"};
+        String[] statusOptions = {"In Stock", "Out Stock"};
         cmbStatus = new JComboBox<>(statusOptions);
         cmbStatus.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Khởi tạo buttons
-        btnSave = createStyledButton("Lưu");
-        btnClear = createStyledButton("Xóa trắng");
+        btnSave = createStyledButton("SAVE");
+        btnSave.setForeground(Color.BLACK);
+        btnClear = createStyledButton("CLEAN ALL");
+        btnClear.setForeground(Color.BLACK);
+        btnExit = createStyledButton("CANCEL");
+        btnExit.setForeground(Color.BLACK);
 
         // Thêm hiệu ứng hover cho buttons
-        addButtonHoverEffect(btnSave);
-        addButtonHoverEffect(btnClear);
+        ButtonConfig.addButtonHoverEffect(btnSave ,BUTTON_HOVER_COLOR,BUTTON_COLOR);
+        ButtonConfig.addButtonHoverEffect(btnClear ,BUTTON_HOVER_COLOR,BUTTON_COLOR);
+        ButtonConfig.addButtonHoverEffect(btnExit ,BUTTON_HOVER_COLOR,BUTTON_COLOR);
+
     }
+
 
     private JTextField createStyledTextField() {
         JTextField textField = new JTextField(20);
@@ -175,23 +202,23 @@ public class ProductInputForm extends JFrame {
         return button;
     }
 
-    private void addButtonHoverEffect(JButton button) {
-        button.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(BUTTON_HOVER_COLOR);
-            }
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(BUTTON_COLOR);
-            }
-        });
+    private static void setCompany(ArrayList<Supplier> suppliers, String [] companyNames  ){
+        for (int i = 0; i < suppliers.size(); i++) {
+            companyNames[i] = suppliers.get( i).getCompanyName();
+        }
     }
+    private static  void setMapCompany(ArrayList<Supplier> suppliers ,Map<String ,Integer> map){
+        for (int i = 0; i < suppliers.size(); i++) {
+            map.put(suppliers.get(i).getCompanyName(), suppliers.get(i).getId());
+        }
+    }
+
+
 
     private void addStyledComponents(JPanel panel, GridBagConstraints gbc) {
         Object[][] components = {
-                {"Mã sản phẩm:", txtId},
+//                {"Mã sản phẩm:", txtId},
                 {"Mã nhà cung cấp:", cmbSupplierId}, // Sử dụng JComboBox
                 {"Tên sản phẩm:", txtName},
                 {"Chất lượng:", txtQuality},
@@ -225,14 +252,17 @@ public class ProductInputForm extends JFrame {
     }
 
     private JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        panel.setPreferredSize(new Dimension(800,800));
         panel.setBackground(BACKGROUND_COLOR);
 
         btnSave.addActionListener(e -> saveProduct());
         btnClear.addActionListener(e -> clearForm());
+        btnExit.addActionListener(e ->  this.setVisible(false));
 
         panel.add(btnSave);
         panel.add(btnClear);
+        panel.add(btnExit);
 
         return panel;
     }
@@ -240,8 +270,9 @@ public class ProductInputForm extends JFrame {
     private void saveProduct() {
         try {
             Product product = new Product();
-            product.setId(Integer.parseInt(txtId.getText()));
-            product.setSuppliersId(Integer.parseInt(cmbSupplierId.getSelectedItem().toString()));
+
+//            product.setId(Integer.parseInt(txtId.getText()));
+            product.setSuppliersId(supplierId );
             product.setName(txtName.getText());
             product.setQuality(Integer.parseInt(txtQuality.getText()));
             product.setPrice(Integer.parseInt(txtPrice.getText()));
@@ -253,35 +284,35 @@ public class ProductInputForm extends JFrame {
             product.setRam(txtRAM.getText());
             product.setMadeIn(txtMadeIn.getText());
             product.setStatus(cmbStatus.getSelectedItem().toString());
+            productDAO.save(product);
 
-            showSuccessDialog("Đã lưu thông tin sản phẩm thành công!");
+            showSuccessDialog("saved successfully!");
             clearForm();
+
         } catch (NumberFormatException ex) {
-            showErrorDialog("Vui lòng nhập đúng định dạng số!");
+            showErrorDialog("Please enter the correct format!");
         }
     }
 
     private void clearForm() {
-        JPanel mainPanel = (JPanel) ((JScrollPane) getContentPane().getComponent(0)).getViewport().getView();
-        for (Component panel : mainPanel.getComponents()) {
-            if (panel instanceof JPanel) {
-                for (Component comp : ((JPanel) panel).getComponents()) {
-                    if (comp instanceof JTextField) {
-                        ((JTextField) comp).setText("");
-                    } else if (comp instanceof JComboBox) {
-                        ((JComboBox<?>) comp).setSelectedIndex(0);
-                    }
-                }
-            }
-        }
+        txtName.setText("");
+        txtQuality.setText("");
+        txtPrice.setText("");
+        txtGenre.setText("");
+        txtBrand.setText("");
+        txtOS.setText("");
+        txtCPU.setText("");
+        txtMemory.setText("");
+        txtRAM.setText("");
+        txtMadeIn.setText("");
     }
 
     private void showSuccessDialog(String message) {
-        JOptionPane.showMessageDialog(this, message, "Thành công", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Successfully", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void showErrorDialog(String message) {
-        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     public static void main(String[] args) {

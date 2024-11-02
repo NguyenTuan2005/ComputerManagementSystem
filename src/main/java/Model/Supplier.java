@@ -23,20 +23,21 @@ public class Supplier {
 
     private String  address;
 
-    private Date contactDate;
+    private Date contractDate;
 
-    public Supplier(String companyName, String email, String phoneNumber, String address, Date contactDate) {
+    public Supplier(String companyName, String email, String phoneNumber, String address, Date contractDate) {
         this.companyName = companyName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.contactDate = contactDate;
+        this.contractDate = contractDate;
     }
 
+    // Convert data to String
     public static String [][] getData(ArrayList<Supplier> suppliers){
         String [][] datas = new String[suppliers.size()][];
         for (int i = 0; i < suppliers.size() ; i++) {
-            datas[i]= suppliers.get(i).convertToArray(i);
+            datas[i]= suppliers.get(i).convertToArray(i + 1);
         }
         return datas;
     }
@@ -48,7 +49,7 @@ public class Supplier {
                             email,
                             phoneNumber,
                             address,
-                            String.valueOf(contactDate)
+                            String.valueOf(contractDate)
         };
         return result;
     }

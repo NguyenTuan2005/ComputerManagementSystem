@@ -4,8 +4,13 @@ import view.Style;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ButtonConfig {
+
+    private final Color BUTTON_HOVER_COLOR = new Color(52, 152, 219);
+    private final Color BUTTON_COLOR = new Color(41, 128, 185);
 
     public static void setIconSmallButton(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
@@ -63,4 +68,17 @@ public class ButtonConfig {
         return separator;
     }
 
+    public static void addButtonHoverEffect(JButton button , Color hover , Color def) {
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(hover);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(def);
+            }
+        });
+    }
 }

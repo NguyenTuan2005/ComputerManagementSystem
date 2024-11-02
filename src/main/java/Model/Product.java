@@ -55,6 +55,9 @@ public class Product {
         this.status = status;
         this.deleteRow= deleteRow;
     }
+
+
+
     private  String [] convertToArray(int serial){
         String []  result =  {String.valueOf(serial)
                 ,String.valueOf(id)

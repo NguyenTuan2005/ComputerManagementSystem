@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -36,5 +37,14 @@ public class ProductConfig {
 
     public ProductConfig(Stack<ArrayList<Product>> undoAction) {
         this.undoAction = undoAction;
+    }
+
+    public static <K, V> K getKeyByValue(Map<K, V> map, V value) {
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            if (entry.getValue().equals(value)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }

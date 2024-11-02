@@ -25,6 +25,8 @@ public class Style {
 
     public static final Color LOGIN_FRAME_BACKGROUND_COLOR_BLUE= new Color(71, 143, 210);
     public static final Color CONFIRM_BUTTON_COLOR_GREEN = new Color(20, 133, 20);
+    public static final Color BUTTON_COLOR_HOVER = new Color(224, 255, 224, 255);
+
 //    public static final Color CONFIRM_BUTTON_COLOR_GREEN = new Color(53, 225, 53);  //old green
     public static  final Color WORD_COLOR_WHITE = new Color(255,255,255);
     public static  final Color WORD_COLOR_BLACK = new Color(0,0,0);

@@ -28,9 +28,10 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product save(Product product) {
         try {
-            String sql = "INSERT INTO product (suppliers_id, name, quality, price, genre, brand, operating_system, cpu, memory, ram, made_in, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO product (suppliers_id, name, quality, price, genre, brand, operating_system, cpu, memory, ram, made_in, status, delete_row) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             setProductParameters(preparedStatement, product);
+            preparedStatement.setInt(13, 1);
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -124,10 +125,10 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product update(Product product) {
         try {
-            String sql = "UPDATE product SET suppliers_id = ?, name = ?, quality = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? WHERE id = ?";
+            String sql = "UPDATE product SET suppliers_id = ?, name = ?, quality = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? , delete_row=? WHERE id = ?";
             preparedStatement = connection.prepareStatement(sql);
             setProductParameters(preparedStatement, product);
-            preparedStatement.setInt(13,product.getId());
+            preparedStatement.setInt(14,product.getId());
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -186,6 +187,7 @@ public class ProductDAO implements Repository<Product> {
         preparedStatement.setString(10, product.getRam());
         preparedStatement.setString(11, product.getMadeIn());
         preparedStatement.setString(12, product.getStatus());
+        preparedStatement.setInt(13, product.getDeleteRow());
     }
 
     public static void main(String[] args) {

@@ -199,8 +199,6 @@ public class ProductDAO implements Repository<Product> {
         preparedStatement.setString(15,product.getWeight());
         preparedStatement.setString(16,product.getMonitor());
         preparedStatement.setString(17,product.getCard());
-
-
     }
 
     public static void main(String[] args) {

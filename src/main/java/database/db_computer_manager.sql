@@ -87,3 +87,11 @@ ALTER TABLE account ADD CONSTRAINT account_email_unique UNIQUE(email);
 
 ALTER TABLE account ADD CONSTRAINT username_unique UNIQUE(username);
 
+-- update
+alter table product add column disk varchar;
+alter table product add column monitor varchar;
+alter table product add column weight varchar;
+alter table product add column card varchar;
+
+update product set   disk = 'demo', monitor= 'demo',weight='demo',card='demo';
+

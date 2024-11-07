@@ -25,6 +25,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 
 public class ManagerMainPanel extends JPanel {
@@ -54,7 +55,8 @@ public class ManagerMainPanel extends JPanel {
 
     // create data for column Names
     static final String[] columnNamesPRODUCT = {"Serial Number", "ProductID", "Product Name", "Quantity", "Unit Price", "Type of Device", "Brand",
-            "Operating System", "CPU", "Storage", "RAM", "Origin"};
+            "Operating System", "CPU", "Storage", "RAM", "Made In", "status","Disk","Weight","Monitor","Card"};
+    // tôi đã thêm :"Disk","Weight","Monitor","Card"
     static final String[] columnNamesSUPPLIER = {"Supplier ID:", "Supplier Name:", "Address", "Phone number:", "Email:", "Contract Start Date:"};
     static final String[] columnNamesCUSTOMER = {"Customer ID:", "Customer Name:", "Phone number:", "Email", "Address:", "Order Date:"};
 
@@ -107,6 +109,10 @@ public class ManagerMainPanel extends JPanel {
         JTableHeader tableProductHeader;
         JScrollPane scrollPaneProductTable;
         JTabbedPane tabbedPaneProductTable;
+        JPanel sortPanel;
+        JLabel sortLabel;
+        JPanel imgSort;
+
 
         JPanel searchPanel, applicationPanel, mainPanel;
         private static ProductController productController = new ProductController();
@@ -168,13 +174,13 @@ public class ManagerMainPanel extends JPanel {
                         }
                     }
                 });
+
                 deleteBt = new JButton("Delete");
                 ButtonConfig.addButtonHoverEffect(deleteBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(deleteBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt);
                 deleteBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 deleteBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-                // api for delete row
                 deleteBt.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -190,15 +196,12 @@ public class ManagerMainPanel extends JPanel {
                     }
                 });
 
-
-                //demo
                 sortBt = new JButton("Sort");
                 ButtonConfig.addButtonHoverEffect(sortBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(sortBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/sort.256x204.png", sortBt);
                 sortBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 sortBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-
 
                 exportExcelBt = new JButton("Export");
                 ButtonConfig.addButtonHoverEffect(exportExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -218,9 +221,11 @@ public class ManagerMainPanel extends JPanel {
                             }
                             //update data truoc khi export
                             productsAll= reloadData(productController);
+                            ProductConfig.exportProductsToExcel(productsAll,fileName);
                             if (productsAll.isEmpty())
                                 JOptionPane.showMessageDialog(null, "Not found data", "Notify", JOptionPane.WARNING_MESSAGE);
-                            ProductConfig.exportToExcel(productsAll,fileName);
+                            // config
+//                            ProductConfig.exportToExcel(productsAll,fileName);
                             JOptionPane.showMessageDialog(null, "Created file :"+fileName, "Notify", JOptionPane.WARNING_MESSAGE);
                         }
                         JOptionPane.showMessageDialog(null, "Are you sure ", "Exit", JOptionPane.ERROR_MESSAGE);
@@ -246,7 +251,7 @@ public class ManagerMainPanel extends JPanel {
                             File selectedFile = fileChooser.getSelectedFile();
                             String url = selectedFile.getAbsolutePath();
 //                            System.out.println("Đã chọn file: " + selectedFile.getAbsolutePath());
-                            ArrayList<Product> products = (ArrayList<Product>) ProductConfig.readExcelFile(url);
+                            ArrayList<Product> products = (ArrayList<Product>) ProductConfig.readProductsFromExcel(url);
 //                            System.out.println("print " + products);
                             productController.saves(products);
                             JOptionPane.showMessageDialog(null, "Read file "+ url, "Notify", JOptionPane.WARNING_MESSAGE);
@@ -256,7 +261,6 @@ public class ManagerMainPanel extends JPanel {
                         }
                     }
                 });
-
 
                 findText = new JTextField();
                 formatTextField(findText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
@@ -292,27 +296,98 @@ public class ManagerMainPanel extends JPanel {
                 reloadBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 reloadBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
-
                 searchPanel = new JPanel(new FlowLayout());
                 searchPanel.add(findText);
                 searchPanel.add(searchBt);
                 searchPanel.setBackground(Style.WORD_COLOR_WHITE);
 
                 applicationPanel = new JPanel(new FlowLayout());
-
-
                 applicationPanel.add(addBt);
-//                applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(deleteBt);
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(modifyBt);
-//                applicationPanel.add(ButtonConfig.createVerticalSeparator());
-//                sortDropListDown = new JComboBox<>(sortsStyle);
+                String[] sortOptions = {"NAME", "MEMORY", "PRICE", "RAM"};
+                JComboBox<String> sortComboBox = new JComboBox<>(sortOptions);
+                sortComboBox.setPreferredSize(new Dimension(74,59));
+                sortComboBox.setBackground(Style.WORD_COLOR_WHITE);
+                sortComboBox.setForeground(Style.WORD_COLOR_BLACK);
+                sortComboBox.setFont(Style.FONT_SIZE_BUTTON);
+                sortComboBox.setRenderer(new DefaultListCellRenderer() {
+                    @Override
+                    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                        Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
+                        if (isSelected) {
+                            c.setBackground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);  // Màu nền khi mục được chọn
+                            c.setForeground(Color.WHITE); // Màu chữ khi mục được chọn
+                        } else {
+                            c.setBackground(Color.WHITE); // Màu nền khi mục không được chọn
+                            c.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE); // Màu chữ khi mục không được chọn
+                        }
+                        return c;
+                    }
+                });
+                sortComboBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String item = (String) sortComboBox.getSelectedItem();
+                        switch (item) {
+                            case ("PIRCE") :  {
+                                productsAll = (ArrayList<Product>) productsAll.stream()
+                                    .sorted((p1, p2) -> Integer.compare(p2.getPrice(), p1.getPrice()))
+                                    .collect(Collectors.toList());
+                                break;
+                            }
+
+                            case ("MEMORY") :  {
+                                productsAll = (ArrayList<Product>) productsAll.stream()
+                                        .sorted((p1, p2) ->  p2.getMemory().compareTo(p1.getMemory()) )
+                                        .collect(Collectors.toList());
+                                break;
+                            }
+                            case ("NAME") :  {
+                                productsAll = (ArrayList<Product>) productsAll.stream()
+                                        .sorted((p1, p2) ->  p2.getName().compareTo(p1.getName()) )
+                                        .collect(Collectors.toList());
+                                break;
+                            }
+                            case ("RAM") :  {
+                                productsAll = (ArrayList<Product>) productsAll.stream()
+                                        .sorted((p1, p2) ->  p2.getRam().compareTo(p1.getRam()) )
+                                        .collect(Collectors.toList());
+                                break;
+                            }
+
+                        }
+                        TablePanel.upDataTable(productsAll,modelProductTable);
+
+                    }
+                });
+
+
+
+
+                sortPanel = new JPanel(new BorderLayout());
+                sortLabel = new JLabel("Sort");
+                sortLabel.setHorizontalAlignment(SwingConstants.CENTER); // Căn ngang giữa
+                sortLabel.setVerticalAlignment(SwingConstants.CENTER);
+                sortLabel.setFont(Style.FONT_SIZE_MIN_PRODUCT);
+                JLabel none =new JLabel("");
+                none.setFont(Style.FONT_SIZE_MIN_PRODUCT);
+                none.setHorizontalAlignment(SwingConstants.CENTER); // Căn ngang giữa
+                none.setVerticalAlignment(SwingConstants.CENTER);
+
+
+
+                sortPanel.add(sortComboBox,BorderLayout.CENTER);
+                sortPanel.add(none,BorderLayout.NORTH);
+                sortPanel.add(sortLabel,BorderLayout.SOUTH);
+                sortPanel.setBackground(Style.WORD_COLOR_WHITE);
+
+
+                applicationPanel.add(sortPanel);
 
 //                applicationPanel.add(sortBt);
-
-                applicationPanel.add(sortBt);
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(exportExcelBt);
 //                applicationPanel.add(ButtonConfig.createVerticalSeparator());
@@ -405,10 +480,11 @@ public class ManagerMainPanel extends JPanel {
 
             public static void upDataTable(ArrayList<Product> products, DefaultTableModel modelProductTable) {
                 String[][] rowData = Product.getDateOnTable(products);
+                System.out.println("number of row data: "+ rowData[0].length);
                 TablePanel.removeDataTable(modelProductTable);
                 for (int i = 0; i < rowData.length; i++) {
                     modelProductTable.addRow(rowData[i]);
-//                    System.out.println(products.get(i));
+                    System.out.println(products.get(i));
                 }
             }
         }
@@ -904,10 +980,10 @@ public class ManagerMainPanel extends JPanel {
             LeftPn leftPn;
             RightPn rightPn;
             private JTextField SupplierIDTF, nameSupplierTF, addressSupplierTF, phoneSupplierTF, emailSupplierTF, cooperationDayTF,
-                    productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF;
-
+                    productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF,statusTF ,diskTF,weightTF,monitorTF,cardTF;
+            // tôi đã thêm :"Disk","Weight","Monitor","Card"
             private JTextField[] supplierTFArray = {SupplierIDTF, nameSupplierTF, addressSupplierTF, phoneSupplierTF, emailSupplierTF, cooperationDayTF};
-            private final JTextField[] productTFArray = {productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF};
+            private final JTextField[] productTFArray = {productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF,statusTF,diskTF,weightTF,monitorTF,cardTF};
 
             ImportPanel() {
                 setLayout(new GridLayout(1, 2));
@@ -1219,7 +1295,7 @@ public class ManagerMainPanel extends JPanel {
                         add(tabbedPaneImportProductList, gbc);
                     }
                 }
-
+// bug
                 class AddNewProductPn extends JPanel {
                     JButton backBt, clearAllBt, addBt;
 
@@ -1371,9 +1447,9 @@ public class ManagerMainPanel extends JPanel {
             RightPn rightPn;
 
             private JTextField customerIDTF, customerNameTF, customerPhoneNumberTF, customerEmailTF, customerAddressTF, orderDateTF, productIDTF, productNameTF, amountTF,
-                    priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF;
+                    priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF,statusTF ,diskTF,weightTF,monitorTF,cardTF;
             private final JTextField[] customerTFArray = {customerIDTF, customerNameTF, customerPhoneNumberTF, customerEmailTF, customerAddressTF, orderDateTF};
-            private final JTextField[] productTFArray = {productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF};
+            private final JTextField[] productTFArray = {productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF,statusTF ,diskTF,weightTF,monitorTF,cardTF};
 
             ExportPanel() {
                 setLayout(new GridLayout(1, 2));

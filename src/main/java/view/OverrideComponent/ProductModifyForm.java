@@ -31,6 +31,12 @@ public class ProductModifyForm extends JFrame {
     private JTextField txtRAM;
     private JTextField txtMadeIn;
     private JComboBox<String> cmbStatus;
+
+    private JTextField txtDisk;
+    private JTextField txtMonitor;
+    private JTextField txtWeight;
+    private JTextField txtCard;
+
     private JButton btnSave;
     private JButton btnClear;
     private JButton btnExit;
@@ -42,6 +48,8 @@ public class ProductModifyForm extends JFrame {
     private String firstDataOfCompany;
     private String firstDataOfStatus;
     private int mouseX, mouseY;
+
+    private ScrollPane scrollPane;
 
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
@@ -99,10 +107,14 @@ public class ProductModifyForm extends JFrame {
 
 
         JPanel buttonPanel = createButtonPanel();
+        scrollPane = new ScrollPane();
 
         mainPanel.add(titlePanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        mainPanel.add(contentPanel);
+//        mainPanel
+        scrollPane.add(contentPanel);
+        mainPanel.add(scrollPane);
+        scrollPane.setPreferredSize(new Dimension(700,90000));
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         mainPanel.add(buttonPanel);
 
@@ -161,6 +173,10 @@ public class ProductModifyForm extends JFrame {
         txtMemory = createStyledTextField();
         txtRAM = createStyledTextField();
         txtMadeIn = createStyledTextField();
+        txtDisk = createStyledTextField();
+        txtMonitor = createStyledTextField();
+        txtWeight = createStyledTextField();
+        txtCard = createStyledTextField();
         supplierDAO = new SupplierDAO();
         productDAO = new ProductDAO();
 
@@ -218,6 +234,10 @@ public class ProductModifyForm extends JFrame {
         txtCPU.setText(product.getCpu());
         txtMemory.setText(product.getMemory());
         txtRAM.setText(product.getRam());
+        txtCard.setText(product.getCard());
+        txtDisk.setText(product.getDisk());
+        txtMonitor.setText(product.getMonitor());
+        txtWeight.setText(product.getWeight());
         txtMadeIn.setText(product.getMadeIn());
     }
 
@@ -271,7 +291,12 @@ public class ProductModifyForm extends JFrame {
                 {"Memory:", txtMemory},
                 {"RAM:", txtRAM},
                 {"Made in:", txtMadeIn},
+                {"Disk :", txtDisk},
+                {"Minotor :", txtMonitor},
+                {"Weight :", txtWeight},
+                {"Card :", txtCard},
                 {"Status:", cmbStatus}
+
         };
 
         int gridy = 0;
@@ -321,6 +346,10 @@ public class ProductModifyForm extends JFrame {
             product.setRam(txtRAM.getText());
             product.setMadeIn(txtMadeIn.getText());
             product.setStatus(cmbStatus.getSelectedItem().toString());
+            product.setDisk(txtDisk.getText());
+            product.setMonitor(txtMonitor.getText());
+            product.setCard(txtCard.getText());
+            product.setWeight(txtWeight.getText());
             System.out.println(product);
             productDAO.update(product);
             showSuccessDialog("saved successfully!");
@@ -357,27 +386,27 @@ public class ProductModifyForm extends JFrame {
 
 
     public static void main(String[] args) {
-        Product fakeProduct = new Product(
-                42,
-                4, // suppliersId
-                "Asus Gaming Laptop", // name
-                10, // quality
-                1500, // price
-                "Laptop", // genre
-                "ASUS", // brand
-                "Windows 10", // operatingSystem
-                "Intel Core i7", // cpu
-                "512GB SSD", // memory
-                "16GB", // ram
-                "USA", // madeIn
-                "Out Stock", // status
-                1 // deleteRow
-        );
-
-
-            SwingUtilities.invokeLater(() -> {
-                new ProductModifyForm(fakeProduct).setVisible(true);
-            });
+//        Product fakeProduct = new Product(
+//                42,
+//                4, // suppliersId
+//                "Asus Gaming Laptop", // name
+//                10, // quality
+//                1500, // price
+//                "Laptop", // genre
+//                "ASUS", // brand
+//                "Windows 10", // operatingSystem
+//                "Intel Core i7", // cpu
+//                "512GB SSD", // memory
+//                "16GB", // ram
+//                "USA", // madeIn
+//                "Out Stock", // status
+//                1 // deleteRow
+//        );
+//
+//
+//            SwingUtilities.invokeLater(() -> {
+//                new ProductModifyForm(fakeProduct).setVisible(true);
+//            });
 
     }
 }

@@ -38,6 +38,14 @@ public class Product {
 
     private String status;
 
+    private String disk;
+
+    private String monitor;
+
+    private String weight;
+
+    private String card;
+
     private int deleteRow;
 
     public Product(int suppliersId, String name, int quality, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status,int deleteRow) {
@@ -56,7 +64,25 @@ public class Product {
         this.deleteRow= deleteRow;
     }
 
-
+    public Product(int suppliersId, String name, int quality, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status, String disk, String monitor, String weight, String card, int deleteRow) {
+        this.suppliersId = suppliersId;
+        this.name = name;
+        this.quality = quality;
+        this.price = price;
+        this.genre = genre;
+        this.brand = brand;
+        this.operatingSystem = operatingSystem;
+        this.cpu = cpu;
+        this.memory = memory;
+        this.ram = ram;
+        this.madeIn = madeIn;
+        this.status = status;
+        this.disk = disk;
+        this.monitor = monitor;
+        this.weight = weight;
+        this.card = card;
+        this.deleteRow = deleteRow;
+    }
 
     private  String [] convertToArray(int serial){
         String []  result =  {String.valueOf(serial)
@@ -71,12 +97,19 @@ public class Product {
                 , memory
                 , ram
                 , madeIn
-                , status };
+                , status
+                ,disk
+                ,monitor
+                ,weight
+                ,card
+        };
+        System.out.println(this.status);
 //        System.out.println(Double.toString(price));
         return result;
     }
 
     public static String [][] getDateOnTable(ArrayList<Product> products){
+        System.out.println( " size of product : " + products.size());
         String [][] datas = new String[products.size()][];
         for (int i = 0; i < products.size() ; i++) {
             datas[i]= products.get(i).convertToArray(i);

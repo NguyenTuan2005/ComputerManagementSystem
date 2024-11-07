@@ -36,8 +36,9 @@ public class ProductController implements ModelController<Product> {
 
     @Override
     public void saves(ArrayList<Product> products) {
-        for(Product product: products)
+        for(Product product: products) {
             productDAO.save(product);
+        }
     }
 
     @Deprecated

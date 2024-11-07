@@ -1,6 +1,7 @@
 package Config;
 
 import Model.Product;
+import dao.ProductDAO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,22 +53,23 @@ public class ProductConfig {
         return null;
     }
 
-    public static void exportToExcel(List<Product> products, String name) {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Products");
+    public static void exportProductsToExcel(ArrayList<Product> products, String filePath) {
+        // Create a new workbook and a sheet
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Products");
 
-        String[] headers = {"ID", "Suppliers ID", "Name", "Quality", "Price", "Genre", "Brand", "Operating System",
-                "CPU", "Memory", "RAM", "Made In", "Status", "Delete Row"};
+        // Create header row
+        String[] headers = {"ID", "Supplier ID", "Name", "Quality", "Price", "Genre", "Brand", "OS",
+                "CPU", "Memory", "RAM", "Made In", "Status", "Disk", "Monitor", "Weight", "Card"};
 
-        // Tạo hàng đầu tiên làm tiêu đề
-        Row headerRow = ((XSSFSheet) sheet).createRow(0);
+        Row headerRow = sheet.createRow(0);
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
-            ((Cell) cell).setCellValue(headers[i]);
-            cell.setCellStyle(getHeaderCellStyle(workbook));
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(createHeaderStyle(workbook));
         }
 
-        // Điền dữ liệu sản phẩm
+        // Populate the rows with product data
         int rowNum = 1;
         for (Product product : products) {
             Row row = sheet.createRow(rowNum++);
@@ -84,64 +86,74 @@ public class ProductConfig {
             row.createCell(10).setCellValue(product.getRam());
             row.createCell(11).setCellValue(product.getMadeIn());
             row.createCell(12).setCellValue(product.getStatus());
-            row.createCell(13).setCellValue(product.getDeleteRow());
+            row.createCell(13).setCellValue(product.getDisk());
+            row.createCell(14).setCellValue(product.getMonitor());
+            row.createCell(15).setCellValue(product.getWeight());
+            row.createCell(16).setCellValue(product.getCard());
         }
 
-        // Tự động điều chỉnh kích thước cột
+        // Auto-size all columns
         for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
         }
 
-        // Ghi file Excel
-        try (FileOutputStream fileOut = new FileOutputStream(name)) {
-            workbook.write(fileOut);
-            System.out.println("Ghi thành công dữ liệu vào file Products.xlsx");
+        // Write the workbook to a file
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            workbook.write(fos);
+            System.out.println("Excel file created successfully!");
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private static CellStyle getHeaderCellStyle(XSSFWorkbook workbook) {
-        CellStyle headerCellStyle = workbook.createCellStyle();
+    private static CellStyle createHeaderStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
-        headerCellStyle.setFont(font);
-        return headerCellStyle;
+        style.setFont(font);
+        return style;
     }
 
+    // import
+    public static ArrayList<Product> readProductsFromExcel(String filePath) {
+        ArrayList<Product> products = new ArrayList<>();
 
-    public static List<Product> readExcelFile(String filePath) {
-        List<Product> products = new ArrayList<>();
+        try (FileInputStream fis = new FileInputStream(filePath);
+             Workbook workbook = new XSSFWorkbook(fis)) {
 
-        try (FileInputStream file = new FileInputStream(filePath);
-             XSSFWorkbook workbook = new XSSFWorkbook(file)) {
+            Sheet sheet = workbook.getSheetAt(0); // Assuming the first sheet contains the data
 
-            Sheet sheet = workbook.getSheetAt(0);
-            Iterator<Row> rowIterator = sheet.iterator();
+            // Skip header row (index 0)
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
 
-            // Bỏ qua dòng tiêu đề
-            if (rowIterator.hasNext()) rowIterator.next();
+                // Read each cell in the row and set the corresponding field in a Product object
+                Product product = new Product();
+                product.setId((int) row.getCell(0).getNumericCellValue());
+                product.setSuppliersId((int) row.getCell(1).getNumericCellValue());
+                product.setName(row.getCell(2).getStringCellValue());
+                product.setQuality((int) row.getCell(3).getNumericCellValue());
+                product.setPrice((int) row.getCell(4).getNumericCellValue());
+                product.setGenre(row.getCell(5).getStringCellValue());
+                product.setBrand(row.getCell(6).getStringCellValue());
+                product.setOperatingSystem(row.getCell(7).getStringCellValue());
+                product.setCpu(row.getCell(8).getStringCellValue());
+                product.setMemory(row.getCell(9).getStringCellValue());
+                product.setRam(row.getCell(10).getStringCellValue());
+                product.setMadeIn(row.getCell(11).getStringCellValue());
+                product.setStatus(row.getCell(12).getStringCellValue());
+                product.setDisk(row.getCell(13).getStringCellValue());
+                product.setMonitor(row.getCell(14).getStringCellValue());
+                product.setWeight(row.getCell(15).getStringCellValue());
+                product.setCard(row.getCell(16).getStringCellValue());
 
-            while (rowIterator.hasNext()) {
-                Row row = rowIterator.next();
-
-                int id = (int) row.getCell(0).getNumericCellValue();
-                int suppliersId = (int) row.getCell(1).getNumericCellValue();
-                String name = row.getCell(2).getStringCellValue();
-                int quality = (int) row.getCell(3).getNumericCellValue();
-                int price = (int) row.getCell(4).getNumericCellValue();
-                String genre = row.getCell(5).getStringCellValue();
-                String brand = row.getCell(6).getStringCellValue();
-                String operatingSystem = row.getCell(7).getStringCellValue();
-                String cpu = row.getCell(8).getStringCellValue();
-                String memory = row.getCell(9).getStringCellValue();
-                String ram = row.getCell(10).getStringCellValue();
-                String madeIn = row.getCell(11).getStringCellValue();
-                String status = row.getCell(12).getStringCellValue();
-                int deleteRow = (int) row.getCell(13).getNumericCellValue();
-
-                Product product = new Product(id, suppliersId, name, quality, price, genre, brand,
-                        operatingSystem, cpu, memory, ram, madeIn, status, deleteRow);
+                // Add the product to the list
                 products.add(product);
             }
         } catch (IOException e) {
@@ -149,5 +161,11 @@ public class ProductConfig {
         }
 
         return products;
+    }
+
+    public static void main(String[] args) {
+        ProductDAO productDAO = new ProductDAO();
+        for (Product p : readProductsFromExcel("demo.xlsx"))
+            System.out.println(p);
     }
 }

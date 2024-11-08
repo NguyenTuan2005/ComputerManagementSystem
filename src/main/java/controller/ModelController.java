@@ -4,7 +4,7 @@ import Model.Product;
 
 import java.util.ArrayList;
 
-public interface  ModelController<M> {
+public interface ModelController<M> {
     ArrayList<M> find(String name);
 
     ArrayList<M> getAll();

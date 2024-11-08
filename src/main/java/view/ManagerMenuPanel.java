@@ -2,6 +2,7 @@ package view;
 
 import Config.CurrentUser;
 
+import view.OtherComponent.CircularImage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -55,7 +56,7 @@ public class ManagerMenuPanel extends JPanel {
 //            role.setHorizontalAlignment(JLabel.CENTER);
 //            role.setForeground(Color.GREEN);
 //            add(role, BorderLayout.NORTH);
-            avatar = new CircularImage(CurrentUser.URL+"",60,60);
+            avatar = new CircularImage("src/main/java/Icon/dragon_Icon.png",60,60,true);
             avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(avatar);
 

@@ -9,6 +9,7 @@ public class Style {
 
     //manager frame
     public static final Font FONT_SIZE = new Font("Arial", Font.PLAIN, 15);
+    public static final Font FONT_SIZE_MENU_BUTTON = new Font("Arial", Font.BOLD, 15);
     public static final Font FONT_SIZE_MIN_PRODUCT = new Font("Arial", Font.PLAIN, 13);
     public static final Font FONT_TEXT_TABLE = new Font("Arial", Font.PLAIN, 16);
     public static final Font FONT_HEADER_ROW_TABLE = new Font("Arial", Font.BOLD, 16);
@@ -36,4 +37,8 @@ public class Style {
     //customer frame
     public static final Font FONT_TEXT_CUSTOMER = new Font("Arial", Font.PLAIN, 18);
     public static final Font FONT_BUTTON_CUSTOMER = new Font("Arial", Font.BOLD, 16);
+    public static final Font FONT_BUTTON_PAY = new Font("Arial", Font.BOLD, 20);
+    public static final Font FONT_TITLE_PRODUCT = new Font("Arial", Font.BOLD, 24);
+    public static final Font FONT_TITLE_PRODUCT_30 = new Font("Arial", Font.BOLD, 30);
+
 }

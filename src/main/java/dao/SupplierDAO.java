@@ -49,7 +49,7 @@ public class SupplierDAO implements Repository<Supplier>{
             preparedStatement.setString(2, supplier.getEmail());
             preparedStatement.setString(3, supplier.getPhoneNumber());
             preparedStatement.setString(4, supplier.getAddress());
-            preparedStatement.setDate(5, (Date) supplier.getContactDate());
+            preparedStatement.setDate(5, (Date) supplier.getContractDate());
     
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
@@ -154,7 +154,7 @@ public class SupplierDAO implements Repository<Supplier>{
             preparedStatement.setString(2, supplier.getEmail());
             preparedStatement.setString(3, supplier.getPhoneNumber());
             preparedStatement.setString(4, supplier.getAddress());
-            preparedStatement.setDate(5, (Date) supplier.getContactDate());
+            preparedStatement.setDate(5, (Date) supplier.getContractDate());
             preparedStatement.setInt(6, supplier.getId());
 
             int rowsAffected = preparedStatement.executeUpdate();

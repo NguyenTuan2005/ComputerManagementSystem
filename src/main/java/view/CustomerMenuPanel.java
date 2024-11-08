@@ -1,5 +1,7 @@
 package view;
 
+import view.OtherComponent.CircularImage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -8,7 +10,8 @@ public class CustomerMenuPanel extends JPanel {
     OldLoginFrame loginFrame;
     CustomerFrame userFrame;
     JLabel role, name, credit;
-    JButton productCatalogBt, purchasedBt, notificationBt, changeInformBt, logoutBt;
+    CircularImage avatar;
+    JButton productCatalogBt, purchasedBt, notificationBt, changeInfoBt, logoutBt;
     GridBagConstraints gbc;
 
     public CustomerMenuPanel() {
@@ -47,18 +50,23 @@ public class CustomerMenuPanel extends JPanel {
             setLayout(new BorderLayout());
             setBackground(Style.BACKGROUND_COLOR);
             setBorder(BorderFactory.createEmptyBorder());
-            role = new JLabel("Hello baby");
+            role = new JLabel("Customer");
             role.setFont(new Font("Arial", Font.PLAIN, 25));
             role.setHorizontalAlignment(JLabel.CENTER);
             role.setForeground(Color.GREEN);
             add(role, BorderLayout.NORTH);
 
+            avatar = new CircularImage("src/main/java/img/anhDuyVipPro.png", 75, 75,true);
+            avatar.setHorizontalAlignment(JLabel.CENTER);
+            add(Box.createRigidArea(new Dimension(0, 5)));
+            add(avatar, BorderLayout.CENTER);
 
 
-            name = new JLabel();
+            name = new JLabel("Duy vip pro");
             name.setHorizontalAlignment(JLabel.CENTER);
             name.setForeground(Color.GREEN);
             name.setFont(new Font("Arial", Font.PLAIN, 25));
+//            add(Box.createRigidArea(new Dimension(0, 5)));
             add(name, BorderLayout.SOUTH);
         }
     }
@@ -71,12 +79,13 @@ public class CustomerMenuPanel extends JPanel {
 
             productCatalogBt = new JButton("PRODUCT CATALOG");
             setFormatButton(productCatalogBt);
-            setIcon("src/main/java/Icon/cartIcon.png", productCatalogBt);
+            setIcon("src/main/java/Icon/catalog_Icon.png", productCatalogBt);
             add(productCatalogBt);
 
 
-            purchasedBt = new JButton("PURCHASED");
+            purchasedBt = new JButton("PURCHASED LIST");
             setFormatButton(purchasedBt);
+            setIcon("src/main/java/Icon/purchasedList_Icon.png", purchasedBt);
             add(purchasedBt);
 
             notificationBt = new JButton("NOTIFICATION");
@@ -92,10 +101,10 @@ public class CustomerMenuPanel extends JPanel {
             setLayout(new GridLayout(3, 1, 0, 10));
             setBackground(Style.BACKGROUND_COLOR);
 
-            changeInformBt = new JButton("CHANGE INFORMATION");
-            setFormatButton(changeInformBt);
-            setIcon("src/main/java/Icon/iconChangeInform.png", changeInformBt);
-            add(changeInformBt);
+            changeInfoBt = new JButton("CHANGE INFORMATION");
+            setFormatButton(changeInfoBt);
+            setIcon("src/main/java/Icon/iconChangeInform.png", changeInfoBt);
+            add(changeInfoBt);
 
             logoutBt = new JButton("LOGOUT");
 
@@ -112,11 +121,11 @@ public class CustomerMenuPanel extends JPanel {
     }
 
     // set Icon cho button
-    private void setIcon(String url, JButton that) {
-        ImageIcon iconButton = new ImageIcon(url);
+    private void setIcon(String filePath, JButton that) {
+        ImageIcon iconButton = new ImageIcon(filePath);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();
-        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
+        Image resizedImage = image.getScaledInstance(buttonSize.height, buttonSize.height, java.awt.Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
     }
 
@@ -125,7 +134,7 @@ public class CustomerMenuPanel extends JPanel {
         that.setFocusable(false);
         that.setBackground(Style.BACKGROUND_COLOR);
         that.setForeground(Style.WORD_COLOR_WHITE);
-        that.setFont(Style.FONT_SIZE);
+        that.setFont(Style.FONT_SIZE_MENU_BUTTON);
         that.setHorizontalAlignment(SwingConstants.LEFT);
         that.setBorderPainted(false);
     }
@@ -141,6 +150,9 @@ public class CustomerMenuPanel extends JPanel {
 
     public void setPurchasedBtListener(ActionListener listener) {
         purchasedBt.addActionListener(listener);
+    }
+    public void setChangeInfoBtListener(ActionListener listener) {
+        changeInfoBt.addActionListener(listener);
     }
 
     //thiết lập ActionListener cho nút "log out"

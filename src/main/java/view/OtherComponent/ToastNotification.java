@@ -7,11 +7,11 @@ import java.awt.*;
 
 public class ToastNotification {
 
-    public static void showToast(String message, int duration) {
+    public static void showToast(String message, int duration, int width, int height ) {
         // Tạo một JWindow để hiển thị thông báo
         JWindow window = new JWindow();
         window.setLayout(new BorderLayout());
-        window.setSize(350, 60);
+        window.setSize(width, height);
         window.setLocationRelativeTo(null); // Đặt vị trí ở giữa màn hình
 
         // Tạo JLabel để chứa thông điệp

@@ -11,7 +11,7 @@ public class CustomerMenuPanel extends JPanel {
     CustomerFrame userFrame;
     JLabel role, name, credit;
     CircularImage avatar;
-    JButton productCatalogBt, purchasedBt, notificationBt, changeInformBt, logoutBt;
+    JButton productCatalogBt, purchasedBt, notificationBt, changeInfoBt, logoutBt;
     GridBagConstraints gbc;
 
     public CustomerMenuPanel() {
@@ -101,10 +101,10 @@ public class CustomerMenuPanel extends JPanel {
             setLayout(new GridLayout(3, 1, 0, 10));
             setBackground(Style.BACKGROUND_COLOR);
 
-            changeInformBt = new JButton("CHANGE INFORMATION");
-            setFormatButton(changeInformBt);
-            setIcon("src/main/java/Icon/iconChangeInform.png", changeInformBt);
-            add(changeInformBt);
+            changeInfoBt = new JButton("CHANGE INFORMATION");
+            setFormatButton(changeInfoBt);
+            setIcon("src/main/java/Icon/iconChangeInform.png", changeInfoBt);
+            add(changeInfoBt);
 
             logoutBt = new JButton("LOGOUT");
 
@@ -150,6 +150,9 @@ public class CustomerMenuPanel extends JPanel {
 
     public void setPurchasedBtListener(ActionListener listener) {
         purchasedBt.addActionListener(listener);
+    }
+    public void setChangeInfoBtListener(ActionListener listener) {
+        changeInfoBt.addActionListener(listener);
     }
 
     //thiết lập ActionListener cho nút "log out"

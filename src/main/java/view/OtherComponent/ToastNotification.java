@@ -1,5 +1,7 @@
 package view.OtherComponent;
 
+import view.Style;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -23,7 +25,7 @@ public class ToastNotification {
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Image resizedImage = image.getScaledInstance(28,28 , java.awt.Image.SCALE_SMOOTH);
         label.setIcon(new ImageIcon(resizedImage));
-        label.setBorder(BorderFactory.createLineBorder(new Color(255, 165, 0), 2));
+        label.setBorder(BorderFactory.createLineBorder(Style.ADD_BUTTON_COLOR_GREEN));
         window.add(label, BorderLayout.CENTER);
 
         // Hiển thị thông báo

@@ -34,6 +34,8 @@ public class Style {
     //customer frame
     public static final Font FONT_TEXT_CUSTOMER = new Font("Arial", Font.PLAIN, 18);
     public static final Font FONT_BUTTON_CUSTOMER = new Font("Arial", Font.BOLD, 16);
+    public static final Font FONT_BUTTON_PAY = new Font("Arial", Font.BOLD, 20);
     public static final Font FONT_TITLE_PRODUCT = new Font("Arial", Font.BOLD, 24);
+    public static final Font FONT_TITLE_PRODUCT_30 = new Font("Arial", Font.BOLD, 30);
 
 }

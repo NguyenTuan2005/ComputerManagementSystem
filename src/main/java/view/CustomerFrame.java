@@ -12,7 +12,7 @@ public class CustomerFrame extends JFrame {
     public CustomerFrame() {
 //    public CustomerFrame(LoginFrame loginFrame) {
         setTitle("Computer Management");
-        setSize(1200, 650);
+        setSize(1250, 650);
         setResizable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -47,6 +47,14 @@ public class CustomerFrame extends JFrame {
                 setHover(CustomerMainPanel.NOTIFICATION_CONSTRAINT);
             }
         });
+
+        customerMenuPanel.setChangeInfoBtListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                customerMainPanel.showPanel(CustomerMainPanel.CHANGE_INFORMATION_CONSTRAINT);
+                setHover(CustomerMainPanel.CHANGE_INFORMATION_CONSTRAINT);
+            }
+        });
         // thêm sự kiện cho nút logout
         customerMenuPanel.setLogoutBtListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -54,11 +62,13 @@ public class CustomerFrame extends JFrame {
                         "Are you sure you want to logout?", "Logout Confirmation",
                         JOptionPane.YES_NO_OPTION);
                 if (confirmed == JOptionPane.YES_OPTION) {
-                    setVisible(false);
+
+
 
                 }
             }
         });
+
         setVisible(true);
     }
     // setHover tạo hiệu ứng đổi màu cho nút khi nhấn chuột vào
@@ -67,7 +77,7 @@ public class CustomerFrame extends JFrame {
                 customerMenuPanel.productCatalogBt,
                 customerMenuPanel.purchasedBt,
                 customerMenuPanel.notificationBt,
-                customerMenuPanel.changeInformBt
+                customerMenuPanel.changeInfoBt
 
         };
         String[] constraints = {

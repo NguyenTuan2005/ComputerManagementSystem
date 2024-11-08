@@ -7,15 +7,11 @@ import Model.Product;
 import Model.Supplier;
 import controller.CustomerController;
 import controller.ProductController;
+import controller.SupplierController;
+import view.OverrideComponent.AddSupplierFrame;
 import view.OverrideComponent.ImageInJTable;
 import view.OverrideComponent.ProductInputForm;
-
 import view.OverrideComponent.ProductModifyForm;
-
-
-import controller.SupplierController;
-
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -116,21 +112,18 @@ public class ManagerMainPanel extends JPanel {
         JLabel sortLabel;
         JPanel imgSort;
 
-
         JPanel searchPanel, applicationPanel, mainPanel;
         private static ProductController productController = new ProductController();
         private static ArrayList<Product> productsAll = reloadData(productController);
-
         //       String [] sortsStyle = {"SORT BY PRICE", "SORT BY RAM", "SORT BY MEMORY", "SORT BY NAME"};
         // reload method
         private static ArrayList<Product> reloadData(ProductController productController) {
             return productController.getAll();
         }
 
-
         public ProductPanel() {
             setLayout(new BorderLayout());
-            toolPanel.setBorder(BorderFactory.createTitledBorder("Tool"));
+            toolPanel.setBorder(BorderFactory.createTitledBorder("Tools"));
             add(toolPanel, BorderLayout.NORTH);
             add(tablePanel, BorderLayout.CENTER);
 
@@ -198,7 +191,6 @@ public class ManagerMainPanel extends JPanel {
                         }
                     }
                 });
-
                 sortBt = new JButton("Sort");
                 ButtonConfig.addButtonHoverEffect(sortBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(sortBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
@@ -216,7 +208,6 @@ public class ManagerMainPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         String fileName = JOptionPane.showInputDialog(null, "Enter file name excel:", "Input file", JOptionPane.QUESTION_MESSAGE);
-
                         if (fileName != null && !fileName.trim().isEmpty()) {
                             // Thêm phần mở rộng .xlsx nếu người dùng không nhập
                             if (!fileName.toLowerCase().endsWith(".xlsx")) {
@@ -262,7 +253,6 @@ public class ManagerMainPanel extends JPanel {
                         }
                     }
                 });
-
                 findText = new JTextField();
                 formatTextField(findText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
                 findText.addFocusListener(new FocusListener() {
@@ -481,7 +471,6 @@ public class ManagerMainPanel extends JPanel {
 
             public static void upDataTable(ArrayList<Product> products, DefaultTableModel modelProductTable) {
                 String[][] rowData = Product.getDateOnTable(products);
-                System.out.println("number of row data: "+ rowData[0].length);
                 TablePanel.removeDataTable(modelProductTable);
                 for (int i = 0; i < rowData.length; i++) {
                     modelProductTable.addRow(rowData[i]);
@@ -495,7 +484,7 @@ public class ManagerMainPanel extends JPanel {
     class SupplierPanel extends JPanel {
         JButton addBt, modifyBt, deleteBt, sortBt, exportExcelBt, importExcelBt, searchBt;
         JTextField findText;
-        private final String[] columnNamesSUPPLIER = {"Serial Number", "Supplier ID:", "Supplier Name:", "Address", "Phone number:", "Email:", "Contract Start Date:"};
+        private final String[] columnNamesSUPPLIER = {"Serial Number", "Supplier ID:", "Supplier Name:", "Email:", "Phone number:", "Address:", "Contract Start Date:"};
         private JTable tableSupplier;
         private DefaultTableModel modelSupplier;
         private JTableHeader headerSupplier;
@@ -520,67 +509,86 @@ public class ManagerMainPanel extends JPanel {
                 setBackground(Style.WORD_COLOR_WHITE);
 
                 // Add Button
-                addBt = new JButton("Add");
-                ButtonConfig.setStyleButton(addBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addBt);
-                addBt.setHorizontalTextPosition(SwingConstants.CENTER);
-                addBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                {
+                    addBt = new JButton("Add");
+                    ButtonConfig.setStyleButton(addBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addBt);
+                    ButtonConfig.addButtonHoverEffect(addBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                    addBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    addBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                    addBt.addActionListener(e -> {
+                        new AddSupplierFrame().showFrame();
+                    });
+                }
 
                 // Modify Button
-                modifyBt = new JButton("Modify");
-                ButtonConfig.setStyleButton(modifyBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", modifyBt);
-                modifyBt.setHorizontalTextPosition(SwingConstants.CENTER);
-                modifyBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                {
+                    modifyBt = new JButton("Modify");
+                    ButtonConfig.setStyleButton(modifyBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", modifyBt);
+                    modifyBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    modifyBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                }
 
                 // Delete Button
-                deleteBt = new JButton("Delete");
-                ButtonConfig.setStyleButton(deleteBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt);
-                deleteBt.setHorizontalTextPosition(SwingConstants.CENTER);
-                deleteBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                {
+                    deleteBt = new JButton("Delete");
+                    ButtonConfig.setStyleButton(deleteBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt);
+                    deleteBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    deleteBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                }
 
                 // Sort Button
-                sortBt = new JButton("Sort Asc");
-                ButtonConfig.setStyleButton(sortBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/request-quote.238x256.png", sortBt);
-                sortBt.setHorizontalTextPosition(SwingConstants.CENTER);
-                sortBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                {
+                    sortBt = new JButton("Sort Asc");
+                    ButtonConfig.setStyleButton(sortBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/request-quote.238x256.png", sortBt);
+                    sortBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    sortBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+                }
 
                 // Export Excel Button
-                exportExcelBt = new JButton("Export Excel");
-                ButtonConfig.setStyleButton(exportExcelBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt);
-                exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
-                exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                {
+                    exportExcelBt = new JButton("Export Excel");
+                    ButtonConfig.setStyleButton(exportExcelBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt);
+                    exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                }
 
                 // Import Excel Button
-                importExcelBt = new JButton("Import Excel");
-                ButtonConfig.setStyleButton(importExcelBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-export-excel-50.png", importExcelBt);
-                importExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
-                importExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                {
+                    importExcelBt = new JButton("Import Excel");
+                    ButtonConfig.setStyleButton(importExcelBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-export-excel-50.png", importExcelBt);
+                    importExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    importExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                }
 
                 // Search Text Field
-                findText = new JTextField();
-                formatTextField(findText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
-                findText.addFocusListener(new FocusListener() {
-                    @Override
-                    public void focusGained(FocusEvent e) {
-                        if (findText.getText().equals("Search by name")) {
-                            findText.setText("");
-                            findText.setForeground(Color.BLACK);
+                {
+                    findText = new JTextField();
+                    formatTextField(findText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
+                    findText.addFocusListener(new FocusListener() {
+                        @Override
+                        public void focusGained(FocusEvent e) {
+                            if (findText.getText().equals("Search by name")) {
+                                findText.setText("");
+                                findText.setForeground(Color.BLACK);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void focusLost(FocusEvent e) {
-                        if (findText.getText().isEmpty()) {
-                            findText.setForeground(Color.GRAY);
-                            findText.setText("Search by name");
+                        @Override
+                        public void focusLost(FocusEvent e) {
+                            if (findText.getText().isEmpty()) {
+                                findText.setForeground(Color.GRAY);
+                                findText.setText("Search by name");
+                            }
                         }
-                    }
-                });
+                    });
+                }
 
                 // Search Button
                 searchBt = new JButton();
@@ -657,8 +665,6 @@ public class ManagerMainPanel extends JPanel {
 
     //james
     class CustomerPanel extends JPanel {
-
-
         final String[] customerColumnNames = { "Customer ID", "Customer Name", "Email","Address", "Password", "Avata"};
 
         private JTable tableCustomer;
@@ -666,33 +672,27 @@ public class ManagerMainPanel extends JPanel {
         private JTableHeader headerCustomer;
         private JScrollPane scrollPaneCustomer;
         private JTabbedPane tabbedPaneCustomer;
-
         private  ToolPanel toolPanel = new ToolPanel();
         private TableCustomerPanel tableCustomerPanel = new TableCustomerPanel();
 
         private JButton addCustomerBt, modifyCustomerBt, deleteCustomerBt, sortCustomerBt, exportCustomerExcelBt, importCustomerExcelBt, searchCustomerBt, reloadCustomerBt;
          private JTextField findCustomerText;
-
         private JPanel sortPanel;
         private JLabel sortLabel;
 
         private static CustomerController customerController= new CustomerController();
         private static ArrayList<Customer> customers = new ArrayList<>();
 
-
         private JPanel searchPanel, applicationPanel, mainPanel;
-
 
         public CustomerPanel() {
             setLayout(new BorderLayout());
             toolPanel.setBorder(BorderFactory.createTitledBorder("Tool"));
             add(toolPanel, BorderLayout.NORTH);
             add(tableCustomerPanel, BorderLayout.CENTER);
-
         }
 
         public class ToolPanel extends JPanel {
-
             public ToolPanel() {
                 setLayout(new BorderLayout());
                 setBackground(Style.WORD_COLOR_WHITE);
@@ -784,12 +784,11 @@ public class ManagerMainPanel extends JPanel {
                 reloadCustomerBt.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
                         customers = customerController.getAll();
                         upDataTable(customers, modelCustomer);
                     }
                 });
-
+              
                 searchPanel = new JPanel(new FlowLayout());
                 searchPanel.add(findCustomerText);
                 searchPanel.add(searchCustomerBt);
@@ -821,11 +820,6 @@ public class ManagerMainPanel extends JPanel {
                         return c;
                     }
                 });
-
-
-
-
-
                 sortPanel = new JPanel(new BorderLayout());
                 sortLabel = new JLabel("Sort");
                 sortLabel.setHorizontalAlignment(SwingConstants.CENTER); // Căn ngang giữa
@@ -835,17 +829,13 @@ public class ManagerMainPanel extends JPanel {
                 none.setFont(Style.FONT_SIZE_MIN_PRODUCT);
                 none.setHorizontalAlignment(SwingConstants.CENTER); // Căn ngang giữa
                 none.setVerticalAlignment(SwingConstants.CENTER);
-
-
-
+              
                 sortPanel.add(sortComboBox,BorderLayout.CENTER);
                 sortPanel.add(none,BorderLayout.NORTH);
                 sortPanel.add(sortLabel,BorderLayout.SOUTH);
                 sortPanel.setBackground(Style.WORD_COLOR_WHITE);
 
-
                 applicationPanel.add(sortPanel);
-
 //                applicationPanel.add(sortBt);
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(exportCustomerExcelBt);
@@ -896,7 +886,6 @@ public class ManagerMainPanel extends JPanel {
                 tableCustomer.setRowHeight(100);
 //                tableCustomer.setRowHeight(30);
                 resizeColumnWidth(tableCustomer, 219);
-
                 modelCustomer = (DefaultTableModel) tableCustomer.getModel();
 
 //                ArrayList<Product> productsDemo = productController.getAll();

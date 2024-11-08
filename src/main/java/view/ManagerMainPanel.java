@@ -121,10 +121,9 @@ public class ManagerMainPanel extends JPanel {
             return productController.getAll();
         }
 
-
         public ProductPanel() {
             setLayout(new BorderLayout());
-            toolPanel.setBorder(BorderFactory.createTitledBorder("Tool"));
+            toolPanel.setBorder(BorderFactory.createTitledBorder("Tools"));
             add(toolPanel, BorderLayout.NORTH);
             add(tablePanel, BorderLayout.CENTER);
 
@@ -673,22 +672,18 @@ public class ManagerMainPanel extends JPanel {
         private JTableHeader headerCustomer;
         private JScrollPane scrollPaneCustomer;
         private JTabbedPane tabbedPaneCustomer;
-
         private  ToolPanel toolPanel = new ToolPanel();
         private TableCustomerPanel tableCustomerPanel = new TableCustomerPanel();
 
         private JButton addCustomerBt, modifyCustomerBt, deleteCustomerBt, sortCustomerBt, exportCustomerExcelBt, importCustomerExcelBt, searchCustomerBt, reloadCustomerBt;
          private JTextField findCustomerText;
-
         private JPanel sortPanel;
         private JLabel sortLabel;
 
         private static CustomerController customerController= new CustomerController();
         private static ArrayList<Customer> customers = new ArrayList<>();
 
-
         private JPanel searchPanel, applicationPanel, mainPanel;
-
 
         public CustomerPanel() {
             setLayout(new BorderLayout());
@@ -891,7 +886,6 @@ public class ManagerMainPanel extends JPanel {
                 tableCustomer.setRowHeight(100);
 //                tableCustomer.setRowHeight(30);
                 resizeColumnWidth(tableCustomer, 219);
-
                 modelCustomer = (DefaultTableModel) tableCustomer.getModel();
 
 //                ArrayList<Product> productsDemo = productController.getAll();

@@ -3,9 +3,8 @@ package view;
 import Config.CurrentUser;
 import controller.AccountController;
 import controller.CustomerController;
- 
-import view.OverrideComponent.RoundedButton;
- 
+import view.OtherComponent.CircularImage;
+import view.OtherComponent.RoundedButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,10 +25,8 @@ public class LoginFrame extends JFrame {
     final String SignUpGreeting = "Hello!";
     final String SignInGreeting = "Welcome back!";
 
- 
     static final String CUSTOMER_ROLE ="Customer";
     static final String MANAGER_ROLE ="Manager";
- 
 
     LoginFrame() {
         setLayout(new BorderLayout());
@@ -59,10 +56,10 @@ public class LoginFrame extends JFrame {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBorder(BorderFactory.createEmptyBorder(0, 50, 50, 50));
 
-            fitAva = new CircularImage("src/main/java/Icon/fit_nlu_logo.jpg",180,180);
+            fitAva = new CircularImage("src/main/java/Icon/fit_nlu_logo.jpg",180,180,false);
             fitAva.setAlignmentX(Component.CENTER_ALIGNMENT);
 
- 
+
             welcomeLabel = new JLabel(SignInGreeting);
             welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             welcomeLabel.setFont(Style.FONT_TITLE_LOGIN_FRAME);
@@ -89,7 +86,7 @@ public class LoginFrame extends JFrame {
                         switchBt.setText("Sign Up");
                         welcomeLabel.setText(SignInGreeting);
                         subTextLabel.setText(SignUpString);
- 
+
                     }
                 }
             });
@@ -252,7 +249,7 @@ public class LoginFrame extends JFrame {
         }
     }
 
- 
+
     class SignInPanel extends JPanel {
         private LoginFrame loginFrame;
 
@@ -269,7 +266,7 @@ public class LoginFrame extends JFrame {
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(10, 10, 10, 10);
             gbc.fill = GridBagConstraints.HORIZONTAL;
- 
+
 
             // Sign In label
             signInLabel = new JLabel("       Sign In");

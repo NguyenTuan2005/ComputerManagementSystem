@@ -894,7 +894,6 @@ public class ManagerMainPanel extends JPanel {
                  // Thiết lập renderer cho cột ảnh
                 tableCustomer.getColumnModel().getColumn(customerColumnNames.length-1).setCellRenderer(new ImageInJTable.ImageRenderer());
                 tableCustomer.setRowHeight(100);
-//                tableCustomer.setRowHeight(30);
                 resizeColumnWidth(tableCustomer, 219);
 
                 modelCustomer = (DefaultTableModel) tableCustomer.getModel();

@@ -73,7 +73,7 @@ CREATE TABLE account (
                          password VARCHAR(255),
                          email VARCHAR(255),
                          create_date DATE,
-                         avata-img VARCHAR
+                         avata_img VARCHAR
 );
 
 create table image(

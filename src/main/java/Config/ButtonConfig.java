@@ -4,8 +4,13 @@ import view.Style;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ButtonConfig {
+
+    public static final Color BUTTON_HOVER_COLOR = new Color(52, 152, 219);
+    public static final Color BUTTON_COLOR = new Color(41, 128, 185);
 
     public static void setIconSmallButton(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
@@ -23,6 +28,17 @@ public class ButtonConfig {
         that.setForeground(textColor);
         that.setFocusable(false);
         that.setPreferredSize(size);
+    }
+
+    public static JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setForeground(Color.WHITE);
+        button.setBackground(BUTTON_COLOR);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
     }
 
     public static void setIconBigButton(String url, JButton that) {
@@ -63,4 +79,17 @@ public class ButtonConfig {
         return separator;
     }
 
+    public static void addButtonHoverEffect(JButton button , Color hover , Color def) {
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(hover);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(def);
+            }
+        });
+    }
 }

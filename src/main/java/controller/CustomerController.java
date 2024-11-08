@@ -2,10 +2,13 @@ package controller;
 
 import Model.Account;
 import Model.Customer;
+import Model.Product;
 import dao.CustomerDAO;
 import security.PasswordSecurity;
 
-public class CustomerController {
+import java.util.ArrayList;
+
+public class CustomerController implements ModelController<Customer> {
     private CustomerDAO customerDAO;
 
     private PasswordSecurity passwordSecurity;
@@ -29,4 +32,38 @@ public class CustomerController {
         return customerDAO.save(customer);
     }
 
+    @Override
+    public ArrayList<Customer> find(String name) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Customer> getAll() {
+        return  customerDAO.getAll();
+    }
+
+    @Override
+    public ArrayList<Customer> reloadData() {
+        return customerDAO.getAll();
+    }
+
+    @Override
+    public void setDeleteRow(int id, boolean status) {
+
+    }
+
+    @Override
+    public void saves(ArrayList<Customer> products) {
+
+    }
+
+    @Override
+    public void save(Product product) {
+
+    }
+
+    public static void main(String[] args) {
+        CustomerController customerController = new CustomerController();
+        System.out.println(customerController.getAll());
+    }
 }

@@ -1,6 +1,7 @@
 package dao;
 
 import Config.DatabaseConfig;
+import Config.ProductConfig;
 import Model.Product;
 
 import java.sql.*;
@@ -28,9 +29,10 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product save(Product product) {
         try {
-            String sql = "INSERT INTO product (suppliers_id, name, quality, price, genre, brand, operating_system, cpu, memory, ram, made_in, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO product (suppliers_id, name, quality, price, genre, brand, operating_system, cpu, memory, ram, made_in, status, delete_row, disk ,weight ,monitor,card) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             setProductParameters(preparedStatement, product);
+
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -39,13 +41,14 @@ public class ProductDAO implements Repository<Product> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println( product);
         return product;
     }
 
 
     @Override
     public Product findById(int id) {
-        String sql = "SELECT * FROM product WHERE id = ?";
+        String sql = "SELECT * FROM product WHERE id = ? AND delete_row = 1";
         Product product = new Product();
         ArrayList<Product> products = new ArrayList<>();
         try {
@@ -64,7 +67,8 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public ArrayList<Product> getAll() {
         ArrayList<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM product";
+        String sql = "SELECT * FROM product WHERE delete_row = 1";
+
         try {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(sql);
@@ -81,7 +85,7 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public ArrayList<Product> findByName(String name) {
 //        LOWER(product_name) LIKE LOWER('%từ_khóa_tìm_kiếm%')
-        String sql = "SELECT * FROM  product WHERE LOWER(name) LIKE LOWER(?)";
+        String sql = "SELECT * FROM  product WHERE LOWER(name) LIKE LOWER(?) AND delete_row = 1";
         ArrayList<Product> products = new ArrayList<>();
         try {
             preparedStatement = connection.prepareStatement(sql);
@@ -100,7 +104,7 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product findOneByName(String name) {
         try {
-            String sql = "SELECT * FROM product WHERE LOWER(name) LIKE LOWER(?)";
+            String sql = "SELECT * FROM product WHERE LOWER(name) LIKE LOWER(?) AND delete_row = 1";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, "%" + name + "%");
             ResultSet rs = preparedStatement.executeQuery();
@@ -123,10 +127,10 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product update(Product product) {
         try {
-            String sql = "UPDATE product SET suppliers_id = ?, name = ?, quality = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? WHERE id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            String sql = "UPDATE product SET suppliers_id = ?, name = ?, quality = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? , delete_row=?,disk = ? ,weight = ? ,monitor = ? ,card =? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
             setProductParameters(preparedStatement, product);
-            preparedStatement.setInt(13,product.getId());
+            preparedStatement.setInt(18,product.getId());
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,6 +138,20 @@ public class ProductDAO implements Repository<Product> {
         return product;
     }
 
+    public void setDeleteRow(int id , boolean status){
+        //UPDATE product SET delete_row = 0 WHERE id = 3
+        String sql = "UPDATE product SET delete_row = ? WHERE id = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, status?1:0);
+            preparedStatement.setInt(2,id);
+            preparedStatement.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Deprecated
     @Override
     public boolean remove(int id) {
         return false;
@@ -154,9 +172,15 @@ public class ProductDAO implements Repository<Product> {
         product.setRam(rs.getString("ram"));
         product.setMadeIn(rs.getString("made_in"));
         product.setStatus(rs.getString("status"));
+        product.setDeleteRow(rs.getInt("delete_row"));
+        product.setDisk(rs.getString("disk"));
+        product.setWeight(rs.getString("weight"));
+        product.setMonitor(rs.getString("monitor"));
+        product.setCard(rs.getString("card"));
         return product;
     }
 
+    // lỗi
     private void setProductParameters(PreparedStatement preparedStatement, Product product) throws SQLException {
         preparedStatement.setInt(1, product.getSuppliersId());
         preparedStatement.setString(2, product.getName());
@@ -170,6 +194,17 @@ public class ProductDAO implements Repository<Product> {
         preparedStatement.setString(10, product.getRam());
         preparedStatement.setString(11, product.getMadeIn());
         preparedStatement.setString(12, product.getStatus());
+        preparedStatement.setInt(13, product.getDeleteRow());
+        preparedStatement.setString(14,product.getDisk());
+        preparedStatement.setString(15,product.getWeight());
+        preparedStatement.setString(16,product.getMonitor());
+        preparedStatement.setString(17,product.getCard());
+    }
+
+    public static void main(String[] args) {
+        ProductDAO p = new ProductDAO();
+        System.out.println(p.getAll());
+//        ProductConfig.exportToExcel(p.getAll(),"demo");
     }
 
 }

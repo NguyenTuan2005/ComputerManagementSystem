@@ -29,6 +29,7 @@ public class CustomerDAO implements Repository<Customer> {
         preparedStatement.setString(2, customer.getEmail());
         preparedStatement.setString(3, customer.getAddress());
         preparedStatement.setString(4, customer.getPassword());
+        preparedStatement.setString(5, customer.getAvataImg());
     }
 
     private Customer resultCustomer(ResultSet rs) throws SQLException {
@@ -37,14 +38,15 @@ public class CustomerDAO implements Repository<Customer> {
                 rs.getString("fullname"),
                 rs.getString("email"),
                 rs.getString("address"),
-                rs.getString("password")
+                rs.getString("password"),
+                rs.getString("avata_img")
         );
     }
 
     @Override
     public Customer save(Customer customer) {
         try {
-            String sql = "INSERT INTO customer (fullname, email, address, password) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO customer (fullname, email, address, password,avata_img) VALUES (?, ?, ?, ?,?)";
             preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             setAccountParameter(preparedStatement,customer);
             preparedStatement.executeUpdate();
@@ -77,7 +79,7 @@ public class CustomerDAO implements Repository<Customer> {
     }
 
     @Override
-    public ArrayList<Customer> getAll() throws SQLException {
+    public ArrayList<Customer> getAll()  {
         try {
             String sql = "SELECT * FROM customer";
             statement = connection.createStatement();
@@ -179,9 +181,9 @@ public class CustomerDAO implements Repository<Customer> {
         }
     }
 
-//    public static void main(String[] args) {
-//        CustomerDAO customerDAO = new CustomerDAO();
-//        System.out.println(customerDAO.findByEmail("duy"));
-////        System.out.println(customerDAO.save(new Customer("nguyen huu duy","duynguyenavg@gmail.com","tien giang , chau thành diem hy","123")));
-//    }
+    public static void main(String[] args) {
+        CustomerDAO customerDAO = new CustomerDAO();
+        System.out.println(customerDAO.getAll());
+//        System.out.println(customerDAO.save(new Customer("nguyen huu duy","duynguyenavg@gmail.com","tien giang , chau thành diem hy","123")));
+    }
 }

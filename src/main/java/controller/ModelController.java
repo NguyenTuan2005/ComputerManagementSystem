@@ -1,5 +1,7 @@
 package controller;
 
+import Model.Product;
+
 import java.util.ArrayList;
 
 public interface ModelController<M> {
@@ -10,4 +12,8 @@ public interface ModelController<M> {
     ArrayList<M> reloadData();
 
     void setDeleteRow(int id , boolean status);
+
+    void saves(ArrayList<M> products);
+    void save(Product product);
+
 }

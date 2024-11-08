@@ -5,23 +5,46 @@ import dao.ProductDAO;
 
 import java.util.ArrayList;
 
-public class ProductController {
+public class ProductController implements ModelController<Product> {
+
     private ProductDAO productDAO ;
+
 
     public ProductController() {
         this.productDAO = new ProductDAO();
     }
 
+    @Override
     public ArrayList<Product> find(String name){
         return  productDAO.findByName(name);
     }
 
+    @Override
     public ArrayList<Product> getAll() {
         return productDAO.getAll();
     }
 
+    @Override
+    public ArrayList<Product> reloadData() {
+        return null;
+    }
+
+    @Override
     public void setDeleteRow(int id , boolean status){
         productDAO.setDeleteRow(id,status);
+    }
+
+    @Override
+    public void saves(ArrayList<Product> products) {
+        for(Product product: products) {
+            productDAO.save(product);
+        }
+    }
+
+    @Deprecated
+    @Override
+    public void save(Product product) {
+
     }
 
     public static void main(String[] args) {

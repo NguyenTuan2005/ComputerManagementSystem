@@ -1,6 +1,7 @@
 package dao;
 
 import Config.DatabaseConfig;
+import Config.ProductConfig;
 import Model.Product;
 
 import java.sql.*;
@@ -28,10 +29,10 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product save(Product product) {
         try {
-            String sql = "INSERT INTO product (suppliers_id, name, quality, price, genre, brand, operating_system, cpu, memory, ram, made_in, status, delete_row) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+            String sql = "INSERT INTO product (suppliers_id, name, quality, price, genre, brand, operating_system, cpu, memory, ram, made_in, status, delete_row, disk ,weight ,monitor,card) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             setProductParameters(preparedStatement, product);
-            preparedStatement.setInt(13, 1);
+
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -40,6 +41,7 @@ public class ProductDAO implements Repository<Product> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println( product);
         return product;
     }
 
@@ -125,10 +127,10 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product update(Product product) {
         try {
-            String sql = "UPDATE product SET suppliers_id = ?, name = ?, quality = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? , delete_row=? WHERE id = ?";
+            String sql = "UPDATE product SET suppliers_id = ?, name = ?, quality = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? , delete_row=?,disk = ? ,weight = ? ,monitor = ? ,card =? WHERE id = ?";
             preparedStatement = connection.prepareStatement(sql);
             setProductParameters(preparedStatement, product);
-            preparedStatement.setInt(14,product.getId());
+            preparedStatement.setInt(18,product.getId());
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -171,9 +173,14 @@ public class ProductDAO implements Repository<Product> {
         product.setMadeIn(rs.getString("made_in"));
         product.setStatus(rs.getString("status"));
         product.setDeleteRow(rs.getInt("delete_row"));
+        product.setDisk(rs.getString("disk"));
+        product.setWeight(rs.getString("weight"));
+        product.setMonitor(rs.getString("monitor"));
+        product.setCard(rs.getString("card"));
         return product;
     }
 
+    // lỗi
     private void setProductParameters(PreparedStatement preparedStatement, Product product) throws SQLException {
         preparedStatement.setInt(1, product.getSuppliersId());
         preparedStatement.setString(2, product.getName());
@@ -188,11 +195,16 @@ public class ProductDAO implements Repository<Product> {
         preparedStatement.setString(11, product.getMadeIn());
         preparedStatement.setString(12, product.getStatus());
         preparedStatement.setInt(13, product.getDeleteRow());
+        preparedStatement.setString(14,product.getDisk());
+        preparedStatement.setString(15,product.getWeight());
+        preparedStatement.setString(16,product.getMonitor());
+        preparedStatement.setString(17,product.getCard());
     }
 
     public static void main(String[] args) {
         ProductDAO p = new ProductDAO();
-        p.setDeleteRow(3, false);
+        System.out.println(p.getAll());
+//        ProductConfig.exportToExcel(p.getAll(),"demo");
     }
 
 }

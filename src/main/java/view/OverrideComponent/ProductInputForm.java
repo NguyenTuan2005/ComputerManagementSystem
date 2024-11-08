@@ -27,14 +27,21 @@ public class ProductInputForm extends JFrame{
     private JTextField txtMemory;
     private JTextField txtRAM;
     private JTextField txtMadeIn;
+    private JTextField txtDisk;
+    private JTextField txtMonitor;
+    private JTextField txtWeight;
+    private JTextField txtCard;
+
     private JComboBox<String> cmbStatus;
     private JButton btnSave;
     private JButton btnClear;
     private JButton btnExit;
     private SupplierDAO supplierDAO;
     private ProductDAO productDAO;
-    private int supplierId ;
+    private int supplierId  = 1;
     private int mouseX, mouseY;
+
+    private ScrollPane scrollPane;
 
     private Map<String,Integer> suppliersMap;
 
@@ -91,15 +98,19 @@ public class ProductInputForm extends JFrame{
 
 
         JPanel buttonPanel = createButtonPanel();
+        scrollPane = new ScrollPane();
+
 
         mainPanel.add(titlePanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        mainPanel.add(contentPanel);
+        scrollPane.add(contentPanel);
+        scrollPane.setPreferredSize(new Dimension(700,90000));
+        mainPanel.add(scrollPane);
+
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         mainPanel.add(buttonPanel);
 
         add(mainPanel);
-
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -153,6 +164,10 @@ public class ProductInputForm extends JFrame{
         txtMemory = createStyledTextField();
         txtRAM = createStyledTextField();
         txtMadeIn = createStyledTextField();
+        txtDisk = createStyledTextField();
+        txtMonitor = createStyledTextField();
+        txtWeight = createStyledTextField();
+        txtCard = createStyledTextField();
         supplierDAO = new SupplierDAO();
         productDAO = new ProductDAO();
 
@@ -232,19 +247,23 @@ public class ProductInputForm extends JFrame{
 
     private void addStyledComponents(JPanel panel, GridBagConstraints gbc) {
         Object[][] components = {
-//                {"Mã sản phẩm:", txtId},
-                {"Mã nhà cung cấp:", cmbSupplierId}, // Sử dụng JComboBox
-                {"Tên sản phẩm:", txtName},
-                {"Chất lượng:", txtQuality},
-                {"Giá:", txtPrice},
-                {"Thể loại:", txtGenre},
-                {"Thương hiệu:", txtBrand},
-                {"Hệ điều hành:", txtOS},
+
+                {"Suppler name:", cmbSupplierId},
+                {"Product name:", txtName},
+                {"Quality:", txtQuality},
+                {"Unit price:", txtPrice},
+                {"Genre:", txtGenre},
+                {"Brand:", txtBrand},
+                {"Operating system :", txtOS},
                 {"CPU:", txtCPU},
-                {"Bộ nhớ:", txtMemory},
+                {"Memory:", txtMemory},
                 {"RAM:", txtRAM},
-                {"Nơi sản xuất:", txtMadeIn},
-                {"Trạng thái:", cmbStatus}
+                {"Made in:", txtMadeIn},
+                {"Disk :", txtDisk},
+                {"Minotor :", txtMonitor},
+                {"Weight :", txtWeight},
+                {"Card :", txtCard},
+                {"Status:", cmbStatus}
         };
 
         int gridy = 0;
@@ -297,6 +316,10 @@ public class ProductInputForm extends JFrame{
             product.setMemory(txtMemory.getText());
             product.setRam(txtRAM.getText());
             product.setMadeIn(txtMadeIn.getText());
+            product.setDisk(txtDisk.getText());
+            product.setMonitor(txtMonitor.getText());
+            product.setWeight(txtWeight.getText());
+            product.setCard(txtCard.getText());
             product.setStatus(cmbStatus.getSelectedItem().toString());
             productDAO.save(product);
 
@@ -319,6 +342,10 @@ public class ProductInputForm extends JFrame{
         txtMemory.setText("");
         txtRAM.setText("");
         txtMadeIn.setText("");
+        txtCard.setText("");
+        txtWeight.setText("");
+        txtDisk.setText("");
+        txtMonitor.setText("");
     }
 
     private void showSuccessDialog(String message) {

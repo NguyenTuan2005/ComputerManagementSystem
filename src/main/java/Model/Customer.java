@@ -3,6 +3,11 @@ package Model;
 
 import lombok.*;
 
+import javax.swing.*;
+import java.util.ArrayList;
+
+import static view.OverrideComponent.ImageInJTable.resizeImageIcon;
+
 @ToString
 @EqualsAndHashCode
 @Getter
@@ -49,5 +54,35 @@ public class Customer {
 
     public boolean samePasswordAndEmail(String email, String password) {
         return  this.email.equals(email) && this.password.equals(password);
+    }
+
+    public String [] convertToArray(){
+        String [] result = {
+                String.valueOf(this.id)
+                ,this.fullName
+                ,this.email
+                ,this.address
+                ,"***************"
+                ,this.avataImg
+        };
+        return result;
+    }
+    public Object [] convertToObjects(){
+        ImageIcon icon = resizeImageIcon(this.avataImg, 200, 200); // Kích thước 50x50
+        return new Object[]{String.valueOf(this.id)
+                ,this.fullName
+                ,this.email
+                ,this.address
+                ,"***************"
+                ,icon
+        };
+    }
+    public static Object [][] getDataOnTable(ArrayList<Customer> customers){
+//        String [][] datas = new String[customers.size()][];
+        Object [][] datass = new Object[customers.size()][];
+        for (int i = 0; i < customers.size(); i++) {
+            datass[i] = customers.get(i).convertToObjects();
+        }
+        return datass;
     }
 }

@@ -28,6 +28,17 @@ public class Customer {
 
     private String avataImg;
 
+    private int  numberOfCombsPurchased;
+
+    public Customer(String fullName, String email, String address, String password, String avataImg, int numberOfCombsPurchased) {
+        this.fullName = fullName;
+        this.email = email;
+        this.address = address;
+        this.password = password;
+        this.avataImg = avataImg;
+        this.numberOfCombsPurchased = numberOfCombsPurchased;
+    }
+
     public Customer(String fullName, String email, String address, String password) {
         this.fullName = fullName;
         this.email = email;

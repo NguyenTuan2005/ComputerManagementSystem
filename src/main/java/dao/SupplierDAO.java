@@ -34,6 +34,7 @@ public class SupplierDAO implements Repository<Supplier>{
                 rs.getString("phone_number"),
                 rs.getString("address"),
                 rs.getDate("contact_date")
+
         );
     }
     

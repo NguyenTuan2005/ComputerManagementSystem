@@ -30,6 +30,7 @@ public class CustomerDAO implements Repository<Customer> {
         preparedStatement.setString(3, customer.getAddress());
         preparedStatement.setString(4, customer.getPassword());
         preparedStatement.setString(5, customer.getAvataImg());
+        preparedStatement.setInt(6,customer.getNumberOfCombsPurchased());
     }
 
     private Customer resultCustomer(ResultSet rs) throws SQLException {
@@ -39,14 +40,15 @@ public class CustomerDAO implements Repository<Customer> {
                 rs.getString("email"),
                 rs.getString("address"),
                 rs.getString("password"),
-                rs.getString("avata_img")
+                rs.getString("avata_img"),
+                rs.getInt("number_of_combs_purchased")
         );
     }
 
     @Override
     public Customer save(Customer customer) {
         try {
-            String sql = "INSERT INTO customer (fullname, email, address, password,avata_img) VALUES (?, ?, ?, ?,?)";
+            String sql = "INSERT INTO customer (fullname, email, address, password,avata_img,number_of_combs_purchased) VALUES (?, ?, ?, ?,?,?)";
             preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             setAccountParameter(preparedStatement,customer);
             preparedStatement.executeUpdate();
@@ -99,7 +101,7 @@ public class CustomerDAO implements Repository<Customer> {
     @Override
     public ArrayList<Customer> findByName(String name) {
         try {
-            String sql = "SELECT * FROM customer WHERE fullname LIKE ?";
+            String sql = "SELECT * FROM customer WHERE LOWER(fullname) LIKE lower(?)";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, "%" + name + "%");
             ResultSet rs = preparedStatement.executeQuery();
@@ -152,10 +154,10 @@ public class CustomerDAO implements Repository<Customer> {
     @Override
     public Customer update(Customer customer) {
         try {
-            String sql = "UPDATE customer SET fullname = ?, email = ?, address = ?, password = ? WHERE id = ?";
+            String sql = "UPDATE customer SET fullname = ?, email = ?, address = ?, password = ? ,number_of_combs_purchased =? WHERE id = ?";
             preparedStatement = connection.prepareStatement(sql);
             setAccountParameter(preparedStatement,customer);
-            preparedStatement.setInt(5, customer.getId());
+            preparedStatement.setInt(6, customer.getId());
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
                 return customer;
@@ -184,6 +186,6 @@ public class CustomerDAO implements Repository<Customer> {
     public static void main(String[] args) {
         CustomerDAO customerDAO = new CustomerDAO();
         System.out.println(customerDAO.getAll());
-//        System.out.println(customerDAO.save(new Customer("nguyen huu duy","duynguyenavg@gmail.com","tien giang , chau thành diem hy","123")));
+//        System.out.println(customerDAO.indByEmail("1233@abc.com")save(new Customer("nguyen huu duy","duynguyenavg@gmail.com","tien giang , chau thành diem hy","123")));
     }
 }

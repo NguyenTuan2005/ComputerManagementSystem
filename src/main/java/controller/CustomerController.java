@@ -35,7 +35,7 @@ public class CustomerController implements ModelController<Customer> {
 
     @Override
     public ArrayList<Customer> find(String name) {
-        return null;
+        return customerDAO.findByName(name);
     }
 
     @Override

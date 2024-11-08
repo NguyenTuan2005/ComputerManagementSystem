@@ -8,6 +8,12 @@ import Model.Supplier;
 import controller.CustomerController;
 import controller.ProductController;
 import controller.SupplierController;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 import view.OverrideComponent.*;
 
 import javax.swing.*;
@@ -22,6 +28,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -367,7 +375,6 @@ public class ManagerMainPanel extends JPanel {
                 none.setVerticalAlignment(SwingConstants.CENTER);
 
 
-
                 sortPanel.add(sortComboBox,BorderLayout.CENTER);
                 sortPanel.add(none,BorderLayout.NORTH);
                 sortPanel.add(sortLabel,BorderLayout.SOUTH);
@@ -674,10 +681,9 @@ public class ManagerMainPanel extends JPanel {
         private  ToolPanel toolPanel = new ToolPanel();
         private TableCustomerPanel tableCustomerPanel = new TableCustomerPanel();
 
-        private JButton addCustomerBt, modifyCustomerBt, deleteCustomerBt, sortCustomerBt, exportCustomerExcelBt, importCustomerExcelBt, searchCustomerBt, reloadCustomerBt;
+        private JButton addCustomerBt, modifyCustomerBt,exportCustomerExcelBt, searchCustomerBt, reloadCustomerBt;
          private JTextField findCustomerText;
-        private JPanel sortPanel;
-        private JLabel sortLabel;
+
 
         private static CustomerController customerController= new CustomerController();
         private static ArrayList<Customer> customers = new ArrayList<>();
@@ -740,20 +746,7 @@ public class ManagerMainPanel extends JPanel {
                 });
 
 
-                deleteCustomerBt = new JButton("Delete");
-                ButtonConfig.addButtonHoverEffect(deleteCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                setStyleButton(deleteCustomerBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", deleteCustomerBt);
-                deleteCustomerBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
-                deleteCustomerBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
-
-                sortCustomerBt = new JButton("Sort");
-                ButtonConfig.addButtonHoverEffect(sortCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                setStyleButton(sortCustomerBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/sort.256x204.png", sortCustomerBt);
-                sortCustomerBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
-                sortCustomerBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
                 exportCustomerExcelBt = new JButton("Export");
                 ButtonConfig.addButtonHoverEffect(exportCustomerExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -761,33 +754,6 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-file-excel-32.png", exportCustomerExcelBt);
                 exportCustomerExcelBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 exportCustomerExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-
-
-                importCustomerExcelBt = new JButton("Import");
-                ButtonConfig.addButtonHoverEffect(importCustomerExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                setStyleButton(importCustomerExcelBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-export-excel-50.png", importCustomerExcelBt);
-                importCustomerExcelBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
-                importCustomerExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-                // api cho phan Import excel
-//                importCustomerExcelBt.addActionListener(new ActionListener() {
-//                    @Override
-//                    public void actionPerformed(ActionEvent e) {
-//                        JFileChooser fileChooser = new JFileChooser();
-//                        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-//
-//                        int result = fileChooser.showOpenDialog(new JFrame("File Chooser"));
-//                        if (result == JFileChooser.APPROVE_OPTION) {
-//                            File selectedFile = fileChooser.getSelectedFile();
-//                            String url = selectedFile.getAbsolutePath();
-//
-//                            JOptionPane.showMessageDialog(null, "Read file "+ url, "Notify", JOptionPane.WARNING_MESSAGE);
-//
-//                        } else {
-//                            System.out.println("Chọn file đã bị hủy.");
-//                        }
-//                    }
-//                });
 
                 findCustomerText = new JTextField();
                 formatTextField(findCustomerText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
@@ -797,6 +763,23 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.addButtonHoverEffect(searchCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(searchCustomerBt, Style.FONT_SIZE_MIN_PRODUCT, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
                 ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchCustomerBt);
+                searchCustomerBt.addActionListener(
+                        new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                if (findCustomerText.getText().trim().isEmpty())
+                                    return;
+                                ArrayList<Customer> cuss = customerController.find(findCustomerText.getText().trim());
+
+                                if (cuss.isEmpty()) {
+                                    JOptionPane.showMessageDialog(tableCustomerPanel, "có caái ni");
+                                    return;
+                                }
+                                   upDataTable(cuss, modelCustomer);
+
+                            }
+                        }
+                );
 
                 reloadCustomerBt = new JButton("reload");
                 ButtonConfig.addButtonHoverEffect(reloadCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -819,56 +802,25 @@ public class ManagerMainPanel extends JPanel {
 
                 applicationPanel = new JPanel(new FlowLayout());
                 applicationPanel.add(addCustomerBt);
-                applicationPanel.add(deleteCustomerBt);
+
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(modifyCustomerBt);
-                String[] sortOptions = {"NAME", "MEMORY", "PRICE", "RAM"};
-                JComboBox<String> sortComboBox = new JComboBox<>(sortOptions);
-                sortComboBox.setPreferredSize(new Dimension(74,59));
-                sortComboBox.setBackground(Style.WORD_COLOR_WHITE);
-                sortComboBox.setForeground(Style.WORD_COLOR_BLACK);
-                sortComboBox.setFont(Style.FONT_SIZE_BUTTON);
-                sortComboBox.setRenderer(new DefaultListCellRenderer() {
-                    @Override
-                    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                        Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-                        if (isSelected) {
-                            c.setBackground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);  // Màu nền khi mục được chọn
-                            c.setForeground(Color.WHITE); // Màu chữ khi mục được chọn
-                        } else {
-                            c.setBackground(Color.WHITE); // Màu nền khi mục không được chọn
-                            c.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE); // Màu chữ khi mục không được chọn
-                        }
-                        return c;
-                    }
-                });
-                sortPanel = new JPanel(new BorderLayout());
-                sortLabel = new JLabel("Sort");
-                sortLabel.setHorizontalAlignment(SwingConstants.CENTER); // Căn ngang giữa
-                sortLabel.setVerticalAlignment(SwingConstants.CENTER);
-                sortLabel.setFont(Style.FONT_SIZE_MIN_PRODUCT);
                 JLabel none =new JLabel("");
                 none.setFont(Style.FONT_SIZE_MIN_PRODUCT);
                 none.setHorizontalAlignment(SwingConstants.CENTER); // Căn ngang giữa
                 none.setVerticalAlignment(SwingConstants.CENTER);
               
-                sortPanel.add(sortComboBox,BorderLayout.CENTER);
-                sortPanel.add(none,BorderLayout.NORTH);
-                sortPanel.add(sortLabel,BorderLayout.SOUTH);
-                sortPanel.setBackground(Style.WORD_COLOR_WHITE);
 
-                applicationPanel.add(sortPanel);
-//                applicationPanel.add(sortBt);
+
+
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(exportCustomerExcelBt);
-//                applicationPanel.add(ButtonConfig.createVerticalSeparator());
-                applicationPanel.add(importCustomerExcelBt);
+
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(reloadCustomerBt);
                 applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
 
-// layout
                 mainPanel = new JPanel(new GridBagLayout());
                 mainPanel.setBackground(Style.BACKGROUND_COLOR);
                 GridBagConstraints gbc = new GridBagConstraints();
@@ -918,9 +870,51 @@ public class ManagerMainPanel extends JPanel {
 
                 scrollPaneCustomer = new JScrollPane(tableCustomer);
                 tabbedPaneCustomer = createTabbedPane(scrollPaneCustomer , "Customer", Style.FONT_HEADER_ROW_TABLE);
-
+                tabbedPaneCustomer .add(new Schemas());
                 add(tabbedPaneCustomer, BorderLayout.CENTER);
 
+
+            }
+        }
+        private class Schemas extends JPanel{
+            public Schemas() {
+
+                // Tạo biểu đồ với dữ liệu
+                JFreeChart barChart = ChartFactory.createBarChart(
+                        "Purchase Quantity by Customer",
+                        "Customer",
+                        "Number of purchased",
+                        createDataset(),
+                        PlotOrientation.VERTICAL,
+                        true, true, false);
+
+                // Tạo panel chứa biểu đồ
+                ChartPanel chartPanel = new ChartPanel(barChart);
+                chartPanel.setPreferredSize(new Dimension(800, 600));
+
+                // Đặt layout cho JPanel và thêm ChartPanel vào
+                this.setLayout(new BorderLayout());
+                this.add(chartPanel, BorderLayout.CENTER);
+            }
+
+            private CategoryDataset createDataset() {
+                DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+                // Dữ liệu mẫu: Thay thế bằng dữ liệu từ database
+                Map<String, Integer> topCustomers = new HashMap<>();
+
+                consertCustomerToMap(customers,  topCustomers);
+
+                // Thêm dữ liệu vào dataset
+                for (Map.Entry<String, Integer> entry : topCustomers.entrySet()) {
+                    dataset.addValue(entry.getValue(), "Số lượng mua", entry.getKey());
+                }
+
+                return dataset;
+            }
+            private void  consertCustomerToMap(ArrayList<Customer> customers, Map<String,Integer> map){
+                for(Customer customer  :customers){
+                    map.put(customer.getFullName(),customer.getNumberOfCombsPurchased());
+                }
             }
         }
 

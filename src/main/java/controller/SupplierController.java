@@ -1,5 +1,6 @@
 package controller;
 
+import Model.Customer;
 import Model.Product;
 import Model.Supplier;
 import dao.SupplierDAO;
@@ -16,6 +17,11 @@ public class SupplierController implements ModelController<Supplier> {
     @Override
     public ArrayList<Supplier> find(String name){
         return  supplierDAO.findByName(name);
+    }
+
+    @Override
+    public Supplier findById(int id) {
+        return null;
     }
 
     @Override
@@ -39,7 +45,13 @@ public class SupplierController implements ModelController<Supplier> {
     }
 
     @Override
-    public void save(Product product) {
+    public void save(Supplier supplier) {
 
     }
+
+    @Override
+    public void update(Supplier supplier) {
+
+    }
+
 }

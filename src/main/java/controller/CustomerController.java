@@ -15,6 +15,7 @@ public class CustomerController implements ModelController<Customer> {
 
     public CustomerController(){
         this.customerDAO = new CustomerDAO();
+        passwordSecurity = new PasswordSecurity();
     }
     public boolean isValidAccount(String email , String password ){
         Customer customer = customerDAO.findByEmail(email);
@@ -38,6 +39,11 @@ public class CustomerController implements ModelController<Customer> {
     }
 
     @Override
+    public Customer findById(int id) {
+        return customerDAO.findById(id);
+    }
+
+    @Override
     public ArrayList<Customer> getAll() {
         return  customerDAO.getAll();
     }
@@ -53,13 +59,22 @@ public class CustomerController implements ModelController<Customer> {
     }
 
     @Override
-    public void saves(ArrayList<Customer> products) {
-
+    public void saves(ArrayList<Customer> customers) {
+        for (Customer customer :customers)
+            customerDAO.save(customer);
     }
 
     @Override
-    public void save(Product product) {
+    public void save(Customer customer) {
+        passwordSecurity.setPlainPassword(customer.getPassword());
+        customer.setPassword(passwordSecurity.generatePassword());
+        System.out.println( customerDAO.save(customer));
+    }
 
+    @Override
+    public void update(Customer customer) {
+        // Customer has to have Id!
+        customerDAO.update(customer);
     }
 
     public static void main(String[] args) {

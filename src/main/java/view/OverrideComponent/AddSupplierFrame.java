@@ -1,20 +1,29 @@
 package view.OverrideComponent;
 
+import Config.ButtonConfig;
+import Model.Supplier;
+import dao.SupplierDAO;
+import view.Style;
+
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Date;
 
 public class AddSupplierFrame extends JFrame {
-    private JTextField companyNameField, emailField, phoneNumberField, addressField;
-    private JButton saveButton, cancelButton, clearButton;
+    private JTextField companyNameField, emailField, phoneNumberField, addressField, dateField;
+    private JButton clearButton, saveButton, cancelButton;
+
+    private SupplierDAO supplierDAO;
 
     public static void main(String[] args) {
-        new AddSupplierFrame();
+        new AddSupplierFrame().showFrame();
     }
+
     public AddSupplierFrame() {
         setTitle("Add Supplier");
-        setSize(400, 300);
-        setLocationRelativeTo(null); // Center on screen
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(900, 750);
+        setLocationRelativeTo(null);
+        setUndecorated(true);
 
         // Create the main panel with padding
         JPanel mainPanel = new JPanel();
@@ -36,7 +45,7 @@ public class AddSupplierFrame extends JFrame {
         companyNameField = new JTextField(20);
         mainPanel.add(companyNameField, gbc);
 
-        // Email
+        // email
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0.0;
@@ -75,18 +84,15 @@ public class AddSupplierFrame extends JFrame {
         gbc.weightx = 0.0;
         mainPanel.add(new JLabel("Contract Date:"), gbc);
 
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        dateField = new JTextField(20);
+        mainPanel.add(dateField, gbc);
+
+        supplierDAO = new SupplierDAO();
+
         // Button Panel
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-        clearButton = new JButton("Clear All");
-        saveButton = new JButton("Save");
-        cancelButton = new JButton("Cancel");
-
-        buttonPanel.add(clearButton);
-        buttonPanel.add(cancelButton);
-        buttonPanel.add(saveButton);
-
+        ButtonPanel buttonPanel = new ButtonPanel();
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.gridwidth = 2;
@@ -94,42 +100,98 @@ public class AddSupplierFrame extends JFrame {
         gbc.anchor = GridBagConstraints.PAGE_END;
         mainPanel.add(buttonPanel, gbc);
 
-        // Add action listeners
-        clearButton.addActionListener(e -> clearFields());
-
-        cancelButton.addActionListener(e -> dispose());
-
-        saveButton.addActionListener(e -> {
-            // Add your save logic here
-            saveSupplier();
-            dispose();
-        });
-
         // Add the main panel to frame
         add(mainPanel);
-        setVisible(true);
     }
 
-    private void clearFields() {
-        companyNameField.setText("");
-        emailField.setText("");
-        phoneNumberField.setText("");
-        addressField.setText("");
-    }
+    class ButtonPanel extends JPanel {
+        public ButtonPanel() {
+            setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-    private void saveSupplier() {
-        // Get all the values
-        String companyName = companyNameField.getText();
-        String email = emailField.getText();
-        String phoneNumber = phoneNumberField.getText();
-        String address = addressField.getText();
+            clearButton = ButtonConfig.createStyledButton("Clear All");
+            clearButton.setForeground(Style.WORD_COLOR_BLACK);
+            ButtonConfig.addButtonHoverEffect(clearButton, ButtonConfig.BUTTON_HOVER_COLOR, ButtonConfig.BUTTON_COLOR);
+            saveButton = ButtonConfig.createStyledButton("Save");
+            saveButton.setForeground(Style.WORD_COLOR_BLACK);
+            ButtonConfig.addButtonHoverEffect(saveButton, ButtonConfig.BUTTON_HOVER_COLOR, ButtonConfig.BUTTON_COLOR);
+            cancelButton = ButtonConfig.createStyledButton("Cancel");
+            cancelButton.setForeground(Style.WORD_COLOR_BLACK);
+            ButtonConfig.addButtonHoverEffect(cancelButton, ButtonConfig.BUTTON_HOVER_COLOR, ButtonConfig.BUTTON_COLOR);
 
-        // Add your save logic here
-        System.out.println("Saving supplier:");
-        System.out.println("Company Name: " + companyName);
-        System.out.println("Email: " + email);
-        System.out.println("Phone: " + phoneNumber);
-        System.out.println("Address: " + address);
+            add(clearButton);
+            add(cancelButton);
+            add(saveButton);
+
+            // Add action listeners
+            clearButton.addActionListener(e -> clearFields());
+
+            cancelButton.addActionListener(e -> dispose());
+
+            saveButton.addActionListener(e -> {
+                String result = saveSupplier();
+                switch (result) {
+                    case "success" -> dispose();
+                    case "phone" -> phoneNumberField.requestFocus();
+                    case "date" -> dateField.requestFocus();
+                }
+            });
+        }
+
+        private void clearFields() {
+            companyNameField.setText("");
+            emailField.setText("");
+            phoneNumberField.setText("");
+            addressField.setText("");
+            dateField.setText("");
+        }
+
+        private String saveSupplier() {
+            try {
+                //Get all the values
+                Supplier supplier = new Supplier();
+                supplier.setCompanyName(companyNameField.getText());
+                supplier.setEmail(emailField.getText());
+                supplier.setPhoneNumber(checkPhoneNum(phoneNumberField.getText()));
+                supplier.setAddress(addressField.getText());
+                supplier.setContractDate(checkDate(dateField.getText()));
+
+                supplierDAO.save(supplier);
+                clearFields();
+                return "success";
+            } catch (IllegalArgumentException e) {
+                showMessageDialog(e.getMessage());
+
+                if (e.getMessage().contains("Phone number")) {
+                    return "phone";
+                } else if (e.getMessage().contains("date")) {
+                    return "date";
+                }
+                return "error";
+            }
+        }
+
+        private String checkPhoneNum(String phoneNum) {
+            //Check if phone number is at least 10 characters
+            if (phoneNum.length() != 10)
+                throw new IllegalArgumentException("Phone number must be 10 digits");
+
+            //Check if all characters are digits
+            if (!phoneNum.chars().allMatch(Character::isDigit))
+                throw new IllegalArgumentException("Phone number must contain only digits");
+            return phoneNum;
+        }
+
+        private Date checkDate(String dateStr) {
+            try {
+                return Date.valueOf(dateStr);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Wrong date format. Please enter the date in YYYY-MM-DD format.");
+            }
+        }
+
+        private void showMessageDialog(String message) {
+            JOptionPane.showMessageDialog(null, message, "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     // Method to show the frame

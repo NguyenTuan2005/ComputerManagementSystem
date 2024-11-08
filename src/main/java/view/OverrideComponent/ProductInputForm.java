@@ -180,11 +180,11 @@ public class ProductInputForm extends JFrame{
         cmbStatus.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Khởi tạo buttons
-        btnSave = createStyledButton("SAVE");
+        btnSave = ButtonConfig.createStyledButton("SAVE");
         btnSave.setForeground(Color.BLACK);
-        btnClear = createStyledButton("CLEAN ALL");
+        btnClear = ButtonConfig.createStyledButton("CLEAN ALL");
         btnClear.setForeground(Color.BLACK);
-        btnExit = createStyledButton("CANCEL");
+        btnExit = ButtonConfig.createStyledButton("CANCEL");
         btnExit.setForeground(Color.BLACK);
 
         // Thêm hiệu ứng hover cho buttons
@@ -204,18 +204,6 @@ public class ProductInputForm extends JFrame{
         ));
         return textField;
     }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 14));
-        button.setForeground(Color.WHITE);
-        button.setBackground(BUTTON_COLOR);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        return button;
-    }
-
 
     private static void setCompany(ArrayList<Supplier> suppliers, String [] companyNames  ){
         for (int i = 0; i < suppliers.size(); i++) {

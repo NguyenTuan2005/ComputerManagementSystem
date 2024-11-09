@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class TextDisplayPanel extends JPanel {
     private JTextArea textArea;
@@ -16,6 +17,7 @@ public class TextDisplayPanel extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBackground(LIGHT_BLUE);
         setBorder(new EmptyBorder(10, 10, 10, 10));
+        setTextEditable(false);
 
         // Create and configure the text area
         textArea = new JTextArea();

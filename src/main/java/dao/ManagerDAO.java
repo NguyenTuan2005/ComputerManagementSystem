@@ -165,6 +165,11 @@ public class ManagerDAO implements  Repository<Manager> {
         return false;
     }
 
+    @Override
+    public ArrayList<Manager> getByColumn(String column) {
+        return null;
+    }
+
     private ManagerInfor mapResultSetToManagerInfor(ResultSet resultSet) {
         ManagerInfor managerInfor = new ManagerInfor();
         try {

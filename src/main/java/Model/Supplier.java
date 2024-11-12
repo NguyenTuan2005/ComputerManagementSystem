@@ -25,12 +25,34 @@ public class Supplier {
 
     private Date contractDate;
 
-    public Supplier(String companyName, String email, String phoneNumber, String address, Date contractDate) {
+    private int deleteRow;
+
+    public Supplier(String companyName, String email, String phoneNumber, String address, Date contractDate,int deleteRow) {
         this.companyName = companyName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.contractDate = contractDate;
+        this.deleteRow= deleteRow;
+    }
+
+    public static java.sql.Date checkDate(String dateStr) {
+        try {
+            return java.sql.Date.valueOf(dateStr);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Wrong date format. Please enter the date in YYYY-MM-DD format.");
+        }
+    }
+
+    public static String checkPhoneNum(String phoneNum) {
+        //Check if phone number is at least 10 characters
+        if (phoneNum.length() != 10)
+            throw new IllegalArgumentException("Phone number must be 10 digits");
+
+        //Check if all characters are digits
+        if (!phoneNum.chars().allMatch(Character::isDigit))
+            throw new IllegalArgumentException("Phone number must contain only digits");
+        return phoneNum;
     }
 
     // Convert data to String

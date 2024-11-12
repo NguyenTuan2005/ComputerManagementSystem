@@ -1,7 +1,6 @@
 package dao;
 
 import Config.DatabaseConfig;
-import Config.ProductConfig;
 import Model.Product;
 
 import java.sql.*;
@@ -155,6 +154,12 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public boolean remove(int id) {
         return false;
+    }
+
+    // Phương thức để lấy tất cả Products theo cột
+    @Override
+    public ArrayList<Product> getByColumn(String column) {
+        return null;
     }
 
     private Product mapResultSetToProduct(ResultSet rs) throws SQLException {

@@ -7,14 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 // create undo
@@ -51,73 +50,6 @@ public class ProductConfig {
             }
         }
         return null;
-    }
-
-    public static void exportProductsToExcel(ArrayList<Product> products, String filePath) {
-        // Create a new workbook and a sheet
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Products");
-
-        // Create header row
-        String[] headers = {"ID", "Supplier ID", "Name", "Quality", "Price", "Genre", "Brand", "OS",
-                "CPU", "Memory", "RAM", "Made In", "Status", "Disk", "Monitor", "Weight", "Card"};
-
-        Row headerRow = sheet.createRow(0);
-        for (int i = 0; i < headers.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(headers[i]);
-            cell.setCellStyle(createHeaderStyle(workbook));
-        }
-
-        // Populate the rows with product data
-        int rowNum = 1;
-        for (Product product : products) {
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(product.getId());
-            row.createCell(1).setCellValue(product.getSuppliersId());
-            row.createCell(2).setCellValue(product.getName());
-            row.createCell(3).setCellValue(product.getQuality());
-            row.createCell(4).setCellValue(product.getPrice());
-            row.createCell(5).setCellValue(product.getGenre());
-            row.createCell(6).setCellValue(product.getBrand());
-            row.createCell(7).setCellValue(product.getOperatingSystem());
-            row.createCell(8).setCellValue(product.getCpu());
-            row.createCell(9).setCellValue(product.getMemory());
-            row.createCell(10).setCellValue(product.getRam());
-            row.createCell(11).setCellValue(product.getMadeIn());
-            row.createCell(12).setCellValue(product.getStatus());
-            row.createCell(13).setCellValue(product.getDisk());
-            row.createCell(14).setCellValue(product.getMonitor());
-            row.createCell(15).setCellValue(product.getWeight());
-            row.createCell(16).setCellValue(product.getCard());
-        }
-
-        // Auto-size all columns
-        for (int i = 0; i < headers.length; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
-        // Write the workbook to a file
-        try (FileOutputStream fos = new FileOutputStream(filePath)) {
-            workbook.write(fos);
-            System.out.println("Excel file created successfully!");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                workbook.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static CellStyle createHeaderStyle(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
-        Font font = workbook.createFont();
-        font.setBold(true);
-        style.setFont(font);
-        return style;
     }
 
     // import

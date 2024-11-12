@@ -67,9 +67,11 @@ public class Customer {
         };
         return result;
     }
-    public Object [] convertToObjects(){
+    public Object [] convertToObjects(int serial ){
         ImageIcon icon = resizeImageIcon(this.avataImg, 200, 200); // Kích thước 50x50
-        return new Object[]{String.valueOf(this.id)
+        return new Object[]{
+                serial
+                ,String.valueOf(this.id)
                 ,this.fullName
                 ,this.email
                 ,this.address
@@ -81,7 +83,7 @@ public class Customer {
 //        String [][] datas = new String[customers.size()][];
         Object [][] datass = new Object[customers.size()][];
         for (int i = 0; i < customers.size(); i++) {
-            datass[i] = customers.get(i).convertToObjects();
+            datass[i] = customers.get(i).convertToObjects(i+1);
         }
         return datass;
     }

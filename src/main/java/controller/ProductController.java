@@ -1,13 +1,17 @@
 package controller;
 
+import Model.Customer;
 import Model.Product;
 import dao.ProductDAO;
+import security.PasswordSecurity;
 
 import java.util.ArrayList;
 
 public class ProductController implements ModelController<Product> {
 
     private ProductDAO productDAO ;
+
+    private PasswordSecurity passwordSecurity;
 
 
     public ProductController() {
@@ -17,6 +21,11 @@ public class ProductController implements ModelController<Product> {
     @Override
     public ArrayList<Product> find(String name){
         return  productDAO.findByName(name);
+    }
+
+    @Override
+    public Product findById(int id) {
+        return null;
     }
 
     @Override
@@ -41,7 +50,6 @@ public class ProductController implements ModelController<Product> {
         }
     }
 
-    @Deprecated
     @Override
     public void save(Product product) {
 

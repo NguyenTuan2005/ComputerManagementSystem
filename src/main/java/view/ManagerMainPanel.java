@@ -540,6 +540,7 @@ public class ManagerMainPanel extends JPanel {
                     });
                 }
 
+
                 // Modify Button
                 {
                     modifyBt = new JButton("Modify");
@@ -788,7 +789,7 @@ public class ManagerMainPanel extends JPanel {
 
     //james
     class CustomerPanel extends JPanel {
-        final String[] customerColumnNames = { "Customer ID", "Customer Name", "Email","Address", "Password", "Avata"};
+        final String[] customerColumnNames = { "Serial number","Customer ID", "Customer Name", "Email","Address", "Password", "Avata"};
 
         private JTable tableCustomer;
         private DefaultTableModel modelCustomer;
@@ -825,12 +826,17 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addCustomerBt);
                 addCustomerBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 addCustomerBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-//                addCustomerBt.addActionListener(new ActionListener() {
-//                    @Override
-//                    public void actionPerformed(ActionEvent e) {
-//                        new ProductInputForm();
-//                    }
-//                });
+                addCustomerBt.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        SwingUtilities.invokeLater(CustomerInfoFrame::new);
+                    }
+                });
 
                 modifyCustomerBt = new JButton("Modify");
                 ButtonConfig.addButtonHoverEffect(modifyCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -838,6 +844,25 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.setIconBigButton("src/main/java/Icon/modify.png", modifyCustomerBt);
                 modifyCustomerBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 modifyCustomerBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                modifyCustomerBt.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int selectedRow = tableCustomer.getSelectedRow();
+                        int columnIndex = 0;
+                        if (selectedRow != -1) {
+                            Object value = tableCustomer.getValueAt(selectedRow, columnIndex);
+
+                            int customerId = Integer.parseInt(value.toString());
+                            System.out.println("delete row : " + customerId);
+                            SwingUtilities.invokeLater(() -> {
+                                System.out.println(customerId);
+//                                new ProductModifyForm(productsAll.get(selectedRow)).setVisible(true);
+                                new ModifyCustomerFrame(customers.get(customerId-1));
+                            });
+
+                        }
+                    }
+                });
 
 
                 deleteCustomerBt = new JButton("Delete");
@@ -1007,7 +1032,6 @@ public class ManagerMainPanel extends JPanel {
                  // Thiết lập renderer cho cột ảnh
                 tableCustomer.getColumnModel().getColumn(customerColumnNames.length-1).setCellRenderer(new ImageInJTable.ImageRenderer());
                 tableCustomer.setRowHeight(100);
-//                tableCustomer.setRowHeight(30);
                 resizeColumnWidth(tableCustomer, 219);
                 modelCustomer = (DefaultTableModel) tableCustomer.getModel();
 

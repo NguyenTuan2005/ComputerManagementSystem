@@ -72,8 +72,10 @@ public class LoginFrame extends JFrame {
             subTextLabel.setForeground(Color.WHITE);
 
 
-            switchBt = new RoundedButton("Sign Up");
-            formatRoundedButton(switchBt, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.FONT_BUTTON_LOGIN_FRAME, new Dimension(200, 40));
+//            switchBt = new RoundedButton("Sign Up");
+//            formatRoundedButton(switchBt, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.FONT_BUTTON_LOGIN_FRAME, new Dimension(200, 40));
+            switchBt= createRoundedButton("Sign Up", Style.FONT_BUTTON_LOGIN_FRAME, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white,new Color(160, 231, 224),new Dimension(150, 38));
+            switchBt.setAlignmentX(Component.CENTER_ALIGNMENT);
             switchBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     if (switchBt.getText().equals("Sign Up")) {
@@ -90,27 +92,27 @@ public class LoginFrame extends JFrame {
                     }
                 }
             });
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setPreferredSize(new Dimension(150, 50));
+            buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+            buttonPanel.setOpaque(false);
+            buttonPanel.add(Box.createHorizontalGlue());
+            buttonPanel.add(switchBt);
+            buttonPanel.add(Box.createHorizontalGlue());
+
 
 
             add(Box.createVerticalGlue());
-            add(fitAva); // Thêm logo
+            add(fitAva);
             add(Box.createRigidArea(new Dimension(0, 50)));
             add(welcomeLabel);
             add(Box.createRigidArea(new Dimension(0, 10)));
             add(subTextLabel);
             add(Box.createRigidArea(new Dimension(0, 30)));
-            add(switchBt);
+            add(buttonPanel);
             add(Box.createVerticalGlue());
         }
 
-
-//        protected void paintComponent(Graphics grphcs) {
-//            Graphics2D g2 = (Graphics2D) grphcs;
-//            GradientPaint gra = new GradientPaint(0, 0, new Color(35, 166, 97), 0, getHeight(), new Color(22, 116, 66));
-//            g2.setPaint(gra);
-//            g2.fillRect(0, 0, getWidth(), getHeight());
-//            super.paintComponent(grphcs);
-//        }
     }
 
     class InputFormPanel extends JPanel {
@@ -233,11 +235,8 @@ public class LoginFrame extends JFrame {
             add(showPasswdCB, gbc);
 
             // Sign Up button
-            gbc.gridy++;
-            gbc.gridx = 0;
-            gbc.gridwidth = 2;
             signUpButton = new RoundedButton("Sign Up");
-            formatRoundedButton(signUpButton, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.FONT_BUTTON_LOGIN_FRAME, new Dimension(200, 40));
+            formatRoundedButton(signUpButton, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.FONT_BUTTON_LOGIN_FRAME, new Dimension(300, 40));
             signUpButton.setBackground(new Color(0, 153, 102));
             signUpButton.setForeground(Style.WORD_COLOR_WHITE);
             signUpButton.addActionListener(new ActionListener() {
@@ -245,10 +244,14 @@ public class LoginFrame extends JFrame {
                     JOptionPane.showMessageDialog(loginFrame, "Em chưa làm:(((", "", JOptionPane.INFORMATION_MESSAGE);
                 }
             });
+            gbc.gridy++;
+            gbc.gridx = 0;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            add(signUpButton, gbc);
             add(signUpButton, gbc);
         }
     }
-
 
     class SignInPanel extends JPanel {
         private LoginFrame loginFrame;
@@ -351,7 +354,7 @@ public class LoginFrame extends JFrame {
             gbc.gridx = 0;
             gbc.gridwidth = 2;
             signInButton = new RoundedButton("Sign In");
-            formatRoundedButton(signInButton, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.FONT_BUTTON_LOGIN_FRAME, new Dimension(200, 40));
+            formatRoundedButton(signInButton, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.FONT_BUTTON_LOGIN_FRAME, new Dimension(300, 40));
             signInButton.setBackground(new Color(0, 153, 102));
             signInButton.setForeground(Color.WHITE);
             signInButton.addActionListener(new ActionListener() {
@@ -456,6 +459,16 @@ public class LoginFrame extends JFrame {
         button.setFont(font);
     }
 
+    private static RoundedButton createRoundedButton(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, Dimension size) {
+        RoundedButton button = new RoundedButton(title);
+        button.setCustomFont(font);
+        button.setTextColor(textColor);
+        button.setBackgroundColor(backgroundColor);
+        button.setHoverColor(hoverColor);
+        button.setBorderPainted(false);
+        button.setButtonSize(size);
+        return button;
+    }
 
     public static void main(String[] args) {
         new LoginFrame();

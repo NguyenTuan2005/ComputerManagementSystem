@@ -74,7 +74,7 @@ public class AccountDAO implements Repository<Account> {
     }
 
     @Override
-    public ArrayList<Account> getAll() throws SQLException {
+    public ArrayList<Account> getAll() {
         String sql = " SELECT *FROM account ";
         ArrayList<Account> accounts = new ArrayList<>();
         try {
@@ -161,6 +161,37 @@ public class AccountDAO implements Repository<Account> {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // Phương thức để lấy tất cả Accounts theo cột
+    @Override
+    public ArrayList<Account> getByColumn(String column) {
+        ArrayList<Account> accounts = new ArrayList<>();
+        String query = "SELECT * FROM public.account";
+
+        switch (column) {
+            case "NAME" -> query += " ORDER BY username";
+            case "PASSWORD" -> query += " ORDER BY password";
+            case "EMAIL" -> query += " ORDER BY email";
+            case "DATE" -> query += " ORDER BY create_date";
+            default -> {
+                return getAll();
+            }
+        }
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                Account account = new Account();
+                setAccountParameter(rs, account);
+                accounts.add(account);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return accounts;
     }
 
     private static void setAccountParameter(ResultSet rs ,Account account ) throws SQLException {

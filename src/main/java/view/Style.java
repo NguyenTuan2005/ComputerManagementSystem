@@ -34,6 +34,9 @@ public class Style {
     public static  final Color WORD_COLOR_BLACK = new Color(0,0,0);
     public static final Font FONT_TITLE_LOGIN_FRAME = new Font("Arial", Font.BOLD, 40);
 
+    //Model frame color
+    public static final Color MODEL_PRIMARY_COLOR = new Color(41, 128, 185);
+
     //customer frame
     public static final Font FONT_TEXT_CUSTOMER = new Font("Arial", Font.PLAIN, 18);
     public static final Font FONT_BUTTON_CUSTOMER = new Font("Arial", Font.BOLD, 16);

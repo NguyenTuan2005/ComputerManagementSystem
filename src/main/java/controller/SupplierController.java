@@ -42,4 +42,9 @@ public class SupplierController implements ModelController<Supplier> {
     public void save(Product product) {
 
     }
+
+    @Override
+    public ArrayList<Supplier> getByColumn(String column) {
+        return supplierDAO.getByColumn(column);
+    }
 }

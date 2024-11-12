@@ -47,6 +47,11 @@ public class ProductController implements ModelController<Product> {
 
     }
 
+    @Override
+    public ArrayList<Product> getByColumn(String column) {
+        return null;
+    }
+
     public static void main(String[] args) {
         ProductController p = new ProductController();
         System.out.println(p.getAll());

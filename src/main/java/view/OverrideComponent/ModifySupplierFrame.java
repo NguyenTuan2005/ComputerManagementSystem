@@ -9,41 +9,60 @@ import view.Style;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
-public class AddSupplierFrame extends JFrame {
-    private JTextField companyNameField, emailField, phoneNumberField, addressField, dateField;
-    private JButton clearButton, saveButton, cancelButton;
+public class ModifySupplierFrame extends JFrame {
+
+    private JButton cancelButton;
+    private JButton saveButton;
+    private JButton undoButton;
+    private JTextField dateField;
+    private JTextField addressField;
+    private JTextField phoneNumberField;
+    private JTextField emailField;
+    private JTextField companyNameField;
+
+    private CenterPanel centerPanel;
+    private ButtonPanel buttonPanel;
 
     private SupplierDAO supplierDAO;
     private Runnable updateCallback;
+    private Supplier supplier;
 
-    public AddSupplierFrame(Runnable updateCallback) {
+    private Map<JTextField, Stack<String>> fieldHistoryMap = new HashMap<>();
+    private Stack<JTextField> modificationOrder = new Stack<>();
+
+    public ModifySupplierFrame(Runnable updateCallback, Supplier supplier) {
         this.updateCallback = updateCallback;
+        this.supplier = supplier;
         initializeFrame();
     }
 
     // Initialize frame properties and add components
     private void initializeFrame() {
-        setTitle("Adding Supplier");
+        setTitle("Modifying Supplier");
         setSize(600, 350);
         setLocationRelativeTo(null);
         setUndecorated(true);
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
 
         // Main panel with a border
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Style.MODEL_PRIMARY_COLOR, Style.WORD_COLOR_BLACK));
 
         TitlePanel titlePanel = new TitlePanel();
-        mainPanel.add(titlePanel);
+        mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // Center panel with form fields
-        CenterPanel centerPanel = new CenterPanel();
-        mainPanel.add(centerPanel);
+        centerPanel = new CenterPanel();
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
 
         // Button Panel
-        ButtonPanel buttonPanel = new ButtonPanel();
+        buttonPanel = new ButtonPanel();
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         // Add the main panel to the frame
@@ -62,7 +81,7 @@ public class AddSupplierFrame extends JFrame {
     private class TitlePanel extends JPanel {
         public TitlePanel() {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            JLabel titleLabel = new JLabel("SUPPLIER INFORMATION");
+            JLabel titleLabel = new JLabel("MODIFYING INFORMATION");
             titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
             titleLabel.setForeground(Style.MODEL_PRIMARY_COLOR);
             add(titleLabel);
@@ -81,17 +100,21 @@ public class AddSupplierFrame extends JFrame {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = new Insets(5, 5, 5, 5);
 
-            // Form labels and fields
             String[] labels = {"Company Name:", "Email:", "Phone Number:", "Address:", "Contract Date:"};
             JTextField[] fields = {
-                    companyNameField = TextFieldConfig.createStyledTextField(),
-                    emailField = TextFieldConfig.createStyledTextField(),
-                    phoneNumberField = TextFieldConfig.createStyledTextField(),
-                    addressField = TextFieldConfig.createStyledTextField(),
-                    dateField = TextFieldConfig.createStyledTextField()
+                    companyNameField = TextFieldConfig.createStyledTextField(supplier.getCompanyName()),
+                    emailField = TextFieldConfig.createStyledTextField(supplier.getEmail()),
+                    phoneNumberField = TextFieldConfig.createStyledTextField(supplier.getPhoneNumber()),
+                    addressField = TextFieldConfig.createStyledTextField(supplier.getAddress()),
+                    dateField = TextFieldConfig.createStyledTextField(String.valueOf(supplier.getContractDate()))
             };
 
-            // Add form components using a loop
+            // Initialize history for each field
+            for (JTextField field : fields) {
+                fieldHistoryMap.put(field, new Stack<>() {{ push(field.getText()); }});
+                saveFieldState(field, modificationOrder);  // Save the initial state
+            }
+
             for (int i = 0; i < labels.length; i++) {
                 gbc.gridx = 0;
                 gbc.gridy = i;
@@ -103,17 +126,46 @@ public class AddSupplierFrame extends JFrame {
                 gbc.gridx = 1;
                 gbc.weightx = 1.0;
                 add(fields[i], gbc);
+
+                fields[i].addFocusListener(new SaveFieldListener(fields[i]));
+            }
+        }
+
+        private class SaveFieldListener implements FocusListener {
+            private JTextField field;
+
+            public SaveFieldListener(JTextField field) {
+                this.field = field;
+            }
+
+            @Override
+            public void focusGained(FocusEvent e) {
+
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                saveFieldState(field, modificationOrder);
+            }
+        }
+
+        private void saveFieldState(JTextField field, Stack<JTextField> modificationOrder) {
+            Stack<String> history = fieldHistoryMap.get(field);
+            if (history.size() > 1 || !history.peek().equals(field.getText())) {
+                history.push(field.getText());
+                modificationOrder.add(field);
             }
         }
     }
+
 
     private class ButtonPanel extends JPanel {
         public ButtonPanel() {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
 
-            clearButton = ButtonConfig.createStyledButton("CLEAR ALL");
-            clearButton.setForeground(Style.WORD_COLOR_BLACK);
-            ButtonConfig.addButtonHoverEffect(clearButton, ButtonConfig.BUTTON_HOVER_COLOR, ButtonConfig.BUTTON_COLOR);
+            undoButton = ButtonConfig.createStyledButton("UNDO");
+            undoButton.setForeground(Style.WORD_COLOR_BLACK);
+            ButtonConfig.addButtonHoverEffect(undoButton, ButtonConfig.BUTTON_HOVER_COLOR, ButtonConfig.BUTTON_COLOR);
             saveButton = ButtonConfig.createStyledButton("SAVE");
             saveButton.setForeground(Style.WORD_COLOR_BLACK);
             ButtonConfig.addButtonHoverEffect(saveButton, ButtonConfig.BUTTON_HOVER_COLOR, ButtonConfig.BUTTON_COLOR);
@@ -121,12 +173,12 @@ public class AddSupplierFrame extends JFrame {
             cancelButton.setForeground(Style.WORD_COLOR_BLACK);
             ButtonConfig.addButtonHoverEffect(cancelButton, ButtonConfig.BUTTON_HOVER_COLOR, ButtonConfig.BUTTON_COLOR);
 
-            add(clearButton);
+            add(undoButton);
             add(cancelButton);
             add(saveButton);
 
             // Add action listeners
-            clearButton.addActionListener(e -> clearFields());
+            undoButton.addActionListener(e -> undoFields());
 
             cancelButton.addActionListener(e -> dispose());
 
@@ -145,26 +197,27 @@ public class AddSupplierFrame extends JFrame {
             });
         }
 
-        private void clearFields() {
-            companyNameField.setText("");
-            emailField.setText("");
-            phoneNumberField.setText("");
-            addressField.setText("");
-            dateField.setText("");
+        // Undo the most recent modification for the last modified field
+        private void undoFields() {
+            if (!modificationOrder.isEmpty()) {
+                JTextField field = modificationOrder.pop();
+                Stack<String> history = fieldHistoryMap.get(field);
+                if (history.size() > 1) {
+                    history.pop();
+                    field.setText(history.peek());  // Restore to the previous state
+                }
+            }
         }
 
         private String saveSupplier() {
             try {
-                //Get all the values
-                Supplier supplier = new Supplier();
                 supplier.setCompanyName(companyNameField.getText());
                 supplier.setEmail(emailField.getText());
                 supplier.setPhoneNumber(Supplier.checkPhoneNum(phoneNumberField.getText()));
                 supplier.setAddress(addressField.getText());
                 supplier.setContractDate(Supplier.checkDate(dateField.getText()));
 
-                supplierDAO.save(supplier);
-                clearFields();
+                supplierDAO.update(supplier);
                 return "success";
             } catch (IllegalArgumentException e) {
                 showMessageDialog(e.getMessage());
@@ -183,7 +236,6 @@ public class AddSupplierFrame extends JFrame {
         }
     }
 
-    // Method to show the frame
     public void showFrame() {
         setVisible(true);
     }

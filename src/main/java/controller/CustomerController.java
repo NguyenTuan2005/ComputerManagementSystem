@@ -4,6 +4,7 @@ import Model.Account;
 import Model.Customer;
 import Model.Product;
 import dao.CustomerDAO;
+import dto.CustomerOrderDTO;
 import security.PasswordSecurity;
 
 import java.util.ArrayList;
@@ -77,8 +78,16 @@ public class CustomerController implements ModelController<Customer> {
         customerDAO.update(customer);
     }
 
+    public ArrayList<CustomerOrderDTO> findCustomerOrderById(int id){
+        return customerDAO.getDataCustomerOrderById(id);
+    }
+
+    public void block(boolean isBlock, int id){
+        customerDAO.updateBlock(isBlock, id);
+    }
     public static void main(String[] args) {
         CustomerController customerController = new CustomerController();
-        System.out.println(customerController.getAll());
+        for ( CustomerOrderDTO c : customerController.findCustomerOrderById(3))
+            System.out.println(c.toBillString());
     }
 }

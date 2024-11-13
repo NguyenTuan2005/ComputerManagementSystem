@@ -1,5 +1,6 @@
 package view.OverrideComponent;
 
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -13,11 +14,12 @@ public class TextDisplayPanel extends JPanel {
     private static final Color LIGHT_BLUE = new Color(235, 245, 255);
 
     public TextDisplayPanel() {
+
         // Set up the panel
         setLayout(new BorderLayout(10, 10));
         setBackground(LIGHT_BLUE);
         setBorder(new EmptyBorder(10, 10, 10, 10));
-        setTextEditable(false);
+//        setTextEditable(false);
 
         // Create and configure the text area
         textArea = new JTextArea();
@@ -26,6 +28,9 @@ public class TextDisplayPanel extends JPanel {
         textArea.setWrapStyleWord(true);
         textArea.setBackground(Color.WHITE);
         textArea.setBorder(new EmptyBorder(5, 5, 5, 5));
+        this.setTextEditable(false);
+        this.setText("You should continue to find the customer Id!!!");
+
 
         // Create scroll pane for text area
         JScrollPane scrollPane = new JScrollPane(textArea);
@@ -34,7 +39,7 @@ public class TextDisplayPanel extends JPanel {
         scrollPane.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(MEDIUM_BLUE, 2),
-                        "Data Display",
+                        "Bill Data Display",
                         TitledBorder.LEFT,
                         TitledBorder.TOP,
                         new Font("Arial", Font.BOLD, 14),

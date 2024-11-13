@@ -28,15 +28,17 @@ public class Customer {
 
     private String avataImg;
 
-    private int  numberOfCombsPurchased;
+    private int  numberOfPurchased;
 
-    public Customer(String fullName, String email, String address, String password, String avataImg, int numberOfCombsPurchased) {
+    private int block;
+
+    public Customer(String fullName, String email, String address, String password, String avataImg, int numberOfPurchased) {
         this.fullName = fullName;
         this.email = email;
         this.address = address;
         this.password = password;
         this.avataImg = avataImg;
-        this.numberOfCombsPurchased = numberOfCombsPurchased;
+        this.numberOfPurchased = numberOfPurchased;
     }
 
     public Customer(String fullName, String email, String address, String password) {
@@ -62,6 +64,15 @@ public class Customer {
         this.avataImg = avataImg;
     }
 
+    public Customer(String fullName, String email, String address, String password, String avataImg, int numberOfPurchased, int block) {
+        this.fullName = fullName;
+        this.email = email;
+        this.address = address;
+        this.password = password;
+        this.avataImg = avataImg;
+        this.numberOfPurchased = numberOfPurchased;
+        this.block = block;
+    }
 
     public boolean samePasswordAndEmail(String email, String password) {
         return  this.email.equals(email) && this.password.equals(password);
@@ -83,12 +94,15 @@ public class Customer {
         return new Object[]{
                 serial
                 ,String.valueOf(this.id)
-                ,this.fullName
+                ,this.fullName +(this.isBlock()?" *":" ")
                 ,this.email
                 ,this.address
                 ,"***************"
                 ,icon
         };
+    }
+    public boolean isBlock(){
+        return this.block == 1?true:false;
     }
     public static Object [][] getDataOnTable(ArrayList<Customer> customers){
 //        String [][] datas = new String[customers.size()][];

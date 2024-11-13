@@ -37,6 +37,8 @@ public class ModifyCustomerFrame extends JFrame {
 
     public ModifyCustomerFrame( Customer customer) {
         this.customer = customer;
+        this.contextPath = customer.getAvataImg();
+        System.out.println( " before :" + customer);
         setTitle("Customer Information");
         setSize(500, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,19 +67,6 @@ public class ModifyCustomerFrame extends JFrame {
         togglePassword.setBackground(MEDIUM_BLUE);
         togglePassword.setBorder(BorderFactory.createLineBorder(MEDIUM_BLUE));
         togglePassword.setFocusPainted(false);
-
-
-//        // Add action listener for password toggle
-//        togglePassword.addActionListener(e -> {
-//            passwordVisible = togglePassword.isSelected();
-//            if (passwordVisible) {
-//                togglePassword.setIcon(new ImageIcon("src/main/java/img/eye-open.png"));
-//                passwordField.setEchoChar((char) 0);
-//            } else {
-//                togglePassword.setIcon(new ImageIcon("src/main/java/img/eye-closed.png"));
-//                passwordField.setEchoChar('•');
-//            }
-//        });
 
         // Add hover effect for toggle button
         togglePassword.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -153,7 +142,11 @@ public class ModifyCustomerFrame extends JFrame {
 
         setContentPane(mainPanel);
         setLocationRelativeTo(null);
-        setVisible(true);
+        this.setVisibleA(true);
+    }
+
+    public void setVisibleA(boolean visible){
+        this.setVisible(visible);
     }
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
@@ -181,6 +174,7 @@ public class ModifyCustomerFrame extends JFrame {
         this.customer.setEmail(emailField.getText());
         this.customer.setFullName(fullNameField.getText());
         this.customer.setAddress( addressField.getText());
+// mat hinh
         this.customer.setAvataImg(contextPath);
         System.out.println("update "+ customer);
         return this.customer;
@@ -190,9 +184,12 @@ public class ModifyCustomerFrame extends JFrame {
         // Add your save logic here
         customerController= new CustomerController();
         JOptionPane.showMessageDialog(this, "Update button clicked!");
+        System.out.println(createCustomer());
         customerController.update(createCustomer());
         System.out.println("update :"+createCustomer());
         JOptionPane.showMessageDialog(this, "Updated successfully");
+        setVisible(false);
+
     }
 
     private void handleClear() {

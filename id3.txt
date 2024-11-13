@@ -1,0 +1,64 @@
+----- Customer Order Bill -----
+Customer ID     : 3
+Order Date      : 2024-09-09
+Ship Address    : trường đại học nông lâm thành phố HỒ CHÍ MINH, cư xá c
+Order Status    : Đang giao hàng
+
+Saler           : James Nguyen (ID: 2)
+
+Product Details:
+    Product ID  : 46
+    Name        : Asus ROG Zephyrus G15
+    Genre       : Gaming Laptop
+    Brand       : Asus
+    OS          : Windows 11
+    CPU         : AMD Ryzen 9
+    Memory      : 1TB SSD
+    RAM         : 16GB
+    Made In     : Taiwan
+    Disk        : demo
+    Weight      : demo
+    Monitor     : demo
+    Graphics    : demo
+
+Order Summary:
+    Unit Price  : $4000000.00
+    Quantity    : 2
+    Total Price : $8000000.00
+--------------------------------
+Thank you for your purchase!
+For inquiries, contact us at: hduy09092005@gmail.com
+--------------------------------
+
+----- Customer Order Bill -----
+Customer ID     : 3
+Order Date      : 2024-09-09
+Ship Address    : trường đại học nông lâm thành phố HỒ CHÍ MINH, cư xá c
+Order Status    : Đang giao hàng
+
+Saler           : James Nguyen (ID: 2)
+
+Product Details:
+    Product ID  : 7
+    Name        : Lenovo ThinkPad X1 Carbon Gen 7
+    Genre       : Business Laptop
+    Brand       : Lenovo
+    OS          : Windows 11
+    CPU         : Intel Core i7
+    Memory      : 512GB SSD
+    RAM         : 16GB
+    Made In     : China
+    Disk        : demo
+    Weight      : demo
+    Monitor     : demo
+    Graphics    : demo
+
+Order Summary:
+    Unit Price  : $3500000.00
+    Quantity    : 1
+    Total Price : $3500000.00
+--------------------------------
+Thank you for your purchase!
+For inquiries, contact us at: hduy09092005@gmail.com
+--------------------------------
+

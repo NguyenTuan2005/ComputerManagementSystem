@@ -1,7 +1,7 @@
 package view;
 
 import Config.ButtonConfig;
-import Config.CustomerExcelExporter;
+import Config.CustomerExporter;
 import Config.ProductConfig;
 import Model.Customer;
 import Model.Product;
@@ -9,6 +9,7 @@ import Model.Supplier;
 import controller.CustomerController;
 import controller.ProductController;
 import controller.SupplierController;
+import dto.CustomerOrderDTO;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static dto.CustomerOrderDTO.toBillsString;
 
 
 public class ManagerMainPanel extends JPanel {
@@ -255,7 +258,8 @@ public class ManagerMainPanel extends JPanel {
                         }
                     }
                 });
-                findText = new JTextField();
+                findText = new JTextField("Search by name");
+                findText.setForeground(Color.GRAY);
                 formatTextField(findText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
                 findText.addFocusListener(new FocusListener() {
                     @Override
@@ -265,6 +269,7 @@ public class ManagerMainPanel extends JPanel {
                             findText.setText("");
                             findText.setForeground(Color.BLACK);
                         }
+                        System.out.println( "hì hì ");
                     }
 
                     @Override
@@ -274,6 +279,7 @@ public class ManagerMainPanel extends JPanel {
                             findText.setForeground(Color.GRAY);
                             findText.setText("Search by name");
                         }
+                        System.out.println("haha");
                     }
                 });
 
@@ -676,12 +682,20 @@ public class ManagerMainPanel extends JPanel {
         private ToolPanel toolPanel = new ToolPanel();
         private TableCustomerPanel tableCustomerPanel = new TableCustomerPanel();
 
-        private JButton addCustomerBt, modifyCustomerBt, exportCustomerExcelBt, searchCustomerBt, reloadCustomerBt, blockCustomer;
+        private JButton addCustomerBt, modifyCustomerBt, exportCustomerExcelBt, searchCustomerBt, reloadCustomerBt, blockCustomer, writeToFileTXT;
         private JTextField findCustomerText;
+
+        private TextDisplayPanel billTextDisplayPanal;
+        private int index =0;
+        private final int TAB_DATA_CUSTOMER =0;
+        private final int TAB_SCHEMAS =1;
+        private final int TAB_BILL =2;
+
 
 
         private static CustomerController customerController = new CustomerController();
         private static ArrayList<Customer> customers = new ArrayList<>();
+        private  ArrayList<CustomerOrderDTO> bills= new ArrayList<>();
 
         private JPanel searchPanel, applicationPanel, mainPanel;
 
@@ -711,6 +725,7 @@ public class ManagerMainPanel extends JPanel {
                             ex.printStackTrace();
                         }
                         SwingUtilities.invokeLater(CustomerInfoFrame::new);
+                        reload();
                     }
                 });
 
@@ -733,7 +748,9 @@ public class ManagerMainPanel extends JPanel {
                             SwingUtilities.invokeLater(() -> {
                                 System.out.println(customerId);
 //                                new ProductModifyForm(productsAll.get(selectedRow)).setVisible(true);
-                                new ModifyCustomerFrame(customers.get(customerId - 1));
+                                ModifyCustomerFrame modifyCustomerFrame = new ModifyCustomerFrame(customers.get(customerId - 1));
+                                reload();
+
                             });
 
                         }
@@ -750,7 +767,26 @@ public class ManagerMainPanel extends JPanel {
                 blockCustomer.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showInputDialog("e chua code");
+
+                        int selectedRow = tableCustomer.getSelectedRow();
+                        int columnIndex = 1;
+                        int fullName =2;
+                        if (selectedRow != -1) {
+                            Object value = tableCustomer.getValueAt(selectedRow, columnIndex);
+                            int customerId = Integer.parseInt(value.toString());
+                            String customername = (String) tableCustomer.getValueAt(selectedRow, fullName);
+                            System.out.println( "sao ko in ra j het vayj"+customername );
+                            if (customername.contains("*")){
+                                JOptionPane.showMessageDialog(null, "Unblock customerId : " + customerId);
+                                customerController.block(false, customerId);
+                                JOptionPane.showMessageDialog(null, "Customer" + tableCustomer.getValueAt(selectedRow, fullName) + "Unblocked! ");
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Block customerId : " + customerId);
+                                customerController.block(true, customerId);
+                                JOptionPane.showMessageDialog(null, "Customer" + tableCustomer.getValueAt(selectedRow, fullName) + "is blocked! ");
+                            }
+                            reload();
+                        }
                     }
                 });
 
@@ -769,18 +805,60 @@ public class ManagerMainPanel extends JPanel {
                         else {
                             JOptionPane.showMessageDialog(null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
 
-                            CustomerExcelExporter.exportCustomerListToExcel(customers, fileName);
+                            CustomerExporter.exportCustomerListToExcel(customers, fileName);
+
                             JOptionPane.showMessageDialog(null, "Created !!! ", "Message", JOptionPane.ERROR_MESSAGE);
+                            reload();
                         }
 
 
                     }
                 });
 
+                writeToFileTXT = new JButton("to file.txt");
+                ButtonConfig.addButtonHoverEffect(writeToFileTXT, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                setStyleButton(writeToFileTXT, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                ButtonConfig.setIconBigButton("src/main/java/Icon/bill.png",writeToFileTXT);
+                writeToFileTXT.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                writeToFileTXT.setVerticalTextPosition(SwingConstants.BOTTOM);
+                writeToFileTXT.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println( bills);
+                        if (bills.isEmpty())
+                            JOptionPane.showMessageDialog(null, "Not found data", "Notify", JOptionPane.WARNING_MESSAGE);
+                        else {
+                            String fileName = JOptionPane.showInputDialog(null, "Enter bill file name :", "Input file", JOptionPane.QUESTION_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
+                            CustomerExporter.writeBillToFile(toBillsString(bills), fileName);
+                            JOptionPane.showMessageDialog(null, "Created !!! ", "Message", JOptionPane.ERROR_MESSAGE);
+                            reload();
+                        }
+                    }
+                });
 
-                findCustomerText = new JTextField();
+
+
+                findCustomerText = new JTextField("Search by name");
+                findCustomerText.setForeground(Color.GRAY);
                 formatTextField(findCustomerText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
+                findCustomerText.addFocusListener( new FocusListener() {
+                                                       @Override
+                                                       public void focusGained(FocusEvent e) {
+                                                           if (findCustomerText.getText().equals("Search by name")) {
+                                                               findCustomerText.setText("");
+                                                               findCustomerText.setForeground(Color.BLACK);
+                                                           }
+                                                       }
 
+                                                       @Override
+                                                       public void focusLost(FocusEvent e) {
+                                                           findCustomerText.setForeground(Color.GRAY);
+                                                           findCustomerText.setText("Search by name");
+                                                       }
+                                                   }
+
+                );
 
                 searchCustomerBt = new JButton();
                 ButtonConfig.addButtonHoverEffect(searchCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -790,16 +868,42 @@ public class ManagerMainPanel extends JPanel {
                         new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                if (findCustomerText.getText().trim().isEmpty())
-                                    return;
-                                ArrayList<Customer> cuss = customerController.find(findCustomerText.getText().trim());
 
-                                if (cuss.isEmpty()) {
-                                    JOptionPane.showMessageDialog(tableCustomerPanel, "có caái ni");
-                                    return;
+                                switch (getIndexSelectedTab()) {
+
+                                    case TAB_DATA_CUSTOMER : {
+                                        if (findCustomerText.getText().trim().isEmpty())
+                                            return;
+                                        ArrayList<Customer> cuss = customerController.find(findCustomerText.getText().trim());
+                                        if (cuss.isEmpty()) {
+                                            JOptionPane.showMessageDialog(tableCustomerPanel, "có caái ni");
+                                            return;
+                                        }
+                                        upDataTable(cuss, modelCustomer, tableCustomer);
+                                        break;
+                                    }
+                                    case TAB_BILL :{
+                                        if (findCustomerText.getText().trim().isEmpty())
+                                            return;
+                                        try {
+                                            int customerId = Integer.parseInt(findCustomerText.getText());
+                                            bills = customerController.findCustomerOrderById(customerId);
+                                            if( bills.isEmpty())
+                                                JOptionPane.showMessageDialog(null,"No information available");
+                                            billTextDisplayPanal.setText(toBillsString(bills));
+                                            billTextDisplayPanal.setTextEditable(false);
+                                            System.out.println(bills.get(0).toBillString());
+
+                                        } catch (Exception ex){
+                                            JOptionPane.showMessageDialog(null,"You must enter the ID Customer");
+                                            findCustomerText.setText("");
+                                        }
+                                        break;
+                                    }
+
+
+
                                 }
-                                upDataTable(cuss, modelCustomer);
-
                             }
                         }
                 );
@@ -813,8 +917,8 @@ public class ManagerMainPanel extends JPanel {
                 reloadCustomerBt.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        customers = customerController.getAll();
-                        upDataTable(customers, modelCustomer);
+                        reload();
+
                     }
                 });
 
@@ -838,6 +942,7 @@ public class ManagerMainPanel extends JPanel {
 
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(exportCustomerExcelBt);
+                applicationPanel.add(writeToFileTXT);
 
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(reloadCustomerBt);
@@ -887,17 +992,27 @@ public class ManagerMainPanel extends JPanel {
 //                ArrayList<Product> productsDemo = productController.getAll();
 //                customerController = new CustomerController();
                 customers = customerController.getAll();
-                upDataTable(customers, modelCustomer);
+                upDataTable(customers, modelCustomer, tableCustomer);
 
 
                 scrollPaneCustomer = new JScrollPane(tableCustomer);
                 tabbedPaneCustomer = createTabbedPane(scrollPaneCustomer, "Customer", Style.FONT_HEADER_ROW_TABLE);
                 tabbedPaneCustomer.add(new Schemas());
-                tabbedPaneCustomer.add(new TextDisplayPanel());
+
+                billTextDisplayPanal= new TextDisplayPanel();
+                tabbedPaneCustomer.add(billTextDisplayPanal);
                 add(tabbedPaneCustomer, BorderLayout.CENTER);
 
 
             }
+        }
+        private void reload(){
+            customers = customerController.getAll();
+            upDataTable(customers, modelCustomer, tableCustomer);
+            billTextDisplayPanal.setText("You should continue to find the customer Id!!!");
+        }
+        public int getIndexSelectedTab(){
+            return tabbedPaneCustomer.getSelectedIndex();
         }
 
         private class Schemas extends JPanel {
@@ -921,6 +1036,8 @@ public class ManagerMainPanel extends JPanel {
                 this.add(chartPanel, BorderLayout.CENTER);
             }
 
+
+
             private CategoryDataset createDataset() {
                 DefaultCategoryDataset dataset = new DefaultCategoryDataset();
                 // Dữ liệu mẫu: Thay thế bằng dữ liệu từ database
@@ -938,7 +1055,7 @@ public class ManagerMainPanel extends JPanel {
 
             private void consertCustomerToMap(ArrayList<Customer> customers, Map<String, Integer> map) {
                 for (Customer customer : customers) {
-                    map.put(customer.getFullName(), customer.getNumberOfCombsPurchased());
+                    map.put(customer.getFullName(), customer.getNumberOfPurchased());
                 }
             }
         }
@@ -947,13 +1064,19 @@ public class ManagerMainPanel extends JPanel {
             modelCustomerTable.setRowCount(0);
         }
 
-        public static void upDataTable(ArrayList<Customer> customers, DefaultTableModel modelCustomerTable) {
+        public static void upDataTable(ArrayList<Customer> customers, DefaultTableModel modelCustomerTable ,JTable tableCustomer) {
             Object[][] rowData = Customer.getDataOnTable(customers);
             System.out.println("number of row data: " + rowData[0].length);
             ProductPanel.TablePanel.removeDataTable(modelCustomerTable);
+            System.out.println(" con cai nit" );
             for (int i = 0; i < rowData.length; i++) {
+                int j =i;
+                
+//                System.out.println(customers.get(j));
+                boolean  isBlock = customers.get(i).isBlock();
+                System.out.println("customer :" + customers.get(i)+"    "+isBlock);
+
                 modelCustomerTable.addRow(rowData[i]);
-                System.out.println(customers.get(i));
             }
         }
 

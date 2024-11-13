@@ -2,7 +2,7 @@ package dao;
 
 import Config.DatabaseConfig;
 import Model.Manager;
-import dto.ManagerInfor;
+import dto.ManagerInforDTO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -165,8 +165,8 @@ public class ManagerDAO implements  Repository<Manager> {
         return false;
     }
 
-    private ManagerInfor mapResultSetToManagerInfor(ResultSet resultSet) {
-        ManagerInfor managerInfor = new ManagerInfor();
+    private ManagerInforDTO mapResultSetToManagerInfor(ResultSet resultSet) {
+        ManagerInforDTO managerInfor = new ManagerInforDTO();
         try {
             managerInfor.setManagerId(resultSet.getInt("managerId"));
             managerInfor.setFullName(resultSet.getString("fullname"));
@@ -185,13 +185,13 @@ public class ManagerDAO implements  Repository<Manager> {
         return managerInfor;
     }
 
-    public ManagerInfor getManagerWithAccountById(String nameOfAccount ) {
+    public ManagerInforDTO getManagerWithAccountById(String nameOfAccount ) {
         String sql = "SELECT m.id AS managerId, m.fullname, m.address, m.birthday, m.phone_number, " +
                 "a.id AS accountId, a.username, a.password, a.email, a.create_date , a.avata_img " +
                 "FROM Manager AS m " +
                 "INNER JOIN Account AS a ON a.manage_id = m.id " +
                 "WHERE a.username LIKE ?";
-        ManagerInfor managerInfor = null;
+        ManagerInforDTO managerInfor = null;
         ResultSet resultSet = null;
         try {
             preparedStatement = connection.prepareStatement(sql);

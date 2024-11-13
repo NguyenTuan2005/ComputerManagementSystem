@@ -9,7 +9,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ManagerInfor {
+public class ManagerInforDTO {
 
     private int  managerId;
 

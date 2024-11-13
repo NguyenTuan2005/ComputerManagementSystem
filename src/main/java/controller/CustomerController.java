@@ -77,6 +77,11 @@ public class CustomerController implements ModelController<Customer> {
         customerDAO.update(customer);
     }
 
+    @Override
+    public ArrayList<Customer> getByColumn(String column) {
+        return null;
+    }
+
     public static void main(String[] args) {
         CustomerController customerController = new CustomerController();
         System.out.println(customerController.getAll());

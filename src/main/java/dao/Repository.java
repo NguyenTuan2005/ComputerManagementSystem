@@ -19,4 +19,5 @@ public interface Repository<T> {
 
     boolean remove(int id);
 
+    ArrayList<T> getByColumn(String column);
 }

@@ -31,14 +31,14 @@ public class OrderDAO implements Repository<Order> {
                 rs.getInt("customer_id"),
                 rs.getInt("manager_id"),
                 rs.getString("ship_address"),
-                rs.getDate("orderdata"),
+                rs.getDate("order_date"),
                 rs.getString("status")
         );
     }
 
     @Override
     public Order save(Order order) {
-        String query = "INSERT INTO public.order (manager_id, customer_id, orderdata, ship_address, status) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO public.order (manager_id, customer_id, order_date, ship_address, status) VALUES (?, ?, ?, ?, ?)";
         try {
             preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, order.getManagerId());
@@ -82,7 +82,7 @@ public class OrderDAO implements Repository<Order> {
 
     // Lấy tất cả các đơn hàng
     @Override
-    public ArrayList<Order> getAll() throws SQLException {
+    public ArrayList<Order> getAll() {
         ArrayList<Order> orders = new ArrayList<>();
         String query = "SELECT * FROM public.order";
         try {
@@ -141,7 +141,7 @@ public class OrderDAO implements Repository<Order> {
     // Cập nhật thông tin đơn hàng
     @Override
     public Order update(Order order) {
-        String query = "UPDATE public.order SET manager_id = ?, customer_id = ?, orderdata = ?, ship_address = ?, status = ? WHERE id = ?";
+        String query = "UPDATE public.order SET manager_id = ?, customer_id = ?, order_date = ?, ship_address = ?, status = ? WHERE id = ?";
         try {
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, order.getManagerId());
@@ -174,5 +174,36 @@ public class OrderDAO implements Repository<Order> {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // Phương thức để lấy tất cả Suppliers theo cột
+    @Override
+    public ArrayList<Order> getByColumn(String column) {
+        ArrayList<Order> orders = new ArrayList<>();
+        String query = "SELECT * FROM public. \"order\"";
+
+        switch (column) {
+            case "MANAGER ID" -> query += " ORDER BY manager_id";
+            case "CUSTOMER ID" -> query += " ORDER BY customer_id";
+            case "DATE" -> query += " ORDER BY order_date";
+            case "ADDRESS" -> query += " ORDER BY ship_address";
+            case "STATUS" -> query += " ORDER BY status";
+            default -> {
+                return getAll();
+            }
+        }
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                Order order = resultOrder(rs);
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
     }
 }

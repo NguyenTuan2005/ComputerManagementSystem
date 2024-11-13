@@ -7,7 +7,7 @@ import dto.ManagerInforDTO;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class ManagerDAO implements  Repository<Manager> {
+public class ManagerDAO implements Repository<Manager> {
 
     private DatabaseConfig databaseConfig;
 
@@ -64,6 +64,7 @@ public class ManagerDAO implements  Repository<Manager> {
         }
         return null;
     }
+
     private Manager mapResultSetToManager(ResultSet resultSet) throws SQLException {
         Manager manager = new Manager();
         manager.setId(resultSet.getInt("id"));
@@ -75,7 +76,7 @@ public class ManagerDAO implements  Repository<Manager> {
     }
 
     @Override
-    public ArrayList<Manager> getAll()  {
+    public ArrayList<Manager> getAll() {
         ArrayList<Manager> managers = new ArrayList<>();
         String sql = "SELECT * FROM Manager";
         try {
@@ -85,7 +86,7 @@ public class ManagerDAO implements  Repository<Manager> {
             while (resultSet.next()) {
                 managers.add(mapResultSetToManager(resultSet));
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return managers;
@@ -116,7 +117,7 @@ public class ManagerDAO implements  Repository<Manager> {
         String sql = "SELECT * FROM manager WHERE fullname LIKE ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1,"%" +name+"%");
+            preparedStatement.setString(1, "%" + name + "%");
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return mapResultSetToManager(resultSet);
@@ -135,7 +136,7 @@ public class ManagerDAO implements  Repository<Manager> {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, manager.getFullName());
             preparedStatement.setString(2, manager.getAddress());
-            preparedStatement.setDate(3,(Date) manager.getBirthDay());
+            preparedStatement.setDate(3, (Date) manager.getBirthDay());
             preparedStatement.setString(4, manager.getPhoneNumber());
             preparedStatement.setLong(5, manager.getId());
             int affectedRows = preparedStatement.executeUpdate();
@@ -165,8 +166,14 @@ public class ManagerDAO implements  Repository<Manager> {
         return false;
     }
 
+    @Override
+    public ArrayList<Manager> getByColumn(String column) {
+        return null;
+    }
+
     private ManagerInforDTO mapResultSetToManagerInfor(ResultSet resultSet) {
         ManagerInforDTO managerInfor = new ManagerInforDTO();
+
         try {
             managerInfor.setManagerId(resultSet.getInt("managerId"));
             managerInfor.setFullName(resultSet.getString("fullname"));
@@ -185,7 +192,7 @@ public class ManagerDAO implements  Repository<Manager> {
         return managerInfor;
     }
 
-    public ManagerInforDTO getManagerWithAccountById(String nameOfAccount ) {
+    public ManagerInforDTO getManagerWithAccountById(String nameOfAccount) {
         String sql = "SELECT m.id AS managerId, m.fullname, m.address, m.birthday, m.phone_number, " +
                 "a.id AS accountId, a.username, a.password, a.email, a.create_date , a.avata_img " +
                 "FROM Manager AS m " +
@@ -196,7 +203,7 @@ public class ManagerDAO implements  Repository<Manager> {
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, nameOfAccount);
-             resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 managerInfor = mapResultSetToManagerInfor(resultSet);

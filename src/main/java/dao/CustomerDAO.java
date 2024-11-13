@@ -257,6 +257,11 @@ public class CustomerDAO implements Repository<Customer> {
 
 
 
+    @Override
+    public ArrayList<Customer> getByColumn(String column) {
+        return null;
+    }
+
     public static void main(String[] args) {
         CustomerDAO customerDAO = new CustomerDAO();
         System.out.println(customerDAO.getDataCustomerOrderById(3));

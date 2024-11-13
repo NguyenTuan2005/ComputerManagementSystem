@@ -1,9 +1,11 @@
 package view.OverrideComponent;
 import Config.ButtonConfig;
+import Config.TextFieldConfig;
 import Model.Product;
 import Model.Supplier;
 import dao.ProductDAO;
 import dao.SupplierDAO;
+import view.Style;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -45,7 +47,6 @@ public class ProductInputForm extends JFrame{
 
     private Map<String,Integer> suppliersMap;
 
-    private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SECONDARY_COLOR = new Color(52, 152, 219);
     private final Color BACKGROUND_COLOR = new Color(236, 240, 241);
     private final Color PANEL_BACKGROUND = Color.WHITE;
@@ -127,7 +128,7 @@ public class ProductInputForm extends JFrame{
 
         JLabel titleLabel = new JLabel("PRODUCT INFORMATION");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setForeground(PRIMARY_COLOR);
+        titleLabel.setForeground(Style.MODEL_PRIMARY_COLOR);
         panel.add(titleLabel);
 
         return panel;
@@ -137,7 +138,7 @@ public class ProductInputForm extends JFrame{
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(PANEL_BACKGROUND);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(PRIMARY_COLOR, 1),
+                new LineBorder(Style.MODEL_PRIMARY_COLOR, 1),
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
 
@@ -154,20 +155,20 @@ public class ProductInputForm extends JFrame{
 
     private void initializeStyledComponents() {
 
-        txtName = createStyledTextField();
-        txtQuality = createStyledTextField();
-        txtPrice = createStyledTextField();
-        txtGenre = createStyledTextField();
-        txtBrand = createStyledTextField();
-        txtOS = createStyledTextField();
-        txtCPU = createStyledTextField();
-        txtMemory = createStyledTextField();
-        txtRAM = createStyledTextField();
-        txtMadeIn = createStyledTextField();
-        txtDisk = createStyledTextField();
-        txtMonitor = createStyledTextField();
-        txtWeight = createStyledTextField();
-        txtCard = createStyledTextField();
+        txtName = TextFieldConfig.createStyledTextField();
+        txtQuality = TextFieldConfig.createStyledTextField();
+        txtPrice = TextFieldConfig.createStyledTextField();
+        txtGenre = TextFieldConfig.createStyledTextField();
+        txtBrand = TextFieldConfig.createStyledTextField();
+        txtOS = TextFieldConfig.createStyledTextField();
+        txtCPU = TextFieldConfig.createStyledTextField();
+        txtMemory = TextFieldConfig.createStyledTextField();
+        txtRAM = TextFieldConfig.createStyledTextField();
+        txtMadeIn = TextFieldConfig.createStyledTextField();
+        txtDisk = TextFieldConfig.createStyledTextField();
+        txtMonitor = TextFieldConfig.createStyledTextField();
+        txtWeight = TextFieldConfig.createStyledTextField();
+        txtCard = TextFieldConfig.createStyledTextField();
         supplierDAO = new SupplierDAO();
         productDAO = new ProductDAO();
 
@@ -207,17 +208,6 @@ public class ProductInputForm extends JFrame{
         ButtonConfig.addButtonHoverEffect(btnClear ,BUTTON_HOVER_COLOR,BUTTON_COLOR);
         ButtonConfig.addButtonHoverEffect(btnExit ,BUTTON_HOVER_COLOR,BUTTON_COLOR);
 
-    }
-
-
-    private JTextField createStyledTextField() {
-        JTextField textField = new JTextField(20);
-        textField.setFont(new Font("Arial", Font.PLAIN, 14));
-        textField.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(PRIMARY_COLOR, 1),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
-        return textField;
     }
 
     private static void setCompany(ArrayList<Supplier> suppliers, String [] companyNames  ){
@@ -261,7 +251,7 @@ public class ProductInputForm extends JFrame{
             gbc.weightx = 0.3;
             JLabel label = new JLabel(comp[0].toString());
             label.setFont(new Font("Arial", Font.BOLD, 14));
-            label.setForeground(PRIMARY_COLOR);
+            label.setForeground(Style.MODEL_PRIMARY_COLOR);
             panel.add(label, gbc);
 
             gbc.gridx = 1;

@@ -54,4 +54,8 @@ public class SupplierController implements ModelController<Supplier> {
 
     }
 
+    @Override
+    public ArrayList<Supplier> getByColumn(String column) {
+        return supplierDAO.getByColumn(column);
+    }
 }

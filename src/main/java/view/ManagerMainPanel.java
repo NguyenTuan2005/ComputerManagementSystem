@@ -1,6 +1,7 @@
 package view;
 
 import Config.ButtonConfig;
+import Config.ExcelConfig;
 import Config.CustomerExporter;
 import Config.ProductConfig;
 import Model.Customer;
@@ -16,6 +17,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
+import dao.SupplierDAO;
+import view.OtherComponent.ToastNotification;
 import view.OverrideComponent.*;
 
 import javax.swing.*;
@@ -220,9 +223,31 @@ public class ManagerMainPanel extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         String fileName = JOptionPane.showInputDialog(null, "Enter file name excel:", "Input file", JOptionPane.QUESTION_MESSAGE);
                         if (fileName != null && !fileName.trim().isEmpty()) {
-                            fileName = fileName + (fileName.contains(".xlsx") ? "" : ".xlsx");
-                            productsAll = reloadData(productController);
-                            ProductConfig.exportProductsToExcel(productsAll, fileName);
+                            // Thêm phần mở rộng .xlsx nếu người dùng không nhập
+                            if (!fileName.toLowerCase().endsWith(".xlsx")) {
+                                fileName += ".xlsx";
+                            }
+                            //update data truoc khi export
+                            productsAll= reloadData(productController);
+                            ExcelConfig.exportToExcel(productsAll, fileName, columnNamesPRODUCT, (row, product) -> {
+                                row.createCell(0).setCellValue(product.getId());
+                                row.createCell(1).setCellValue(product.getSuppliersId());
+                                row.createCell(2).setCellValue(product.getName());
+                                row.createCell(3).setCellValue(product.getQuality());
+                                row.createCell(4).setCellValue(product.getPrice());
+                                row.createCell(5).setCellValue(product.getGenre());
+                                row.createCell(6).setCellValue(product.getBrand());
+                                row.createCell(7).setCellValue(product.getOperatingSystem());
+                                row.createCell(8).setCellValue(product.getCpu());
+                                row.createCell(9).setCellValue(product.getMemory());
+                                row.createCell(10).setCellValue(product.getRam());
+                                row.createCell(11).setCellValue(product.getMadeIn());
+                                row.createCell(12).setCellValue(product.getStatus());
+                                row.createCell(13).setCellValue(product.getDisk());
+                                row.createCell(14).setCellValue(product.getMonitor());
+                                row.createCell(15).setCellValue(product.getWeight());
+                                row.createCell(16).setCellValue(product.getCard());
+                            });
                             if (productsAll.isEmpty())
                                 JOptionPane.showMessageDialog(null, "Not found data", "Notify", JOptionPane.WARNING_MESSAGE);
                             JOptionPane.showMessageDialog(null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
@@ -248,10 +273,10 @@ public class ManagerMainPanel extends JPanel {
                         int result = fileChooser.showOpenDialog(new JFrame("File Chooser"));
                         if (result == JFileChooser.APPROVE_OPTION) {
                             File selectedFile = fileChooser.getSelectedFile();
-                            String url = selectedFile.getAbsolutePath();
-                            ArrayList<Product> products = (ArrayList<Product>) ProductConfig.readProductsFromExcel(url);
+                            ArrayList<Product> products = ExcelConfig.importFromExcel(selectedFile, Product.class);
                             productController.saves(products);
-                            JOptionPane.showMessageDialog(null, "Read file " + url, "Notify", JOptionPane.WARNING_MESSAGE);
+                            String url = selectedFile.getAbsolutePath();
+                            JOptionPane.showMessageDialog(null, "Read file "+ url, "Notify", JOptionPane.WARNING_MESSAGE);
 
                         } else {
                             System.out.println("Chọn file đã bị hủy.");
@@ -488,20 +513,20 @@ public class ManagerMainPanel extends JPanel {
 
     // Hoang's code // tuan/
     class SupplierPanel extends JPanel {
-        JButton addBt, modifyBt, deleteBt, sortBt, exportExcelBt, importExcelBt, searchBt;
+        JButton addBt, modifyBt, deleteBt, exportExcelBt, importExcelBt, searchBt;
         JTextField findText;
-        private final String[] columnNamesSUPPLIER = {"Serial Number", "Supplier ID:", "Supplier Name:", "Email:", "Phone number:", "Address:", "Contract Start Date:"};
         private JTable tableSupplier;
         private DefaultTableModel modelSupplier;
         private JTableHeader headerSupplier;
-        private JScrollPane scrollPaneSupplier;
-        private JTabbedPane tabbedPaneSupplier;
 
         ToolPanel toolPanel = new ToolPanel();
         TablePanel tablePanel = new TablePanel();
 
         private static SupplierController supplierController = new SupplierController();
-        private static ArrayList<Supplier> suppliers = supplierController.reloadData();
+        private static ArrayList<Supplier> suppliers;
+        private String selectedOption = "ALL";
+
+        private SupplierDAO supplierDAO = new SupplierDAO();
 
         public SupplierPanel() {
             setLayout(new BorderLayout());
@@ -517,13 +542,14 @@ public class ManagerMainPanel extends JPanel {
                 // Add Button
                 {
                     addBt = new JButton("Add");
-                    ButtonConfig.setStyleButton(addBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setStyleButton(addBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
                     ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addBt);
                     ButtonConfig.addButtonHoverEffect(addBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                     addBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     addBt.setVerticalTextPosition(SwingConstants.BOTTOM);
                     addBt.addActionListener(e -> {
-                        new AddSupplierFrame().showFrame();
+                        AddSupplierFrame addSupplierFrame = new AddSupplierFrame(() -> updateTable(selectedOption));
+                        addSupplierFrame.showFrame();
                     });
                 }
 
@@ -531,53 +557,85 @@ public class ManagerMainPanel extends JPanel {
                 // Modify Button
                 {
                     modifyBt = new JButton("Modify");
-                    ButtonConfig.setStyleButton(modifyBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                    ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", modifyBt);
+                    ButtonConfig.setStyleButton(modifyBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/modify.png", modifyBt);
+                    ButtonConfig.addButtonHoverEffect(modifyBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                     modifyBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     modifyBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                    modifyBt.addActionListener(e -> modifyHandle());
                 }
 
                 // Delete Button
                 {
                     deleteBt = new JButton("Delete");
-                    ButtonConfig.setStyleButton(deleteBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setStyleButton(deleteBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
                     ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt);
+                    ButtonConfig.addButtonHoverEffect(deleteBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                     deleteBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     deleteBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-                }
-
-                // Sort Button
-                {
-                    sortBt = new JButton("Sort Asc");
-                    ButtonConfig.setStyleButton(sortBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                    ButtonConfig.setIconBigButton("src/main/java/Icon/request-quote.238x256.png", sortBt);
-                    sortBt.setHorizontalTextPosition(SwingConstants.CENTER);
-                    sortBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-
+                    deleteBt.addActionListener(e -> deleteHandle());
                 }
 
                 // Export Excel Button
                 {
-                    exportExcelBt = new JButton("Export Excel");
-                    ButtonConfig.setStyleButton(exportExcelBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    exportExcelBt = new JButton("Export");
+                    ButtonConfig.setStyleButton(exportExcelBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
                     ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt);
+                    ButtonConfig.addButtonHoverEffect(exportExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                     exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                    exportExcelBt.addActionListener(e -> {
+                        String fileName = JOptionPane.showInputDialog("Enter the name of the Excel file:");
+                        if (fileName != null && !fileName.trim().isEmpty()) {
+                            fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
+                            ExcelConfig.exportToExcel(suppliers, fileName, columnNamesSUPPLIER, (row, supplier) -> {
+                                row.createCell(0).setCellValue(supplier.getId());
+                                row.createCell(1).setCellValue(supplier.getCompanyName());
+                                row.createCell(2).setCellValue(supplier.getEmail());
+                                row.createCell(3).setCellValue(supplier.getPhoneNumber());
+                                row.createCell(4).setCellValue(supplier.getAddress());
+                                row.createCell(5).setCellValue(supplier.getContractDate().toString());
+                            });
+                            JOptionPane.showMessageDialog(null, "Exported to " + fileName);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "File name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    });
                 }
 
                 // Import Excel Button
                 {
-                    importExcelBt = new JButton("Import Excel");
-                    ButtonConfig.setStyleButton(importExcelBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    importExcelBt = new JButton("Import");
+                    ButtonConfig.setStyleButton(importExcelBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
                     ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-export-excel-50.png", importExcelBt);
+                    ButtonConfig.addButtonHoverEffect(importExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                     importExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     importExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                    importExcelBt.addActionListener(e -> {
+                        JFileChooser fileChooser = new JFileChooser();
+                        fileChooser.setDialogTitle("Select Excel file to import");
+
+                        int result = fileChooser.showOpenDialog(null);
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            File selectedFile = fileChooser.getSelectedFile();
+                            if (selectedFile != null) {
+                                // Use ExcelConfig to import suppliers from the selected file
+                                ArrayList<Supplier> importedSuppliers = ExcelConfig.importFromExcel(selectedFile, Supplier.class);
+
+                                // Clear current suppliers and update with imported data
+                                suppliers.clear();
+                                suppliers.addAll(importedSuppliers);
+                                updateTable(selectedOption); // Refresh the table to show imported data
+                            }
+                        }
+                    });
+
                 }
 
                 // Search Text Field
                 {
-                    findText = new JTextField();
-                    formatTextField(findText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
+                    findText = new JTextField("Search by name");
+                    formatTextField(findText, new Font("Arial", Font.PLAIN, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
                     findText.addFocusListener(new FocusListener() {
                         @Override
                         public void focusGained(FocusEvent e) {
@@ -592,6 +650,7 @@ public class ManagerMainPanel extends JPanel {
                             if (findText.getText().isEmpty()) {
                                 findText.setForeground(Color.GRAY);
                                 findText.setText("Search by name");
+                                updateTable(selectedOption);
                             }
                         }
                     });
@@ -601,6 +660,16 @@ public class ManagerMainPanel extends JPanel {
                 searchBt = new JButton();
                 ButtonConfig.setStyleButton(searchBt, Style.FONT_SIZE, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
                 ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
+                ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                searchBt.addActionListener(e -> {
+                    if (!findText.getText().isBlank()) {
+                        String text = findText.getText();
+                        suppliers = supplierController.find(text);
+                        updateTable(selectedOption, text);
+                    } else {
+                        updateTable(selectedOption);
+                    }
+                });
 
                 // Create panels
                 JPanel searchPanel = new JPanel(new FlowLayout());
@@ -608,12 +677,23 @@ public class ManagerMainPanel extends JPanel {
                 searchPanel.add(searchBt);
                 searchPanel.setBackground(Style.WORD_COLOR_WHITE);
 
+                String[] sortOptions = {"ALL", "NAME", "EMAIL", "PHONE NUMBER", "ADDRESS", "DATE"};
+                JComboBox<String> sortComboBox = new JComboBox<>(sortOptions);
+                sortComboBox.setPreferredSize(new Dimension(130,59));
+                sortComboBox.setBackground(Style.WORD_COLOR_WHITE);
+                sortComboBox.setForeground(Style.WORD_COLOR_BLACK);
+                sortComboBox.setFont(Style.FONT_SIZE_BUTTON);
+                sortComboBox.addActionListener(e -> {
+                    selectedOption = (String) sortComboBox.getSelectedItem();
+                    sortTable(selectedOption);
+                });
+
                 JPanel applicationPanel = new JPanel(new FlowLayout());
                 applicationPanel.add(addBt);
                 applicationPanel.add(deleteBt);
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(modifyBt);
-                applicationPanel.add(sortBt);
+                applicationPanel.add(sortComboBox);
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(exportExcelBt);
                 applicationPanel.add(importExcelBt);
@@ -642,7 +722,40 @@ public class ManagerMainPanel extends JPanel {
 
                 add(mainPanel);
             }
+
+            private void sortTable(String selectedOption) {
+                updateTable(selectedOption);
+            }
+
+            private void modifyHandle() {
+                int selectedRow = tableSupplier.getSelectedRow();
+                if (selectedRow != -1) {
+                    int supplierId = Integer.parseInt((String) modelSupplier.getValueAt(selectedRow, 1));
+                    ModifySupplierFrame modifySupplierFrame = new ModifySupplierFrame(() -> updateTable(selectedOption), supplierDAO.findById(supplierId));
+                    modifySupplierFrame.showFrame();
+                } else {
+                    ToastNotification.showToast("Please select a row to modify.", 3000, 200, 100);
+                }
+            }
+
+            private void deleteHandle() {
+                int selectedRow = tableSupplier.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    int supplierId = Integer.parseInt((String) modelSupplier.getValueAt(selectedRow, 1));
+
+                    supplierDAO.setDeleteRow(supplierId, true);
+
+                    // Remove the row from the table model
+                    modelSupplier.removeRow(selectedRow);
+
+                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 200, 100);
+                } else {
+                    ToastNotification.showToast("Please select a row to delete.", 3000, 200, 100);
+                }
+            }
         }
+
 
         public class TablePanel extends JPanel {
             public TablePanel() {
@@ -652,20 +765,37 @@ public class ManagerMainPanel extends JPanel {
                 tableSupplier = createTable(modelSupplier, headerSupplier, columnNamesSUPPLIER);
                 tableSupplier.setRowHeight(40);
                 resizeColumnWidth(tableSupplier, 200);
-                scrollPaneSupplier = new JScrollPane(tableSupplier);
+                JScrollPane scrollPaneSupplier = new JScrollPane(tableSupplier);
                 modelSupplier = (DefaultTableModel) tableSupplier.getModel();
+                suppliers = supplierController.reloadData();
 
                 upDataTable(suppliers, modelSupplier);
 
-                tabbedPaneSupplier = createTabbedPane(scrollPaneSupplier, "Supplier List", Style.FONT_HEADER_ROW_TABLE);
+                JTabbedPane tabbedPaneSupplier = createTabbedPane(scrollPaneSupplier, "Supplier List", Style.FONT_HEADER_ROW_TABLE);
                 add(tabbedPaneSupplier, BorderLayout.CENTER);
             }
 
-            private void upDataTable(ArrayList<Supplier> suppliers, DefaultTableModel modelSupplier) {
-                String[][] rowData = Supplier.getData(suppliers);
-                for (String[] strings : rowData) {
-                    modelSupplier.addRow(strings);
-                }
+        }
+
+        // Update method for the table
+        private void updateTable(String selectedOption) {
+            modelSupplier.setRowCount(0);
+            suppliers = supplierController.getByColumn(selectedOption);
+            upDataTable(suppliers, modelSupplier);
+        }
+
+        private void updateTable(String selectedOption, String text) {
+            modelSupplier.setRowCount(0);
+            suppliers = supplierController.find(text);
+            //..To be continue...
+            upDataTable(suppliers, modelSupplier);
+        }
+
+        // Method to populate the table with data
+        private void upDataTable(ArrayList<Supplier> suppliers, DefaultTableModel modelSupplier) {
+            String[][] rowData = Supplier.getData(suppliers);
+            for (String[] strings : rowData) {
+                modelSupplier.addRow(strings);
             }
         }
     }
@@ -1066,12 +1196,11 @@ public class ManagerMainPanel extends JPanel {
 
         public static void upDataTable(ArrayList<Customer> customers, DefaultTableModel modelCustomerTable ,JTable tableCustomer) {
             Object[][] rowData = Customer.getDataOnTable(customers);
-            System.out.println("number of row data: " + rowData[0].length);
             ProductPanel.TablePanel.removeDataTable(modelCustomerTable);
             System.out.println(" con cai nit" );
             for (int i = 0; i < rowData.length; i++) {
                 int j =i;
-                
+
 //                System.out.println(customers.get(j));
                 boolean  isBlock = customers.get(i).isBlock();
                 System.out.println("customer :" + customers.get(i)+"    "+isBlock);

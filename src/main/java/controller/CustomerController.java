@@ -78,6 +78,11 @@ public class CustomerController implements ModelController<Customer> {
         customerDAO.update(customer);
     }
 
+    @Override
+    public ArrayList<Customer> getByColumn(String column) {
+        return null;
+    }
+
     public ArrayList<CustomerOrderDTO> findCustomerOrderById(int id){
         return customerDAO.getDataCustomerOrderById(id);
     }

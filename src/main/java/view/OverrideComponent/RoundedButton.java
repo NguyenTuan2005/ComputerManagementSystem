@@ -1,8 +1,5 @@
-package view.OtherComponent;
+package view.OverrideComponent;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -45,20 +42,17 @@ public class RoundedButton extends JButton {
             g2.setColor(backgroundColor);
         }
 
-        // Vẽ hình chữ nhật bo tròn
         g2.fill(new RoundRectangle2D.Double(0, 0, buttonSize.getWidth(), buttonSize.getHeight(), radius, radius));
 
-        // Vẽ đường viền
         g2.setColor(borderColor);
-        g2.setStroke(new BasicStroke(borderWidth)); // Đặt độ rộng của viền
+        g2.setStroke(new BasicStroke(borderWidth));
         g2.draw(new RoundRectangle2D.Double(0, 0, buttonSize.getWidth(), buttonSize.getHeight(), radius, radius));
 
-        // Thiết lập màu chữ
         setForeground(textColor);
 
-        // Vẽ chữ của nút
         super.paintComponent(g);
     }
+
 
     // Getter for text
     public String getText() {
@@ -118,7 +112,3 @@ public class RoundedButton extends JButton {
         return buttonSize; // Trả về kích thước đã thiết lập
     }
 }
-
-
-
-

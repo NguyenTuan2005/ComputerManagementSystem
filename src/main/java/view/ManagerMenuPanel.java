@@ -2,21 +2,20 @@ package view;
 
 import Config.CurrentUser;
 
-import view.OtherComponent.CircularImage;
+import view.OverrideComponent.CircularImage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class ManagerMenuPanel extends JPanel {
-    OldLoginFrame loginFrame;
+    LoginFrame loginFrame;
     ManagerFrame managerFrame;
     JLabel role, name, credit;
     CircularImage avatar;
     JButton productBt, supplierBt, customerBt, inventoryBt, accountManagementBt, notificationBt, logoutBt, changeInformBt;
     GridBagConstraints gbc;
 
-//    public ManagerMenuPanel(LoginFrame loginFrame, ManagerFrame managerFrame) {
-    public ManagerMenuPanel() {
+    public ManagerMenuPanel(LoginFrame loginFrame, ManagerFrame managerFrame) {
         this.loginFrame = loginFrame;
         this.managerFrame = managerFrame;
 
@@ -125,7 +124,6 @@ public class ManagerMenuPanel extends JPanel {
             add(logoutBt);
             credit = new JLabel("     Group high!");
             add(credit);
-
         }
     }
 
@@ -143,7 +141,7 @@ public class ManagerMenuPanel extends JPanel {
         that.setFocusable(false);
         that.setBackground(Style.BACKGROUND_COLOR);
         that.setForeground(Style.WORD_COLOR_WHITE);
-        that.setFont(Style.FONT_SIZE);
+        that.setFont(Style.FONT_SIZE_MENU_BUTTON);
         that.setHorizontalAlignment(SwingConstants.LEFT);
         that.setBorderPainted(false);
     }

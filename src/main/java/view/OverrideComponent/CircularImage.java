@@ -1,4 +1,4 @@
-package view.OtherComponent;
+package view.OverrideComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +21,7 @@ public class CircularImage extends JLabel {
 		this.isAvatar = isAvatar;
 		try {
 			BufferedImage originalImage = ImageIO.read(new File(imagePath));
-			BufferedImage tickImage = ImageIO.read(new File("src/main/java/Icon/img_2.png")); // Tải ảnh dấu tích xanh
+			BufferedImage tickImage = ImageIO.read(new File("src/main/java/Icon/tick_Icon.png")); // Tải ảnh dấu tích xanh
 			circularImage = createCircularImage(originalImage, tickImage, width, height);
 			setIcon(new ImageIcon(circularImage)); // Đặt hình ảnh tròn làm Icon
 		} catch (IOException e) {

@@ -1,17 +1,17 @@
 package view;
 
-import view.OtherComponent.CircularImage;
+import view.OverrideComponent.CircularImage;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class CustomerMenuPanel extends JPanel {
-    OldLoginFrame loginFrame;
+    LoginFrame loginFrame;
     CustomerFrame userFrame;
     JLabel role, name, credit;
     CircularImage avatar;
-    JButton productCatalogBt, purchasedBt, notificationBt, changeInfoBt, logoutBt;
+    JButton productCatalogBt, orderHistoryBt, notificationBt, changeInfoBt, logoutBt;
     GridBagConstraints gbc;
 
     public CustomerMenuPanel() {
@@ -79,14 +79,15 @@ public class CustomerMenuPanel extends JPanel {
 
             productCatalogBt = new JButton("PRODUCT CATALOG");
             setFormatButton(productCatalogBt);
+            productCatalogBt.setBackground(Style.MENU_BUTTON_COLOR_GREEN);
             setIcon("src/main/java/Icon/catalog_Icon.png", productCatalogBt);
             add(productCatalogBt);
 
 
-            purchasedBt = new JButton("PURCHASED LIST");
-            setFormatButton(purchasedBt);
-            setIcon("src/main/java/Icon/purchasedList_Icon.png", purchasedBt);
-            add(purchasedBt);
+            orderHistoryBt = new JButton("ORDER HISTORY");
+            setFormatButton(orderHistoryBt);
+            setIcon("src/main/java/Icon/purchasedList_Icon.png", orderHistoryBt);
+            add(orderHistoryBt);
 
             notificationBt = new JButton("NOTIFICATION");
             setFormatButton(notificationBt);
@@ -149,7 +150,7 @@ public class CustomerMenuPanel extends JPanel {
     }
 
     public void setPurchasedBtListener(ActionListener listener) {
-        purchasedBt.addActionListener(listener);
+        orderHistoryBt.addActionListener(listener);
     }
     public void setChangeInfoBtListener(ActionListener listener) {
         changeInfoBt.addActionListener(listener);

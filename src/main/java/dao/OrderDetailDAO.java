@@ -172,7 +172,7 @@ public class OrderDetailDAO implements Repository<OrderDetail> {
     }
 
     @Override
-    public ArrayList<OrderDetail> getByColumn(String column) {
+    public ArrayList<OrderDetail> sortByColumn(String column) {
         return null;
     }
 }

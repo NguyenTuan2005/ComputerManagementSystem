@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class ProductEntryForm extends JFrame {
     private JTextField suppliersIdField;
-    private JTextField idField, nameField, qualityField, priceField, genreField, brandField,
+    private JTextField idField, nameField, quantityField, priceField, genreField, brandField,
             operatingSystemField, cpuField, memoryField, ramField, madeInField, statusField;
     private JButton saveButton;
     private JTable suppliersTable;
@@ -70,10 +70,10 @@ public class ProductEntryForm extends JFrame {
 
         gbc.gridx = 0;
         gbc.gridy = 3;
-        add(new JLabel("Quality:"), gbc);
-        qualityField = new JTextField(20);
+        add(new JLabel("Quantity:"), gbc);
+        quantityField = new JTextField(20);
         gbc.gridx = 1;
-        add(qualityField, gbc);
+        add(quantityField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 4;

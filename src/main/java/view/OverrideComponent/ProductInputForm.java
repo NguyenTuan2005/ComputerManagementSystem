@@ -20,7 +20,7 @@ public class ProductInputForm extends JFrame{
 
     private JComboBox<String> cmbSupplierId;
     private JTextField txtName;
-    private JTextField txtQuality;
+    private JTextField txtQuantity;
     private JTextField txtPrice;
     private JTextField txtGenre;
     private JTextField txtBrand;
@@ -156,7 +156,7 @@ public class ProductInputForm extends JFrame{
     private void initializeStyledComponents() {
 
         txtName = TextFieldConfig.createStyledTextField();
-        txtQuality = TextFieldConfig.createStyledTextField();
+        txtQuantity = TextFieldConfig.createStyledTextField();
         txtPrice = TextFieldConfig.createStyledTextField();
         txtGenre = TextFieldConfig.createStyledTextField();
         txtBrand = TextFieldConfig.createStyledTextField();
@@ -228,7 +228,7 @@ public class ProductInputForm extends JFrame{
 
                 {"Suppler name:", cmbSupplierId},
                 {"Product name:", txtName},
-                {"Quality:", txtQuality},
+                {"Quantity:", txtQuantity},
                 {"Unit price:", txtPrice},
                 {"Genre:", txtGenre},
                 {"Brand:", txtBrand},
@@ -285,7 +285,7 @@ public class ProductInputForm extends JFrame{
 //            product.setId(Integer.parseInt(txtId.getText()));
             product.setSuppliersId(supplierId );
             product.setName(txtName.getText());
-            product.setQuality(Integer.parseInt(txtQuality.getText()));
+            product.setQuantity(Integer.parseInt(txtQuantity.getText()));
             product.setPrice(Integer.parseInt(txtPrice.getText()));
             product.setGenre(txtGenre.getText());
             product.setBrand(txtBrand.getText());
@@ -311,7 +311,7 @@ public class ProductInputForm extends JFrame{
 
     private void clearForm() {
         txtName.setText("");
-        txtQuality.setText("");
+        txtQuantity.setText("");
         txtPrice.setText("");
         txtGenre.setText("");
         txtBrand.setText("");

@@ -400,11 +400,9 @@ public class ProductModifyForm extends JFrame {
 //                "Out Stock", // status
 //                1 // deleteRow
 //        );
+
+
 //
-//
-//            SwingUtilities.invokeLater(() -> {
-//                new ProductModifyForm(fakeProduct).setVisible(true);
-//            });
 
     }
 }

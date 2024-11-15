@@ -720,7 +720,7 @@ public class ManagerMainPanel extends JPanel {
                     ModifySupplierFrame modifySupplierFrame = new ModifySupplierFrame(() -> updateSuppliers(selectedOption), supplierDAO.findById(supplierId));
                     modifySupplierFrame.showFrame();
                 } else {
-                    ToastNotification.showToast("Please select a row to modify.", 3000);
+                    ToastNotification.showToast("Please select a row to modify.", 3000, 100, 200);
                 }
             }
 
@@ -735,9 +735,9 @@ public class ManagerMainPanel extends JPanel {
                     // Remove the row from the table model
                     modelSupplier.removeRow(selectedRow);
 
-                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000);
+                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 100, 200);
                 } else {
-                    ToastNotification.showToast("Please select a row to delete.", 3000);
+                    ToastNotification.showToast("Please select a row to delete.", 3000, 100, 200);
                 }
             }
         }
@@ -828,12 +828,17 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addCustomerBt);
                 addCustomerBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 addCustomerBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-//                addCustomerBt.addActionListener(new ActionListener() {
-//                    @Override
-//                    public void actionPerformed(ActionEvent e) {
-//                        new ProductInputForm();
-//                    }
-//                });
+                addCustomerBt.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        SwingUtilities.invokeLater(CustomerInfoFrame::new);
+                    }
+                });
 
                 modifyCustomerBt = new JButton("Modify");
                 ButtonConfig.addButtonHoverEffect(modifyCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -841,6 +846,25 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.setIconBigButton("src/main/java/Icon/modify.png", modifyCustomerBt);
                 modifyCustomerBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 modifyCustomerBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                modifyCustomerBt.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int selectedRow = tableCustomer.getSelectedRow();
+                        int columnIndex = 0;
+                        if (selectedRow != -1) {
+                            Object value = tableCustomer.getValueAt(selectedRow, columnIndex);
+
+                            int customerId = Integer.parseInt(value.toString());
+                            System.out.println("delete row : " + customerId);
+                            SwingUtilities.invokeLater(() -> {
+                                System.out.println(customerId);
+//                                new ProductModifyForm(productsAll.get(selectedRow)).setVisible(true);
+                                new ModifyCustomerFrame(customers.get(customerId-1));
+                            });
+
+                        }
+                    }
+                });
 
 
                 deleteCustomerBt = new JButton("Delete");
@@ -1010,7 +1034,6 @@ public class ManagerMainPanel extends JPanel {
                 // Thiết lập renderer cho cột ảnh
                 tableCustomer.getColumnModel().getColumn(customerColumnNames.length - 1).setCellRenderer(new ImageInJTable.ImageRenderer());
                 tableCustomer.setRowHeight(100);
-//                tableCustomer.setRowHeight(30);
                 resizeColumnWidth(tableCustomer, 219);
                 modelCustomer = (DefaultTableModel) tableCustomer.getModel();
 
@@ -1237,7 +1260,7 @@ public class ManagerMainPanel extends JPanel {
                             updateProduct();
                         });
                     } else {
-                        ToastNotification.showToast("Please select a row to modify.", 3000);
+                        ToastNotification.showToast("Please select a row to modify.", 3000, 100, 200);
                     }
                 }
             }

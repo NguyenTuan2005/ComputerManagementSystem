@@ -20,11 +20,9 @@ public class ModifyCustomerFrame extends JFrame {
 
 
     private JTextField  fullNameField, emailField, addressField;
-//    private JPasswordField passwordField;
     private JLabel avatarLabel;
     private  String contextPath = "";
     boolean cancel = true;
-    private boolean passwordVisible = false;
 
     private Customer customer;
 
@@ -37,6 +35,8 @@ public class ModifyCustomerFrame extends JFrame {
 
     public ModifyCustomerFrame( Customer customer) {
         this.customer = customer;
+        this.contextPath = customer.getAvataImg();
+        System.out.println( " before :" + customer);
         setTitle("Customer Information");
         setSize(500, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,7 +53,6 @@ public class ModifyCustomerFrame extends JFrame {
         fullNameField = createStyledTextField(customer.getFullName());
         emailField = createStyledTextField(customer.getEmail());
         addressField = createStyledTextField(customer.getAddress());
-//        passwordField = createStyledPasswordField();
 
         // Create password panel with toggle button
         JPanel passwordPanel = new JPanel(new BorderLayout(5, 0));
@@ -66,19 +65,6 @@ public class ModifyCustomerFrame extends JFrame {
         togglePassword.setBorder(BorderFactory.createLineBorder(MEDIUM_BLUE));
         togglePassword.setFocusPainted(false);
 
-
-//        // Add action listener for password toggle
-//        togglePassword.addActionListener(e -> {
-//            passwordVisible = togglePassword.isSelected();
-//            if (passwordVisible) {
-//                togglePassword.setIcon(new ImageIcon("src/main/java/img/eye-open.png"));
-//                passwordField.setEchoChar((char) 0);
-//            } else {
-//                togglePassword.setIcon(new ImageIcon("src/main/java/img/eye-closed.png"));
-//                passwordField.setEchoChar('•');
-//            }
-//        });
-
         // Add hover effect for toggle button
         togglePassword.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -89,14 +75,10 @@ public class ModifyCustomerFrame extends JFrame {
             }
         });
 
-//        passwordPanel.add(passwordField, BorderLayout.CENTER);
-//        passwordPanel.add(togglePassword, BorderLayout.EAST);
-
         JLabel[] labels = {
                 createStyledLabel("Full Name:"),
                 createStyledLabel("Email:"),
                 createStyledLabel("Address:"),
-//                createStyledLabel("Password:"),
                 createStyledLabel("Avatar Image:")
         };
 
@@ -110,7 +92,6 @@ public class ModifyCustomerFrame extends JFrame {
         formPanel.add(labels[0]); formPanel.add(fullNameField);
         formPanel.add(labels[1]); formPanel.add(emailField);
         formPanel.add(labels[2]); formPanel.add(addressField);
-//        formPanel.add(labels[3]); formPanel.add(passwordPanel);  // Add password panel instead of just password field
 
         JPanel avatarPanel = new JPanel(new BorderLayout());
         avatarPanel.setBackground(LIGHT_BLUE);
@@ -153,7 +134,11 @@ public class ModifyCustomerFrame extends JFrame {
 
         setContentPane(mainPanel);
         setLocationRelativeTo(null);
-        setVisible(true);
+        this.setVisibleA(true);
+    }
+
+    public void setVisibleA(boolean visible){
+        this.setVisible(visible);
     }
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
@@ -181,6 +166,7 @@ public class ModifyCustomerFrame extends JFrame {
         this.customer.setEmail(emailField.getText());
         this.customer.setFullName(fullNameField.getText());
         this.customer.setAddress( addressField.getText());
+// mat hinh
         this.customer.setAvataImg(contextPath);
         System.out.println("update "+ customer);
         return this.customer;
@@ -190,9 +176,12 @@ public class ModifyCustomerFrame extends JFrame {
         // Add your save logic here
         customerController= new CustomerController();
         JOptionPane.showMessageDialog(this, "Update button clicked!");
+        System.out.println(createCustomer());
         customerController.update(createCustomer());
         System.out.println("update :"+createCustomer());
         JOptionPane.showMessageDialog(this, "Updated successfully");
+        setVisible(false);
+
     }
 
     private void handleClear() {
@@ -290,17 +279,5 @@ public class ModifyCustomerFrame extends JFrame {
             }
             return false;
         }
-    }
-
-    public static void main(String[] args) {
-//        try {
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        SwingUtilities.invokeLater(ModifyCustomerFrame::new);
-        CustomerController controller = new CustomerController();
-        System.out.println(controller.findById(4));
-        new ModifyCustomerFrame(controller.findById(4));
     }
 }

@@ -381,28 +381,4 @@ public class ProductModifyForm extends JFrame {
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
-
-
-    public static void main(String[] args) {
-//        Product fakeProduct = new Product(
-//                42,
-//                4, // suppliersId
-//                "Asus Gaming Laptop", // name
-//                10, // quantity
-//                1500, // price
-//                "Laptop", // genre
-//                "ASUS", // brand
-//                "Windows 10", // operatingSystem
-//                "Intel Core i7", // cpu
-//                "512GB SSD", // memory
-//                "16GB", // ram
-//                "USA", // madeIn
-//                "Out Stock", // status
-//                1 // deleteRow
-//        );
-
-
-//
-
-    }
 }

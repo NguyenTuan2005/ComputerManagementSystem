@@ -6,7 +6,7 @@ import lombok.*;
 import javax.swing.*;
 import java.util.ArrayList;
 
-import static view.OverrideComponent.ImageInJTable.resizeImageIcon;
+import static view.OtherComponent.ImageInJTable.resizeImageIcon;
 
 @ToString
 @EqualsAndHashCode

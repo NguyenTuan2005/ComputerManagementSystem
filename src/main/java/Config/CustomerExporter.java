@@ -1,8 +1,9 @@
 package Config;
 
 import Model.Customer;
-import dao.CustomerDAO;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.BufferedWriter;
@@ -64,12 +65,5 @@ public class CustomerExporter {
             System.out.println("An error occurred while writing to the file.");
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        CustomerDAO customerDAO = new CustomerDAO();
-//        exportCustomerListToExcel(customerDAO.getAll(),"democustomer");
-        writeBillToFile("hahaha","text");
-
     }
 }

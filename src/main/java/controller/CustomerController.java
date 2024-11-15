@@ -1,8 +1,6 @@
 package controller;
 
-import Model.Account;
 import Model.Customer;
-import Model.Product;
 import dao.CustomerDAO;
 import dto.CustomerOrderDTO;
 import security.PasswordSecurity;
@@ -79,7 +77,7 @@ public class CustomerController implements ModelController<Customer> {
     }
 
     @Override
-    public ArrayList<Customer> getByColumn(String column) {
+    public ArrayList<Customer> sortByColumn(String column) {
         return null;
     }
 
@@ -89,10 +87,5 @@ public class CustomerController implements ModelController<Customer> {
 
     public void block(boolean isBlock, int id){
         customerDAO.updateBlock(isBlock, id);
-    }
-    public static void main(String[] args) {
-        CustomerController customerController = new CustomerController();
-        for ( CustomerOrderDTO c : customerController.findCustomerOrderById(3))
-            System.out.println(c.toBillString());
     }
 }

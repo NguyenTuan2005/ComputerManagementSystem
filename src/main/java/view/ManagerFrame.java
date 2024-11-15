@@ -9,8 +9,7 @@ public class ManagerFrame extends JFrame {
     ManagerMainPanel managerMainPanel;
     ManagerMenuPanel managerMenuPanel;
 
-//    public ManagerFrame(LoginFrame loginFrame) {
-    public ManagerFrame() {
+    public ManagerFrame(LoginFrame loginFrame) {
         setTitle("Computer Management");
         setSize(1200, 650);
         setResizable(true);
@@ -20,12 +19,13 @@ public class ManagerFrame extends JFrame {
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
 
 
-//        managerMenuPanel = new ManagerMenuPanel(loginFrame,this);
-//        managerMainPanel = new ManagerMainPanel(loginFrame);
+        managerMenuPanel = new ManagerMenuPanel(loginFrame,this);
         managerMainPanel = new ManagerMainPanel();
-        managerMenuPanel = new ManagerMenuPanel();
+//        managerMainPanel = new ManagerMainPanel(loginFrame);
         add(managerMenuPanel, BorderLayout.WEST);
         add(managerMainPanel, BorderLayout.CENTER);
+
+
         // thêm sự kiện cho các nút để chuyển màn hình tương tác ở menu
         managerMenuPanel.setProductButtonListener(new ActionListener() {
             @Override
@@ -58,7 +58,6 @@ public class ManagerFrame extends JFrame {
             }
         });
 
-
         managerMenuPanel.setAccountManagementButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -82,23 +81,20 @@ public class ManagerFrame extends JFrame {
                 setHover(ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT);
             }
         });
+
         managerMenuPanel.setLogoutButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 int confirmed = JOptionPane.showConfirmDialog(null,
                         "Are you sure you want to logout?", "Logout Confirmation",
                         JOptionPane.YES_NO_OPTION);
 
                 if (confirmed == JOptionPane.YES_OPTION) {
                     setVisible(false);
-//                    loginFrame.setVisible(true);
+                    loginFrame.setVisible(true);
                 }
-
             }
         });
-
-
         setVisible(true);
     }
     // setHover tạo hiệu ứng đổi màu cho nút khi nhấn chuột vào
@@ -126,8 +122,4 @@ public class ManagerFrame extends JFrame {
         }
     }
 
-
-    public static void main(String[] args) {
-        new ManagerFrame();
-    }
 }

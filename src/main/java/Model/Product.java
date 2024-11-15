@@ -1,7 +1,6 @@
 package Model;
 
 import lombok.*;
-import org.postgresql.gss.GSSOutputStream;
 
 import java.util.ArrayList;
 
@@ -18,7 +17,7 @@ public class Product {
 
     private String name;
 
-    private int quality;
+    private int quantity;
 
     private int price;
 
@@ -48,10 +47,10 @@ public class Product {
 
     private int deleteRow;
 
-    public Product(int suppliersId, String name, int quality, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status,int deleteRow) {
+    public Product(int suppliersId, String name, int quantity, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status,int deleteRow) {
         this.suppliersId = suppliersId;
         this.name = name;
-        this.quality = quality;
+        this.quantity = quantity;
         this.price = price;
         this.genre = genre;
         this.brand = brand;
@@ -64,10 +63,10 @@ public class Product {
         this.deleteRow= deleteRow;
     }
 
-    public Product(int suppliersId, String name, int quality, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status, String disk, String monitor, String weight, String card, int deleteRow) {
+    public Product(int suppliersId, String name, int quantity, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status, String disk, String monitor, String weight, String card, int deleteRow) {
         this.suppliersId = suppliersId;
         this.name = name;
-        this.quality = quality;
+        this.quantity = quantity;
         this.price = price;
         this.genre = genre;
         this.brand = brand;
@@ -88,7 +87,7 @@ public class Product {
         String []  result =  {String.valueOf(serial)
                 ,String.valueOf(id)
                 , name
-                , String.valueOf(quality)
+                , String.valueOf(quantity)
                 , Integer.toString(price)
                 , genre
                 , brand

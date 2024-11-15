@@ -50,7 +50,7 @@ public class CustomerDAO implements Repository<Customer> {
     @Override
     public Customer save(Customer customer) {
         try {
-            String sql = "INSERT INTO customer (fullname, email, address, password,avata_img,number_of__purchased) VALUES (?, ?, ?, ?,?,?)";
+            String sql = "INSERT INTO customer (fullname, email, address, password,avata_img,number_of_purchased) VALUES (?, ?, ?, ?,?,?)";
             preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             setAccountParameter(preparedStatement, customer);
             preparedStatement.executeUpdate();
@@ -258,7 +258,7 @@ public class CustomerDAO implements Repository<Customer> {
 
 
     @Override
-    public ArrayList<Customer> getByColumn(String column) {
+    public ArrayList<Customer> sortByColumn(String column) {
         return null;
     }
 

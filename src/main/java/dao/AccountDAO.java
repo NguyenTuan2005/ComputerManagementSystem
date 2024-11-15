@@ -165,7 +165,7 @@ public class AccountDAO implements Repository<Account> {
 
     // Phương thức để lấy tất cả Accounts theo cột
     @Override
-    public ArrayList<Account> getByColumn(String column) {
+    public ArrayList<Account> sortByColumn(String column) {
         ArrayList<Account> accounts = new ArrayList<>();
         String query = "SELECT * FROM public.account";
 

@@ -3,7 +3,6 @@ package controller;
 import Model.Manager;
 import dao.ManagerDAO;
 import dto.ManagerInforDTO;
-import security.PasswordSecurity;
 
 import java.util.ArrayList;
 
@@ -57,7 +56,7 @@ public class ManagerController implements ModelController<Manager>{
     }
 
     @Override
-    public ArrayList<Manager> getByColumn(String column) {
+    public ArrayList<Manager> sortByColumn(String column) {
         return null;
     }
 

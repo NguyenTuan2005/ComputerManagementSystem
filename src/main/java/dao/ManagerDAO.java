@@ -167,7 +167,7 @@ public class ManagerDAO implements Repository<Manager> {
     }
 
     @Override
-    public ArrayList<Manager> getByColumn(String column) {
+    public ArrayList<Manager> sortByColumn(String column) {
         return null;
     }
 

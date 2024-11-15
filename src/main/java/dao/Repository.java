@@ -19,5 +19,5 @@ public interface Repository<T> {
 
     boolean remove(int id);
 
-    ArrayList<T> getByColumn(String column);
+    ArrayList<T> sortByColumn(String column);
 }

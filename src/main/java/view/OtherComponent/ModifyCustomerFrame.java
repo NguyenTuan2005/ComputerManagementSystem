@@ -1,4 +1,4 @@
-package view.OverrideComponent;
+package view.OtherComponent;
 
 import Model.Customer;
 import controller.CustomerController;
@@ -7,8 +7,8 @@ import view.Style;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.dnd.*;
-import java.awt.datatransfer.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,16 +16,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
-import static Config.ButtonConfig.createStyledButton;
+public class ModifyCustomerFrame extends JFrame {
 
-public class CustomerInfoFrame extends JFrame {
 
-    private JTextField fullNameField, emailField, addressField;
-    private JPasswordField passwordField;
+    private JTextField  fullNameField, emailField, addressField;
     private JLabel avatarLabel;
     private  String contextPath = "";
     boolean cancel = true;
-    private boolean passwordVisible = false;
+
+    private Customer customer;
 
     private CustomerController customerController;
 
@@ -34,7 +33,10 @@ public class CustomerInfoFrame extends JFrame {
     private static final Color LIGHT_BLUE = new Color(235, 245, 255);
     private static final Color HOVER_BLUE = new Color(30, 144, 255);
 
-    public CustomerInfoFrame() {
+    public ModifyCustomerFrame( Customer customer) {
+        this.customer = customer;
+        this.contextPath = customer.getAvataImg();
+        System.out.println( " before :" + customer);
         setTitle("Customer Information");
         setSize(500, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,10 +50,9 @@ public class CustomerInfoFrame extends JFrame {
         JPanel formPanel = new JPanel(new GridLayout(6, 2, 15, 15));
         formPanel.setBackground(LIGHT_BLUE);
 
-        fullNameField = createStyledTextField();
-        emailField = createStyledTextField();
-        addressField = createStyledTextField();
-        passwordField = createStyledPasswordField();
+        fullNameField = createStyledTextField(customer.getFullName());
+        emailField = createStyledTextField(customer.getEmail());
+        addressField = createStyledTextField(customer.getAddress());
 
         // Create password panel with toggle button
         JPanel passwordPanel = new JPanel(new BorderLayout(5, 0));
@@ -64,18 +65,6 @@ public class CustomerInfoFrame extends JFrame {
         togglePassword.setBorder(BorderFactory.createLineBorder(MEDIUM_BLUE));
         togglePassword.setFocusPainted(false);
 
-        // Add action listener for password toggle
-        togglePassword.addActionListener(e -> {
-            passwordVisible = togglePassword.isSelected();
-            if (passwordVisible) {
-                togglePassword.setIcon(new ImageIcon("src/main/java/img/eye-open.png"));
-                passwordField.setEchoChar((char) 0);
-            } else {
-                togglePassword.setIcon(new ImageIcon("src/main/java/img/eye-closed.png"));
-                passwordField.setEchoChar('•');
-            }
-        });
-
         // Add hover effect for toggle button
         togglePassword.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -86,18 +75,13 @@ public class CustomerInfoFrame extends JFrame {
             }
         });
 
-        passwordPanel.add(passwordField, BorderLayout.CENTER);
-        passwordPanel.add(togglePassword, BorderLayout.EAST);
-
         JLabel[] labels = {
                 createStyledLabel("Full Name:"),
                 createStyledLabel("Email:"),
                 createStyledLabel("Address:"),
-                createStyledLabel("Password:"),
                 createStyledLabel("Avatar Image:")
         };
 
-        // drop img
         avatarLabel = new JLabel("Drag and drop an image here", SwingConstants.CENTER);
         avatarLabel.setPreferredSize(new Dimension(150, 150));
         avatarLabel.setBackground(Color.WHITE);
@@ -108,20 +92,19 @@ public class CustomerInfoFrame extends JFrame {
         formPanel.add(labels[0]); formPanel.add(fullNameField);
         formPanel.add(labels[1]); formPanel.add(emailField);
         formPanel.add(labels[2]); formPanel.add(addressField);
-        formPanel.add(labels[3]); formPanel.add(passwordPanel);  // Add password panel instead of just password field
 
         JPanel avatarPanel = new JPanel(new BorderLayout());
         avatarPanel.setBackground(LIGHT_BLUE);
-        avatarPanel.add(labels[4], BorderLayout.NORTH);
+        avatarPanel.add(labels[3], BorderLayout.NORTH);
         avatarPanel.add(avatarLabel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(LIGHT_BLUE);
         buttonPanel.setBorder(new EmptyBorder(15, 0, 0, 0));
 
-        JButton saveButton = createStyledButton("Save");
-        JButton clearButton = createStyledButton("Clear");
-        JButton cancelButton = createStyledButton("Cancel");
+        JButton saveButton = createStyledButton("UPDATE");
+        JButton clearButton = createStyledButton("UNDO");
+        JButton cancelButton = createStyledButton("CANCEL");
 
         saveButton.addActionListener(e -> handleSave());
         clearButton.addActionListener(e -> handleClear());
@@ -141,15 +124,21 @@ public class CustomerInfoFrame extends JFrame {
         mainPanel.add(formPanel, BorderLayout.CENTER);
         mainPanel.add(southPanel, BorderLayout.SOUTH);
 
-        JLabel titleLabel = new JLabel("Customer Information", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Customer Modify", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(DARK_BLUE);
         titleLabel.setBorder(new EmptyBorder(0, 0, 20, 0));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
+        // Set default image
+        setDefaultImage();
 
         setContentPane(mainPanel);
         setLocationRelativeTo(null);
-        setVisible(true);
+        this.setVisibleA(true);
+    }
+
+    public void setVisibleA(boolean visible){
+        this.setVisible(visible);
     }
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
@@ -174,33 +163,32 @@ public class CustomerInfoFrame extends JFrame {
     }
 
     private Customer createCustomer(){
-        return new Customer(
-                fullNameField.getText(),
-                emailField.getText(),
-                addressField.getText(),
-                new String( passwordField.getPassword()),
-                contextPath
-        );
+        this.customer.setEmail(emailField.getText());
+        this.customer.setFullName(fullNameField.getText());
+        this.customer.setAddress( addressField.getText());
+// mat hinh
+        this.customer.setAvataImg(contextPath);
+        System.out.println("update "+ customer);
+        return this.customer;
     }
+
     private void handleSave() {
         // Add your save logic here
-
         customerController= new CustomerController();
-        JOptionPane.showMessageDialog(this, "Save button clicked!");
-        customerController.save(createCustomer());
-        System.out.println("save :"+createCustomer());
-        handleClear();
+        JOptionPane.showMessageDialog(this, "Update button clicked!");
+        System.out.println(createCustomer());
+        customerController.update(createCustomer());
+        System.out.println("update :"+createCustomer());
+        JOptionPane.showMessageDialog(this, "Updated successfully");
+        setVisible(false);
 
     }
 
     private void handleClear() {
-//        idField.setText("");
-        fullNameField.setText("");
-        emailField.setText("");
-        addressField.setText("");
-        passwordField.setText("");
-        avatarLabel.setIcon(null);
-        avatarLabel.setText("Drag and drop an image here");
+        fullNameField.setText(this.customer.getFullName());
+        emailField.setText(this.customer.getEmail());
+        addressField.setText(this.customer.getAddress());
+        setDefaultImage();
     }
 
     private void handleCancel() {
@@ -215,8 +203,8 @@ public class CustomerInfoFrame extends JFrame {
         }
     }
 
-    private JTextField createStyledTextField() {
-        JTextField field = new JTextField();
+    private JTextField createStyledTextField(String text) {
+        JTextField field = new JTextField(text);
         field.setFont(Style.FONT_SIZE_MIN_PRODUCT);
         field.setPreferredSize(new Dimension(200, 30));
         field.setBorder(BorderFactory.createCompoundBorder(
@@ -227,7 +215,7 @@ public class CustomerInfoFrame extends JFrame {
     }
 
     private JPasswordField createStyledPasswordField() {
-        JPasswordField field = new JPasswordField();
+        JPasswordField field = new JPasswordField(" null");
         field.setPreferredSize(new Dimension(200, 30));
         field.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(MEDIUM_BLUE),
@@ -243,6 +231,18 @@ public class CustomerInfoFrame extends JFrame {
         return label;
     }
 
+    private void setDefaultImage() {
+        try {
+            Path defaultImagePath = Paths.get(this.customer.getAvataImg());
+            ImageIcon defaultIcon = new ImageIcon(defaultImagePath.toString());
+            Image scaledImage = defaultIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            avatarLabel.setIcon(new ImageIcon(scaledImage));
+            avatarLabel.setText(""); // Clear text when default image is set
+        } catch (Exception e) {
+            System.out.println("Default image not found in src/img/");
+            e.printStackTrace();
+        }
+    }
     private class ImageTransferHandler extends TransferHandler {
         @Override
         public boolean canImport(TransferSupport support) {
@@ -255,7 +255,7 @@ public class CustomerInfoFrame extends JFrame {
 
             try {
                 Transferable transferable = support.getTransferable();
-                List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                java.util.List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                 if (!files.isEmpty()) {
                     File file = files.get(0);
                     String fileName = file.getName();
@@ -279,14 +279,5 @@ public class CustomerInfoFrame extends JFrame {
             }
             return false;
         }
-    }
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        SwingUtilities.invokeLater(CustomerInfoFrame::new);
     }
 }

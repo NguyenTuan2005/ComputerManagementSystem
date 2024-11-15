@@ -178,7 +178,7 @@ public class OrderDAO implements Repository<Order> {
 
     // Phương thức để lấy tất cả Suppliers theo cột
     @Override
-    public ArrayList<Order> getByColumn(String column) {
+    public ArrayList<Order> sortByColumn(String column) {
         ArrayList<Order> orders = new ArrayList<>();
         String query = "SELECT * FROM public. \"order\"";
 

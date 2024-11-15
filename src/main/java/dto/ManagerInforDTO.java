@@ -1,14 +1,12 @@
 package dto;
 
-
-import jakarta.validation.constraints.*;
 import lombok.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static view.OverrideComponent.ImageInJTable.resizeImageIcon;
+import static view.OtherComponent.ImageInJTable.resizeImageIcon;
 
 @Getter
 @Setter

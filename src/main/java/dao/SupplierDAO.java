@@ -196,7 +196,7 @@ public class SupplierDAO implements Repository<Supplier> {
 
     // Phương thức để lấy tất cả Suppliers theo cột
     @Override
-    public ArrayList<Supplier> getByColumn(String column) {
+    public ArrayList<Supplier> sortByColumn(String column) {
         ArrayList<Supplier> suppliers = new ArrayList<>();
         String query = "SELECT * FROM public.suppliers where delete_row = 1";
 

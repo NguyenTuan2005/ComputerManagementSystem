@@ -1,5 +1,6 @@
 package Config;
 
+import Model.Customer;
 import Model.Product;
 import Model.Supplier;
 import org.apache.poi.ss.usermodel.*;
@@ -123,6 +124,16 @@ public class ExcelConfig {
                 product.setMonitor(row.getCell(14).getStringCellValue());
                 product.setWeight(row.getCell(15).getStringCellValue());
                 product.setCard(row.getCell(16).getStringCellValue());
+            }
+
+            if (instance instanceof Customer customer) {
+                customer.setId((int) row.getCell(0).getNumericCellValue());
+                customer.setFullName(row.getCell(1).getStringCellValue());
+                customer.setEmail(row.getCell(2).getStringCellValue());
+                customer.setAddress(row.getCell(3).getStringCellValue());
+                customer.setPassword(row.getCell(4).getStringCellValue());
+                customer.setAvataImg(row.getCell(5).getStringCellValue());
+                customer.setNumberOfPurchased((int) row.getCell(6).getNumericCellValue());
             }
             // Add more `else if` cases here for other types, if needed
 

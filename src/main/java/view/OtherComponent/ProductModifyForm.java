@@ -1,22 +1,21 @@
-package view.OverrideComponent;
+package view.OtherComponent;
+
 import Config.ButtonConfig;
-import Config.TextFieldConfig;
+import Config.ProductConfig;
 import Model.Product;
 import Model.Supplier;
 import dao.ProductDAO;
 import dao.SupplierDAO;
-import view.Style;
 
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProductInputForm extends JFrame{
+public class ProductModifyForm extends JFrame {
 
     private JComboBox<String> cmbSupplierId;
     private JTextField txtName;
@@ -29,31 +28,37 @@ public class ProductInputForm extends JFrame{
     private JTextField txtMemory;
     private JTextField txtRAM;
     private JTextField txtMadeIn;
+    private JComboBox<String> cmbStatus;
+
     private JTextField txtDisk;
     private JTextField txtMonitor;
     private JTextField txtWeight;
     private JTextField txtCard;
 
-    private JComboBox<String> cmbStatus;
     private JButton btnSave;
     private JButton btnClear;
     private JButton btnExit;
     private SupplierDAO supplierDAO;
     private ProductDAO productDAO;
-    private int supplierId  = 1;
+    private int supplierId ;
+    private Product product;
+    private Map<String,Integer> suppliersMap;
+    private String firstDataOfCompany;
+    private String firstDataOfStatus;
     private int mouseX, mouseY;
 
     private ScrollPane scrollPane;
 
-    private Map<String,Integer> suppliersMap;
 
+    private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SECONDARY_COLOR = new Color(52, 152, 219);
     private final Color BACKGROUND_COLOR = new Color(236, 240, 241);
     private final Color PANEL_BACKGROUND = Color.WHITE;
     private final Color BUTTON_COLOR = new Color(41, 128, 185);
     private final Color BUTTON_HOVER_COLOR = new Color(52, 152, 219);
 
-    public ProductInputForm() {
+    public ProductModifyForm( Product  product) {
+        this.product = product;
         setUndecorated(true);
         setTitle("Add product");
         setSize(900, 750);
@@ -63,14 +68,7 @@ public class ProductInputForm extends JFrame{
 
         getContentPane().setBackground(BACKGROUND_COLOR);
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                JOptionPane.showMessageDialog(null, "Use the Save or Reload button to manage the window.");
-            }
-        });
-
+        // Thêm sự kiện mouse listener để di chuyển JFrame
         this.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 mouseX = e.getX();
@@ -84,7 +82,15 @@ public class ProductInputForm extends JFrame{
                 setLocation(x - mouseX, y - mouseY);
             }
         });
-//        setUndecorated(true);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Custom behavior when trying to close the window
+                JOptionPane.showMessageDialog(null, "Use the Save or Reload button to manage the window.");
+            }
+        });
+
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -101,23 +107,23 @@ public class ProductInputForm extends JFrame{
         JPanel buttonPanel = createButtonPanel();
         scrollPane = new ScrollPane();
 
-
         mainPanel.add(titlePanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+//        mainPanel
         scrollPane.add(contentPanel);
-        scrollPane.setPreferredSize(new Dimension(700,90000));
         mainPanel.add(scrollPane);
-
+        scrollPane.setPreferredSize(new Dimension(700,90000));
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         mainPanel.add(buttonPanel);
 
         add(mainPanel);
 
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             SwingUtilities.updateComponentTreeUI(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("bug ne e???");
         }
     }
 
@@ -128,7 +134,7 @@ public class ProductInputForm extends JFrame{
 
         JLabel titleLabel = new JLabel("PRODUCT INFORMATION");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setForeground(Style.MODEL_PRIMARY_COLOR);
+        titleLabel.setForeground(PRIMARY_COLOR);
         panel.add(titleLabel);
 
         return panel;
@@ -138,7 +144,7 @@ public class ProductInputForm extends JFrame{
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(PANEL_BACKGROUND);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(Style.MODEL_PRIMARY_COLOR, 1),
+                new LineBorder(PRIMARY_COLOR, 1),
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
 
@@ -155,22 +161,24 @@ public class ProductInputForm extends JFrame{
 
     private void initializeStyledComponents() {
 
-        txtName = TextFieldConfig.createStyledTextField();
-        txtQuantity = TextFieldConfig.createStyledTextField();
-        txtPrice = TextFieldConfig.createStyledTextField();
-        txtGenre = TextFieldConfig.createStyledTextField();
-        txtBrand = TextFieldConfig.createStyledTextField();
-        txtOS = TextFieldConfig.createStyledTextField();
-        txtCPU = TextFieldConfig.createStyledTextField();
-        txtMemory = TextFieldConfig.createStyledTextField();
-        txtRAM = TextFieldConfig.createStyledTextField();
-        txtMadeIn = TextFieldConfig.createStyledTextField();
-        txtDisk = TextFieldConfig.createStyledTextField();
-        txtMonitor = TextFieldConfig.createStyledTextField();
-        txtWeight = TextFieldConfig.createStyledTextField();
-        txtCard = TextFieldConfig.createStyledTextField();
+        txtName = createStyledTextField();
+        txtQuantity = createStyledTextField();
+        txtPrice = createStyledTextField();
+        txtGenre = createStyledTextField();
+        txtBrand = createStyledTextField();
+        txtOS = createStyledTextField();
+        txtCPU = createStyledTextField();
+        txtMemory = createStyledTextField();
+        txtRAM = createStyledTextField();
+        txtMadeIn = createStyledTextField();
+        txtDisk = createStyledTextField();
+        txtMonitor = createStyledTextField();
+        txtWeight = createStyledTextField();
+        txtCard = createStyledTextField();
         supplierDAO = new SupplierDAO();
         productDAO = new ProductDAO();
+
+
 
         // Khởi tạo JComboBox cho Supplier ID với các lựa chọn
         ArrayList<Supplier> suppliers = supplierDAO.getAll();
@@ -178,15 +186,19 @@ public class ProductInputForm extends JFrame{
         setMapCompany(suppliers, suppliersMap);
         String [] companyNames = new String[suppliers.size()];
         setCompany(suppliers, companyNames);
+        firstDataOfCompany = ProductConfig.getKeyByValue(suppliersMap, product.getSuppliersId());
+        firstDataOfStatus = product.getStatus();
+//        System.out.println(firstDataOfCompany+"lkasjdhlaSKJFDHLAKSFDS");
 
         cmbSupplierId = new JComboBox<>(companyNames);
-        cmbSupplierId.setSelectedItem(companyNames[2]);
+        cmbSupplierId.setSelectedItem(firstDataOfCompany);
         cmbSupplierId.setFont(new Font("Arial", Font.PLAIN, 14));
         cmbSupplierId.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 supplierId  = suppliersMap.get(cmbSupplierId.getSelectedItem());
-                System.out.println( supplierId );
+                System.out.println(supplierId);
+                product.setSuppliersId(supplierId);
             }
         });
 
@@ -194,13 +206,15 @@ public class ProductInputForm extends JFrame{
         String[] statusOptions = {"In Stock", "Out Stock"};
         cmbStatus = new JComboBox<>(statusOptions);
         cmbStatus.setFont(new Font("Arial", Font.PLAIN, 14));
+        cmbStatus.setSelectedItem(firstDataOfStatus);
+        System.out.println(firstDataOfStatus+"ljhdslfjkhdslkjghfdslkjghldfskjh");
 
         // Khởi tạo buttons
-        btnSave = ButtonConfig.createStyledButton("SAVE");
+        btnSave = createStyledButton("UPDATE");
         btnSave.setForeground(Color.BLACK);
-        btnClear = ButtonConfig.createStyledButton("CLEAN ALL");
+        btnClear = createStyledButton("UNDO");
         btnClear.setForeground(Color.BLACK);
-        btnExit = ButtonConfig.createStyledButton("CANCEL");
+        btnExit = createStyledButton("CANCEL");
         btnExit.setForeground(Color.BLACK);
 
         // Thêm hiệu ứng hover cho buttons
@@ -208,7 +222,45 @@ public class ProductInputForm extends JFrame{
         ButtonConfig.addButtonHoverEffect(btnClear ,BUTTON_HOVER_COLOR,BUTTON_COLOR);
         ButtonConfig.addButtonHoverEffect(btnExit ,BUTTON_HOVER_COLOR,BUTTON_COLOR);
 
+        // set data
+        txtName.setText(product.getName());
+        txtQuantity.setText(""+product.getQuantity());
+        txtPrice.setText(""+product.getPrice());
+        txtGenre.setText(product.getGenre());
+        txtBrand.setText(product.getBrand());
+        txtOS.setText(product.getOperatingSystem());
+        txtCPU.setText(product.getCpu());
+        txtMemory.setText(product.getMemory());
+        txtRAM.setText(product.getRam());
+        txtCard.setText(product.getCard());
+        txtDisk.setText(product.getDisk());
+        txtMonitor.setText(product.getMonitor());
+        txtWeight.setText(product.getWeight());
+        txtMadeIn.setText(product.getMadeIn());
     }
+
+
+    private JTextField createStyledTextField() {
+        JTextField textField = new JTextField(20);
+        textField.setFont(new Font("Arial", Font.PLAIN, 14));
+        textField.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(PRIMARY_COLOR, 1),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+        return textField;
+    }
+
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setForeground(Color.WHITE);
+        button.setBackground(BUTTON_COLOR);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
+    }
+
 
     private static void setCompany(ArrayList<Supplier> suppliers, String [] companyNames  ){
         for (int i = 0; i < suppliers.size(); i++) {
@@ -225,8 +277,8 @@ public class ProductInputForm extends JFrame{
 
     private void addStyledComponents(JPanel panel, GridBagConstraints gbc) {
         Object[][] components = {
-
-                {"Suppler name:", cmbSupplierId},
+//                {"Mã sản phẩm:", txtId},
+                {"Suppler name:", cmbSupplierId}, // Sử dụng JComboBox
                 {"Product name:", txtName},
                 {"Quantity:", txtQuantity},
                 {"Unit price:", txtPrice},
@@ -242,6 +294,7 @@ public class ProductInputForm extends JFrame{
                 {"Weight :", txtWeight},
                 {"Card :", txtCard},
                 {"Status:", cmbStatus}
+
         };
 
         int gridy = 0;
@@ -251,7 +304,7 @@ public class ProductInputForm extends JFrame{
             gbc.weightx = 0.3;
             JLabel label = new JLabel(comp[0].toString());
             label.setFont(new Font("Arial", Font.BOLD, 14));
-            label.setForeground(Style.MODEL_PRIMARY_COLOR);
+            label.setForeground(PRIMARY_COLOR);
             panel.add(label, gbc);
 
             gbc.gridx = 1;
@@ -280,10 +333,6 @@ public class ProductInputForm extends JFrame{
 
     private void saveProduct() {
         try {
-            Product product = new Product();
-
-//            product.setId(Integer.parseInt(txtId.getText()));
-            product.setSuppliersId(supplierId );
             product.setName(txtName.getText());
             product.setQuantity(Integer.parseInt(txtQuantity.getText()));
             product.setPrice(Integer.parseInt(txtPrice.getText()));
@@ -294,13 +343,13 @@ public class ProductInputForm extends JFrame{
             product.setMemory(txtMemory.getText());
             product.setRam(txtRAM.getText());
             product.setMadeIn(txtMadeIn.getText());
+            product.setStatus(cmbStatus.getSelectedItem().toString());
             product.setDisk(txtDisk.getText());
             product.setMonitor(txtMonitor.getText());
-            product.setWeight(txtWeight.getText());
             product.setCard(txtCard.getText());
-            product.setStatus(cmbStatus.getSelectedItem().toString());
-            productDAO.save(product);
-
+            product.setWeight(txtWeight.getText());
+            System.out.println(product);
+            productDAO.update(product);
             showSuccessDialog("saved successfully!");
             clearForm();
 
@@ -310,33 +359,26 @@ public class ProductInputForm extends JFrame{
     }
 
     private void clearForm() {
-        txtName.setText("");
-        txtQuantity.setText("");
-        txtPrice.setText("");
-        txtGenre.setText("");
-        txtBrand.setText("");
-        txtOS.setText("");
-        txtCPU.setText("");
-        txtMemory.setText("");
-        txtRAM.setText("");
-        txtMadeIn.setText("");
-        txtCard.setText("");
-        txtWeight.setText("");
-        txtDisk.setText("");
-        txtMonitor.setText("");
+        txtName.setText(product.getName());
+        txtQuantity.setText(""+product.getQuantity());
+        txtPrice.setText(""+product.getPrice());
+        txtGenre.setText(product.getGenre());
+        txtBrand.setText(product.getBrand());
+        txtOS.setText(product.getOperatingSystem());
+        txtCPU.setText(product.getCpu());
+        txtMemory.setText(product.getMemory());
+        txtRAM.setText(product.getRam());
+        txtMadeIn.setText(product.getMadeIn());
+        cmbSupplierId.setSelectedItem(firstDataOfCompany);
+        cmbStatus.setSelectedItem(firstDataOfStatus);
     }
 
     private void showSuccessDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Successfully", JOptionPane.INFORMATION_MESSAGE);
+        this.setVisible(false);
     }
 
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new ProductInputForm().setVisible(true);
-        });
     }
 }

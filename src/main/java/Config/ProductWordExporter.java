@@ -1,7 +1,6 @@
 package Config;
 
 import Model.Product;
-import dao.ProductDAO;
 import org.apache.poi.xwpf.usermodel.*;
 
 import java.io.FileOutputStream;
@@ -10,13 +9,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 public class ProductWordExporter {
-    public static void main(String[] args) {
-        ProductDAO productDAO = new ProductDAO();
-        List<Product> products = productDAO.getAll();
-        ProductWordExporter.createAndExportProductListToWord(products, "pmofdsssssf.docx");
-
-    }
-
     public static void createAndExportProductListToWord(List<Product> productList, String filePath) {
         // Create a new blank document
         XWPFDocument document = new XWPFDocument();

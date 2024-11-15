@@ -1,4 +1,4 @@
-package view;
+package view.OverrideComponent;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -146,9 +146,5 @@ public class ProductEntryForm extends JFrame {
         add(saveButton, gbc);
 
         setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(ProductEntryForm::new);
     }
 }

@@ -333,10 +333,4 @@ public class ProductInputForm extends JFrame{
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new ProductInputForm().setVisible(true);
-        });
-    }
 }

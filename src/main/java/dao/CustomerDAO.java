@@ -2,6 +2,7 @@ package dao;
 
 import Config.DatabaseConfig;
 import Model.Customer;
+import dto.CustomerOrderDTO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -24,12 +25,13 @@ public class CustomerDAO implements Repository<Customer> {
         }
     }
 
-    private void setAccountParameter(PreparedStatement preparedStatement, Customer customer ) throws SQLException {
+    private void setAccountParameter(PreparedStatement preparedStatement, Customer customer) throws SQLException {
         preparedStatement.setString(1, customer.getFullName());
         preparedStatement.setString(2, customer.getEmail());
         preparedStatement.setString(3, customer.getAddress());
         preparedStatement.setString(4, customer.getPassword());
         preparedStatement.setString(5, customer.getAvataImg());
+        preparedStatement.setInt(6, customer.getNumberOfPurchased());
     }
 
     private Customer resultCustomer(ResultSet rs) throws SQLException {
@@ -39,16 +41,18 @@ public class CustomerDAO implements Repository<Customer> {
                 rs.getString("email"),
                 rs.getString("address"),
                 rs.getString("password"),
-                rs.getString("avata_img")
+                rs.getString("avata_img"),
+                rs.getInt("number_of_purchased"),
+                rs.getInt("block")
         );
     }
 
     @Override
     public Customer save(Customer customer) {
         try {
-            String sql = "INSERT INTO customer (fullname, email, address, password,avata_img) VALUES (?, ?, ?, ?,?)";
+            String sql = "INSERT INTO customer (fullname, email, address, password,avata_img,number_of_purchased) VALUES (?, ?, ?, ?,?,?)";
             preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            setAccountParameter(preparedStatement,customer);
+            setAccountParameter(preparedStatement, customer);
             preparedStatement.executeUpdate();
             ResultSet rs = preparedStatement.getGeneratedKeys();
             if (rs.next()) {
@@ -79,7 +83,7 @@ public class CustomerDAO implements Repository<Customer> {
     }
 
     @Override
-    public ArrayList<Customer> getAll()  {
+    public ArrayList<Customer> getAll() {
         try {
             String sql = "SELECT * FROM customer";
             statement = connection.createStatement();
@@ -99,7 +103,7 @@ public class CustomerDAO implements Repository<Customer> {
     @Override
     public ArrayList<Customer> findByName(String name) {
         try {
-            String sql = "SELECT * FROM customer WHERE fullname LIKE ?";
+            String sql = "SELECT * FROM customer WHERE LOWER(fullname) LIKE lower(?)";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, "%" + name + "%");
             ResultSet rs = preparedStatement.executeQuery();
@@ -123,7 +127,7 @@ public class CustomerDAO implements Repository<Customer> {
             ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next()) {
-                 return resultCustomer(rs);
+                return resultCustomer(rs);
             }
 
         } catch (SQLException e) {
@@ -132,7 +136,7 @@ public class CustomerDAO implements Repository<Customer> {
         return null;
     }
 
-    public Customer findByEmail(String email ) {
+    public Customer findByEmail(String email) {
         try {
             String sql = "SELECT * FROM customer WHERE email LIKE ?";
             preparedStatement = connection.prepareStatement(sql);
@@ -152,10 +156,10 @@ public class CustomerDAO implements Repository<Customer> {
     @Override
     public Customer update(Customer customer) {
         try {
-            String sql = "UPDATE customer SET fullname = ?, email = ?, address = ?, password = ? WHERE id = ?";
+            String sql = "UPDATE customer SET fullname = ?, email = ?, address = ?, password = ?,avata_img=? ,number_of__purchased =? WHERE id = ?";
             preparedStatement = connection.prepareStatement(sql);
-            setAccountParameter(preparedStatement,customer);
-            preparedStatement.setInt(5, customer.getId());
+            setAccountParameter(preparedStatement, customer);
+            preparedStatement.setInt(7, customer.getId());
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
                 return customer;
@@ -181,6 +185,78 @@ public class CustomerDAO implements Repository<Customer> {
         }
     }
 
+
+    public ArrayList<CustomerOrderDTO> getDataCustomerOrderById(int customerId) {
+        ArrayList<CustomerOrderDTO> orders = new ArrayList<>();
+        String query = "SELECT * FROM customer_order_view WHERE customer_id = ?";
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, customerId);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                CustomerOrderDTO order = new CustomerOrderDTO();
+                order.setCustomerId(rs.getInt("customer_id"));
+                order.setOrderDate(rs.getDate("order_date"));
+                order.setShipAddress(rs.getString("ship_address"));
+                order.setStatusItem(rs.getString("status_item"));
+                order.setSaler(rs.getString("saler"));
+                order.setSalerId(rs.getInt("saler_id"));
+                order.setUnitPrice(rs.getDouble("unit_price"));
+                order.setQuantity(rs.getInt("quantity"));
+                order.setProductId(rs.getInt("product_id"));
+                order.setProductName(rs.getString("product_name"));
+                order.setProductGenre(rs.getString("product_genre"));
+                order.setProductBrand(rs.getString("product_brand"));
+                order.setOperatingSystem(rs.getString("operating_system"));
+                order.setCpu(rs.getString("cpu"));
+                order.setMemory(rs.getString("memory"));
+                order.setRam(rs.getString("ram"));
+                order.setMadeIn(rs.getString("made_in"));
+                order.setDisk(rs.getString("disk"));
+                order.setWeight(rs.getString("weight"));
+                order.setMonitor(rs.getString("monitor"));
+                order.setCard(rs.getString("card"));
+                orders.add(order);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return orders;
+    }
+
+    /***
+     * If isBlock = true then block column update = 1 (Customer is blocked)
+     * If isBlock = false then block column update = 0
+     * @param isBlock
+     * @param id
+     */
+    public void updateBlock(boolean isBlock , int id){
+        try {
+            String sql = "UPDATE customer SET block = ? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, isBlock?1:0 );
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void updateNumberOfPurchased( int id){
+        try {
+            String sql = "UPDATE customer SET number_of_purchased = number_of_purchased+1  WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
     @Override
     public ArrayList<Customer> sortByColumn(String column) {
         return null;
@@ -188,7 +264,7 @@ public class CustomerDAO implements Repository<Customer> {
 
     public static void main(String[] args) {
         CustomerDAO customerDAO = new CustomerDAO();
-        System.out.println(customerDAO.getAll());
-//        System.out.println(customerDAO.save(new Customer("nguyen huu duy","duynguyenavg@gmail.com","tien giang , chau thành diem hy","123")));
+        System.out.println(customerDAO.getDataCustomerOrderById(3));
+//        System.out.println(customerDAO.indByEmail("1233@abc.com")save(new Customer("nguyen huu duy","duynguyenavg@gmail.com","tien giang , chau thành diem hy","123")));
     }
 }

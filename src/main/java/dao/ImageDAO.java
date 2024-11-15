@@ -106,5 +106,10 @@ public class ImageDAO implements Repository<Image> {
         return false;
     }
 
+    @Override
+    public ArrayList<Image> sortByColumn(String column) {
+        return null;
+    }
+
 
 }

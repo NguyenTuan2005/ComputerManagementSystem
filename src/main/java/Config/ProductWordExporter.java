@@ -1,7 +1,6 @@
 package Config;
 
 import Model.Product;
-import dao.ProductDAO;
 import org.apache.poi.xwpf.usermodel.*;
 
 import java.io.FileOutputStream;
@@ -10,13 +9,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 public class ProductWordExporter {
-    public static void main(String[] args) {
-        ProductDAO productDAO = new ProductDAO();
-        List<Product> products = productDAO.getAll();
-        ProductWordExporter.createAndExportProductListToWord(products, "pmofdsssssf.docx");
-
-    }
-
     public static void createAndExportProductListToWord(List<Product> productList, String filePath) {
         // Create a new blank document
         XWPFDocument document = new XWPFDocument();
@@ -33,7 +25,7 @@ public class ProductWordExporter {
         XWPFTable table = document.createTable();
 
         // Define headers without "Operating System"
-        String[] headers = {"Name", "Quality", "Price", "Genre", "CPU", "Memory", "RAM", "Made In"};
+        String[] headers = {"Name", "Quantity", "Price", "Genre", "CPU", "Memory", "RAM", "Made In"};
 
         // Add and style header row
         XWPFTableRow headerRow = table.getRow(0);
@@ -67,9 +59,9 @@ public class ProductWordExporter {
             nameCell.setText(product.getName());
             nameCell.getCTTc().addNewTcPr().addNewNoWrap();  // Disable wrap for name cell
 
-            XWPFTableCell qualityCell = row.getCell(1);
-            qualityCell.setText(String.valueOf(product.getQuality()));
-            qualityCell.getCTTc().addNewTcPr().addNewNoWrap();  // Disable wrap for quality cell
+            XWPFTableCell quantityCell = row.getCell(1);
+            quantityCell.setText(String.valueOf(product.getQuantity()));
+            quantityCell.getCTTc().addNewTcPr().addNewNoWrap();  // Disable wrap for quantity cell
 
             XWPFTableCell priceCell = row.getCell(2);
             String formattedPrice = decimalFormat.format(product.getPrice());

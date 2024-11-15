@@ -1,9 +1,8 @@
 package controller;
 
-import Model.Account;
 import Model.Customer;
-import Model.Product;
 import dao.CustomerDAO;
+import dto.CustomerOrderDTO;
 import security.PasswordSecurity;
 
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class CustomerController implements ModelController<Customer> {
 
     @Override
     public ArrayList<Customer> find(String name) {
-        return null;
+        return customerDAO.findByName(name);
     }
 
     @Override
@@ -77,8 +76,16 @@ public class CustomerController implements ModelController<Customer> {
         customerDAO.update(customer);
     }
 
-    public static void main(String[] args) {
-        CustomerController customerController = new CustomerController();
-        System.out.println(customerController.getAll());
+    @Override
+    public ArrayList<Customer> sortByColumn(String column) {
+        return null;
+    }
+
+    public ArrayList<CustomerOrderDTO> findCustomerOrderById(int id){
+        return customerDAO.getDataCustomerOrderById(id);
+    }
+
+    public void block(boolean isBlock, int id){
+        customerDAO.updateBlock(isBlock, id);
     }
 }

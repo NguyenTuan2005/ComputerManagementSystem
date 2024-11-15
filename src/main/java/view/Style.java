@@ -36,6 +36,9 @@ public class Style {
     public static final Font FONT_TITLE_BOLD_40 = new Font("Arial", Font.BOLD, 40);
     public static final Font FONT_TITLE_BOLD_45 = new Font("Arial", Font.BOLD, 45);
 
+    //Model frame color
+    public static final Color MODEL_PRIMARY_COLOR = new Color(41, 128, 185);
+
     //customer frame
     public static final Font FONT_TEXT_CUSTOMER = new Font("Arial", Font.PLAIN, 18);
     public static final Font FONT_BUTTON_CUSTOMER = new Font("Arial", Font.BOLD, 16);

@@ -1,7 +1,6 @@
 package dao;
 
 import Config.DatabaseConfig;
-import Config.ProductConfig;
 import Model.Product;
 
 import java.sql.*;
@@ -29,7 +28,7 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product save(Product product) {
         try {
-            String sql = "INSERT INTO product (suppliers_id, name, quality, price, genre, brand, operating_system, cpu, memory, ram, made_in, status, delete_row, disk ,weight ,monitor,card) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
+            String sql = "INSERT INTO product (suppliers_id, name, quantity, price, genre, brand, operating_system, cpu, memory, ram, made_in, status, delete_row, disk ,weight ,monitor,card) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             setProductParameters(preparedStatement, product);
 
@@ -127,7 +126,7 @@ public class ProductDAO implements Repository<Product> {
     @Override
     public Product update(Product product) {
         try {
-            String sql = "UPDATE product SET suppliers_id = ?, name = ?, quality = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? , delete_row=?,disk = ? ,weight = ? ,monitor = ? ,card =? WHERE id = ?";
+            String sql = "UPDATE product SET suppliers_id = ?, name = ?, quantity = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? , delete_row=?,disk = ? ,weight = ? ,monitor = ? ,card =? WHERE id = ?";
             preparedStatement = connection.prepareStatement(sql);
             setProductParameters(preparedStatement, product);
             preparedStatement.setInt(18,product.getId());
@@ -157,12 +156,54 @@ public class ProductDAO implements Repository<Product> {
         return false;
     }
 
+    // Phương thức để lấy tất cả Products theo cột
+    @Override
+    public ArrayList<Product> sortByColumn(String column) {
+        ArrayList<Product> products = new ArrayList<>();
+        String query = "SELECT * FROM public.product where delete_row = 1";
+
+        switch (column) {
+            case "SUPPLIER ID" -> query += " ORDER BY suppliers_id";
+            case "NAME" -> query += " ORDER BY name";
+            case "QUANTITY" -> query += " ORDER BY quantity";
+            case "PRICE" -> query += " ORDER BY price";
+            case "GENRE" -> query += " ORDER BY genre";
+            case "BRAND" -> query += " ORDER BY brand";
+            case "OPERATING SYSTEM" -> query += " ORDER BY operating_system";
+            case "CPU" -> query += " ORDER BY cpu";
+            case "MEMORY" -> query += " ORDER BY memory";
+            case "RAM" -> query += " ORDER BY ram";
+            case "MADE IN" -> query += " ORDER BY made_in";
+            case "STATUS" -> query += " ORDER BY status";
+            case "DISK" -> query += " ORDER BY disk";
+            case "MONITOR" -> query += " ORDER BY monitor";
+            case "WEIGHT" -> query += " ORDER BY weight";
+            case "CARD" -> query += " ORDER BY card";
+            default -> {
+                return getAll();
+            }
+        }
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                Product product = mapResultSetToProduct(rs);
+                products.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
     private Product mapResultSetToProduct(ResultSet rs) throws SQLException {
         Product product = new Product();
         product.setId(rs.getInt("id"));
         product.setSuppliersId(rs.getInt("suppliers_id"));
         product.setName(rs.getString("name"));
-        product.setQuality(Integer.parseInt(rs.getString("quality")));
+        product.setQuantity(Integer.parseInt(rs.getString("quantity")));
         product.setPrice(rs.getInt("price"));
         product.setGenre(rs.getString("genre"));
         product.setBrand(rs.getString("brand"));
@@ -184,7 +225,7 @@ public class ProductDAO implements Repository<Product> {
     private void setProductParameters(PreparedStatement preparedStatement, Product product) throws SQLException {
         preparedStatement.setInt(1, product.getSuppliersId());
         preparedStatement.setString(2, product.getName());
-        preparedStatement.setInt(3, product.getQuality());
+        preparedStatement.setInt(3, product.getQuantity());
         preparedStatement.setDouble(4, product.getPrice());
         preparedStatement.setString(5, product.getGenre());
         preparedStatement.setString(6, product.getBrand());

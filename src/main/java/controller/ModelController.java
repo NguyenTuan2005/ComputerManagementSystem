@@ -20,4 +20,5 @@ public interface ModelController<M> {
     void save(M m);
     void update(M m);
 
+    ArrayList<M> sortByColumn(String column);
 }

@@ -19,7 +19,7 @@ public class ProductModifyForm extends JFrame {
 
     private JComboBox<String> cmbSupplierId;
     private JTextField txtName;
-    private JTextField txtQuality;
+    private JTextField txtQuantity;
     private JTextField txtPrice;
     private JTextField txtGenre;
     private JTextField txtBrand;
@@ -162,7 +162,7 @@ public class ProductModifyForm extends JFrame {
     private void initializeStyledComponents() {
 
         txtName = createStyledTextField();
-        txtQuality = createStyledTextField();
+        txtQuantity = createStyledTextField();
         txtPrice = createStyledTextField();
         txtGenre = createStyledTextField();
         txtBrand = createStyledTextField();
@@ -224,7 +224,7 @@ public class ProductModifyForm extends JFrame {
 
         // set data
         txtName.setText(product.getName());
-        txtQuality.setText(""+product.getQuality());
+        txtQuantity.setText(""+product.getQuantity());
         txtPrice.setText(""+product.getPrice());
         txtGenre.setText(product.getGenre());
         txtBrand.setText(product.getBrand());
@@ -280,7 +280,7 @@ public class ProductModifyForm extends JFrame {
 //                {"Mã sản phẩm:", txtId},
                 {"Suppler name:", cmbSupplierId}, // Sử dụng JComboBox
                 {"Product name:", txtName},
-                {"Quality:", txtQuality},
+                {"Quantity:", txtQuantity},
                 {"Unit price:", txtPrice},
                 {"Genre:", txtGenre},
                 {"Brand:", txtBrand},
@@ -334,7 +334,7 @@ public class ProductModifyForm extends JFrame {
     private void saveProduct() {
         try {
             product.setName(txtName.getText());
-            product.setQuality(Integer.parseInt(txtQuality.getText()));
+            product.setQuantity(Integer.parseInt(txtQuantity.getText()));
             product.setPrice(Integer.parseInt(txtPrice.getText()));
             product.setGenre(txtGenre.getText());
             product.setBrand(txtBrand.getText());
@@ -360,7 +360,7 @@ public class ProductModifyForm extends JFrame {
 
     private void clearForm() {
         txtName.setText(product.getName());
-        txtQuality.setText(""+product.getQuality());
+        txtQuantity.setText(""+product.getQuantity());
         txtPrice.setText(""+product.getPrice());
         txtGenre.setText(product.getGenre());
         txtBrand.setText(product.getBrand());
@@ -380,29 +380,5 @@ public class ProductModifyForm extends JFrame {
 
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-
-    public static void main(String[] args) {
-//        Product fakeProduct = new Product(
-//                42,
-//                4, // suppliersId
-//                "Asus Gaming Laptop", // name
-//                10, // quality
-//                1500, // price
-//                "Laptop", // genre
-//                "ASUS", // brand
-//                "Windows 10", // operatingSystem
-//                "Intel Core i7", // cpu
-//                "512GB SSD", // memory
-//                "16GB", // ram
-//                "USA", // madeIn
-//                "Out Stock", // status
-//                1 // deleteRow
-//        );
-
-
-//
-
     }
 }

@@ -97,6 +97,7 @@ public class CustomerInfoFrame extends JFrame {
                 createStyledLabel("Avatar Image:")
         };
 
+        // drop img
         avatarLabel = new JLabel("Drag and drop an image here", SwingConstants.CENTER);
         avatarLabel.setPreferredSize(new Dimension(150, 150));
         avatarLabel.setBackground(Color.WHITE);

@@ -4,6 +4,7 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
+import java.util.Random;
 
 public class EmailConfig {
 
@@ -45,5 +46,16 @@ public class EmailConfig {
             throw new RuntimeException(e);
         }
     }
+
+    public int generateOTP(){
+        Random random = new Random();
+        return 100 + random.nextInt(1000);
+    }
+
+    public static void main(String[] args) {
+        EmailConfig emailConfig = new EmailConfig();
+        System.out.println(emailConfig.generateOTP());
+    }
+
 
 }

@@ -128,7 +128,7 @@ public class ManagerDAO implements Repository<Manager> {
         return null;
     }
 
-    @Deprecated
+
     @Override
     public Manager update(Manager manager) {
         String sql = "UPDATE Manager SET fullname = ?, address = ?, birthday = ?, phone_number = ? WHERE id = ?";
@@ -216,7 +216,30 @@ public class ManagerDAO implements Repository<Manager> {
 
     public static void main(String[] args) {
         ManagerDAO managerDAO = new ManagerDAO();
-        System.out.println(managerDAO.getManagerWithAccountById("james"));
+        System.out.println(managerDAO.getManagerInforDTO());
+    }
+
+
+    public ArrayList<ManagerInforDTO> getManagerInforDTO() {
+
+        String sql = "SELECT m.id AS managerId, m.fullname, m.address, m.birthday, m.phone_number, " +
+                    "a.id AS accountId, a.username, a.password, a.email, a.create_date , a.avata_img " +
+                    "FROM Manager AS m " +
+                    "INNER JOIN Account AS a ON a.manage_id = m.id " ;
+        ArrayList< ManagerInforDTO> managerInforDTOS = new ArrayList<>();
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                ManagerInforDTO managerInfor = mapResultSetToManagerInfor(resultSet);
+                managerInforDTOS.add(managerInfor);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return managerInforDTOS;
     }
 
 

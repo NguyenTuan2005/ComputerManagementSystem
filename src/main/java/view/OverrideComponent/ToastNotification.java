@@ -1,4 +1,4 @@
-package view.OtherComponent;
+package view.OverrideComponent;
 
 import view.Style;
 

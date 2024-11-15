@@ -75,7 +75,7 @@ public class CustomerFrame extends JFrame {
     private void setHover(String panelName) {
         JButton[] buttons = {
                 customerMenuPanel.productCatalogBt,
-                customerMenuPanel.purchasedBt,
+                customerMenuPanel.orderHistoryBt,
                 customerMenuPanel.notificationBt,
                 customerMenuPanel.changeInfoBt
 

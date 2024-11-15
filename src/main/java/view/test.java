@@ -1,6 +1,7 @@
 package view;
 
 import com.toedter.calendar.JCalendar;
+import view.OverrideComponent.CustomButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,25 +67,28 @@ public class test {
 
     static class ModifyManager extends JPanel {
         ChangeInfo changeInfo;
+        Avatar avatar;
         ModifyManager() {
             setLayout(new BorderLayout());
             changeInfo = new ChangeInfo();
+            avatar = new Avatar();
             add(changeInfo,BorderLayout.CENTER);
+            add(avatar,BorderLayout.SOUTH);
         }
 
         class ChangeInfo extends JPanel {
-            RightPn rightPn;
-            LeftPn leftPn;
+            LeftPn rightPn;
+            RightPn leftPn;
             ChangeInfo() {
                 setLayout(new GridLayout(1, 2));
-                rightPn = new RightPn();
-                leftPn = new LeftPn();
+                rightPn = new LeftPn();
+                leftPn = new RightPn();
                 add(rightPn);
                 add(leftPn);
             }
 
-            class RightPn extends JPanel {
-                RightPn() {
+            class LeftPn extends JPanel {
+                LeftPn() {
                     setLayout(new GridBagLayout());
                     setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2),"Personal Information"));
 
@@ -164,13 +168,12 @@ public class test {
                 }
 
             }
-            class LeftPn extends JPanel {
+            class RightPn extends JPanel {
                 JTextField usernameField,emailField;
                 JPasswordField passwordField;
-                LeftPn() {
+                RightPn() {
                     setLayout(new GridBagLayout());
                     setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2),"Account Information"));
-                    setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2));
                     GridBagConstraints gbc = new GridBagConstraints();
 
                     // Cài đặt vị trí của các component trong GridBagLayout
@@ -215,10 +218,29 @@ public class test {
 
 
         class Avatar extends JPanel {
-
+            CustomButton importImage, undoBt;
+            JLabel label;
             Avatar() {
+                setLayout(new BorderLayout());
 
+                label = new JLabel("Drop your image here",SwingConstants.CENTER);
+                label.setBackground(Color.WHITE);
+                label.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2));
+                label.setPreferredSize(new Dimension(400,300));
 
+                JPanel importImagePn = new JPanel();
+                importImage = new CustomButton("Import");
+                importImage.setDrawBorder(false);
+                importImage.setPreferredSize(new Dimension(100, 40));
+
+                undoBt = new CustomButton("Undo");
+                undoBt.setPreferredSize(new Dimension(100, 40));
+                undoBt.setDrawBorder(false);
+                importImagePn.add(importImage);
+                importImagePn.add(undoBt);
+
+                add(label, BorderLayout.CENTER);
+                add(importImagePn, BorderLayout.SOUTH);
             }
 
         }

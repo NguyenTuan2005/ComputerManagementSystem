@@ -8,7 +8,9 @@ import Model.Supplier;
 import controller.CustomerController;
 import controller.ProductController;
 import controller.SupplierController;
-import view.OverrideComponent.*;
+import view.OverrideComponent.CircularImage;
+import view.OverrideComponent.CustomButton;
+import view.OtherComponent.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -16,17 +18,14 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 
 public class ManagerMainPanel extends JPanel {
-    OldLoginFrame loginFrame;
+    LoginFrame loginFrame;
     CardLayout cardLayout = new CardLayout();
     WelcomePanel welcomePanel;
     ProductPanel productPanel = new ProductPanel();
@@ -2211,9 +2210,304 @@ public class ManagerMainPanel extends JPanel {
         }
     }
 
-    //nut thong tin
+
     class ChangeInformationPanel extends JPanel {
+        ChangeAvatarPanel changeAvatarPanel = new ChangeAvatarPanel();
+        ChangeInfo changeInfo = new ChangeInfo();
+        CustomButton updateBt, cancelBt, changeAvaBt;
+
         public ChangeInformationPanel() {
+            setLayout(new BorderLayout());
+
+            JPanel ChangePn = new JPanel(new GridLayout(1, 2));
+            ChangePn.add(changeAvatarPanel);
+            ChangePn.add(changeInfo);
+            add(ChangePn, BorderLayout.CENTER);
+
+            cancelBt = new CustomButton("Cancel");
+            cancelBt.setGradientColors(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.GRAY);
+            cancelBt.setBackgroundColor(Style.LIGHT_BlUE);
+            cancelBt.setBorderRadius(20);
+            cancelBt.setPreferredSize(new Dimension(200,50));
+            cancelBt.setFont(Style.FONT_TITLE_PRODUCT);
+
+            updateBt = new CustomButton("Update");
+            updateBt.setGradientColors(new Color(58, 106, 227), Color.GREEN);
+            updateBt.setBackgroundColor(Style.LIGHT_BlUE);
+            updateBt.setBorderRadius(20);
+            updateBt.setPreferredSize(new Dimension(200,50));
+            updateBt.setFont(Style.FONT_TITLE_PRODUCT);
+            updateBt.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JOptionPane.showConfirmDialog(null,"Confirm Your Change?", "Confirm",JOptionPane.YES_NO_OPTION );
+                }
+            });
+
+
+            JPanel updatePn = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            updatePn.add(cancelBt);
+            updatePn.add(updateBt);
+            add(updatePn, BorderLayout.SOUTH);
+
+
+        }
+
+        class ChangeAvatarPanel extends JPanel {
+
+            ChangeAvatarPanel() {
+                setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+                setBorder(BorderFactory.createEmptyBorder(20, 50, 30, 50));
+                CircularImage avatar = new CircularImage("src/main/java/Icon/fit_nlu_logo.jpg", 300, 300, false);
+                avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+
+                changeAvaBt = new CustomButton("Upload new image from Computer");
+                changeAvaBt.setGradientColors(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.GREEN);
+                changeAvaBt.setBackgroundColor(Style.LIGHT_BlUE);
+                changeAvaBt.setBorderRadius(20);
+                changeAvaBt.setPreferredSize(new Dimension(450, 40));
+                changeAvaBt.setFont(Style.FONT_BUTTON_CUSTOMER);
+                changeAvaBt.setHorizontalAlignment(SwingConstants.CENTER);
+                changeAvaBt.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+                add(Box.createVerticalGlue());
+                add(avatar);
+                add(Box.createRigidArea(new Dimension(0, 50)));
+                add(changeAvaBt);
+                add(Box.createVerticalGlue());
+            }
+
+        }
+
+        class ChangeInfo extends JPanel {
+            JTextField emailField, fullNameField, addressField;
+            JPasswordField oldPasswordField, newPasswordField, confirmPasswordField;
+            JButton showOldPasswd, showNewPasswd, showRetypeNewPasswd;
+
+            ChangeInfo() {
+                setLayout(new GridBagLayout());
+
+                // Tạo layout constraints
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(5, 5, 5, 5);
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+
+                JLabel title = new JLabel("Customer Information", SwingConstants.CENTER);
+                title.setFont(Style.FONT_TITLE_PRODUCT);
+                title.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                gbc.gridwidth = 2;
+                add(title, gbc);
+
+                JLabel emailLabel = new JLabel("Email: ");
+                gbc.gridx = 0;
+                gbc.gridy = 1;
+                gbc.gridwidth = 2;
+                add(emailLabel, gbc);
+
+                emailField = createStyledTextField();
+                gbc.gridx = 0;
+                gbc.gridy = 2;
+                gbc.gridwidth = 1;
+                add(emailField, gbc);
+
+                // Thêm Label 2, TextField 2, và Button 2
+                JLabel nameLabel = new JLabel("Name: ");
+                gbc.gridx = 0;
+                gbc.gridy = 3;
+                gbc.gridwidth = 2;
+                add(nameLabel, gbc);
+
+                fullNameField = createStyledTextField();
+                gbc.gridx = 0;
+                gbc.gridy = 4;
+                gbc.gridwidth = 1;
+                add(fullNameField, gbc);
+
+                JButton button2 = createEditFieldButton(fullNameField);
+                gbc.gridx = 1;
+                gbc.gridy = 4;
+                add(button2, gbc);
+
+                // Thêm Label 3, TextField 3, và Button 3
+                JLabel addressLabel = new JLabel("Address: ");
+                gbc.gridx = 0;
+                gbc.gridy = 5;
+                gbc.gridwidth = 2;
+                add(addressLabel, gbc);
+
+                addressField = createStyledTextField();
+                gbc.gridx = 0;
+                gbc.gridy = 6;
+                gbc.gridwidth = 1;
+                add(addressField, gbc);
+
+                JButton button3 = createEditFieldButton(addressField);
+                gbc.gridx = 1;
+                gbc.gridy = 6;
+                add(button3, gbc);
+
+                JLabel oldPasswdLabel = new JLabel("Old Password: ");
+                gbc.gridx = 0;
+                gbc.gridy = 7;
+                gbc.gridwidth = 2;
+                add(oldPasswdLabel, gbc);
+
+                oldPasswordField = createStyledJPasswordField();
+                gbc.gridx = 0;
+                gbc.gridy = 8;
+                gbc.gridwidth = 1;
+                add(oldPasswordField, gbc);
+
+                showOldPasswd = createShowPasswdButton(oldPasswordField);
+                gbc.gridx = 1;
+                gbc.gridy = 8;
+                gbc.gridwidth = 1;
+                add(showOldPasswd, gbc);
+
+                JLabel newPasswdLabel = new JLabel("New Password: ");
+                gbc.gridx = 0;
+                gbc.gridy = 9;
+                gbc.gridwidth = 2;
+                add(newPasswdLabel, gbc);
+
+                newPasswordField = createStyledJPasswordField();
+                gbc.gridx = 0;
+                gbc.gridy = 10;
+                gbc.gridwidth = 1;
+                add(newPasswordField, gbc);
+
+                showNewPasswd = createShowPasswdButton(newPasswordField);
+                gbc.gridx = 1;
+                gbc.gridy = 10;
+                gbc.gridwidth = 1;
+                add(showNewPasswd, gbc);
+
+                JLabel confirmPasswdLabel = new JLabel("Confirm Password: ");
+                gbc.gridx = 0;
+                gbc.gridy = 11;
+                gbc.gridwidth = 2;
+                add(confirmPasswdLabel, gbc);
+
+                confirmPasswordField = createStyledJPasswordField();
+                gbc.gridx = 0;
+                gbc.gridy = 12;
+                gbc.gridwidth = 1;
+                add(confirmPasswordField, gbc);
+
+                showRetypeNewPasswd = createShowPasswdButton(confirmPasswordField);
+                gbc.gridx = 1;
+                gbc.gridy = 12;
+                gbc.gridwidth = 1;
+                add(showRetypeNewPasswd, gbc);
+            }
+
+            private JTextField createStyledTextField() {
+                JTextField field = new JTextField();
+                field.setFont(Style.FONT_TEXT_CUSTOMER);
+                field.setPreferredSize(new Dimension(350, 40));
+                field.setEditable(false);
+                field.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(Style.MEDIUM_BLUE),
+                        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+                field.setBackground(Color.WHITE);
+                return field;
+            }
+
+            private JPasswordField createStyledJPasswordField() {
+                JPasswordField passwdField = new JPasswordField();
+                passwdField.setEchoChar('*');
+                passwdField.setFont(Style.FONT_BUTTON_PAY);
+                passwdField.setPreferredSize(new Dimension(350, 40));
+                passwdField.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(Style.MEDIUM_BLUE),
+                        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+                return passwdField;
+            }
+
+            private JButton createEditFieldButton(JTextField textField) {
+                JButton editBt = new JButton();
+                editBt.setIcon(new ImageIcon("src/main/java/Icon/penIcon1.png"));
+                editBt.setPreferredSize(new Dimension(45, 40));
+
+                Color hoverBackground = new Color(130, 180, 230); // Màu sáng hơn khi hover
+
+                editBt.setBackground(Style.LIGHT_BlUE);
+                editBt.setFocusPainted(false);
+                editBt.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
+                editBt.setContentAreaFilled(true); // Đảm bảo nền được vẽ
+
+                // Thêm hiệu ứng hover
+                editBt.addMouseListener(new MouseAdapter() {
+                    public void mouseEntered(MouseEvent evt) {
+                        editBt.setBackground(hoverBackground);
+                    }
+
+                    public void mouseExited(MouseEvent evt) {
+                        editBt.setBackground(Style.LIGHT_BlUE);
+                    }
+                });
+
+                // Thêm hiệu ứng click để làm sáng lên
+                editBt.addMouseListener(new MouseAdapter() {
+                    public void mousePressed(MouseEvent evt) {
+                        editBt.setBackground(hoverBackground.darker()); // Tối hơn khi nhấn
+                    }
+
+                    public void mouseReleased(MouseEvent evt) {
+                        editBt.setBackground(hoverBackground); // Quay lại màu hover sau khi thả chuột
+                    }
+                });
+
+                editBt.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        textField.setEditable(true);
+                    }
+                });
+
+                return editBt;
+            }
+
+            // nút ẩn hiện cho mật khẩu
+            private JButton createShowPasswdButton(JPasswordField passwordField) {
+                JButton toggleButton = new JButton();
+                toggleButton.setBackground(Style.LIGHT_BlUE);
+                toggleButton.setFocusPainted(false);
+                toggleButton.setFocusable(false);
+                toggleButton.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
+                ImageIcon showPasswd = new ImageIcon("src/main/java/Icon/showPasswd_Icon.png");
+                ImageIcon hidePasswd = new ImageIcon("src/main/java/Icon/hidePasswd_Icon.png");
+
+                toggleButton.setIcon(showPasswd);
+                toggleButton.addMouseListener(new MouseAdapter() {
+                    public void mouseEntered(MouseEvent evt) {
+                        toggleButton.setBackground(new Color(130, 180, 230));
+                    }
+
+                    public void mouseExited(MouseEvent evt) {
+                        toggleButton.setBackground(Style.LIGHT_BlUE);
+                    }
+                });
+
+                toggleButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (passwordField.getEchoChar() != '\u0000') {
+                            passwordField.setEchoChar('\u0000');
+                            toggleButton.setIcon(hidePasswd);
+                        } else {
+                            // Ẩn mật khẩu
+                            passwordField.setEchoChar('*');
+                            toggleButton.setIcon(showPasswd);
+                        }
+                    }
+                });
+                return toggleButton;
+            }
+
         }
     }
 
@@ -2236,15 +2530,6 @@ public class ManagerMainPanel extends JPanel {
         that.setBorderPainted(false);
         that.setFocusable(false);
         that.setPreferredSize(size);
-    }
-
-    // thay đổi kích thước của cột trong bảng
-    public void resizeColumnWidth(JTable table, int width) {
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setPreferredWidth(width);
-            table.getColumnModel().getColumn(0).setPreferredWidth(100);
-            table.getColumnModel().getColumn(1).setPreferredWidth(120);
-        }
     }
 
     private void setIconSmallButton(String url, JButton that) {
@@ -2306,7 +2591,14 @@ public class ManagerMainPanel extends JPanel {
 
         return table;
     }
-
+    // thay đổi kích thước của cột trong bảng
+    public void resizeColumnWidth(JTable table, int width) {
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setPreferredWidth(width);
+            table.getColumnModel().getColumn(0).setPreferredWidth(100);
+            table.getColumnModel().getColumn(1).setPreferredWidth(120);
+        }
+    }
     // create a TabbedPane
     public JTabbedPane createTabbedPane(JScrollPane scrollPane, String title, Font font) {
         JTabbedPane tabbedPane = new JTabbedPane();

@@ -1,4 +1,4 @@
-package view.OverrideComponent;
+package view.OtherComponent;
 
 import Config.ButtonConfig;
 import Model.Supplier;

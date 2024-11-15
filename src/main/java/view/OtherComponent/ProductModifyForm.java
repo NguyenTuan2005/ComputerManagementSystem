@@ -1,4 +1,4 @@
-package view.OverrideComponent;
+package view.OtherComponent;
 
 import Config.ButtonConfig;
 import Config.ProductConfig;
@@ -6,13 +6,11 @@ import Model.Product;
 import Model.Supplier;
 import dao.ProductDAO;
 import dao.SupplierDAO;
-import org.springframework.util.ObjectUtils;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

@@ -107,7 +107,7 @@ public class ImageDAO implements Repository<Image> {
     }
 
     @Override
-    public ArrayList<Image> getByColumn(String column) {
+    public ArrayList<Image> sortByColumn(String column) {
         return null;
     }
 

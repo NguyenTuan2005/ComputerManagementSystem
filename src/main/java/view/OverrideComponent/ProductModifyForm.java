@@ -6,13 +6,11 @@ import Model.Product;
 import Model.Supplier;
 import dao.ProductDAO;
 import dao.SupplierDAO;
-import org.springframework.util.ObjectUtils;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +19,7 @@ public class ProductModifyForm extends JFrame {
 
     private JComboBox<String> cmbSupplierId;
     private JTextField txtName;
-    private JTextField txtQuality;
+    private JTextField txtQuantity;
     private JTextField txtPrice;
     private JTextField txtGenre;
     private JTextField txtBrand;
@@ -164,7 +162,7 @@ public class ProductModifyForm extends JFrame {
     private void initializeStyledComponents() {
 
         txtName = createStyledTextField();
-        txtQuality = createStyledTextField();
+        txtQuantity = createStyledTextField();
         txtPrice = createStyledTextField();
         txtGenre = createStyledTextField();
         txtBrand = createStyledTextField();
@@ -226,7 +224,7 @@ public class ProductModifyForm extends JFrame {
 
         // set data
         txtName.setText(product.getName());
-        txtQuality.setText(""+product.getQuality());
+        txtQuantity.setText(""+product.getQuantity());
         txtPrice.setText(""+product.getPrice());
         txtGenre.setText(product.getGenre());
         txtBrand.setText(product.getBrand());
@@ -282,7 +280,7 @@ public class ProductModifyForm extends JFrame {
 //                {"Mã sản phẩm:", txtId},
                 {"Suppler name:", cmbSupplierId}, // Sử dụng JComboBox
                 {"Product name:", txtName},
-                {"Quality:", txtQuality},
+                {"Quantity:", txtQuantity},
                 {"Unit price:", txtPrice},
                 {"Genre:", txtGenre},
                 {"Brand:", txtBrand},
@@ -336,7 +334,7 @@ public class ProductModifyForm extends JFrame {
     private void saveProduct() {
         try {
             product.setName(txtName.getText());
-            product.setQuality(Integer.parseInt(txtQuality.getText()));
+            product.setQuantity(Integer.parseInt(txtQuantity.getText()));
             product.setPrice(Integer.parseInt(txtPrice.getText()));
             product.setGenre(txtGenre.getText());
             product.setBrand(txtBrand.getText());
@@ -362,7 +360,7 @@ public class ProductModifyForm extends JFrame {
 
     private void clearForm() {
         txtName.setText(product.getName());
-        txtQuality.setText(""+product.getQuality());
+        txtQuantity.setText(""+product.getQuantity());
         txtPrice.setText(""+product.getPrice());
         txtGenre.setText(product.getGenre());
         txtBrand.setText(product.getBrand());
@@ -390,7 +388,7 @@ public class ProductModifyForm extends JFrame {
 //                42,
 //                4, // suppliersId
 //                "Asus Gaming Laptop", // name
-//                10, // quality
+//                10, // quantity
 //                1500, // price
 //                "Laptop", // genre
 //                "ASUS", // brand

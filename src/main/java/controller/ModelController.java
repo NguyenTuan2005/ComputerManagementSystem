@@ -16,5 +16,5 @@ public interface ModelController<M> {
     void saves(ArrayList<M> products);
     void save(Product product);
 
-    ArrayList<M> getByColumn(String column);
+    ArrayList<M> sortByColumn(String column);
 }

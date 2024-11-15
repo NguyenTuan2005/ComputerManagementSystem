@@ -48,8 +48,8 @@ public class ProductController implements ModelController<Product> {
     }
 
     @Override
-    public ArrayList<Product> getByColumn(String column) {
-        return null;
+    public ArrayList<Product> sortByColumn(String column) {
+        return productDAO.sortByColumn(column);
     }
 
     public static void main(String[] args) {

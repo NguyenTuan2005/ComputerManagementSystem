@@ -70,7 +70,7 @@ public class ProductConfig {
                 product.setId((int) row.getCell(0).getNumericCellValue());
                 product.setSuppliersId((int) row.getCell(1).getNumericCellValue());
                 product.setName(row.getCell(2).getStringCellValue());
-                product.setQuality((int) row.getCell(3).getNumericCellValue());
+                product.setQuantity((int) row.getCell(3).getNumericCellValue());
                 product.setPrice((int) row.getCell(4).getNumericCellValue());
                 product.setGenre(row.getCell(5).getStringCellValue());
                 product.setBrand(row.getCell(6).getStringCellValue());

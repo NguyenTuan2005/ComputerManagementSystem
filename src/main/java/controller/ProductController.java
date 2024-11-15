@@ -1,6 +1,5 @@
 package controller;
 
-import Model.Customer;
 import Model.Product;
 import dao.ProductDAO;
 import security.PasswordSecurity;
@@ -56,12 +55,12 @@ public class ProductController implements ModelController<Product> {
     }
 
     @Override
-    public ArrayList<Product> sortByColumn(String column) {
-        return productDAO.sortByColumn(column);
+    public void update(Product product) {
+
     }
 
-    public static void main(String[] args) {
-        ProductController p = new ProductController();
-        System.out.println(p.getAll());
+    @Override
+    public ArrayList<Product> sortByColumn(String column) {
+        return productDAO.sortByColumn(column);
     }
 }

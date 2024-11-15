@@ -4,10 +4,8 @@ import Config.CurrentUser;
 import Model.Account;
 import dao.AccountDAO;
 import dao.ManagerDAO;
-import dto.ManagerInfor;
+import dto.ManagerInforDTO;
 import security.PasswordSecurity;
-
-import java.util.ArrayList;
 
 public class AccountController {
 
@@ -24,7 +22,7 @@ public class AccountController {
 
     public boolean isValidAccount(String username , String password ){
         Account account = accountDAO.findOneByName(username);
-        ManagerInfor managerInfor = managerDAO.getManagerWithAccountById(username);
+        ManagerInforDTO managerInfor = managerDAO.getManagerWithAccountById(username);
         if ( managerInfor == null )
             return false;
         passwordSecurity = new PasswordSecurity();

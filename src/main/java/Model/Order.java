@@ -1,9 +1,11 @@
 package Model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
+import lombok.*;
+
 import java.util.Date;
 
 @Getter
@@ -30,5 +32,6 @@ public class Order {
         this.orderDate = orderDate;
         this.status = status;
     }
+
 
 }

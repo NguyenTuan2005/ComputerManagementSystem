@@ -371,7 +371,7 @@ public class LoginFrame extends JFrame {
                                     loginFrame.setVisible(false);
                                     managerFrame = new ManagerFrame(loginFrame);
                                 } else {
-                                    sayError("You have entered the Wrong username or password, please try again!");
+                                    sayError("You have entered the Wrong git revertsername or password, please try again!");
                                 }
                                 break;
                             }

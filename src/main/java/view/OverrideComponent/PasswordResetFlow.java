@@ -1,7 +1,8 @@
-package view.OverrideComponent;
-
+package view;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import javax.swing.border.EmptyBorder;
 
 public class PasswordResetFlow extends JFrame {
     private CardLayout cardLayout;
@@ -181,5 +182,17 @@ public class PasswordResetFlow extends JFrame {
         panel.add(backButton);
 
         return panel;
+    }
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            new PasswordResetFlow().setVisible(true);
+        });
     }
 }

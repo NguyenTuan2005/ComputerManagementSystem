@@ -20,7 +20,6 @@ public class Customer {
 
     private String fullName;
 
-
     private String email;
 
     private String address;
@@ -90,7 +89,6 @@ public class Customer {
         };
         return result;
     }
-
     public Object [] convertToObjects(int serial ){
         ImageIcon icon = resizeImageIcon(this.avataImg, 200, 200); // Kích thước 50x50
         return new Object[]{
@@ -103,17 +101,15 @@ public class Customer {
                 ,icon
         };
     }
-
     public boolean isBlock(){
         return this.block == 1?true:false;
     }
-
     public static Object [][] getDataOnTable(ArrayList<Customer> customers){
 //        String [][] datas = new String[customers.size()][];
-        Object [][] datas = new Object[customers.size()][];
+        Object [][] datass = new Object[customers.size()][];
         for (int i = 0; i < customers.size(); i++) {
-            datas[i] = customers.get(i).convertToObjects(i+1);
+            datass[i] = customers.get(i).convertToObjects(i+1);
         }
-        return datas;
+        return datass;
     }
 }

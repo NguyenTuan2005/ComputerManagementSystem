@@ -1,5 +1,7 @@
 package dto;
 
+
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import javax.swing.*;

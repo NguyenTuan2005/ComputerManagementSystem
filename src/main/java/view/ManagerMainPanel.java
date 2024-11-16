@@ -6,6 +6,7 @@ import Config.ExcelConfig;
 import Model.Customer;
 import Model.Product;
 import Model.Supplier;
+import com.toedter.calendar.JCalendar;
 import controller.CustomerController;
 import controller.ManagerController;
 import controller.ProductController;
@@ -25,12 +26,15 @@ import view.OverrideComponent.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -964,20 +968,20 @@ public class ManagerMainPanel extends JPanel {
                 findCustomerText.setForeground(Color.GRAY);
                 formatTextField(findCustomerText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
                 findCustomerText.addFocusListener( new FocusListener() {
-                       @Override
-                       public void focusGained(FocusEvent e) {
-                           if (findCustomerText.getText().equals("Search by name")) {
-                               findCustomerText.setText("");
-                               findCustomerText.setForeground(Color.BLACK);
-                           }
-                       }
+                                                       @Override
+                                                       public void focusGained(FocusEvent e) {
+                                                           if (findCustomerText.getText().equals("Search by name")) {
+                                                               findCustomerText.setText("");
+                                                               findCustomerText.setForeground(Color.BLACK);
+                                                           }
+                                                       }
 
-                       @Override
-                       public void focusLost(FocusEvent e) {
-                           findCustomerText.setForeground(Color.GRAY);
-                           findCustomerText.setText("Search by name");
-                       }
-                   }
+                                                       @Override
+                                                       public void focusLost(FocusEvent e) {
+                                                           findCustomerText.setForeground(Color.GRAY);
+                                                           findCustomerText.setText("Search by name");
+                                                       }
+                                                   }
 
                 );
 
@@ -1112,10 +1116,10 @@ public class ManagerMainPanel extends JPanel {
 
                 scrollPaneCustomer = new JScrollPane(tableCustomer);
                 tabbedPaneCustomer = createTabbedPane(scrollPaneCustomer, "Customer", Style.FONT_HEADER_ROW_TABLE);
-                tabbedPaneCustomer.add(new Schemas());
+                tabbedPaneCustomer.add("Sales Chart",new Schemas());
 
                 billTextDisplayPanal= new TextDisplayPanel();
-                tabbedPaneCustomer.add(billTextDisplayPanal);
+                tabbedPaneCustomer.add("Customer Bill",billTextDisplayPanal);
                 add(tabbedPaneCustomer, BorderLayout.CENTER);
 
 
@@ -2356,8 +2360,6 @@ public class ManagerMainPanel extends JPanel {
 
         }
     }
-   // private final String[] accountColumnNames = {"Serial Number", "ManagerID", "Fullname","Address","Birth Day", "Phone Number", "AccountID"," User Name","Password","Email", "Account creation date","Avata"};
-
     class AccManagementPanel extends JPanel {
         private final String[] accountColumnNames = {"Serial Number", "ManagerID", "Fullname","Address","Birth Day", "Phone Number", "AccountID"," User Name","Password","Email", "Account creation date","Avata"};
 
@@ -2370,7 +2372,7 @@ public class ManagerMainPanel extends JPanel {
         private TableCustomerPanel tableAccManagerPanel = new TableCustomerPanel();
 
         private JButton addAccBt, modifyAccBt, exportAccExcelBt, searchAccBt, reloadAccBt, blockCustomer, writeToFileTXT;
-        private JTextField findAccText;
+        private JTextField textField;
 
 
         private JPanel searchPanel, applicationPanel, mainPanel;
@@ -2460,20 +2462,20 @@ public class ManagerMainPanel extends JPanel {
 
 
 
-                findAccText = new JTextField("Search by name");
-                findAccText.setForeground(Color.GRAY);
-                formatTextField(findAccText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
-                findAccText.addFocusListener( new FocusListener() {
-                                                       @Override
-                                                       public void focusGained(FocusEvent e) {
+                textField = new JTextField("Search by name");
+                textField.setForeground(Color.GRAY);
+                formatTextField(textField, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
+                textField.addFocusListener( new FocusListener() {
+                                                  @Override
+                                                  public void focusGained(FocusEvent e) {
 
-                                                       }
+                                                  }
 
-                                                       @Override
-                                                       public void focusLost(FocusEvent e) {
+                                                  @Override
+                                                  public void focusLost(FocusEvent e) {
 
-                                                       }
-                                                   }
+                                                  }
+                                              }
 
                 );
 
@@ -2505,7 +2507,7 @@ public class ManagerMainPanel extends JPanel {
                 });
 
                 searchPanel = new JPanel(new FlowLayout());
-                searchPanel.add(findAccText);
+                searchPanel.add(textField);
                 searchPanel.add(searchAccBt);
                 searchPanel.setBackground(Style.WORD_COLOR_WHITE);
 
@@ -2555,6 +2557,8 @@ public class ManagerMainPanel extends JPanel {
         }
 
         public class TableCustomerPanel extends JPanel {
+            ModifyManager modifyManager;
+
             public TableCustomerPanel() {
                 setLayout(new BorderLayout());
                 setBackground(Style.WORD_COLOR_WHITE);
@@ -2569,13 +2573,266 @@ public class ManagerMainPanel extends JPanel {
                 upDataTable(managerInfors, modelAccManager, tableAccManager);
 
 
+
                 scrollPaneAccManager = new JScrollPane(tableAccManager);
                 tabbedPaneAccManager = createTabbedPane(scrollPaneAccManager, "Customer", Style.FONT_HEADER_ROW_TABLE);
+                modifyManager = new ModifyManager();
+                tabbedPaneAccManager.add("Modify Manager",modifyManager);
 
                 add(tabbedPaneAccManager, BorderLayout.CENTER);
 
             }
         }
+        class ModifyManager extends JPanel {
+            ChangeInfo changeInfo;
+            Avatar avatar;
+            ModifyManager() {
+                setLayout(new GridLayout(2,1));
+                changeInfo = new ChangeInfo();
+                avatar = new Avatar();
+                add(changeInfo);
+                add(avatar);
+            }
+            public static void addFocusListenerForTextField(JTextField textField) {
+                textField.addFocusListener(new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        textField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,4));
+                    }
+
+                    @Override
+                    public void focusLost(FocusEvent e) {
+                        textField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1));
+                    }
+                });
+            }
+
+
+            class ChangeInfo extends JPanel {
+                LeftPn rightPn;
+                RightPn leftPn;
+                ChangeInfo() {
+                    setLayout(new GridLayout(1, 2));
+                    rightPn = new LeftPn();
+                    leftPn = new RightPn();
+                    add(rightPn);
+                    add(leftPn);
+                }
+
+                class LeftPn extends JPanel {
+                    JTextField txtFullName,txtAddress, txtBirthday,txtPhoneNumber;
+                    LeftPn() {
+                        setLayout(new GridBagLayout());
+                        setBackground(Color.WHITE);
+                        setPreferredSize(new Dimension(400,150));
+                        Border border = BorderFactory.createTitledBorder(
+                                BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3),
+                                "Personal Information",
+                                TitledBorder.LEFT,
+                                TitledBorder.TOP,
+                                Style.FONT_TITLE_PRODUCT_18,
+                                Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE
+                        );
+                        setBorder(border);
+
+                        GridBagConstraints gbc = new GridBagConstraints();
+                        gbc.insets = new Insets(5, 5, 5, 5);  // Thiết lập khoảng cách giữa các thành phần
+
+                        // Khởi tạo các thành phần giao diện
+                        JLabel lblFullName = new JLabel("Full Name:");
+                        txtFullName = createStyledTextField(Style.FONT_PLAIN_16,Color.BLACK,Style.MEDIUM_BLUE,new Dimension(285, 35));
+                        addFocusListenerForTextField(txtFullName);
+
+
+                        JLabel lblAddress = new JLabel("Address:");
+                        txtAddress = createStyledTextField(Style.FONT_PLAIN_16,Color.BLACK,Style.MEDIUM_BLUE,new Dimension(285, 35));
+                        addFocusListenerForTextField(txtAddress);
+
+                        JLabel lblBirthday = new JLabel("Birthday:");
+                        txtBirthday = createStyledTextField(Style.FONT_PLAIN_16,Color.BLACK,Style.MEDIUM_BLUE,new Dimension(250, 35));
+                        addFocusListenerForTextField(txtBirthday);
+                        txtBirthday.setEditable(false);
+                        JButton btnCalendar = new JButton();
+                        btnCalendar.setPreferredSize(new Dimension(35,35));
+                        btnCalendar.setFocusable(false);
+                        btnCalendar.setBackground(Color.WHITE);
+                        btnCalendar.setIcon(new ImageIcon("src/main/java/Icon/calendarIcon.png"));
+
+                        // Tạo JDialog chứa JCalendar
+                        JDialog calendarDialog = new JDialog((Frame) null, "Select Date", true);
+                        calendarDialog.setSize(400, 400);
+                        calendarDialog.setLayout(new BorderLayout());
+                        calendarDialog.setLocation(700, 200);
+                        JCalendar calendar = new JCalendar();
+                        calendar.setBackground(Color.WHITE);
+                        calendar.setFont(Style.FONT_SIZE_MENU_BUTTON);
+
+                        calendar.setMaxSelectableDate(new java.util.Date());
+
+
+                        calendarDialog.add(calendar, BorderLayout.CENTER);
+
+                        JButton btnSelect = new JButton("Select");
+                        btnSelect.setBackground(Color.WHITE);
+                        btnSelect.setFocusable(false);
+                        btnSelect.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+                        calendarDialog.add(btnSelect, BorderLayout.SOUTH);
+
+                        // Sự kiện khi nhấn nút chọn ngày
+                        btnCalendar.addActionListener(e -> calendarDialog.setVisible(true));
+                        btnSelect.addActionListener(e -> {
+                            Date selectedDate = calendar.getDate();
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                            txtBirthday.setText(dateFormat.format(selectedDate));
+                            calendarDialog.setVisible(false);
+                        });
+
+                        JLabel lblPhoneNumber = new JLabel("Phone Number:");
+                        txtPhoneNumber = createStyledTextField(Style.FONT_PLAIN_16,Color.BLACK,Style.MEDIUM_BLUE,new Dimension(285, 35));
+                        addFocusListenerForTextField(txtPhoneNumber);
+
+                        // Cài đặt GridBagConstraints cho các thành phần
+                        gbc.gridx = 0;
+                        gbc.gridy = 0;
+                        gbc.anchor = GridBagConstraints.WEST;
+                        add(lblFullName, gbc);
+
+                        gbc.gridx = 1;
+                        add(txtFullName, gbc);
+
+                        gbc.gridx = 0;
+                        gbc.gridy = 1;
+                        add(lblAddress, gbc);
+
+                        gbc.gridx = 1;
+                        add(txtAddress, gbc);
+
+                        gbc.gridx = 0;
+                        gbc.gridy = 2;
+                        add(lblBirthday, gbc);
+
+                        // Sử dụng một JPanel để chứa cả TextField và Button
+                        JPanel birthdayPanel = new JPanel(new BorderLayout());
+                        birthdayPanel.setBackground(Color.WHITE);
+                        birthdayPanel.add(txtBirthday, BorderLayout.CENTER);
+                        birthdayPanel.add(btnCalendar, BorderLayout.EAST);
+
+                        gbc.gridx = 1;
+                        add(birthdayPanel, gbc);
+
+                        gbc.gridx = 0;
+                        gbc.gridy = 3;
+                        add(lblPhoneNumber, gbc);
+
+                        gbc.gridx = 1;
+                        add(txtPhoneNumber, gbc);
+                    }
+                }
+                class RightPn extends JPanel {
+                    JTextField usernameField,emailField;
+                    JPasswordField passwordField;
+                    RightPn() {
+                        setLayout(new GridBagLayout());
+                        setBackground(Color.WHITE);
+                        setPreferredSize(new Dimension(400,150));
+                        Border border = BorderFactory.createTitledBorder(
+                                BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3), // Đường viền
+                                "Account Information", // Tiêu đề
+                                TitledBorder.LEFT, // Canh trái
+                                TitledBorder.TOP, // Canh trên
+                                Style.FONT_TITLE_PRODUCT_18, // Phông chữ và kiểu chữ
+                                Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE // Màu chữ
+                        );
+                        setBorder(border);
+                        GridBagConstraints gbc = new GridBagConstraints();
+                        gbc.insets = new Insets(5,5,5,5);
+
+                        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+                        // Cột 1 (JLabel)
+                        gbc.gridx = 0;
+                        gbc.gridy = 0;
+                        add(new JLabel("User name:"), gbc);
+
+                        gbc.gridy = 1;
+                        add(new JLabel("Password:"), gbc);
+
+                        gbc.gridy = 2;
+                        add(new JLabel("Email:"), gbc);
+
+                        // Cột 2 (JTextField, JPasswordField, JTextField)
+                        gbc.gridx = 1;
+                        gbc.gridy = 0;
+                        usernameField = createStyledTextField(Style.FONT_PLAIN_16,Color.BLACK,Style.MEDIUM_BLUE,new Dimension(295, 35));
+                        addFocusListenerForTextField(usernameField);
+                        add(usernameField, gbc);
+
+                        gbc.gridy = 1;
+                        JPanel passwdPanel = new JPanel(new BorderLayout());
+                        passwordField = createStyledJPasswordField(Style.FONT_PLAIN_16,Style.MEDIUM_BLUE,new Dimension(250, 35));
+                        passwordField.addFocusListener(new FocusListener() {
+                            @Override
+                            public void focusGained(FocusEvent e) {
+                                passwordField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,4));
+                            }
+                            @Override
+                            public void focusLost(FocusEvent e) {
+                                passwordField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1));
+                            }
+                        });
+
+                        JButton togglePasswordButton = createShowPasswdButton(passwordField);
+                        togglePasswordButton.setPreferredSize(new Dimension(45,35));
+                        passwdPanel.setBackground(Color.WHITE);
+                        passwdPanel.add(passwordField, BorderLayout.CENTER);
+                        passwdPanel.add(togglePasswordButton, BorderLayout.EAST);
+
+                        add(passwdPanel, gbc);
+
+                        gbc.gridy = 2;
+                        emailField = createStyledTextField(Style.FONT_PLAIN_16,Color.BLACK,Style.MEDIUM_BLUE,new Dimension(295, 35));
+                        addFocusListenerForTextField(emailField);
+                        add(emailField, gbc);
+
+                    }
+                }
+            }
+
+
+            class Avatar extends JPanel {
+                CustomButton importImage, undoBt;
+                JLabel label;
+                Avatar() {
+                    setLayout(new BorderLayout());
+                    setBackground(Color.WHITE);
+                    label = new JLabel("Drop your image here",SwingConstants.CENTER);
+                    label.setBackground(Color.WHITE);
+                    Border dashedBorder = BorderFactory.createDashedBorder(Style.CONFIRM_BUTTON_COLOR_GREEN, 2,10, 20,true);
+                    Border margin = BorderFactory.createEmptyBorder(5, 10, 5, 10);
+                    Border compoundBorder = BorderFactory.createCompoundBorder(margin, dashedBorder);
+                    label.setBorder(compoundBorder);
+                    label.setPreferredSize(new Dimension(400,300));
+
+                    JPanel uploadImagePn = new JPanel();
+                    uploadImagePn.setBackground(Color.WHITE);
+                    importImage = new CustomButton("Upload Image from your computer");
+                    importImage.setDrawBorder(false);
+                    importImage.setPreferredSize(new Dimension(300, 40));
+
+                    undoBt = new CustomButton("Undo");
+                    undoBt.setPreferredSize(new Dimension(100, 40));
+                    undoBt.setDrawBorder(false);
+
+                    uploadImagePn.add(undoBt);
+                    uploadImagePn.add(importImage);
+
+                    add(label, BorderLayout.CENTER);
+                    add(uploadImagePn, BorderLayout.SOUTH);
+                }
+            }
+
+        }
+
         private void reload(){
 //            customers = customerController.getAll();
 //            upDataTable(customers, modelCustomer, tableCustomer);
@@ -2585,27 +2842,24 @@ public class ManagerMainPanel extends JPanel {
             return tabbedPaneAccManager.getSelectedIndex();
         }
 
+        private CategoryDataset createDataset() {
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            // Dữ liệu mẫu: Thay thế bằng dữ liệu từ database
+            Map<String, Integer> topCustomers = new HashMap<>();
 
-
-
-            private CategoryDataset createDataset() {
-                DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-                // Dữ liệu mẫu: Thay thế bằng dữ liệu từ database
-                Map<String, Integer> topCustomers = new HashMap<>();
-
-                // Thêm dữ liệu vào dataset
-                for (Map.Entry<String, Integer> entry : topCustomers.entrySet()) {
-                    dataset.addValue(entry.getValue(), "Số lượng mua", entry.getKey());
-                }
-
-                return dataset;
+            // Thêm dữ liệu vào dataset
+            for (Map.Entry<String, Integer> entry : topCustomers.entrySet()) {
+                dataset.addValue(entry.getValue(), "Số lượng mua", entry.getKey());
             }
 
-            private void consertCustomerToMap(ArrayList<Customer> customers, Map<String, Integer> map) {
-                for (Customer customer : customers) {
-                    map.put(customer.getFullName(), customer.getNumberOfPurchased());
-                }
+            return dataset;
+        }
+
+        private void consertCustomerToMap(ArrayList<Customer> customers, Map<String, Integer> map) {
+            for (Customer customer : customers) {
+                map.put(customer.getFullName(), customer.getNumberOfPurchased());
             }
+        }
 
 
         public static void upDataTable(ArrayList<ManagerInforDTO> managerInforDTOS, DefaultTableModel modelCustomerTable ,JTable tableCustomer) {
@@ -2721,7 +2975,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(emailLabel, gbc);
 
-                emailField = createStyledTextField();
+                emailField = createStyledTextField(Style.FONT_TEXT_CUSTOMER,Color.BLACK,Style.MEDIUM_BLUE,new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 2;
                 gbc.gridwidth = 1;
@@ -2734,7 +2988,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(nameLabel, gbc);
 
-                fullNameField = createStyledTextField();
+                fullNameField = createStyledTextField(Style.FONT_TEXT_CUSTOMER,Color.BLACK,Style.MEDIUM_BLUE,new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 4;
                 gbc.gridwidth = 1;
@@ -2752,7 +3006,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(addressLabel, gbc);
 
-                addressField = createStyledTextField();
+                addressField = createStyledTextField(Style.FONT_TEXT_CUSTOMER,Color.BLACK,Style.MEDIUM_BLUE,new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 6;
                 gbc.gridwidth = 1;
@@ -2769,7 +3023,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(oldPasswdLabel, gbc);
 
-                oldPasswordField = createStyledJPasswordField();
+                oldPasswordField = createStyledJPasswordField(Style.FONT_TEXT_CUSTOMER,Style.MEDIUM_BLUE,new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 8;
                 gbc.gridwidth = 1;
@@ -2787,7 +3041,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(newPasswdLabel, gbc);
 
-                newPasswordField = createStyledJPasswordField();
+                newPasswordField = createStyledJPasswordField(Style.FONT_TEXT_CUSTOMER,Style.MEDIUM_BLUE,new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 10;
                 gbc.gridwidth = 1;
@@ -2805,7 +3059,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(confirmPasswdLabel, gbc);
 
-                confirmPasswordField = createStyledJPasswordField();
+                confirmPasswordField = createStyledJPasswordField(Style.FONT_TEXT_CUSTOMER,Style.MEDIUM_BLUE,new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 12;
                 gbc.gridwidth = 1;
@@ -2818,29 +3072,6 @@ public class ManagerMainPanel extends JPanel {
                 add(showRetypeNewPasswd, gbc);
             }
 
-            private JTextField createStyledTextField() {
-                JTextField field = new JTextField();
-                field.setFont(Style.FONT_TEXT_CUSTOMER);
-                field.setPreferredSize(new Dimension(350, 40));
-                field.setEditable(false);
-                field.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(Style.MEDIUM_BLUE),
-                        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-                field.setBackground(Color.WHITE);
-                return field;
-            }
-
-            private JPasswordField createStyledJPasswordField() {
-                JPasswordField passwdField = new JPasswordField();
-                passwdField.setEchoChar('*');
-                passwdField.setFont(Style.FONT_BUTTON_PAY);
-                passwdField.setPreferredSize(new Dimension(350, 40));
-                passwdField.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(Style.MEDIUM_BLUE),
-                        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-
-                return passwdField;
-            }
 
             private JButton createEditFieldButton(JTextField textField) {
                 JButton editBt = new JButton();
@@ -2935,6 +3166,30 @@ public class ManagerMainPanel extends JPanel {
         that.setForeground(color);
         that.setPreferredSize(size);
     }
+    private JTextField createStyledTextField(Font font, Color textColor, Color borderColor, Dimension size) {
+        JTextField field = new JTextField();
+        field.setFont(font);
+        field.setForeground(textColor);
+        field.setPreferredSize(size);
+        field.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        field.setBackground(Color.WHITE);
+        return field;
+    }
+
+    private JPasswordField createStyledJPasswordField(Font font, Color borderColor, Dimension size) {
+        JPasswordField passwdField = new JPasswordField();
+        passwdField.setEchoChar('*');
+        passwdField.setFont(font);
+        passwdField.setPreferredSize(size);
+        passwdField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+        return passwdField;
+    }
+
 
     private static void setStyleButton(JButton that, Font font, Color textColor, Color backgroundColor, int textPosition, Dimension size) {
         that.setFont(font);
@@ -2965,6 +3220,42 @@ public class ManagerMainPanel extends JPanel {
         });
 
         return clearAllButton;
+    }
+
+    private static  JButton createShowPasswdButton(JPasswordField passwordField) {
+        JButton toggleButton = new JButton();
+        toggleButton.setBackground(Style.LIGHT_BlUE);
+        toggleButton.setFocusPainted(false);
+        toggleButton.setFocusable(false);
+        toggleButton.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
+        ImageIcon showPasswd = new ImageIcon("src/main/java/Icon/showPasswd_Icon.png");
+        ImageIcon hidePasswd = new ImageIcon("src/main/java/Icon/hidePasswd_Icon.png");
+
+        toggleButton.setIcon(showPasswd);
+        toggleButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                toggleButton.setBackground(new Color(130, 180, 230));
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                toggleButton.setBackground(Style.LIGHT_BlUE);
+            }
+        });
+
+        toggleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (passwordField.getEchoChar() != '\u0000') {
+                    passwordField.setEchoChar('\u0000');
+                    toggleButton.setIcon(hidePasswd);
+                } else {
+                    // Ẩn mật khẩu
+                    passwordField.setEchoChar('*');
+                    toggleButton.setIcon(showPasswd);
+                }
+            }
+        });
+        return toggleButton;
     }
 
     // Phương thức xóa các JTextField trong panel

@@ -2680,11 +2680,14 @@ public class ManagerMainPanel extends JPanel {
 
                         // Sự kiện khi nhấn nút chọn ngày
                         btnCalendar.addActionListener(e -> calendarDialog.setVisible(true));
-                        btnSelect.addActionListener(e -> {
-                            Date selectedDate = calendar.getDate();
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                            txtBirthday.setText(dateFormat.format(selectedDate));
-                            calendarDialog.setVisible(false);
+                        btnSelect.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                Date selectedDate = calendar.getDate();
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                txtBirthday.setText(dateFormat.format(selectedDate));
+                                calendarDialog.setVisible(false);
+                            }
                         });
 
                         JLabel lblPhoneNumber = new JLabel("Phone Number:");

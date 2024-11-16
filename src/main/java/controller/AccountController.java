@@ -55,7 +55,6 @@ public class AccountController {
         }
 
     }
-
     public Account create(Account theAcount){
         passwordSecurity = new PasswordSecurity(theAcount.getPassword());
         theAcount.setPassword(passwordSecurity.generatePassword());

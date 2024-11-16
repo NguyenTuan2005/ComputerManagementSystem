@@ -74,21 +74,12 @@ public class Customer {
         this.block = block;
     }
 
-    public boolean samePasswordAndEmail(String email, String password) {
-        return  this.email.equals(email) && this.password.equals(password);
+    public boolean sameEmail(String email) {
+        return  this.email.equals(email);
     }
 
-    public String [] convertToArray(){
-        String [] result = {
-                String.valueOf(this.id)
-                ,this.fullName
-                ,this.email
-                ,this.address
-                ,"***************"
-                ,this.avataImg
-        };
-        return result;
-    }
+
+
     public Object [] convertToObjects(int serial ){
         ImageIcon icon = resizeImageIcon(this.avataImg, 200, 200); // Kích thước 50x50
         return new Object[]{
@@ -101,9 +92,7 @@ public class Customer {
                 ,icon
         };
     }
-    public boolean isBlock(){
-        return this.block == 1?true:false;
-    }
+
     public static Object [][] getDataOnTable(ArrayList<Customer> customers){
 //        String [][] datas = new String[customers.size()][];
         Object [][] datass = new Object[customers.size()][];
@@ -113,7 +102,7 @@ public class Customer {
         return datass;
     }
 
-    public boolean isBlocked(){
+    public boolean isBlock(){
         return this.block == 1;
     }
 }

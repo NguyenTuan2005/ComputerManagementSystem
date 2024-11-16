@@ -7,10 +7,7 @@ import Model.Customer;
 import Model.Product;
 import Model.Supplier;
 import com.toedter.calendar.JCalendar;
-import controller.CustomerController;
-import controller.ManagerController;
-import controller.ProductController;
-import controller.SupplierController;
+import controller.*;
 import dao.SupplierDAO;
 import dto.CustomerOrderDTO;
 import dto.ManagerInforDTO;
@@ -2361,6 +2358,7 @@ public class ManagerMainPanel extends JPanel {
 
         private ArrayList<ManagerInforDTO> managerInfors = new ArrayList<>();
         private ManagerController managerController = new ManagerController();
+        private AccountController accountController = new AccountController();
 
         public AccManagementPanel() {
             setLayout(new BorderLayout());
@@ -2408,9 +2406,18 @@ public class ManagerMainPanel extends JPanel {
                 blockCustomer.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
-
-
+                        int selectedRow = tableAccManager.getSelectedRow();
+                        int columnIndex = 6;
+                        int fullnameIndex =2;
+                        if (selectedRow != -1) {
+                            Object value = tableAccManager.getValueAt(selectedRow, columnIndex);
+                            String name =(String) tableAccManager.getValueAt(selectedRow, fullnameIndex);
+                            boolean blocked =!name.contains("*");
+                            int id = Integer.parseInt(value.toString());
+                            accountController.updateBlock(blocked,id);
+                            reload();
+                            ToastNotification.showToast(name+(blocked?" is blocked !!!":" is unblocked !!!"),2500,400,100);
+                        }
                     }
                 });
 
@@ -2423,8 +2430,14 @@ public class ManagerMainPanel extends JPanel {
                 exportAccExcelBt.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
-
+                        String fileName = JOptionPane.showInputDialog(null, "Enter file name excel:", "Input file", JOptionPane.QUESTION_MESSAGE);
+                        if (fileName != null && !fileName.trim().isEmpty()) {
+                            reload();
+                            ExcelConfig.writeManagersToExcel(managerInfors,fileName);
+                            ToastNotification.showToast(fileName +" is created !!!",2500,400,100);
+                        } else {
+                            ToastNotification.showToast("fall !!!",2500,400,100);
+                        }
 
                     }
                 });
@@ -2448,16 +2461,24 @@ public class ManagerMainPanel extends JPanel {
                 textField.setForeground(Color.GRAY);
                 formatTextField(textField, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
                 textField.addFocusListener( new FocusListener() {
-                                                  @Override
-                                                  public void focusGained(FocusEvent e) {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ "Search", nó sẽ biến mất
+                        if (textField.getText().equals("Search by name")) {
+                            textField.setText("");
+                            textField.setForeground(Color.BLACK);
+                        }
+                    }
 
-                                                  }
-
-                                                  @Override
-                                                  public void focusLost(FocusEvent e) {
-
-                                                  }
-                                              }
+                    @Override
+                    public void focusLost(FocusEvent e) {
+                        // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ "Search"
+                        if (textField.getText().isEmpty()) {
+                            textField.setForeground(Color.GRAY);
+                            textField.setText("Search by name");
+                        }
+                    }
+                }
 
                 );
 
@@ -2469,6 +2490,14 @@ public class ManagerMainPanel extends JPanel {
                         new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
+                                 reload();
+                                String find = textField.getText().toLowerCase().trim();
+                                ArrayList<ManagerInforDTO> managerInforDTOS = (ArrayList<ManagerInforDTO>) managerInfors.stream()
+                                        .filter(p-> p.getFullnameLowerCase().contains(find))
+                                        .collect(Collectors.toList());
+                                upDataTable(managerInforDTOS,modelAccManager,tableAccManager);
+
+                                System.out.println(managerInfors);
 
                             }
                         }
@@ -2484,7 +2513,6 @@ public class ManagerMainPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         reload();
-
                     }
                 });
 
@@ -2551,8 +2579,7 @@ public class ManagerMainPanel extends JPanel {
                 resizeColumnWidth(tableAccManager, 219);
                 modelAccManager = (DefaultTableModel) tableAccManager.getModel();
                 managerController= new ManagerController();
-                managerInfors = managerController.getManagerInforDTO();
-                upDataTable(managerInfors, modelAccManager, tableAccManager);
+                reload();
 
 
 
@@ -2819,8 +2846,8 @@ public class ManagerMainPanel extends JPanel {
         }
 
         private void reload(){
-//            customers = customerController.getAll();
-//            upDataTable(customers, modelCustomer, tableCustomer);
+            managerInfors = managerController.getManagerInforDTO();
+            upDataTable(managerInfors, modelAccManager, tableAccManager);
 //            billTextDisplayPanal.setText("You should continue to find the customer Id!!!");
         }
         public int getIndexSelectedTab(){

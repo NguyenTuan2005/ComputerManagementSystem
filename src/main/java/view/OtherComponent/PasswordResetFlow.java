@@ -1,4 +1,4 @@
-package view;
+package view.OtherComponent;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -185,14 +185,15 @@ public class PasswordResetFlow extends JFrame {
     }
 
     public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        SwingUtilities.invokeLater(() -> {
+//            new PasswordResetFlow().setVisible(true);
+//        });
 
-        SwingUtilities.invokeLater(() -> {
-            new PasswordResetFlow().setVisible(true);
-        });
     }
 }

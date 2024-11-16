@@ -3,6 +3,7 @@ package Config;
 import Model.Customer;
 import Model.Product;
 import Model.Supplier;
+import dto.ManagerInforDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -219,5 +221,76 @@ public class ExcelConfig {
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
         return style;
+    }
+
+/// code moi
+    public static void writeManagersToExcel(List<ManagerInforDTO> managers, String filePath) {
+
+        filePath += (filePath.contains(".xlsx")?"":".xlsx");
+        Workbook workbook = new XSSFWorkbook(); // Tạo file Excel mới
+        Sheet sheet = workbook.createSheet("Managers"); // Tạo sheet tên "Managers"
+
+        // Tạo hàng tiêu đề
+        String[] headers = {
+                "Manager ID", "Full Name", "Address", "Birth Day", "Phone Number",
+                "Account ID", "Username", "Password", "Email", "Create Date",
+                "Avatar Image", "Block"
+        };
+        Row headerRow = sheet.createRow(0);
+
+        // Ghi tiêu đề
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(createHeaderStyle(workbook));
+        }
+
+        // Ghi dữ liệu từ danh sách managers
+        int rowIndex = 1;
+        for (ManagerInforDTO manager : managers) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(manager.getManagerId());
+            row.createCell(1).setCellValue(manager.getFullName());
+            row.createCell(2).setCellValue(manager.getAddress());
+            row.createCell(3).setCellValue(manager.getBirthDay().toString());
+            row.createCell(4).setCellValue(manager.getPhoneNumber());
+            row.createCell(5).setCellValue(manager.getAccountId());
+            row.createCell(6).setCellValue(manager.getUsername());
+            row.createCell(7).setCellValue(manager.getPassword());
+            row.createCell(8).setCellValue(manager.getEmail());
+            row.createCell(9).setCellValue(manager.getCreateDate().toString());
+            row.createCell(10).setCellValue(manager.getAvataImg());
+            row.createCell(11).setCellValue(manager.getBlock());
+        }
+
+        // Ghi dữ liệu ra file
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            workbook.write(fos);
+            System.out.println("File Excel đã được tạo tại: " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static CellStyle createHeaderStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        style.setFont(font);
+        return style;
+    }
+
+    public static void main(String[] args) {
+        // Ví dụ danh sách ManagerInforDTO
+
+
+        // Ghi danh sách vào file Excel
+
     }
 }

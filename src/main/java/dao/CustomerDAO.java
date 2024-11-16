@@ -156,7 +156,7 @@ public class CustomerDAO implements Repository<Customer> {
     @Override
     public Customer update(Customer customer) {
         try {
-            String sql = "UPDATE customer SET fullname = ?, email = ?, address = ?, password = ?,avata_img=? ,number_of__purchased =? WHERE id = ?";
+            String sql = "UPDATE customer SET fullname = ?, email = ?, address = ?, password = ?,avata_img=? ,number_of_purchased =? WHERE id = ?";
             preparedStatement = connection.prepareStatement(sql);
             setAccountParameter(preparedStatement, customer);
             preparedStatement.setInt(7, customer.getId());

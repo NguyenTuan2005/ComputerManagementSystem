@@ -45,7 +45,7 @@ public class ManagerInforDTO {
         return new Object[]{
                 i,
             this.managerId,
-            this.fullName,
+            this.fullName +(this.isBlocked()?"*":""),
             this.address,
             this.birthDay,
             this.phoneNumber,
@@ -73,5 +73,9 @@ public class ManagerInforDTO {
 
     public boolean sameFullName(String username) {
         return this.username.equals(username);
+    }
+
+    public String getFullnameLowerCase(){
+        return this.fullName.toLowerCase();
     }
 }

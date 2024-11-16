@@ -173,7 +173,6 @@ public class ManagerDAO implements Repository<Manager> {
 
     private ManagerInforDTO mapResultSetToManagerInfor(ResultSet resultSet) {
         ManagerInforDTO managerInfor = new ManagerInforDTO();
-
         try {
             managerInfor.setManagerId(resultSet.getInt("managerId"));
             managerInfor.setFullName(resultSet.getString("fullname"));
@@ -217,13 +216,14 @@ public class ManagerDAO implements Repository<Manager> {
 
     public static void main(String[] args) {
         ManagerDAO managerDAO = new ManagerDAO();
+        System.out.println(managerDAO.getManagerInforDTO());
 
     }
 
 
     public ArrayList<ManagerInforDTO> getManagerInforDTO() {
         String sql = "SELECT m.id AS managerId, m.fullname, m.address, m.birthday, m.phone_number, " +
-                "a.id AS accountId, a.username, a.password, a.email, a.create_date , a.avata_img " +
+                "a.id AS accountId, a.username, a.password, a.email, a.create_date , a.avata_img  , a.block " +
                 "FROM Manager AS m " +
                 "INNER JOIN Account AS a ON a.manage_id = m.id ";
 

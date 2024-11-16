@@ -4,7 +4,6 @@ import controller.AccountController;
 import controller.CustomerController;
 import view.OverrideComponent.CircularImage;
 import view.OverrideComponent.CustomButton;
-import view.OverrideComponent.RoundedButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -194,6 +193,7 @@ public class LoginFrame extends JFrame {
             showPasswdCB = new JCheckBox("Show Password");
             showPasswdCB.setPreferredSize(new Dimension(250, 15));
             showPasswdCB.setFocusPainted(false);
+            showPasswdCB.setFocusable(false);
             showPasswdCB.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             showPasswdCB.setBackground(Color.WHITE);
             showPasswdCB.addActionListener(new ActionListener() {
@@ -217,7 +217,10 @@ public class LoginFrame extends JFrame {
             signUpButton = createCustomButtonWithBorder("Sign Up", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20,new Dimension(350, 45));
             signUpButton.setBackground(new Color(0, 153, 102));
             signUpButton.setForeground(Style.WORD_COLOR_WHITE);
-            signUpButton.addActionListener(new ActionListener() {
+
+            signUpButton.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "pressEnter");
+            signUpButton.getActionMap().put("pressEnter", new AbstractAction() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     String username = nameField.getText();
                     String password = new String(passwdFieldSignup.getPassword());
@@ -320,6 +323,7 @@ public class LoginFrame extends JFrame {
             showPasswdCB = new JCheckBox("Show Password");
             showPasswdCB.setPreferredSize(new Dimension(300, 15));
             showPasswdCB.setFocusPainted(false);
+            showPasswdCB.setFocusable(false);
             showPasswdCB.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             showPasswdCB.setBackground(Color.WHITE);
             showPasswdCB.addActionListener(new ActionListener() {
@@ -346,7 +350,9 @@ public class LoginFrame extends JFrame {
             signInButton = createCustomButtonWithBorder("Sign In", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20,new Dimension(350, 45));
             signInButton.setBackground(new Color(0, 153, 102));
             signInButton.setForeground(Color.WHITE);
-            signInButton.addActionListener(new ActionListener() {
+            signInButton.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "pressEnter");
+            signInButton.getActionMap().put("pressEnter", new AbstractAction() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     String username = nameField.getText();
                     String password = new String(passwdFieldSignin.getPassword());
@@ -371,7 +377,7 @@ public class LoginFrame extends JFrame {
                                     loginFrame.setVisible(false);
                                     managerFrame = new ManagerFrame(loginFrame);
                                 } else {
-                                    sayError("You have entered the Wrong git revertsername or password, please try again!");
+                                    sayError(AccountController.loginStatus.getMessager());
                                 }
                                 break;
                             }
@@ -388,12 +394,6 @@ public class LoginFrame extends JFrame {
 
                         }
                     }
-                }
-
-                private void sayError(String message) {
-                    JOptionPane.showMessageDialog(loginFrame, message, "Error", JOptionPane.ERROR_MESSAGE);
-                    passwdFieldSignin.setText("");
-                    nameField.setText("");
                 }
             });
             add(signInButton, gbc);
@@ -422,6 +422,11 @@ public class LoginFrame extends JFrame {
             gbc.gridwidth = 2;
             add(forgotPasswdBt, gbc);
 
+        }
+        private void sayError(String message) {
+            JOptionPane.showMessageDialog(loginFrame, message, "Error", JOptionPane.ERROR_MESSAGE);
+            passwdFieldSignin.setText("");
+            nameField.setText("");
         }
     }
 

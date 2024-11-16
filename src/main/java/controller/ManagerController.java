@@ -1,6 +1,7 @@
 package controller;
 
 import Model.Manager;
+import dao.AccountDAO;
 import dao.ManagerDAO;
 import dto.ManagerInforDTO;
 
@@ -10,8 +11,11 @@ public class ManagerController implements ModelController<Manager>{
 
     private ManagerDAO managerDAO;
 
+    private AccountDAO accountDAO;
+
     public ManagerController(){
         this.managerDAO = new ManagerDAO();
+        this.accountDAO = new AccountDAO();
     }
 
     @Override
@@ -63,5 +67,7 @@ public class ManagerController implements ModelController<Manager>{
     public ArrayList<ManagerInforDTO> getManagerInforDTO(){
         return managerDAO.getManagerInforDTO();
     }
+
+
 
 }

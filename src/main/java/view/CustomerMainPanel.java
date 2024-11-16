@@ -675,6 +675,9 @@ public class CustomerMainPanel extends JPanel {
                 add(tabbedPane, BorderLayout.CENTER);
             }
         }
+
+
+
     }
 
     class NotificationPanel extends JPanel {

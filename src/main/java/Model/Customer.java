@@ -112,4 +112,8 @@ public class Customer {
         }
         return datass;
     }
+
+    public boolean isBlocked(){
+        return this.block == 1;
+    }
 }

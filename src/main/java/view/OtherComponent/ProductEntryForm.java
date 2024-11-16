@@ -1,4 +1,4 @@
-package view.OverrideComponent;
+package view.OtherComponent;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

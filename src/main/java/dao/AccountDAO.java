@@ -202,4 +202,16 @@ public class AccountDAO implements Repository<Account> {
         account.setCreateDate(rs.getDate("create_date"));
         account.setManagerId(rs.getInt("manage_id"));
     }
+
+    public void updateBlock(boolean isBlock , int id){
+        try {
+            String sql = "UPDATE account SET block = ? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, isBlock?1:0 );
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

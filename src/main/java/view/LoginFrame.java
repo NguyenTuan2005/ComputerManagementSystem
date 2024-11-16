@@ -4,7 +4,6 @@ import controller.AccountController;
 import controller.CustomerController;
 import view.OverrideComponent.CircularImage;
 import view.OverrideComponent.CustomButton;
-import view.OverrideComponent.RoundedButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -320,6 +319,7 @@ public class LoginFrame extends JFrame {
             showPasswdCB = new JCheckBox("Show Password");
             showPasswdCB.setPreferredSize(new Dimension(300, 15));
             showPasswdCB.setFocusPainted(false);
+            showPasswdCB.setFocusable(false);
             showPasswdCB.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             showPasswdCB.setBackground(Color.WHITE);
             showPasswdCB.addActionListener(new ActionListener() {
@@ -346,7 +346,9 @@ public class LoginFrame extends JFrame {
             signInButton = createCustomButtonWithBorder("Sign In", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20,new Dimension(350, 45));
             signInButton.setBackground(new Color(0, 153, 102));
             signInButton.setForeground(Color.WHITE);
-            signInButton.addActionListener(new ActionListener() {
+            signInButton.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "pressEnter");
+            signInButton.getActionMap().put("pressEnter", new AbstractAction() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     String username = nameField.getText();
                     String password = new String(passwdFieldSignin.getPassword());
@@ -364,13 +366,13 @@ public class LoginFrame extends JFrame {
 
                     } else {
                         switch ((String) roleComboBox.getSelectedItem()) {
-                            case MANAGER_ROLE: {
-                                AccountController accountController = new AccountController();
+                            case MANAGER_ROLE: {    AccountController accountController = new AccountController();
                                 System.out.println(accountController.isValidAccount(username, password));
                                 if (accountController.isValidAccount(username, password)) {
                                     loginFrame.setVisible(false);
                                     managerFrame = new ManagerFrame(loginFrame);
-                                } else {
+                                }
+                                else {
                                     sayError("You have entered the Wrong username or password, please try again!");
                                 }
                                 break;

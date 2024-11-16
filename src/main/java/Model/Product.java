@@ -47,6 +47,10 @@ public class Product {
 
     private int deleteRow;
 
+    public static final String IN_STOCK = "In Stock";
+
+    public static final String AVAILABLE = "Available";
+
     public Product(int suppliersId, String name, int quantity, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status,int deleteRow) {
         this.suppliersId = suppliersId;
         this.name = name;

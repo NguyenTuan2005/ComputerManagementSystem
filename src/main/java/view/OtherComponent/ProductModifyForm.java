@@ -48,6 +48,7 @@ public class ProductModifyForm extends JFrame {
     private int mouseX, mouseY;
 
     private ScrollPane scrollPane;
+    private Runnable updateCallback;
 
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
@@ -59,6 +60,16 @@ public class ProductModifyForm extends JFrame {
 
     public ProductModifyForm( Product  product) {
         this.product = product;
+        initializeFrame();
+    }
+
+    public ProductModifyForm(Product product, Runnable updateCallback) {
+        this.product = product;
+        this.updateCallback = updateCallback;
+        initializeFrame();
+    }
+
+    private void initializeFrame() {
         setUndecorated(true);
         setTitle("Add product");
         setSize(900, 750);
@@ -188,7 +199,6 @@ public class ProductModifyForm extends JFrame {
         setCompany(suppliers, companyNames);
         firstDataOfCompany = ProductConfig.getKeyByValue(suppliersMap, product.getSuppliersId());
         firstDataOfStatus = product.getStatus();
-//        System.out.println(firstDataOfCompany+"lkasjdhlaSKJFDHLAKSFDS");
 
         cmbSupplierId = new JComboBox<>(companyNames);
         cmbSupplierId.setSelectedItem(firstDataOfCompany);
@@ -203,11 +213,10 @@ public class ProductModifyForm extends JFrame {
         });
 
         // Khởi tạo ComboBox trạng thái
-        String[] statusOptions = {"In Stock", "Out Stock"};
+        String[] statusOptions = {"In Stock", "Available"};
         cmbStatus = new JComboBox<>(statusOptions);
         cmbStatus.setFont(new Font("Arial", Font.PLAIN, 14));
         cmbStatus.setSelectedItem(firstDataOfStatus);
-        System.out.println(firstDataOfStatus+"ljhdslfjkhdslkjghfdslkjghldfskjh");
 
         // Khởi tạo buttons
         btnSave = createStyledButton("UPDATE");
@@ -352,6 +361,10 @@ public class ProductModifyForm extends JFrame {
             productDAO.update(product);
             showSuccessDialog("saved successfully!");
             clearForm();
+            dispose();
+            if (updateCallback != null) {
+                updateCallback.run();
+            }
 
         } catch (NumberFormatException ex) {
             showErrorDialog("Please enter the correct format!");

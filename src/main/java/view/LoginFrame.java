@@ -153,66 +153,7 @@ public class LoginFrame extends JFrame {
             gbc.anchor = GridBagConstraints.CENTER;
             add(createAccountLabel, gbc);
 
-            // Name Field with Icon
-            gbc.gridwidth = 1;
-            gbc.gridy++;
-            gbc.gridx = 0;
-            JLabel nameIcon = new JLabel(new ImageIcon("src/main/java/Icon/user_icon.png"));
-            nameIcon.setPreferredSize(new Dimension(30, 30));
-            add(nameIcon, gbc);
-
-            gbc.gridx = 1;
-            nameField = createTextField("User Name", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
-            add(nameField, gbc);
-
-            // Email Field with Icon
-            gbc.gridy++;
-            gbc.gridx = 0;
-            JLabel emailIcon = new JLabel(new ImageIcon("src/main/java/Icon/email_icon.png"));
-            emailIcon.setPreferredSize(new Dimension(30, 30));
-            add(emailIcon, gbc);
-
-            gbc.gridx = 1;
-            emailField = createTextField("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
-            add(emailField, gbc);
-
-            // Password Field with Icon
-            gbc.gridy++;
-            gbc.gridx = 0;
-            JLabel passwordIcon = new JLabel(new ImageIcon("src/main/java/Icon/lock_icon.png"));
-            passwordIcon.setPreferredSize(new Dimension(30, 30));
-            add(passwordIcon, gbc);
-
-            gbc.gridx = 1;
-
-            passwdFieldSignup = createPasswordField("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
-            add(passwdFieldSignup, gbc);
-
-            gbc.gridy++;
-            gbc.gridx = 1;
-            showPasswdCB = new JCheckBox("Show Password");
-            showPasswdCB.setPreferredSize(new Dimension(250, 15));
-            showPasswdCB.setFocusPainted(false);
-            showPasswdCB.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
-            showPasswdCB.setBackground(Color.WHITE);
-            showPasswdCB.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String passwd = new String(passwdFieldSignup.getPassword());
-                    if (passwd.equals("Password")) {
-                        showPasswdCB.setSelected(false);
-                    } else {
-                        if (showPasswdCB.isSelected()) {
-                            passwdFieldSignup.setEchoChar((char) 0); // Hiện mật khẩu
-                        } else {
-                            passwdFieldSignup.setEchoChar('*'); // Ẩn mật khẩu
-                        }
-                    }
-                }
-            });
-            add(showPasswdCB, gbc);
-
-            // Sign Up button
+            //create sign up Button
             signUpButton = createCustomButtonWithBorder("Sign Up", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20,new Dimension(350, 45));
             signUpButton.setBackground(new Color(0, 153, 102));
             signUpButton.setForeground(Style.WORD_COLOR_WHITE);
@@ -240,11 +181,75 @@ public class LoginFrame extends JFrame {
                     }
                 }
             });
+
+            // Name Field with Icon
+            gbc.gridwidth = 1;
+            gbc.gridy++;
+            gbc.gridx = 0;
+            JLabel nameIcon = new JLabel(new ImageIcon("src/main/java/Icon/user_icon.png"));
+            nameIcon.setPreferredSize(new Dimension(30, 30));
+            add(nameIcon, gbc);
+
+            gbc.gridx = 1;
+            nameField = createTextField("User Name", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            nameField.addActionListener(e -> signUpButton.doClick());
+            add(nameField, gbc);
+
+            // Email Field with Icon
+            gbc.gridy++;
+            gbc.gridx = 0;
+            JLabel emailIcon = new JLabel(new ImageIcon("src/main/java/Icon/email_icon.png"));
+            emailIcon.setPreferredSize(new Dimension(30, 30));
+            add(emailIcon, gbc);
+
+            gbc.gridx = 1;
+            emailField = createTextField("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            emailField.addActionListener(e -> signUpButton.doClick());
+            add(emailField, gbc);
+
+            // Password Field with Icon
+            gbc.gridy++;
+            gbc.gridx = 0;
+            JLabel passwordIcon = new JLabel(new ImageIcon("src/main/java/Icon/lock_icon.png"));
+            passwordIcon.setPreferredSize(new Dimension(30, 30));
+            add(passwordIcon, gbc);
+
+            gbc.gridx = 1;
+
+            passwdFieldSignup = createPasswordField("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            passwdFieldSignup.addActionListener(e -> signUpButton.doClick());
+            add(passwdFieldSignup, gbc);
+
+            gbc.gridy++;
+            gbc.gridx = 1;
+            showPasswdCB = new JCheckBox("Show Password");
+            showPasswdCB.setPreferredSize(new Dimension(250, 15));
+            showPasswdCB.setFocusPainted(false);
+            showPasswdCB.setFocusable(false);
+            showPasswdCB.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+            showPasswdCB.setBackground(Color.WHITE);
+            showPasswdCB.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String passwd = new String(passwdFieldSignup.getPassword());
+                    if (passwd.equals("Password")) {
+                        showPasswdCB.setSelected(false);
+                    } else {
+                        if (showPasswdCB.isSelected()) {
+                            passwdFieldSignup.setEchoChar((char) 0); // Hiện mật khẩu
+                        } else {
+                            passwdFieldSignup.setEchoChar('*'); // Ẩn mật khẩu
+                        }
+                    }
+                }
+            });
+            add(showPasswdCB, gbc);
+
+            //add Sign Up button
             gbc.gridy++;
             gbc.gridx = 0;
             gbc.gridwidth = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            add(signUpButton, gbc);
             add(signUpButton, gbc);
         }
     }
@@ -277,6 +282,56 @@ public class LoginFrame extends JFrame {
             gbc.anchor = GridBagConstraints.CENTER;
             add(signInLabel, gbc);
 
+            // create  sign in Button
+            signInButton = createCustomButtonWithBorder("Sign In", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20,new Dimension(350, 45));
+            signInButton.setBackground(new Color(0, 153, 102));
+            signInButton.setForeground(Color.WHITE);
+            signInButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String username = nameField.getText();
+                    String password = new String(passwdFieldSignin.getPassword());
+                    String email = "";
+
+                    if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || password.equals("Password")) {
+                        if (username.isEmpty() || username.equals("User Name")) {
+                            nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                            nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                        }
+                        if (password.isEmpty() || password.equals("Password")) {
+                            passwdFieldSignin.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                            passwdFieldSignin.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                        }
+
+                    } else {
+                        switch ((String) roleComboBox.getSelectedItem()) {
+                            case MANAGER_ROLE: {
+                                AccountController accountController = new AccountController();
+                                System.out.println(accountController.isValidAccount(username, password));
+                                if (accountController.isValidAccount(username, password)) {
+                                    loginFrame.setVisible(false);
+                                    managerFrame = new ManagerFrame(loginFrame);
+                                } else {
+                                    sayError("You have entered the Wrong username or password, please try again!");
+                                }
+                                break;
+                            }
+                            case CUSTOMER_ROLE: {
+                                CustomerController customerController = new CustomerController();
+                                if (customerController.isValidAccount(email, password)) {
+
+//                                    loginFrame.setVisible(false);
+//                                userFrame = new CustomerFrame(loginFrame);
+                                } else
+                                    sayError("You have entered the Wrong email or password, please try again!");
+                                break;
+                            }
+
+                        }
+                    }
+                }
+            });
+
             //Role comboBox with Icon
             gbc.gridwidth = 1;
             gbc.gridy++;
@@ -301,6 +356,7 @@ public class LoginFrame extends JFrame {
 
             gbc.gridx = 1;
             nameField = createTextField("User Name", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            nameField.addActionListener(e -> signInButton.doClick());
             add(nameField, gbc);
 
             // Password Field with Icon
@@ -312,6 +368,7 @@ public class LoginFrame extends JFrame {
 
             gbc.gridx = 1;
             passwdFieldSignin = createPasswordField("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            passwdFieldSignin.addActionListener(e -> signInButton.doClick());
             add(passwdFieldSignin, gbc);
 
             gbc.gridy++;
@@ -339,65 +396,10 @@ public class LoginFrame extends JFrame {
             });
             add(showPasswdCB, gbc);
 
-            // Sign In button
+            // add Sign In button
             gbc.gridy++;
             gbc.gridx = 0;
             gbc.gridwidth = 2;
-            signInButton = createCustomButtonWithBorder("Sign In", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20,new Dimension(350, 45));
-            signInButton.setBackground(new Color(0, 153, 102));
-            signInButton.setForeground(Color.WHITE);
-            signInButton.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "pressEnter");
-            signInButton.getActionMap().put("pressEnter", new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String username = nameField.getText();
-                    String password = new String(passwdFieldSignin.getPassword());
-                    String email = "";
-
-                    if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || password.equals("Password")) {
-                        if (username.isEmpty() || username.equals("User Name")) {
-                            nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-                            nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-                        }
-                        if (password.isEmpty() || password.equals("Password")) {
-                            passwdFieldSignin.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-                            passwdFieldSignin.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-                        }
-
-                    } else {
-                        switch ((String) roleComboBox.getSelectedItem()) {
-                            case MANAGER_ROLE: {    AccountController accountController = new AccountController();
-                                System.out.println(accountController.isValidAccount(username, password));
-                                if (accountController.isValidAccount(username, password)) {
-                                    loginFrame.setVisible(false);
-                                    managerFrame = new ManagerFrame(loginFrame);
-                                }
-                                else {
-                                    sayError("You have entered the Wrong username or password, please try again!");
-                                }
-                                break;
-                            }
-                            case CUSTOMER_ROLE: {
-                                CustomerController customerController = new CustomerController();
-                                if (customerController.isValidAccount(email, password)) {
-
-//                                    loginFrame.setVisible(false);
-//                                userFrame = new CustomerFrame(loginFrame);
-                                } else
-                                    sayError("You have entered the Wrong email or password, please try again!");
-                                break;
-                            }
-
-                        }
-                    }
-                }
-
-                private void sayError(String message) {
-                    JOptionPane.showMessageDialog(loginFrame, message, "Error", JOptionPane.ERROR_MESSAGE);
-                    passwdFieldSignin.setText("");
-                    nameField.setText("");
-                }
-            });
             add(signInButton, gbc);
 
             forgotPasswdBt = new JButton("You forgot your Password?");
@@ -424,6 +426,11 @@ public class LoginFrame extends JFrame {
             gbc.gridwidth = 2;
             add(forgotPasswdBt, gbc);
 
+        }
+        private void sayError(String message) {
+            JOptionPane.showMessageDialog(loginFrame, message, "Error", JOptionPane.ERROR_MESSAGE);
+            passwdFieldSignin.setText("");
+            nameField.setText("");
         }
     }
 

@@ -280,4 +280,5 @@ public class ModifyCustomerFrame extends JFrame {
             return false;
         }
     }
+
 }

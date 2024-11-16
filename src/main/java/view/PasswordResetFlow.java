@@ -1,7 +1,8 @@
-package view.OverrideComponent;
-
+package view;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import javax.swing.border.EmptyBorder;
 
 public class PasswordResetFlow extends JFrame {
     private CardLayout cardLayout;
@@ -82,7 +83,7 @@ public class PasswordResetFlow extends JFrame {
         sendButton.setBounds(50, 280, 300, 40);
         sendButton.setBackground(primaryBlue);
         sendButton.setForeground(Color.WHITE);
-        sendButton.setFocusPainted(false);
+sendButton.setFocusPainted(false);
         sendButton.addActionListener(e -> cardLayout.show(mainPanel, "otp"));
         panel.add(sendButton);
 
@@ -161,7 +162,7 @@ public class PasswordResetFlow extends JFrame {
 
         // Reset Button
         JButton resetButton = new JButton("Reset Password");
-        resetButton.setBounds(50, 280, 300, 40);
+resetButton.setBounds(50, 280, 300, 40);
         resetButton.setBackground(primaryBlue);
         resetButton.setForeground(Color.WHITE);
         resetButton.setFocusPainted(false);
@@ -181,5 +182,17 @@ public class PasswordResetFlow extends JFrame {
         panel.add(backButton);
 
         return panel;
+    }
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            new PasswordResetFlow().setVisible(true);
+        });
     }
 }

@@ -1,11 +1,10 @@
-package view.OverrideComponent;
+package view.OtherComponent;
 
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class TextDisplayPanel extends JPanel {
     private JTextArea textArea;

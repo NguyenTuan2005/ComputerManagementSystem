@@ -229,25 +229,7 @@ public class ManagerMainPanel extends JPanel {
                             }
                             //update data truoc khi export
                             productsAll = reloadData(productController);
-                            ExcelConfig.exportToExcel(productsAll, fileName, columnNamesPRODUCT, (row, product) -> {
-                                row.createCell(0).setCellValue(product.getId());
-                                row.createCell(1).setCellValue(product.getSuppliersId());
-                                row.createCell(2).setCellValue(product.getName());
-                                row.createCell(3).setCellValue(product.getQuantity());
-                                row.createCell(4).setCellValue(product.getPrice());
-                                row.createCell(5).setCellValue(product.getGenre());
-                                row.createCell(6).setCellValue(product.getBrand());
-                                row.createCell(7).setCellValue(product.getOperatingSystem());
-                                row.createCell(8).setCellValue(product.getCpu());
-                                row.createCell(9).setCellValue(product.getMemory());
-                                row.createCell(10).setCellValue(product.getRam());
-                                row.createCell(11).setCellValue(product.getMadeIn());
-                                row.createCell(12).setCellValue(product.getStatus());
-                                row.createCell(13).setCellValue(product.getDisk());
-                                row.createCell(14).setCellValue(product.getMonitor());
-                                row.createCell(15).setCellValue(product.getWeight());
-                                row.createCell(16).setCellValue(product.getCard());
-                            });
+                            ExcelConfig.exportToExcel(productsAll, fileName, columnNamesPRODUCT);
                             if (productsAll.isEmpty())
                                 JOptionPane.showMessageDialog(null, "Not found data", "Notify", JOptionPane.WARNING_MESSAGE);
                             JOptionPane.showMessageDialog(null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
@@ -575,14 +557,7 @@ public class ManagerMainPanel extends JPanel {
                         String fileName = JOptionPane.showInputDialog("Enter the name of the Excel file:");
                         if (fileName != null && !fileName.trim().isEmpty()) {
                             fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
-                            ExcelConfig.exportToExcel(suppliers, fileName, columnNamesSUPPLIER, (row, supplier) -> {
-                                row.createCell(0).setCellValue(supplier.getId());
-                                row.createCell(1).setCellValue(supplier.getCompanyName());
-                                row.createCell(2).setCellValue(supplier.getEmail());
-                                row.createCell(3).setCellValue(supplier.getPhoneNumber());
-                                row.createCell(4).setCellValue(supplier.getAddress());
-                                row.createCell(5).setCellValue(supplier.getContractDate().toString());
-                            });
+                            ExcelConfig.exportToExcel(suppliers, fileName, columnNamesSUPPLIER);
                             JOptionPane.showMessageDialog(null, "Exported to " + fileName);
                         } else {
                             JOptionPane.showMessageDialog(null, "File name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -722,7 +697,7 @@ public class ManagerMainPanel extends JPanel {
                     ModifySupplierFrame modifySupplierFrame = new ModifySupplierFrame(() -> updateSuppliers(selectedOption), supplierDAO.findById(supplierId));
                     modifySupplierFrame.showFrame();
                 } else {
-                    ToastNotification.showToast("Please select a row to modify.", 3000, 100, 200);
+                    ToastNotification.showToast("Please select a row to modify.", 3000, 400, 50);
                 }
             }
 
@@ -737,9 +712,9 @@ public class ManagerMainPanel extends JPanel {
                     // Remove the row from the table model
                     modelSupplier.removeRow(selectedRow);
 
-                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 100, 200);
+                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 600, 50);
                 } else {
-                    ToastNotification.showToast("Please select a row to delete.", 3000, 100, 200);
+                    ToastNotification.showToast("Please select a row to delete.", 3000, 400, 50);
                 }
             }
         }
@@ -923,15 +898,7 @@ public class ManagerMainPanel extends JPanel {
                         else {
                             JOptionPane.showMessageDialog(null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
                             fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
-                            ExcelConfig.exportToExcel(customers, fileName, customerColumnNames, (row , customer) -> {
-                                row.createCell(0).setCellValue(customer.getId());
-                                row.createCell(1).setCellValue(customer.getFullName());
-                                row.createCell(2).setCellValue(customer.getEmail());
-                                row.createCell(3).setCellValue(customer.getAddress());
-                                row.createCell(4).setCellValue(customer.getPassword());
-                                row.createCell(5).setCellValue(customer.getAvataImg());
-                                row.createCell(6).setCellValue(customer.getNumberOfPurchased());
-                            });
+                            ExcelConfig.exportToExcel(customers, fileName, customerColumnNames);
 
                             JOptionPane.showMessageDialog(null, "Created !!! ", "Message", JOptionPane.ERROR_MESSAGE);
                             reload();
@@ -1200,7 +1167,7 @@ public class ManagerMainPanel extends JPanel {
 
         private DefaultTableModel modelInventory, modelImport, modelExport;
         private ArrayList<Supplier> suppliers = SupplierPanel.reloadSuppliers();
-        private ArrayList<Product> products = ProductPanel.reloadProducts();
+        private ArrayList<Product> products;
 
         InventoryPanel() {
             cardLayoutInventory = new CardLayout();
@@ -1221,21 +1188,29 @@ public class ManagerMainPanel extends JPanel {
             cardLayoutInventory.show(this, panelName); // method chuyển đổi giữa các panel
         }
 
-        private void upDataProducts(DefaultTableModel tableModel) {
+        private void reloadProducts() {
             products = ProductPanel.reloadProducts();
+        }
+
+        private void reloadProducts(String status) {
+            reloadProducts();
+            products.removeIf(product -> !(status.equals(product.getStatus())));
+        }
+
+        private void upDataProducts(DefaultTableModel tableModel) {
+            reloadProducts();
             ProductPanel.upDataProducts(products, tableModel);
         }
 
         private void upDataProductsByStatus(DefaultTableModel tableModel, String status) {
-            products = ProductPanel.reloadProducts();
-            products.removeIf(product -> !(status.equals(product.getStatus())));
+            reloadProducts(status);
             ProductPanel.upDataProducts(products, tableModel);
         }
 
         private void updateProduct() {
             upDataProducts(modelInventory);
-            upDataProductsByStatus(modelImport, "In Stock");
-            upDataProductsByStatus(modelExport, "Sold Out");
+            upDataProductsByStatus(modelImport, Product.IN_STOCK);
+            upDataProductsByStatus(modelExport, Product.AVAILABLE);
         }
         // panel chứa các chức năng tương tác của inventory
 
@@ -1356,7 +1331,6 @@ public class ManagerMainPanel extends JPanel {
                         add(modifyBt, gbc);
                     }
 
-
                     //Delete
                     {
                         JButton deleteBt = new JButton("Delete");
@@ -1367,23 +1341,30 @@ public class ManagerMainPanel extends JPanel {
 
                 private void modifyTable() {
                     int index = tabbedPaneMain.getSelectedIndex();
-                    products = ProductPanel.reloadProducts();
 
                     JTable selectedTable = switch (index) {
-                        case 0 -> tableInventory;
-                        case 1 -> tableImport;
-                        case 2 -> tableExport;
+                        case 0 -> {
+                            reloadProducts();
+                            yield tableInventory;
+                        }
+                        case 1 -> {
+                            reloadProducts(Product.IN_STOCK);
+                            yield tableImport;
+                        }
+                        case 2 -> {
+                            reloadProducts(Product.AVAILABLE);
+                            yield tableExport;
+                        }
                         default -> null;
                     };
 
                     if (selectedTable != null && selectedTable.getSelectedRow() != -1) {
                         int selectedRow = selectedTable.getSelectedRow();
                         SwingUtilities.invokeLater(() -> {
-                            new ProductModifyForm(products.get(selectedRow)).setVisible(true);
-                            updateProduct();
+                            new ProductModifyForm(products.get(selectedRow), InventoryPanel.this::updateProduct).setVisible(true);
                         });
                     } else {
-                        ToastNotification.showToast("Please select a row to modify.", 3000, 100, 200);
+                        ToastNotification.showToast("Please select a row to modify.", 3000, 400, 50);
                     }
                 }
             }
@@ -1400,16 +1381,16 @@ public class ManagerMainPanel extends JPanel {
                     modelInventory = (DefaultTableModel) tableInventory.getModel();
                     upDataProducts(modelInventory);
                     modelImport = (DefaultTableModel) tableImport.getModel();
-                    upDataProductsByStatus(modelImport, "In Stock");
+                    upDataProductsByStatus(modelImport, Product.IN_STOCK);
                     modelExport = (DefaultTableModel) tableExport.getModel();
-                    upDataProductsByStatus(modelExport, "Sold out");
+                    upDataProductsByStatus(modelExport, Product.AVAILABLE);
 
                     // Add tables to tabbed pane
                     tabbedPaneMain = new JTabbedPane();
                     tabbedPaneMain.setFont(Style.FONT_HEADER_ROW_TABLE);
                     tabbedPaneMain.addTab("Inventory", new JScrollPane(tableInventory));
                     tabbedPaneMain.addTab("In Stock Products", new JScrollPane(tableImport));
-                    tabbedPaneMain.addTab("Sold Out Products", new JScrollPane(tableExport));
+                    tabbedPaneMain.addTab("Available For Sale Products", new JScrollPane(tableExport));
 
                     add(tabbedPaneMain, BorderLayout.CENTER);
                 }
@@ -2680,11 +2661,14 @@ public class ManagerMainPanel extends JPanel {
 
                         // Sự kiện khi nhấn nút chọn ngày
                         btnCalendar.addActionListener(e -> calendarDialog.setVisible(true));
-                        btnSelect.addActionListener(e -> {
-                            Date selectedDate = calendar.getDate();
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                            txtBirthday.setText(dateFormat.format(selectedDate));
-                            calendarDialog.setVisible(false);
+                        btnSelect.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                Date selectedDate = calendar.getDate();
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                txtBirthday.setText(dateFormat.format(selectedDate));
+                                calendarDialog.setVisible(false);
+                            }
                         });
 
                         JLabel lblPhoneNumber = new JLabel("Phone Number:");
@@ -3311,6 +3295,4 @@ public class ManagerMainPanel extends JPanel {
         tabbedPane.setFocusable(false);
         return tabbedPane;
     }
-
-
 }

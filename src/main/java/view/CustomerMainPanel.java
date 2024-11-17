@@ -199,22 +199,22 @@ public class CustomerMainPanel extends JPanel {
                 TabBar.setLayout(new FlowLayout(FlowLayout.LEFT));
                 TabBar.setBackground(Color.WHITE);
 
-                allBt = createCustomButtonWithBorder("All", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
+                allBt = createCustomButton("All", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
                 allBt.addActionListener(e -> updateSelectedButton(allBt));
 
-                gaming = createCustomButtonWithBorder("Laptop Gaming", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(150, 25));
+                gaming = createCustomButton("Laptop Gaming", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(150, 25));
                 gaming.addActionListener(e -> updateSelectedButton(gaming));
 
-                office = createCustomButtonWithBorder("Laptop Office", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(150, 25));
+                office = createCustomButton("Laptop Office", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(150, 25));
                 office.addActionListener(e -> updateSelectedButton(office));
 
-                pcCase = createCustomButtonWithBorder("PC Case", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
+                pcCase = createCustomButton("PC Case", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
                 pcCase.addActionListener(e -> updateSelectedButton(pcCase));
 
-                cheapest = createCustomButtonWithBorder("Cheapest", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
+                cheapest = createCustomButton("Cheapest", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
                 cheapest.addActionListener(e -> updateSelectedButton(cheapest));
 
-                luxury = createCustomButtonWithBorder("Luxury", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
+                luxury = createCustomButton("Luxury", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
                 luxury.addActionListener(e -> updateSelectedButton(luxury));
 
                 TabBar.add(allBt);
@@ -641,16 +641,16 @@ public class CustomerMainPanel extends JPanel {
         class ToolPanel extends JPanel{
             ToolPanel(){
                 setLayout(new FlowLayout());
-                detailBt =createCustomButtonWithBorder("More Detail",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
+                detailBt = createCustomButton("More Detail",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
                 detailBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 detailBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
-                viewInvoiceBt =createCustomButtonWithBorder("View Invoice",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
+                viewInvoiceBt = createCustomButton("View Invoice",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
                 viewInvoiceBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 viewInvoiceBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
 
-                exportExcelBt =createCustomButtonWithBorder("Export Excel",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
+                exportExcelBt = createCustomButton("Export Excel",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
                 exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
@@ -1164,7 +1164,7 @@ public class CustomerMainPanel extends JPanel {
         return button;
     }
 
-    private static CustomButton createCustomButtonWithBorder(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, Color borderColor, int thickness, int radius, Dimension size) {
+    private static CustomButton createCustomButton(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, Color borderColor, int thickness, int radius, Dimension size) {
         CustomButton bt = new CustomButton(title);
         bt.setFont(font);
         bt.setTextColor(textColor);

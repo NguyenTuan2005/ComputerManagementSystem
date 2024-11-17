@@ -83,7 +83,7 @@ public class PasswordResetFlow extends JFrame {
         sendButton.setBounds(50, 280, 300, 40);
         sendButton.setBackground(primaryBlue);
         sendButton.setForeground(Color.WHITE);
-sendButton.setFocusPainted(false);
+        sendButton.setFocusPainted(false);
         sendButton.addActionListener(e -> cardLayout.show(mainPanel, "otp"));
         panel.add(sendButton);
 
@@ -129,7 +129,6 @@ sendButton.setFocusPainted(false);
     private JPanel createNewPasswordPanel() {
         JPanel panel = new JPanel(null);
         panel.setBackground(Color.WHITE);
-
         // Title
         JLabel titleLabel = new JLabel("Set New Password", SwingConstants.CENTER);
         titleLabel.setFont(titleFont);

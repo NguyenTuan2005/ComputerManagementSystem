@@ -33,7 +33,7 @@ public class ManagerDAO implements Repository<Manager> {
             preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, manager.getFullName());
             preparedStatement.setString(2, manager.getAddress());
-            preparedStatement.setDate(3, (Date) manager.getBirthDay());
+            preparedStatement.setDate(3,  manager.getBirthDay());
             preparedStatement.setString(4, manager.getPhoneNumber());
             preparedStatement.executeUpdate();
 
@@ -128,7 +128,7 @@ public class ManagerDAO implements Repository<Manager> {
         return null;
     }
 
-
+    @Deprecated
     @Override
     public Manager update(Manager manager) {
         String sql = "UPDATE Manager SET fullname = ?, address = ?, birthday = ?, phone_number = ? WHERE id = ?";
@@ -173,7 +173,6 @@ public class ManagerDAO implements Repository<Manager> {
 
     private ManagerInforDTO mapResultSetToManagerInfor(ResultSet resultSet) {
         ManagerInforDTO managerInfor = new ManagerInforDTO();
-
         try {
             managerInfor.setManagerId(resultSet.getInt("managerId"));
             managerInfor.setFullName(resultSet.getString("fullname"));
@@ -186,6 +185,7 @@ public class ManagerDAO implements Repository<Manager> {
             managerInfor.setEmail(resultSet.getString("email"));
             managerInfor.setCreateDate(resultSet.getDate("create_date"));
             managerInfor.setAvataImg(resultSet.getString("avata_img"));
+            managerInfor.setBlock(resultSet.getInt("block"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -194,7 +194,7 @@ public class ManagerDAO implements Repository<Manager> {
 
     public ManagerInforDTO getManagerWithAccountById(String nameOfAccount) {
         String sql = "SELECT m.id AS managerId, m.fullname, m.address, m.birthday, m.phone_number, " +
-                "a.id AS accountId, a.username, a.password, a.email, a.create_date , a.avata_img " +
+                "a.id AS accountId, a.username, a.password, a.email, a.create_date , a.avata_img, a.block " +
                 "FROM Manager AS m " +
                 "INNER JOIN Account AS a ON a.manage_id = m.id " +
                 "WHERE a.username LIKE ?";
@@ -202,7 +202,7 @@ public class ManagerDAO implements Repository<Manager> {
         ResultSet resultSet = null;
         try {
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, nameOfAccount);
+            preparedStatement.setString(1,"%"+ nameOfAccount+"%");
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
@@ -216,31 +216,33 @@ public class ManagerDAO implements Repository<Manager> {
 
     public static void main(String[] args) {
         ManagerDAO managerDAO = new ManagerDAO();
-        System.out.println(managerDAO.getManagerInforDTO());
+        Manager m = new Manager("nguyen van a","nlu",new Date(9,9,2005),"09092");
+
+        System.out.println(managerDAO.save(m));
+
     }
 
 
     public ArrayList<ManagerInforDTO> getManagerInforDTO() {
-
         String sql = "SELECT m.id AS managerId, m.fullname, m.address, m.birthday, m.phone_number, " +
-                    "a.id AS accountId, a.username, a.password, a.email, a.create_date , a.avata_img " +
-                    "FROM Manager AS m " +
-                    "INNER JOIN Account AS a ON a.manage_id = m.id " ;
-        ArrayList< ManagerInforDTO> managerInforDTOS = new ArrayList<>();
+                "a.id AS accountId, a.username, a.password, a.email, a.create_date , a.avata_img  , a.block " +
+                "FROM Manager AS m " +
+                "INNER JOIN Account AS a ON a.manage_id = m.id ";
+
+        ArrayList<ManagerInforDTO> managerInforDTOS = new ArrayList<>();
         ResultSet resultSet = null;
         try {
             preparedStatement = connection.prepareStatement(sql);
+//            preparedStatement.setString(1, nameOfAccount);
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                ManagerInforDTO managerInfor = mapResultSetToManagerInfor(resultSet);
-                managerInforDTOS.add(managerInfor);
+                var n  = mapResultSetToManagerInfor(resultSet);
+                managerInforDTOS.add(n);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return managerInforDTOS;
     }
-
-
 }

@@ -31,13 +31,14 @@ public class AccountDAO implements Repository<Account> {
         preparedStatement.setString(3, account.getEmail());
         preparedStatement.setDate(4, new java.sql.Date(account.getCreateDate().getTime()));
         preparedStatement.setInt(5, account.getManagerId());
+        preparedStatement.setString(6,account.getAvataImg());
     }
 
     @Override
     public Account save(Account account) {
         if (account.getId() == 0) {
             // Insert new account
-            String sql = "INSERT INTO account (username, password, email, create_date, manage_id) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO account (username, password, email, create_date, manage_id , avata_img) VALUES (?, ?, ?, ?, ?,?)";
             try {
                 preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 setAccountParameter(preparedStatement,account);
@@ -201,5 +202,17 @@ public class AccountDAO implements Repository<Account> {
         account.setEmail(rs.getString("email"));
         account.setCreateDate(rs.getDate("create_date"));
         account.setManagerId(rs.getInt("manage_id"));
+    }
+
+    public void updateBlock(boolean isBlock , int id){
+        try {
+            String sql = "UPDATE account SET block = ? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, isBlock?1:0 );
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

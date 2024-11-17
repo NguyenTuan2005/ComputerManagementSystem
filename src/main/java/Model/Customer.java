@@ -20,7 +20,6 @@ public class Customer {
 
     private String fullName;
 
-
     private String email;
 
     private String address;
@@ -75,21 +74,11 @@ public class Customer {
         this.block = block;
     }
 
-    public boolean samePasswordAndEmail(String email, String password) {
-        return  this.email.equals(email) && this.password.equals(password);
+    public boolean sameEmail(String email) {
+        return  this.email.equals(email);
     }
 
-    public String [] convertToArray(){
-        String [] result = {
-                String.valueOf(this.id)
-                ,this.fullName
-                ,this.email
-                ,this.address
-                ,"***************"
-                ,this.avataImg
-        };
-        return result;
-    }
+
 
     public Object [] convertToObjects(int serial ){
         ImageIcon icon = resizeImageIcon(this.avataImg, 200, 200); // Kích thước 50x50
@@ -104,16 +93,16 @@ public class Customer {
         };
     }
 
-    public boolean isBlock(){
-        return this.block == 1?true:false;
-    }
-
     public static Object [][] getDataOnTable(ArrayList<Customer> customers){
 //        String [][] datas = new String[customers.size()][];
-        Object [][] datas = new Object[customers.size()][];
+        Object [][] datass = new Object[customers.size()][];
         for (int i = 0; i < customers.size(); i++) {
-            datas[i] = customers.get(i).convertToObjects(i+1);
+            datass[i] = customers.get(i).convertToObjects(i+1);
         }
-        return datas;
+        return datass;
+    }
+
+    public boolean isBlock(){
+        return this.block == 1;
     }
 }

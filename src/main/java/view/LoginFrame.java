@@ -286,51 +286,7 @@ public class LoginFrame extends JFrame {
             signInButton = createCustomButtonWithBorder("Sign In", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20,new Dimension(350, 45));
             signInButton.setBackground(new Color(0, 153, 102));
             signInButton.setForeground(Color.WHITE);
-            signInButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String username = nameField.getText();
-                    String password = new String(passwdFieldSignin.getPassword());
-                    String email = "";
 
-                    if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || password.equals("Password")) {
-                        if (username.isEmpty() || username.equals("User Name")) {
-                            nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-                            nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-                        }
-                        if (password.isEmpty() || password.equals("Password")) {
-                            passwdFieldSignin.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-                            passwdFieldSignin.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-                        }
-
-                    } else {
-                        switch ((String) roleComboBox.getSelectedItem()) {
-                            case MANAGER_ROLE: {
-                                AccountController accountController = new AccountController();
-                                System.out.println(accountController.isValidAccount(username, password));
-                                if (accountController.isValidAccount(username, password)) {
-                                    loginFrame.setVisible(false);
-                                    managerFrame = new ManagerFrame(loginFrame);
-                                } else {
-                                    sayError("You have entered the Wrong username or password, please try again!");
-                                }
-                                break;
-                            }
-                            case CUSTOMER_ROLE: {
-                                CustomerController customerController = new CustomerController();
-                                if (customerController.isValidAccount(email, password)) {
-
-//                                    loginFrame.setVisible(false);
-//                                userFrame = new CustomerFrame(loginFrame);
-                                } else
-                                    sayError("You have entered the Wrong email or password, please try again!");
-                                break;
-                            }
-
-                        }
-                    }
-                }
-            });
 
             //Role comboBox with Icon
             gbc.gridwidth = 1;
@@ -400,6 +356,50 @@ public class LoginFrame extends JFrame {
             gbc.gridy++;
             gbc.gridx = 0;
             gbc.gridwidth = 2;
+            signInButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String username = nameField.getText();
+                    String password = new String(passwdFieldSignin.getPassword());
+                    String email = nameField.getText();// bug NullPointerException
+                    if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || password.equals("Password")) {
+                        if (username.isEmpty() || username.equals("User Name")) {
+                            nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                            nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                        }
+                        if (password.isEmpty() || password.equals("Password")) {
+                            passwdFieldSignin.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                            passwdFieldSignin.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                        }
+
+                    } else {
+                        switch ((String) roleComboBox.getSelectedItem()) {
+                            case MANAGER_ROLE: {
+                                AccountController accountController = new AccountController();
+                                System.out.println(accountController.isValidAccount(username, password));
+                                if (accountController.isValidAccount(username, password)) {
+                                    loginFrame.setVisible(false);
+                                    managerFrame = new ManagerFrame(loginFrame);
+                                } else {
+                                    sayError(AccountController.loginStatus.getMessager());
+                                }
+                                break;
+                            }
+                            case CUSTOMER_ROLE: {
+                                CustomerController customerController = new CustomerController();
+                                System.out.println(emailField.getText());
+                                if (customerController.isValidAccount(email, password)) {
+                                    loginFrame.setVisible(false);
+                                    customerFrame = new CustomerFrame();
+                                } else
+                                    sayError(CustomerController.loginStatus.getMessager());
+                                break;
+                            }
+
+                        }
+                    }
+                }
+            });
             add(signInButton, gbc);
 
             forgotPasswdBt = new JButton("You forgot your Password?");

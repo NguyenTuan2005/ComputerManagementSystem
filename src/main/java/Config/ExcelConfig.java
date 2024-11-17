@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,7 +111,7 @@ public class ExcelConfig {
                 supplier.setEmail(row.getCell(2).getStringCellValue());
                 supplier.setPhoneNumber(row.getCell(3).getStringCellValue());
                 supplier.setAddress(row.getCell(4).getStringCellValue());
-                supplier.setContractDate(row.getCell(5).getDateCellValue());
+                supplier.setContractDate(new Date(row.getCell(5).getDateCellValue().getTime()));
             }
 
             if (instance instanceof Product product) {

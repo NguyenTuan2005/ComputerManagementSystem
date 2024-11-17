@@ -71,7 +71,7 @@ public class ManagerInforDTO {
     }
 
 
-    public boolean sameFullName(String username) {
+    public boolean sameUsername(String username) {
         return this.username.equals(username);
     }
 

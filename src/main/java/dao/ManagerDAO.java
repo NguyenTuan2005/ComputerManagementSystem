@@ -33,7 +33,7 @@ public class ManagerDAO implements Repository<Manager> {
             preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, manager.getFullName());
             preparedStatement.setString(2, manager.getAddress());
-            preparedStatement.setDate(3, (Date) manager.getBirthDay());
+            preparedStatement.setDate(3,  manager.getBirthDay());
             preparedStatement.setString(4, manager.getPhoneNumber());
             preparedStatement.executeUpdate();
 
@@ -216,7 +216,9 @@ public class ManagerDAO implements Repository<Manager> {
 
     public static void main(String[] args) {
         ManagerDAO managerDAO = new ManagerDAO();
-        System.out.println(managerDAO.getManagerInforDTO());
+        Manager m = new Manager("nguyen van a","nlu",new Date(9,9,2005),"09092");
+
+        System.out.println(managerDAO.save(m));
 
     }
 

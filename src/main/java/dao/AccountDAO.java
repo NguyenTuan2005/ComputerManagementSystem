@@ -31,13 +31,14 @@ public class AccountDAO implements Repository<Account> {
         preparedStatement.setString(3, account.getEmail());
         preparedStatement.setDate(4, new java.sql.Date(account.getCreateDate().getTime()));
         preparedStatement.setInt(5, account.getManagerId());
+        preparedStatement.setString(6,account.getAvataImg());
     }
 
     @Override
     public Account save(Account account) {
         if (account.getId() == 0) {
             // Insert new account
-            String sql = "INSERT INTO account (username, password, email, create_date, manage_id) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO account (username, password, email, create_date, manage_id , avata_img) VALUES (?, ?, ?, ?, ?,?)";
             try {
                 preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 setAccountParameter(preparedStatement,account);

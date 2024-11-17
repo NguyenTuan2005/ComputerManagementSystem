@@ -361,7 +361,7 @@ public class LoginFrame extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     String username = nameField.getText();
                     String password = new String(passwdFieldSignin.getPassword());
-                    String email = "";
+                    String email = nameField.getText();// bug NullPointerException
                     if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || password.equals("Password")) {
                         if (username.isEmpty() || username.equals("User Name")) {
                             nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));

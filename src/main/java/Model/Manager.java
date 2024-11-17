@@ -2,7 +2,7 @@ package Model;
 
 import lombok.*;
 
-import java.util.Date;
+import java.sql.Date;
 
 @ToString
 @EqualsAndHashCode
@@ -10,22 +10,23 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class Manager {
+
 
     private int id;
 
+    @NonNull
     private String fullName;
 
+    @NonNull
     private String address;
 
+    @NonNull
     private Date birthDay;
 
+    @NonNull
     private String phoneNumber;
 
-    public Manager(String fullName, String address, Date birthDay, String phoneNumber) {
-        this.fullName = fullName;
-        this.address = address;
-        this.birthDay = birthDay;
-        this.phoneNumber = phoneNumber;
-    }
+
 }

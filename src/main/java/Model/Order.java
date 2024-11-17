@@ -1,12 +1,10 @@
 package Model;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.PastOrPresent;
-import lombok.*;
-
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.sql.Date;
 
 @Getter
 @Setter
@@ -32,6 +30,5 @@ public class Order {
         this.orderDate = orderDate;
         this.status = status;
     }
-
 
 }

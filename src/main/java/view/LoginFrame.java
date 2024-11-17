@@ -5,10 +5,11 @@ import controller.CustomerController;
 import view.OverrideComponent.CircularImage;
 import view.OverrideComponent.CustomButton;
 import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.TimerTask;
+
 
 
 public class LoginFrame extends JFrame {
@@ -160,7 +161,33 @@ public class LoginFrame extends JFrame {
             add(createAccountLabel, gbc);
 
             //create sign up Button
-            signUpButton = createCustomButtonWithBorder("Sign Up", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 45));
+            signUpButton = createCustomButtonWithBorder("Sign Up", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20,new Dimension(350, 45));
+            signUpButton.setBackground(new Color(0, 153, 102));
+            signUpButton.setForeground(Style.WORD_COLOR_WHITE);
+            signUpButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String username = nameField.getText();
+                    String password = new String(passwdFieldSignup.getPassword());
+                    String email = emailField.getText();
+
+                    if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || password.equals("Password") || email.isEmpty() || email.equals("User Email")) {
+                        if (username.isEmpty() || username.equals("User Name")) {
+                            nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                            nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                        }
+                        if (password.isEmpty() || password.equals("Password")) {
+                            passwdFieldSignup.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                            passwdFieldSignup.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                        }
+                        if (email.isEmpty() || email.equals("User Email")) {
+                            emailField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                            emailField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(loginFrame, "Em chưa làm:(((", "", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
+            });
 
             // Name Field with Icon
             gbc.gridwidth = 1;
@@ -200,6 +227,8 @@ public class LoginFrame extends JFrame {
             passwdFieldSignup.addActionListener(e -> signUpButton.doClick());
             add(passwdFieldSignup, gbc);
 
+            gbc.gridy++;
+            gbc.gridx = 1;
             showPasswdCB = new JCheckBox("Show Password");
             showPasswdCB.setPreferredSize(new Dimension(250, 15));
             showPasswdCB.setFocusPainted(false);
@@ -221,8 +250,6 @@ public class LoginFrame extends JFrame {
                     }
                 }
             });
-            gbc.gridy++;
-            gbc.gridx = 1;
             add(showPasswdCB, gbc);
 
             //add Sign Up button
@@ -230,30 +257,6 @@ public class LoginFrame extends JFrame {
             gbc.gridx = 0;
             gbc.gridwidth = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            signUpButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    String username = nameField.getText().trim();
-                    String email = emailField.getText().trim();
-                    String password = new String(passwdFieldSignup.getPassword());
-
-                    if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || password.equals("Password") || email.isEmpty() || email.equals("User Email")) {
-                        if (username.isEmpty() || username.equals("User Name")) {
-                            nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-                            nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-                        }
-                        if (password.isEmpty() || password.equals("Password")) {
-                            passwdFieldSignup.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-                            passwdFieldSignup.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-                        }
-                        if (email.isEmpty() || email.equals("User Email")) {
-                            emailField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-                            emailField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(loginFrame, "Em chưa làm:(((", "", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                }
-            });
             add(signUpButton, gbc);
         }
     }
@@ -287,7 +290,52 @@ public class LoginFrame extends JFrame {
             add(signInLabel, gbc);
 
             // create  sign in Button
-            signInButton = createCustomButtonWithBorder("Sign In", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 45));
+            signInButton = createCustomButtonWithBorder("Sign In", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20,new Dimension(350, 45));
+            signInButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String username = nameField.getText();
+                    String password = new String(passwdFieldSignin.getPassword());
+                    String email = "";
+
+                    if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || password.equals("Password")) {
+                        if (username.isEmpty() || username.equals("User Name")) {
+                            nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                            nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                        }
+                        if (password.isEmpty() || password.equals("Password")) {
+                            passwdFieldSignin.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                            passwdFieldSignin.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                        }
+
+                    } else {
+                        switch ((String) roleComboBox.getSelectedItem()) {
+                            case MANAGER_ROLE: {
+                                AccountController accountController = new AccountController();
+                                System.out.println(accountController.isValidAccount(username, password));
+                                if (accountController.isValidAccount(username, password)) {
+                                    loginFrame.setVisible(false);
+                                    managerFrame = new ManagerFrame(loginFrame);
+                                } else {
+                                    sayError("You have entered the Wrong username or password, please try again!");
+                                }
+                                break;
+                            }
+                            case CUSTOMER_ROLE: {
+                                CustomerController customerController = new CustomerController();
+                                if (customerController.isValidAccount(email, password)) {
+
+//                                    loginFrame.setVisible(false);
+//                                userFrame = new CustomerFrame(loginFrame);
+                                } else
+                                    sayError("You have entered the Wrong email or password, please try again!");
+                                break;
+                            }
+
+                        }
+                    }
+                }
+            });
 
             //Role comboBox with Icon
             gbc.gridwidth = 1;
@@ -362,7 +410,8 @@ public class LoginFrame extends JFrame {
             passwdFieldSignin.addActionListener(e -> signInButton.doClick());
             add(passwdFieldSignin, gbc);
 
-
+            gbc.gridy++;
+            gbc.gridx = 1;
             showPasswdCB = new JCheckBox("Show Password");
             showPasswdCB.setPreferredSize(new Dimension(300, 15));
             showPasswdCB.setFocusPainted(false);
@@ -384,8 +433,6 @@ public class LoginFrame extends JFrame {
                     }
                 }
             });
-            gbc.gridy++;
-            gbc.gridx = 1;
             add(showPasswdCB, gbc);
 
             // add Sign In button
@@ -395,11 +442,11 @@ public class LoginFrame extends JFrame {
             signInButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String username = nameField.getText().trim();
+                    String username = nameField.getText();
                     String password = new String(passwdFieldSignin.getPassword());
-                    String email = "";
-                    if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || username.equals("User Email") || password.equals("Password")) {
-                        if (username.isEmpty() || username.equals("User Name") || username.equals("User Email")) {
+                    String email = nameField.getText();// bug NullPointerException
+                    if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || password.equals("Password")) {
+                        if (username.isEmpty() || username.equals("User Name")) {
                             nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
                             nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
                         }
@@ -417,18 +464,18 @@ public class LoginFrame extends JFrame {
                                     loginFrame.setVisible(false);
                                     managerFrame = new ManagerFrame(loginFrame);
                                 } else {
-                                    sayError("You have entered the Wrong username or password, please try again!");
+                                    sayError(AccountController.loginStatus.getMessager());
                                 }
                                 break;
                             }
                             case CUSTOMER_ROLE: {
                                 CustomerController customerController = new CustomerController();
+                                System.out.println(emailField.getText());
                                 if (customerController.isValidAccount(email, password)) {
-
-//                                    loginFrame.setVisible(false);
-//                                userFrame = new CustomerFrame(loginFrame);
+                                    loginFrame.setVisible(false);
+                                    customerFrame = new CustomerFrame();
                                 } else
-                                    sayError("You have entered the Wrong email or password, please try again!");
+                                    sayError(CustomerController.loginStatus.getMessager());
                                 break;
                             }
 
@@ -447,6 +494,7 @@ public class LoginFrame extends JFrame {
                 public void mouseEntered(MouseEvent evt) {
                     forgotPasswdBt.setBackground(Style.LIGHT_BlUE);
                 }
+
                 public void mouseExited(MouseEvent evt) {
                     forgotPasswdBt.setBackground(Color.WHITE);
                 }
@@ -880,8 +928,6 @@ public class LoginFrame extends JFrame {
                 add(backBt, gbc);
             }
         }
-
-
     }
 
     public void addFocusListenerForTextField(JTextField field, String originText) {
@@ -970,6 +1016,7 @@ public class LoginFrame extends JFrame {
         addFocusListenerForJPasswordField(pwfield, text);
         return pwfield;
     }
+
 
     public static void main(String[] args) {
         new LoginFrame();

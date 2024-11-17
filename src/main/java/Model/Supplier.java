@@ -3,7 +3,7 @@ package Model;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 
 @ToString
 @EqualsAndHashCode

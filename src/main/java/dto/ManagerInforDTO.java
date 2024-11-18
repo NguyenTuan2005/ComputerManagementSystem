@@ -1,6 +1,7 @@
 package dto;
 
 
+import Model.Account;
 import lombok.*;
 
 import javax.swing.*;
@@ -56,6 +57,10 @@ public class ManagerInforDTO {
             this.createDate,
             icon
         };
+    }
+
+    public Account getAccount(){
+        return new Account();
     }
 
     public static Object[][] getDataOnTable(ArrayList<ManagerInforDTO> managerInforDTOS){

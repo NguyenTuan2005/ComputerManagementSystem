@@ -111,7 +111,7 @@ public class AccountController implements ModelController<Account> {
 
     @Override
     public void update(Account account) {
-
+        accountDAO.updateById(account);
     }
 
     @Override

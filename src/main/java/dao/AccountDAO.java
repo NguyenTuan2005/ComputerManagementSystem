@@ -232,4 +232,16 @@ public class AccountDAO implements Repository<Account> {
             e.printStackTrace();
         }
     }
+
+    public void updatePassword(String pw, int id) {
+        try {
+            String sql = "UPDATE account SET password = ? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, pw);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

@@ -2563,7 +2563,7 @@ public class ManagerMainPanel extends JPanel {
                                 setDataToModify(managerInfors.get(modifyId));
                                 setVisiblePanel(addOrModify);
                                 addAccBt.setEnabled(false);
-
+                                btnModifyStutus = true;
 
 
 
@@ -2582,13 +2582,14 @@ public class ManagerMainPanel extends JPanel {
                             System.out.println(account);
                             managerController.update(manager);
                             accountController.update(account);
+                            btnModifyStutus = false;
                             reload();
                             removeInfor();
                             ToastNotification.showToast("Update thanh cong", 2500, 400, 100);
 
                             addAccBt.setEnabled(true);
                         }
-                        btnModifyStutus = !btnModifyStutus;
+//                        btnModifyStutus = !btnModifyStutus;
 
                     }
                 });

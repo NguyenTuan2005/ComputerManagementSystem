@@ -108,4 +108,13 @@ public class CustomerController implements ModelController<Customer> {
     public void block(boolean isBlock, int id){
         customerDAO.updateBlock(isBlock, id);
     }
+
+    public Customer findByEmail(String s) {
+        return customerDAO.findByEmail(s);
+    }
+
+    public void updatePassword(String newPassword, int id) {
+        passwordSecurity = new PasswordSecurity(newPassword);
+        customerDAO.updatePassword(passwordSecurity.generatePassword(),id);
+    }
 }

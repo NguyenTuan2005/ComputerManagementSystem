@@ -269,4 +269,16 @@ public class CustomerDAO implements Repository<Customer> {
         System.out.println(customerDAO.getDataCustomerOrderById(3));
 //        System.out.println(customerDAO.indByEmail("1233@abc.com")save(new Customer("nguyen huu duy","duynguyenavg@gmail.com","tien giang , chau thành diem hy","123")));
     }
+
+    public void updatePassword(String s, int id) {
+        try {
+            String sql = "UPDATE customer SET password = ? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, s);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

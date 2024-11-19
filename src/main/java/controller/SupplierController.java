@@ -1,7 +1,5 @@
 package controller;
 
-import Model.Customer;
-import Model.Product;
 import Model.Supplier;
 import dao.SupplierDAO;
 
@@ -36,7 +34,7 @@ public class SupplierController implements ModelController<Supplier> {
 
     @Override
     public void setDeleteRow(int id, boolean status) {
-
+        supplierDAO.setDeleteRow(id,status);
     }
 
     @Override

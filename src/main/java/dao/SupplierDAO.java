@@ -108,10 +108,10 @@ public class SupplierDAO implements Repository<Supplier> {
     @Override
     public ArrayList<Supplier> findByName(String name) {
         ArrayList<Supplier> suppliers = new ArrayList<>();
-        String query = "SELECT * FROM public.suppliers WHERE company_name LIKE ?";
+        String query = "SELECT * FROM public.suppliers WHERE LOWER(company_name) LIKE lOWER(?)";
         try {
             preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, "%" + name + "%");
+            preparedStatement.setString(1, "%" + name.toLowerCase() + "%");
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
@@ -168,7 +168,7 @@ public class SupplierDAO implements Repository<Supplier> {
 
     // Method use to hide out table.
     public void setDeleteRow(int id, boolean status) {
-        String sql = "UPDATE product SET delete_row = ? WHERE id = ?";
+        String sql = "UPDATE suppliers SET delete_row = ? WHERE id = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, status ? 1 : 0);

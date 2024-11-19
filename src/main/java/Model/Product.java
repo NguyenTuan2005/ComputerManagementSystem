@@ -112,7 +112,6 @@ public class Product {
     }
 
     public static String [][] getDateOnTable(ArrayList<Product> products){
-        System.out.println( " size of product : " + products.size());
         String [][] datas = new String[products.size()][];
         for (int i = 0; i < products.size() ; i++) {
             datas[i]= products.get(i).convertToArray(i);

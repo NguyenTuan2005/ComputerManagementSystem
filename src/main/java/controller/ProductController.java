@@ -3,6 +3,7 @@ package controller;
 import Model.Product;
 import dao.ProductDAO;
 import security.PasswordSecurity;
+import view.OverrideComponent.ToastNotification;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ public class ProductController implements ModelController<Product> {
 
     @Override
     public Product findById(int id) {
-        return null;
+        return productDAO.findById(id);
     }
 
     @Override
@@ -42,6 +43,14 @@ public class ProductController implements ModelController<Product> {
         productDAO.setDeleteRow(id,status);
     }
 
+    public boolean setStatus(int id, String status) {
+        Product product = findById(id);
+        if (status.equals(product.getStatus())) return false;
+        product.setStatus(status);
+        update(product);
+        return true;
+    }
+
     @Override
     public void saves(ArrayList<Product> products) {
         for(Product product: products) {
@@ -56,7 +65,7 @@ public class ProductController implements ModelController<Product> {
 
     @Override
     public void update(Product product) {
-
+        productDAO.update(product);
     }
 
     @Override

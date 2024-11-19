@@ -37,6 +37,7 @@ public class ImageDAO implements Repository<Image> {
         img.setId(rs.getInt("id"));
         img.setUrl(rs.getString("url"));
         img.setAlt(rs.getString("alt"));
+        img.setProductId(rs.getInt("product_id"));
     }
 
     @Override
@@ -81,6 +82,11 @@ public class ImageDAO implements Repository<Image> {
         return images;
     }
 
+    public static void main(String[] args) {
+        ImageDAO imageDAO = new ImageDAO();
+        System.out.println(imageDAO.findByProductId(7));
+    }
+
     @Deprecated
     @Override
     public ArrayList<Image> findByName(String name) {
@@ -99,6 +105,30 @@ public class ImageDAO implements Repository<Image> {
     public Image update(Image image) {
         return null;
     }
+
+    public ArrayList<Image> findByProductId(int productId){
+//select * from image;
+        String sql = " SELECT *FROM image where product_id =?";
+        ArrayList<Image> images = new ArrayList<>();
+        try{
+//            state = connection.createStatement();
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1,productId);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()){
+                Image img = new Image();
+                setImageParameter(rs,img);
+                images.add(img);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        return images;
+    }
+
+
 
     @Deprecated
     @Override

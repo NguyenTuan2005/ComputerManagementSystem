@@ -47,6 +47,8 @@ public class Product {
 
     private int deleteRow;
 
+    private ArrayList<Image> images;
+
     public static final String IN_STOCK = "In Stock";
 
     public static final String AVAILABLE = "Available";

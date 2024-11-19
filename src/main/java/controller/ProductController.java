@@ -1,6 +1,7 @@
 package controller;
 
 import Model.Product;
+import dao.ImageDAO;
 import dao.ProductDAO;
 import security.PasswordSecurity;
 
@@ -12,9 +13,12 @@ public class ProductController implements ModelController<Product> {
 
     private PasswordSecurity passwordSecurity;
 
+    private ImageDAO imageDAO;
+
 
     public ProductController() {
         this.productDAO = new ProductDAO();
+        this.imageDAO = new ImageDAO();
     }
 
     @Override
@@ -62,5 +66,20 @@ public class ProductController implements ModelController<Product> {
     @Override
     public ArrayList<Product> sortByColumn(String column) {
         return productDAO.sortByColumn(column);
+    }
+
+    public ArrayList<Product> getEagerProducts(){
+        ArrayList<Product> products = productDAO.getEager();
+        for(Product product: products){
+            int id = product.getId();
+            product.setImages(imageDAO.findByProductId(id));
+            System.out.println(product+"\n");
+        }
+        return products;
+    }
+
+    public static void main(String[] args) {
+        ProductController p = new ProductController();
+        p.getEagerProducts();
     }
 }

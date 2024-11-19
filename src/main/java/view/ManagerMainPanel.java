@@ -19,11 +19,11 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import view.OtherComponent.*;
 import view.OverrideComponent.*;
+import Enum.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
@@ -2350,16 +2350,16 @@ public class ManagerMainPanel extends JPanel {
 
     class AccManagementPanel extends JPanel {
         private final String[] accountColumnNames = {"Serial Number", "ManagerID", "Fullname", "Address", "Birth Day", "Phone Number", "AccountID", " User Name", "Password", "Email", "Account creation date", "Avata"};
-
+        private final int informationPanel=0;
+        private final int addOrModify=1;
         private JTable tableAccManager;
         private DefaultTableModel modelAccManager;
-        private JTableHeader headerCustomer;
         private JScrollPane scrollPaneAccManager;
         private JTabbedPane tabbedPaneAccManager;
         private ToolPanel toolPanel = new ToolPanel();
         private TableCustomerPanel tableAccManagerPanel = new TableCustomerPanel();
 
-        private JButton addAccBt, modifyAccBt, exportAccExcelBt, searchAccBt, reloadAccBt, blockCustomer, writeToFileTXT;
+        private JButton addAccBt, modifyAccBt, exportAccExcelBt, searchAccBt, reloadAccBt, blockCustomer;
         private JTextField textField;
 
 
@@ -2372,8 +2372,10 @@ public class ManagerMainPanel extends JPanel {
         private Date selectedDate;
         private JLabel label;
         private String contextPath = "";
-
-        private ArrayList<ManagerInforDTO> managerInfors = new ArrayList<>();
+        private int modifyId=-1;
+        private static boolean  btnModifyStutus = false;
+        private static TableStatus tableStatus = TableStatus.NONE;
+        private static ArrayList<ManagerInforDTO> managerInfors = new ArrayList<>();
         private ManagerController managerController = new ManagerController();
         private AccountController accountController = new AccountController();
 
@@ -2396,15 +2398,20 @@ public class ManagerMainPanel extends JPanel {
 
         private Manager getManager() {
             Manager manager = new Manager();
-            manager.setFullName(txtFullName.getText());
-            manager.setAddress(txtAddress.getText());
-            manager.setBirthDay(selectedDate);
-            manager.setPhoneNumber(txtPhoneNumber.getText());
+            try {
+                manager.setFullName(txtFullName.getText());
+                manager.setAddress(txtAddress.getText());
+
+                manager.setPhoneNumber(txtPhoneNumber.getText());
+                manager.setBirthDay(selectedDate);
+
+            } catch (NullPointerException nullPointerException){
+                System.out.println(nullPointerException.toString());
+            }
             return manager;
         }
 
         private boolean verifier() {
-
             return txtFullName.getInputVerifier().verify(txtFullName) &&
                     txtAddress.getInputVerifier().verify(txtAddress) &&
                     txtBirthday.getInputVerifier().verify(txtBirthday) &&
@@ -2424,7 +2431,42 @@ public class ManagerMainPanel extends JPanel {
             emailField.setText("");
             label.setIcon(null);
             label.setText("Drop your image here");
+            btnModifyStutus =false;
+            addAccBt.setEnabled(true);
         }
+
+        private int getIndexTableSelectedTab() {
+            return  tabbedPaneAccManager.getSelectedIndex();
+        }
+        private void setVisiblePanel(int panel){
+            tabbedPaneAccManager.setSelectedIndex(panel);
+        }
+
+         private void setDataToModify(ManagerInforDTO manager){
+             txtFullName.setText(manager.getFullName());
+             txtAddress.setText(manager.getAddress());
+             txtBirthday.setText(manager.getBirthDay().toString());
+             txtPhoneNumber.setText(manager.getPhoneNumber());
+             usernameField.setText(manager.getUsername());
+//             passwordField.setText("");
+             emailField.setText(manager.getEmail());
+             contextPath = manager.getAvataImg();
+             System.out.println("contextPart " + contextPath);
+             try {
+                 Path targetPath = Paths.get(contextPath);
+                 ImageIcon avatarIcon = new ImageIcon(targetPath.toString());
+                 Image scaledImage = avatarIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                 label.setIcon(new ImageIcon(scaledImage));
+                 label.setText("");
+
+             }catch (NullPointerException npe){
+                 System.out.println( "meo cos hinhf ");
+             }
+//             Files.createDirectories(targetPath.getParent());
+//             Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+
+         }
 
         public class ToolPanel extends JPanel {
             public ToolPanel() {
@@ -2439,52 +2481,60 @@ public class ManagerMainPanel extends JPanel {
                 addAccBt.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        // add valid
-                        try {
-                            if (!verifier()) {
-                                ToastNotification.showToast("verifier False ", 2500, 400, 100);
-                                return;
-                            }
-                            if (getAcc().getAvataImg().isEmpty()) {
-                                Object[] options = {"Push image", "No avata", "Cancel"};
-                                int status = JOptionPane.showOptionDialog(
-                                        null,
-                                        "Bạn chưa nhập hình?",
-                                        "Cảnh báo",
-                                        JOptionPane.YES_NO_CANCEL_OPTION,
-                                        JOptionPane.WARNING_MESSAGE,
-                                        null,
-                                        options, // Nút tùy chỉnh
-                                        options[0] // Nút mặc định
-                                );
-                                System.out.println(status);
-                                switch (status) {
-                                    //YES
-                                    case (0) -> {
+                        setVisiblePanel(addOrModify);
+//                        switch (getIndexTableSelectedTab()){
+                        System.out.println(" modify btn ");
+//                            case 1 ->{
+                                tableStatus=TableStatus.ADD;
+                                try {
+                                    if (!verifier()) {
+                                        ToastNotification.showToast("verifier False ", 2500, 400, 100);
                                         return;
                                     }
-                                    //NO
-                                    case (1) -> {
+                                    if (getAcc().getAvataImg().isEmpty()) {
+                                        Object[] options = {"Push image", "No avata", "Cancel"};
+                                        int status = JOptionPane.showOptionDialog(
+                                                null,
+                                                "Bạn chưa nhập hình?",
+                                                "Cảnh báo",
+                                                JOptionPane.YES_NO_CANCEL_OPTION,
+                                                JOptionPane.WARNING_MESSAGE,
+                                                null,
+                                                options, // Nút tùy chỉnh
+                                                options[0] // Nút mặc định
+                                        );
+                                        System.out.println(status);
+                                        switch (status) {
+                                            //YES
+                                            case (0) -> {
+                                                return;
+                                            }
+                                            //NO
+                                            case (1) -> {
 
-                                    }
-                                    //CANCEL
-                                    case (2) -> {
-                                        return;
-                                    }
+                                            }
+                                            //CANCEL
+                                            case (2) -> {
+                                                return;
+                                            }
 
+                                        }
+                                    }
+                                    System.out.println(getAcc());
+                                    System.out.println(getManager());
+                                    managerController.createManager(getManager(),getAcc());
+                                    removeInfor();
+                                    ToastNotification.showToast("Luu r nha ", 2500, 400, 100);
+                                } catch (Exception exception) {
+                                    ToastNotification.showToast("Nhap lai thong tin ", 2500, 400, 100);
                                 }
-                            }
-                            System.out.println(getAcc());
-                            System.out.println(getManager());
-                            managerController.createManager(getManager(),getAcc());
-                            removeInfor();
-                            ToastNotification.showToast("Luu r nha ", 2500, 400, 100);
-
-                        } catch (Exception exception) {
-                            ToastNotification.showToast("Nhap lai thong tin ", 2500, 400, 100);
+//                            }
+//                        }
 
 
-                        }
+
+                        // add valid
+
 //
                     }
                 });
@@ -2498,6 +2548,49 @@ public class ManagerMainPanel extends JPanel {
                 modifyAccBt.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        // nhấn zô chua )
+                        int selectedRow = tableAccManager.getSelectedRow();
+                        System.out.println(" modify btn ");
+                        if (btnModifyStutus== false && selectedRow != -1) {
+
+                            tableStatus = TableStatus.MODIFY;
+
+
+                            int columnIndex = 0;
+
+                                modifyId = (int) tableAccManager.getValueAt(selectedRow, columnIndex) - 1;
+//                            System.out.println(id);
+                                setDataToModify(managerInfors.get(modifyId));
+                                setVisiblePanel(addOrModify);
+                                addAccBt.setEnabled(false);
+                                btnModifyStutus = true;
+
+
+
+                        } else {
+
+                            System.out.println(" luu ra nha");
+                            Account account = getAcc();
+                            Manager manager = getManager();
+                            account.setId(managerInfors.get(modifyId).getAccountId());
+                            manager.setId(managerInfors.get(modifyId).getManagerId());
+
+                            if (manager.birthDayIsNull()){
+                                manager.setBirthDay((Date) managerInfors.get(modifyId).getBirthDay());
+                            }
+                            System.out.println(manager);
+                            System.out.println(account);
+                            managerController.update(manager);
+                            accountController.update(account);
+                            btnModifyStutus = false;
+                            reload();
+                            removeInfor();
+                            ToastNotification.showToast("Update thanh cong", 2500, 400, 100);
+
+                            addAccBt.setEnabled(true);
+                        }
+//                        btnModifyStutus = !btnModifyStutus;
+
                     }
                 });
 
@@ -2547,18 +2640,7 @@ public class ManagerMainPanel extends JPanel {
                     }
                 });
 
-                writeToFileTXT = new JButton("to file.txt");
-                ButtonConfig.addButtonHoverEffect(writeToFileTXT, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                setStyleButton(writeToFileTXT, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/bill.png", writeToFileTXT);
-                writeToFileTXT.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
-                writeToFileTXT.setVerticalTextPosition(SwingConstants.BOTTOM);
-                writeToFileTXT.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
 
-                    }
-                });
 
 
                 textField = new JTextField("Search by name");
@@ -2640,7 +2722,6 @@ public class ManagerMainPanel extends JPanel {
 
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(exportAccExcelBt);
-                applicationPanel.add(writeToFileTXT);
 
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(reloadAccBt);
@@ -2686,9 +2767,9 @@ public class ManagerMainPanel extends JPanel {
                 reload();
 
                 scrollPaneAccManager = new JScrollPane(tableAccManager);
-                tabbedPaneAccManager = createTabbedPane(scrollPaneAccManager, "Customer", Style.FONT_HEADER_ROW_TABLE);
+                tabbedPaneAccManager = createTabbedPane(scrollPaneAccManager, "Information", Style.FONT_HEADER_ROW_TABLE);
                 modifyManager = new ModifyManager();
-                tabbedPaneAccManager.add("Modify Manager", modifyManager);
+                tabbedPaneAccManager.add(tableStatus.getMessage(), modifyManager);
 
                 add(tabbedPaneAccManager, BorderLayout.CENTER);
 
@@ -2927,7 +3008,7 @@ public class ManagerMainPanel extends JPanel {
 
 
             class Avatar extends JPanel {
-                CustomButton importImage, undoBt;
+                CustomButton importImage, undoBt, cancelBt;
 
 
                 Avatar() {
@@ -2979,9 +3060,22 @@ public class ManagerMainPanel extends JPanel {
                     undoBt = new CustomButton("Undo");
                     undoBt.setPreferredSize(new Dimension(100, 40));
                     undoBt.setDrawBorder(false);
+                    undoBt.addActionListener(e->{
+                        System.out.println(btnModifyStutus);
+                        if (btnModifyStutus== true)
+                            setDataToModify(managerInfors.get(modifyId));
+                    });
+
+                    cancelBt = new CustomButton("cancel");
+                    cancelBt.setPreferredSize(new Dimension(100, 40));
+                    cancelBt.setDrawBorder(false);
+                    cancelBt.addActionListener( e->{
+                                    removeInfor();
+                            });
 
                     uploadImagePn.add(undoBt);
                     uploadImagePn.add(importImage);
+                    uploadImagePn.add(cancelBt);
 
                     add(label, BorderLayout.CENTER);
                     add(uploadImagePn, BorderLayout.SOUTH);

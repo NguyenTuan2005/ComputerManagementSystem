@@ -438,7 +438,7 @@ public class LoginFrame extends JFrame {
                             }
                             case CUSTOMER_ROLE: {
                                 CustomerController customerController = new CustomerController();
-                                System.out.println(emailField.getText());
+//                                System.out.println(emailField.getText());
                                 if (customerController.isValidAccount(email, password)) {
                                     loginFrame.setVisible(false);
                                     customerFrame = new CustomerFrame();

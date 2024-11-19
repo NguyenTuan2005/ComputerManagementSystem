@@ -1,5 +1,6 @@
 package controller;
 
+import Config.CurrentUser;
 import Model.Customer;
 import dao.CustomerDAO;
 import dto.CustomerOrderDTO;
@@ -33,6 +34,7 @@ public class CustomerController implements ModelController<Customer> {
             passwordSecurity = new PasswordSecurity();
             passwordSecurity.setPlainPassword(password);
             if (passwordSecurity.isVariablePassword(customer.getPassword())){
+                CurrentUser.CURRENT_CUSTOMER = customer;
                 return true;
             }else {
                 loginStatus =LoginStatus.WORNG_PASSWORD;

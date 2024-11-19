@@ -2,6 +2,7 @@ package view;
 
 import Model.Customer;
 import Model.Product;
+import controller.ProductController;
 import view.OverrideComponent.*;
 
 import javax.swing.*;
@@ -12,6 +13,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class CustomerMainPanel extends JPanel {
     JPanel containerCatalog;
@@ -274,12 +277,18 @@ public class CustomerMainPanel extends JPanel {
                     setLayout(new BorderLayout());
                     containerCatalog = new JPanel(new GridBagLayout());
                     containerCatalog.setBackground(Color.WHITE);
+                    ProductController  productController = new ProductController();
+                    ArrayList<Product> products = productController.getEagerProducts();
+                    for (int i = 0; i < products.size(); i++) {
 
-                    String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
-                    String[] filePaths1 = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
-                    Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
-                    JPanel p1 = createPanelForProductInCatalog(filePaths, product1);
-                    addNewPanelToCatalogContainer(p1);
+                        String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
+
+                        String[] filePaths1 = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
+                        Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
+                        JPanel p1 = createPanelForProductInCatalog(filePaths, products.get(i));
+                        addNewPanelToCatalogContainer(p1);
+
+                    }
 
                     JPanel[] panels = new JPanel[10];
 
@@ -594,16 +603,16 @@ public class CustomerMainPanel extends JPanel {
                     headerPanel.add(title);
 
 
-                    String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
-                    Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
-
-
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
+//                    Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
+//
+//
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
 
 
                     scrollPane = new JScrollPane(containerCart);
@@ -1268,12 +1277,12 @@ public class CustomerMainPanel extends JPanel {
     }
 
     public void addNewPanelToCatalogContainer(JPanel panel) {
-        panel.setPreferredSize(new Dimension(320, 550));
+        panel.setPreferredSize(new Dimension(315, 550));
         panel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = this.containerCatalog.getComponentCount() % 3;
-        gbc.gridy = this.containerCatalog.getComponentCount() / 3;
+        gbc.gridx = this.containerCatalog.getComponentCount() % 4;
+        gbc.gridy = this.containerCatalog.getComponentCount() / 4;
         gbc.insets = new Insets(2, 2, 2, 2);
 
         this.containerCatalog.add(panel, gbc);
@@ -1288,10 +1297,10 @@ public class CustomerMainPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(2, 10, 2, 10);
-
-        ImageIcon[] images = new ImageIcon[filePaths.length];
-        for (int i = 0; i < filePaths.length; i++) {
-            images[i] = createImageForProduct(filePaths[i], 300, 300);
+        ArrayList<Model.Image> urls = product.getImages();
+        ImageIcon[] images = new ImageIcon[urls.size()];
+        for (int i = 0; i < images.length; i++) {
+            images[i] = createImageForProduct(urls.get(i).getUrl(), 300, 300);
         }
 
         JLabel imageLabel = new JLabel(images[0]); // Hiển thị hình ảnh đầu tiên
@@ -1373,7 +1382,7 @@ public class CustomerMainPanel extends JPanel {
         setStyleButton(addToCartBt, Style.FONT_HEADER_ROW_TABLE, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(80, 30));
         addToCartBt.addActionListener(e -> {
             ToastNotification.showToast("Product added to Cart!", 3000, 350, 60);
-            addNewPanelToCartContainer(createPanelForCart(filePaths, product));
+            addNewPanelToCartContainer(createPanelForCart(urls, product));
 
         });
         gbc.gridx = 1;
@@ -1394,12 +1403,12 @@ public class CustomerMainPanel extends JPanel {
         this.containerCart.repaint();
     }
 
-    public JPanel createPanelForCart(String[] filePaths, Product product) {
+    public JPanel createPanelForCart(ArrayList<Model.Image> urls, Product product) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
 
-        JLabel imageLabel = new JLabel(createImageForProduct(filePaths[0], 200, 200));
+        JLabel imageLabel = new JLabel(createImageForProduct(urls.get(0).getUrl(), 200, 200));
         panel.add(imageLabel, BorderLayout.WEST);
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));

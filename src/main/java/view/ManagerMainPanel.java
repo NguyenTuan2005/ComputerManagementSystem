@@ -703,7 +703,7 @@ public class ManagerMainPanel extends JPanel {
                     ModifySupplierFrame modifySupplierFrame = new ModifySupplierFrame(() -> updateSuppliers(selectedOption), supplierDAO.findById(supplierId));
                     modifySupplierFrame.showFrame();
                 } else {
-                    ToastNotification.showToast("Please select a row to modify.", 3000, 100, 200);
+                    ToastNotification.showToast("Please select a row to modify.", 3000, 50,-1,-1);
                 }
             }
 
@@ -718,9 +718,9 @@ public class ManagerMainPanel extends JPanel {
                     // Remove the row from the table model
                     modelSupplier.removeRow(selectedRow);
 
-                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 100, 200);
+                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 50,-1,-1);
                 } else {
-                    ToastNotification.showToast("Please select a row to delete.", 3000, 100, 200);
+                    ToastNotification.showToast("Please select a row to delete.", 3000, 50,-1,-1);
                 }
             }
         }
@@ -1370,7 +1370,7 @@ public class ManagerMainPanel extends JPanel {
                             new ProductModifyForm(products.get(selectedRow), InventoryPanel.this::updateProduct).setVisible(true);
                         });
                     } else {
-                        ToastNotification.showToast("Please select a row to modify.", 3000, 400, 50);
+                        ToastNotification.showToast("Please select a row to modify.", 3000, 50,-1,-1);
                     }
                 }
             }
@@ -2488,7 +2488,7 @@ public class ManagerMainPanel extends JPanel {
                                 tableStatus=TableStatus.ADD;
                                 try {
                                     if (!verifier()) {
-                                        ToastNotification.showToast("verifier False ", 2500, 400, 100);
+                                        ToastNotification.showToast("verifier False ", 2500, 50,-1,-1);
                                         return;
                                     }
                                     if (getAcc().getAvataImg().isEmpty()) {
@@ -2524,9 +2524,9 @@ public class ManagerMainPanel extends JPanel {
                                     System.out.println(getManager());
                                     managerController.createManager(getManager(),getAcc());
                                     removeInfor();
-                                    ToastNotification.showToast("Luu r nha ", 2500, 400, 100);
+                                    ToastNotification.showToast("Luu r nha ", 2500, 50,-1,-1);
                                 } catch (Exception exception) {
-                                    ToastNotification.showToast("Nhap lai thong tin ", 2500, 400, 100);
+                                    ToastNotification.showToast("Nhap lai thong tin ", 2500, 50,-1,-1);
                                 }
 //                            }
 //                        }
@@ -2585,7 +2585,7 @@ public class ManagerMainPanel extends JPanel {
                             btnModifyStutus = false;
                             reload();
                             removeInfor();
-                            ToastNotification.showToast("Update thanh cong", 2500, 400, 100);
+                            ToastNotification.showToast("Update thanh cong", 2500, 50,-1,-1);
 
                             addAccBt.setEnabled(true);
                         }
@@ -2614,7 +2614,7 @@ public class ManagerMainPanel extends JPanel {
                             int id = Integer.parseInt(value.toString());
                             accountController.updateBlock(blocked, id);
                             reload();
-                            ToastNotification.showToast(name + (blocked ? " is blocked !!!" : " is unblocked !!!"), 2500, 400, 100);
+                            ToastNotification.showToast(name + (blocked ? " is blocked !!!" : " is unblocked !!!"), 2500, 50,-1,-1);
                         }
                     }
                 });
@@ -2632,9 +2632,9 @@ public class ManagerMainPanel extends JPanel {
                         if (fileName != null && !fileName.trim().isEmpty()) {
                             reload();
                             ExcelConfig.writeManagersToExcel(managerInfors, fileName);
-                            ToastNotification.showToast(fileName + " is created !!!", 2500, 400, 100);
+                            ToastNotification.showToast(fileName + " is created !!!", 2500, 50,-1,-1);
                         } else {
-                            ToastNotification.showToast("fall !!!", 2500, 400, 100);
+                            ToastNotification.showToast("fall !!!", 2500, 50,-1,-1);
                         }
 
                     }

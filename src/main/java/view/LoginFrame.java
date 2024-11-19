@@ -304,52 +304,6 @@ public class LoginFrame extends JFrame {
 
             // create  sign in Button
             signInButton = createCustomButtonWithBorder("Sign In", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 45));
-//            signInButton.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    String username = nameField.getText();
-//                    String password = new String(passwdFieldSignin.getPassword());
-//                    String email = "";
-//
-//                    if (username.isEmpty() || password.isEmpty() || username.equals("User Name") || password.equals("Password")) {
-//                        if (username.isEmpty() || username.equals("User Name")) {
-//                            nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-//                            nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-//                        }
-//                        if (password.isEmpty() || password.equals("Password")) {
-//                            passwdFieldSignin.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-//                            passwdFieldSignin.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-//                        }
-//
-//                    } else {
-//                        switch ((String) roleComboBox.getSelectedItem()) {
-//                            case MANAGER_ROLE: {
-//                                accountController = new AccountController();
-//                                System.out.println(accountController.isValidAccount(username, password));
-//                                if (accountController.isValidAccount(username, password)) {
-//                                    loginFrame.setVisible(false);
-//                                    managerFrame = new ManagerFrame(loginFrame);
-//                                } else {
-//                                    sayError("You have entered the Wrong username or password, please try again!");
-//                                }
-//                                break;
-//                            }
-//                            case CUSTOMER_ROLE: {
-//                                customerController = new CustomerController();
-//                                if (customerController.isValidAccount(email, password)) {
-//
-////                                    loginFrame.setVisible(false);
-////                                userFrame = new CustomerFrame(loginFrame);
-//                                } else
-//                                    sayError("You have entered the Wrong email or password, please try again!");
-//                                break;
-//                            }
-//
-//                        }
-//                    }
-//                }
-//            });
-
             //Role comboBox with Icon
             gbc.gridwidth = 1;
             gbc.gridy++;
@@ -575,22 +529,7 @@ public class LoginFrame extends JFrame {
         class InputEmail extends JPanel {
             JTextField emailField;
             CustomButton sendCodeBt, backBt;
-            JCheckBox customerCBox, managerCBox;
-
-
-
-            // fix ow day
-            private void setTextForTextField() {
-                if (customerCBox.isSelected()) {
-                    emailField.setText("Email");
-                } else {
-                    emailField.setText("Username");
-                }
-//                emailField.setInputVerifier(new EmailVerifier());
-            }
-            private void setColorTextField(){
-                emailField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-            }
+            JRadioButton managerBt, customerBt;
 
             InputEmail() {
                 setBackground(Color.WHITE);
@@ -613,21 +552,21 @@ public class LoginFrame extends JFrame {
 
                 //check customer or manager fix di a Hoang
                 ButtonGroup group = new ButtonGroup();
-                customerCBox = new JCheckBox("Customer");
-                customerCBox.setBorderPainted(false);
-                customerCBox.setBackground(Style.WORD_COLOR_WHITE);
-                managerCBox = new JCheckBox("Manager");
-                managerCBox.setBorderPainted(false);
-                managerCBox.setBackground(Style.WORD_COLOR_WHITE);
-                managerCBox.addActionListener(e -> setTextForTextField());
-                customerCBox.addActionListener(e -> setTextForTextField());
-                group.add(customerCBox);
-                group.add(managerCBox);
+
+                managerBt =  createRadioButton("Manager",Style.FONT_SIZE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.WORD_COLOR_WHITE,new Dimension(120,40));
+                customerBt = createRadioButton("Customer",Style.FONT_SIZE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.WORD_COLOR_WHITE,new Dimension(120,40));
+                customerBt.setSelected(true);
+                group.add(customerBt);
+                group.add(managerBt);
+
+
                 JPanel checkBoxPanel = new JPanel();
+
                 checkBoxPanel.setLayout(new FlowLayout());
                 checkBoxPanel.setBackground(Style.WORD_COLOR_WHITE);
-                checkBoxPanel.add(managerCBox);
-                checkBoxPanel.add(customerCBox);
+                checkBoxPanel.add(customerBt);
+                checkBoxPanel.add(managerBt);
+                gbc.insets = new Insets(10, 10, 10, 10);
                 gbc.gridx = 0;
                 gbc.gridy = 1;
                 gbc.gridwidth = 2;
@@ -639,7 +578,7 @@ public class LoginFrame extends JFrame {
                     public void actionPerformed(ActionEvent e) {
 
                         EmailConfig emailConfig = new EmailConfig();
-                        if (customerCBox.isSelected()) {
+                        if (customerBt.isSelected()) {
                             //customer
                             String email = emailField.getText().trim();
                             CustomerController customerController = new CustomerController();
@@ -657,7 +596,7 @@ public class LoginFrame extends JFrame {
                             }else {
                                 setColorTextField();
                             }
-                        } else if(managerCBox.isSelected()) {
+                        } else if(managerBt.isSelected()) {
                             //manager
                             AccountController accountController = new AccountController();
                             String username = emailField.getText().trim();
@@ -692,17 +631,13 @@ public class LoginFrame extends JFrame {
                 emailIcon.setPreferredSize(new Dimension(30, 30));
                 add(emailIcon, gbc);
                 gbc.gridx = 1;
-                emailField = createTextField("Customer or Manager", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
-
+                emailField = createTextField("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
                 emailField.addActionListener(e -> {
-
                     sendCodeBt.doClick();
-
                 });
                 add(emailField, gbc);
 
                 // add send code button to panel
-                gbc.insets = new Insets(10, 10, 10, 10);
                 gbc.gridy++;
                 gbc.gridx = 0;
                 gbc.gridwidth = 2;
@@ -716,6 +651,28 @@ public class LoginFrame extends JFrame {
                 });
                 gbc.gridy++;
                 add(backBt, gbc);
+            }
+            // fix ow day
+            private void setTextForTextField() {
+                if (customerBt.isSelected()) {
+                    emailField.setText("User Email");
+                } else {
+                    emailField.setText("User Name");
+                }
+            }
+            private void setColorTextField(){
+                emailField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+            }
+            private JRadioButton createRadioButton(String title, Font font,Color textColor, Color backgroudColor,Dimension size){
+                JRadioButton rdoBt = new JRadioButton(title);
+                rdoBt.setBorderPainted(false);
+                rdoBt.setFocusable(false);
+                rdoBt.setFont(font);
+                rdoBt.setBackground(backgroudColor);
+                rdoBt.setForeground(textColor);
+                rdoBt.setPreferredSize(size);
+                rdoBt.addActionListener(e -> setTextForTextField());
+                return rdoBt;
             }
         }
 
@@ -794,8 +751,7 @@ public class LoginFrame extends JFrame {
                         } else {
                             System.out.println("sai roi ");
                             setColorTextField();
-                            ToastNotification.showToast("sai opt",2500,200,100);
-
+                            ToastNotification.showToast("Wrong OTP",2500,50,-1,-1);
                         }
                     }
 
@@ -1174,7 +1130,6 @@ public class LoginFrame extends JFrame {
         addFocusListenerForJPasswordField(pwfield, text);
         return pwfield;
     }
-
 
     public static void main(String[] args) {
         new LoginFrame();

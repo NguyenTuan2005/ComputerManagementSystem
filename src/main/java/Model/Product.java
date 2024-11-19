@@ -101,10 +101,10 @@ public class Product {
                 , ram
                 , madeIn
                 , status
-                ,disk
-                ,monitor
-                ,weight
-                ,card
+                , disk
+                , monitor
+                , weight
+                , card
         };
         System.out.println(this.status);
 //        System.out.println(Double.toString(price));

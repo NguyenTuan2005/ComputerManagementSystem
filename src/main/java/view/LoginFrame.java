@@ -1017,7 +1017,6 @@ public class LoginFrame extends JFrame {
         return pwfield;
     }
 
-
     public static void main(String[] args) {
         new LoginFrame();
     }

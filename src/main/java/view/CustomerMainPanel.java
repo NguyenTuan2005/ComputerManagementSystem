@@ -426,7 +426,7 @@ public class CustomerMainPanel extends JPanel {
 
                     gbc2.insets = new Insets(10, 5, 10, 5);
                     addToCart = createCustomButton("Add to Cart", Style.FONT_TITLE_PRODUCT_18, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, new Color(162, 236, 132), SwingConstants.CENTER, new Dimension(200, 50));
-                    addToCart.addActionListener(e -> ToastNotification.showToast("Product added to Cart!", 3000, 350, 60));
+                    addToCart.addActionListener(e -> ToastNotification.showToast("Product added to Cart!", 3000, 50,-1,-1));
                     gbc2.gridy = 3;
                     paymentPn.add(addToCart, gbc2);
 
@@ -1373,7 +1373,7 @@ public class CustomerMainPanel extends JPanel {
         JButton addToCartBt = new JButton("Add to Cart");
         setStyleButton(addToCartBt, Style.FONT_HEADER_ROW_TABLE, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(80, 30));
         addToCartBt.addActionListener(e -> {
-            ToastNotification.showToast("Product added to Cart!", 3000, 350, 60);
+            ToastNotification.showToast("Product added to Cart!", 3000, 50,-1,-1);
             addNewPanelToCartContainer(createPanelForCart(filePaths, product));
 
         });

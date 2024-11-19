@@ -12,7 +12,7 @@ public class ManagerMenuPanel extends JPanel {
     ManagerFrame managerFrame;
     JLabel role, name, credit;
     CircularImage avatar;
-    JButton productBt, supplierBt, customerBt, inventoryBt, accountManagementBt, notificationBt, logoutBt, changeInformBt;
+    JButton productBt, supplierBt, customerBt, inventoryBt, accountManagementBt, notificationBt, changeInformBt, logoutBt, switchToCustomerBt;
     GridBagConstraints gbc;
 
     public ManagerMenuPanel(LoginFrame loginFrame, ManagerFrame managerFrame) {
@@ -122,7 +122,7 @@ public class ManagerMenuPanel extends JPanel {
             logoutBt.setFont(new Font("Arial", Font.BOLD, 15));
             setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
             add(logoutBt);
-            credit = new JLabel("     Group high!");
+            credit = new JLabel("     Group 2");
             add(credit);
         }
     }

@@ -13,7 +13,9 @@ public class EmailVerifier extends InputVerifier {
 
         if( !isEmail){
             input.setBackground(Color.PINK);
-            ToastNotification.showToast("Email "+ email+ " unvaliable !!",2500,400,100);
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            JWindow window = new JWindow();
+            ToastNotification.showToast("SAi roi má",2500,50,screenSize.width - window.getWidth() - 10,screenSize.height - window.getHeight() - 50);
             return false;
         }else {
             input.setBackground(Color.WHITE);

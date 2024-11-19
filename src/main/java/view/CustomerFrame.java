@@ -40,6 +40,7 @@ public class CustomerFrame extends JFrame {
                 setHover(CustomerMainPanel.PURCHASED_CONSTRAINT);
             }
         });
+
         customerMenuPanel.setNotificationBtListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

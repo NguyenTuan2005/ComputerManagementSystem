@@ -12,7 +12,7 @@ public class PhoneNumberVerifer extends InputVerifier {
         boolean isPhonenum =phonenum.length() == 10 && phonenum.charAt(0) =='0'&& isNumeric(phonenum);
         if( !isPhonenum){
             input.setBackground(Color.PINK);
-            ToastNotification.showToast( "Wrong "+ phonenum,2500,500,60);
+            ToastNotification.showToast( "Wrong phone number"+ phonenum,2500,50,-1,-1);
             return false;
         }else {
             input.setBackground(Color.WHITE);

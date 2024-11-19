@@ -111,7 +111,7 @@ public class AccountController implements ModelController<Account> {
 
     @Override
     public void update(Account account) {
-
+        accountDAO.updateById(account);
     }
 
     @Override
@@ -122,4 +122,11 @@ public class AccountController implements ModelController<Account> {
     public Account findByName(String name ){
         return accountDAO.findOneByName(name);
     }
+
+    public void updatePassword(String pw , int id ){
+        passwordSecurity = new PasswordSecurity(pw);
+        String password = passwordSecurity.generatePassword();
+        accountDAO.updatePassword(password,id);
+    }
+
 }

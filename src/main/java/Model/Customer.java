@@ -105,4 +105,5 @@ public class Customer {
     public boolean isBlock(){
         return this.block == 1;
     }
+
 }

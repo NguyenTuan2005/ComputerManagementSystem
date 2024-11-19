@@ -29,4 +29,7 @@ public class Manager {
     private String phoneNumber;
 
 
+    public boolean birthDayIsNull() {
+        return this.birthDay == null;
+    }
 }

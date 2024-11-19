@@ -135,12 +135,12 @@ public class AccountDAO implements Repository<Account> {
 
     public static void main(String[] args) throws SQLException {
         AccountDAO accountDAO = new AccountDAO();
-        accountDAO.update(new Account("123","root","duynguyenavg@gmail.com"));
+        accountDAO.updateById(new Account(12,"thanh update","root","duvg@gmail.com",new Date(9,9,2004),1,"hehehe"));
     }
     @Override
     public Account update(Account account) {
 
-            String sql = "UPDATE account SET username = ?, password = ? WHERE  email = ?";
+            String sql = "UPDATE account SET username = ?, password = ?  WHERE  email = ? ";
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
                 preparedStatement.setString(1, account.getUsername());
@@ -150,6 +150,23 @@ public class AccountDAO implements Repository<Account> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        return account;
+    }
+
+
+    public Account updateById(Account account){
+        String sql = "UPDATE account SET username = ? , email =? ,create_date =?,avata_img =? WHERE  id = ? ";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, account.getUsername());
+            preparedStatement.setString(2, account.getEmail());
+            preparedStatement.setDate(3, account.getCreateDate());
+            preparedStatement.setString(4, account.getAvataImg());
+            preparedStatement.setInt(5, account.getId());
+            System.out.println( preparedStatement.executeUpdate());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return account;
     }
 
@@ -209,6 +226,18 @@ public class AccountDAO implements Repository<Account> {
             String sql = "UPDATE account SET block = ? WHERE id = ?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, isBlock?1:0 );
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void updatePassword(String pw, int id) {
+        try {
+            String sql = "UPDATE account SET password = ? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, pw);
             preparedStatement.setInt(2, id);
             preparedStatement.executeUpdate();
         } catch (Exception e){

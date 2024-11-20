@@ -2,6 +2,7 @@ package view;
 
 import Model.Customer;
 import Model.Product;
+import controller.ProductController;
 import view.OverrideComponent.*;
 
 import javax.swing.*;
@@ -12,6 +13,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class CustomerMainPanel extends JPanel {
     JPanel containerCatalog;
@@ -199,22 +202,22 @@ public class CustomerMainPanel extends JPanel {
                 TabBar.setLayout(new FlowLayout(FlowLayout.LEFT));
                 TabBar.setBackground(Color.WHITE);
 
-                allBt = createCustomButtonWithBorder("All", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
+                allBt = createCustomButton("All", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
                 allBt.addActionListener(e -> updateSelectedButton(allBt));
 
-                gaming = createCustomButtonWithBorder("Laptop Gaming", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(150, 25));
+                gaming = createCustomButton("Laptop Gaming", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(150, 25));
                 gaming.addActionListener(e -> updateSelectedButton(gaming));
 
-                office = createCustomButtonWithBorder("Laptop Office", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(150, 25));
+                office = createCustomButton("Laptop Office", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(150, 25));
                 office.addActionListener(e -> updateSelectedButton(office));
 
-                pcCase = createCustomButtonWithBorder("PC Case", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
+                pcCase = createCustomButton("PC Case", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
                 pcCase.addActionListener(e -> updateSelectedButton(pcCase));
 
-                cheapest = createCustomButtonWithBorder("Cheapest", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
+                cheapest = createCustomButton("Cheapest", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
                 cheapest.addActionListener(e -> updateSelectedButton(cheapest));
 
-                luxury = createCustomButtonWithBorder("Luxury", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
+                luxury = createCustomButton("Luxury", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
                 luxury.addActionListener(e -> updateSelectedButton(luxury));
 
                 TabBar.add(allBt);
@@ -274,12 +277,18 @@ public class CustomerMainPanel extends JPanel {
                     setLayout(new BorderLayout());
                     containerCatalog = new JPanel(new GridBagLayout());
                     containerCatalog.setBackground(Color.WHITE);
+                    ProductController  productController = new ProductController();
+                    ArrayList<Product> products = productController.getEagerProducts();
+                    for (int i = 0; i < products.size(); i++) {
 
-                    String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
-                    String[] filePaths1 = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
-                    Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
-                    JPanel p1 = createPanelForProductInCatalog(filePaths, product1);
-                    addNewPanelToCatalogContainer(p1);
+                        String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
+
+                        String[] filePaths1 = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
+                        Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
+                        JPanel p1 = createPanelForProductInCatalog(filePaths, products.get(i));
+                        addNewPanelToCatalogContainer(p1);
+
+                    }
 
                     JPanel[] panels = new JPanel[10];
 
@@ -426,7 +435,7 @@ public class CustomerMainPanel extends JPanel {
 
                     gbc2.insets = new Insets(10, 5, 10, 5);
                     addToCart = createCustomButton("Add to Cart", Style.FONT_TITLE_PRODUCT_18, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, new Color(162, 236, 132), SwingConstants.CENTER, new Dimension(200, 50));
-                    addToCart.addActionListener(e -> ToastNotification.showToast("Product added to Cart!", 3000, 350, 60));
+                    addToCart.addActionListener(e -> ToastNotification.showToast("Product added to Cart!", 3000, 50,-1,-1));
                     gbc2.gridy = 3;
                     paymentPn.add(addToCart, gbc2);
 
@@ -594,16 +603,16 @@ public class CustomerMainPanel extends JPanel {
                     headerPanel.add(title);
 
 
-                    String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
-                    Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
-
-
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
-                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
+//                    Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
+//
+//
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
+//                    addNewPanelToCartContainer(createPanelForCart(filePaths, product1));
 
 
                     scrollPane = new JScrollPane(containerCart);
@@ -641,18 +650,19 @@ public class CustomerMainPanel extends JPanel {
         class ToolPanel extends JPanel{
             ToolPanel(){
                 setLayout(new FlowLayout());
-                detailBt =createCustomButtonWithBorder("More Detail",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
+                detailBt = createCustomButton("More Detail",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
                 detailBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 detailBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
-                viewInvoiceBt =createCustomButtonWithBorder("View Invoice",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
+                viewInvoiceBt = createCustomButton("View Invoice",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
                 viewInvoiceBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 viewInvoiceBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
 
-                exportExcelBt =createCustomButtonWithBorder("Export Excel",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
+                exportExcelBt = createCustomButton("Export Excel",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(115,80));
                 exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                exportExcelBt.setIcon(new ImageIcon("src/main/java/Icon/exportExcel_Icon.png"));
 
                 add(detailBt);
                 add(viewInvoiceBt);
@@ -675,6 +685,9 @@ public class CustomerMainPanel extends JPanel {
                 add(tabbedPane, BorderLayout.CENTER);
             }
         }
+
+
+
     }
 
     class NotificationPanel extends JPanel {
@@ -1161,7 +1174,7 @@ public class CustomerMainPanel extends JPanel {
         return button;
     }
 
-    private static CustomButton createCustomButtonWithBorder(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, Color borderColor, int thickness, int radius, Dimension size) {
+    private static CustomButton createCustomButton(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, Color borderColor, int thickness, int radius, Dimension size) {
         CustomButton bt = new CustomButton(title);
         bt.setFont(font);
         bt.setTextColor(textColor);
@@ -1265,12 +1278,12 @@ public class CustomerMainPanel extends JPanel {
     }
 
     public void addNewPanelToCatalogContainer(JPanel panel) {
-        panel.setPreferredSize(new Dimension(320, 550));
+        panel.setPreferredSize(new Dimension(315, 550));
         panel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = this.containerCatalog.getComponentCount() % 3;
-        gbc.gridy = this.containerCatalog.getComponentCount() / 3;
+        gbc.gridx = this.containerCatalog.getComponentCount() % 4;
+        gbc.gridy = this.containerCatalog.getComponentCount() / 4;
         gbc.insets = new Insets(2, 2, 2, 2);
 
         this.containerCatalog.add(panel, gbc);
@@ -1285,10 +1298,10 @@ public class CustomerMainPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(2, 10, 2, 10);
-
-        ImageIcon[] images = new ImageIcon[filePaths.length];
-        for (int i = 0; i < filePaths.length; i++) {
-            images[i] = createImageForProduct(filePaths[i], 300, 300);
+        ArrayList<Model.Image> urls = product.getImages();
+        ImageIcon[] images = new ImageIcon[urls.size()];
+        for (int i = 0; i < images.length; i++) {
+            images[i] = createImageForProduct(urls.get(i).getUrl(), 300, 300);
         }
 
         JLabel imageLabel = new JLabel(images[0]); // Hiển thị hình ảnh đầu tiên
@@ -1369,7 +1382,7 @@ public class CustomerMainPanel extends JPanel {
         JButton addToCartBt = new JButton("Add to Cart");
         setStyleButton(addToCartBt, Style.FONT_HEADER_ROW_TABLE, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(80, 30));
         addToCartBt.addActionListener(e -> {
-            ToastNotification.showToast("Product added to Cart!", 3000, 350, 60);
+            ToastNotification.showToast("Product added to Cart!", 3000, 50,-1,-1);
             addNewPanelToCartContainer(createPanelForCart(filePaths, product));
 
         });
@@ -1391,12 +1404,12 @@ public class CustomerMainPanel extends JPanel {
         this.containerCart.repaint();
     }
 
-    public JPanel createPanelForCart(String[] filePaths, Product product) {
+    public JPanel createPanelForCart(ArrayList<Model.Image> urls, Product product) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
 
-        JLabel imageLabel = new JLabel(createImageForProduct(filePaths[0], 200, 200));
+        JLabel imageLabel = new JLabel(createImageForProduct(urls.get(0).getUrl(), 200, 200));
         panel.add(imageLabel, BorderLayout.WEST);
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));

@@ -1,14 +1,18 @@
 package controller;
 
+import Config.CurrentUser;
 import Model.Customer;
 import dao.CustomerDAO;
 import dto.CustomerOrderDTO;
 import security.PasswordSecurity;
+import Enum.*;
 
 import java.util.ArrayList;
 
 public class CustomerController implements ModelController<Customer> {
     private CustomerDAO customerDAO;
+
+    public static LoginStatus loginStatus = LoginStatus.NOT_FOUND;
 
     private PasswordSecurity passwordSecurity;
 
@@ -16,15 +20,33 @@ public class CustomerController implements ModelController<Customer> {
         this.customerDAO = new CustomerDAO();
         passwordSecurity = new PasswordSecurity();
     }
+
     public boolean isValidAccount(String email , String password ){
         Customer customer = customerDAO.findByEmail(email);
+        System.out.println(customer);
         if ( customer == null )
             return false;
-        passwordSecurity = new PasswordSecurity();
-        passwordSecurity.setPlainPassword(password);
-        System.out.println(customer);
-        return passwordSecurity.isVariablePassword(customer.getPassword());
+        if(customer.isBlock()){
+            loginStatus = LoginStatus.BLOCKED;
+            return false;
+        }
+        if (customer.sameEmail(email)){
+            passwordSecurity = new PasswordSecurity();
+            passwordSecurity.setPlainPassword(password);
+            if (passwordSecurity.isVariablePassword(customer.getPassword())){
+                CurrentUser.CURRENT_CUSTOMER = customer;
+                return true;
+            }else {
+                loginStatus =LoginStatus.WORNG_PASSWORD;
+                return false;
+            }
+        }else{
+            loginStatus =LoginStatus.WRONG_EMAIL;
+            return false;
+        }
+
     }
+
     public Customer create(Customer customer){
         passwordSecurity = new PasswordSecurity();
         passwordSecurity.setPlainPassword(customer.getPassword());
@@ -87,5 +109,14 @@ public class CustomerController implements ModelController<Customer> {
 
     public void block(boolean isBlock, int id){
         customerDAO.updateBlock(isBlock, id);
+    }
+
+    public Customer findByEmail(String s) {
+        return customerDAO.findByEmail(s);
+    }
+
+    public void updatePassword(String newPassword, int id) {
+        passwordSecurity = new PasswordSecurity(newPassword);
+        customerDAO.updatePassword(passwordSecurity.generatePassword(),id);
     }
 }

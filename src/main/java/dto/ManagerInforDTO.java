@@ -1,5 +1,7 @@
 package dto;
 
+
+import Model.Account;
 import lombok.*;
 
 import javax.swing.*;
@@ -37,12 +39,14 @@ public class ManagerInforDTO {
 
     private String avataImg;
 
+    private int block;
+
     public Object[]  convertToObj(int i){
         ImageIcon icon = resizeImageIcon(this.avataImg, 150, 150); // Kích thước 50x50
         return new Object[]{
                 i,
             this.managerId,
-            this.fullName,
+            this.fullName +(this.isBlocked()?"*":""),
             this.address,
             this.birthDay,
             this.phoneNumber,
@@ -55,6 +59,10 @@ public class ManagerInforDTO {
         };
     }
 
+    public Account getAccount(){
+        return new Account();
+    }
+
     public static Object[][] getDataOnTable(ArrayList<ManagerInforDTO> managerInforDTOS){
         Object[][] results = new Object[managerInforDTOS.size()][];
         for (int i = 0; i < results.length; i++) {
@@ -63,6 +71,16 @@ public class ManagerInforDTO {
         return results;
     }
 
+    public boolean isBlocked(){
+        return this.block == 1;
+    }
 
 
+    public boolean sameUsername(String username) {
+        return this.username.equals(username);
+    }
+
+    public String getFullnameLowerCase(){
+        return this.fullName.toLowerCase();
+    }
 }

@@ -2,14 +2,12 @@ package view;
 
 import Config.ButtonConfig;
 import Config.CustomerExporter;
+import Config.DateConfig;
 import Config.ExcelConfig;
-import Model.Customer;
-import Model.Product;
-import Model.Supplier;
-import controller.CustomerController;
-import controller.ManagerController;
-import controller.ProductController;
-import controller.SupplierController;
+import Model.*;
+import Verifier.*;
+import com.toedter.calendar.JCalendar;
+import controller.*;
 import dao.SupplierDAO;
 import dto.CustomerOrderDTO;
 import dto.ManagerInforDTO;
@@ -21,6 +19,7 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import view.OtherComponent.*;
 import view.OverrideComponent.*;
+import Enum.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -28,13 +27,24 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.Image;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static Model.Account.getCurrentDate;
 import static dto.CustomerOrderDTO.toBillsString;
 
 
@@ -700,7 +710,7 @@ public class ManagerMainPanel extends JPanel {
                     ModifySupplierFrame modifySupplierFrame = new ModifySupplierFrame(() -> updateSuppliers(selectedOption), supplierDAO.findById(supplierId));
                     modifySupplierFrame.showFrame();
                 } else {
-                    ToastNotification.showToast("Please select a row to modify.", 3000, 400, 50);
+                    ToastNotification.showToast("Please select a row to modify.", 3000, 50,-1,-1);
                 }
             }
 
@@ -715,9 +725,9 @@ public class ManagerMainPanel extends JPanel {
                     // Remove the row from the table model
                     modelSupplier.removeRow(selectedRow);
 
-                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 600, 50);
+                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 50,-1,-1);
                 } else {
-                    ToastNotification.showToast("Please select a row to delete.", 3000, 400, 50);
+                    ToastNotification.showToast("Please select a row to delete.", 3000, 50,-1,-1);
                 }
             }
         }
@@ -785,16 +795,15 @@ public class ManagerMainPanel extends JPanel {
         private JTextField findCustomerText;
 
         private TextDisplayPanel billTextDisplayPanal;
-        private int index =0;
-        private final int TAB_DATA_CUSTOMER =0;
-        private final int TAB_SCHEMAS =1;
-        private final int TAB_BILL =2;
-
+        private int index = 0;
+        private final int TAB_DATA_CUSTOMER = 0;
+        private final int TAB_SCHEMAS = 1;
+        private final int TAB_BILL = 2;
 
 
         private static CustomerController customerController = new CustomerController();
         private static ArrayList<Customer> customers = new ArrayList<>();
-        private  ArrayList<CustomerOrderDTO> bills= new ArrayList<>();
+        private ArrayList<CustomerOrderDTO> bills = new ArrayList<>();
 
         private JPanel searchPanel, applicationPanel, mainPanel;
 
@@ -867,12 +876,12 @@ public class ManagerMainPanel extends JPanel {
 
                         int selectedRow = tableCustomer.getSelectedRow();
                         int columnIndex = 1;
-                        int fullName =2;
+                        int fullName = 2;
                         if (selectedRow != -1) {
                             Object value = tableCustomer.getValueAt(selectedRow, columnIndex);
                             int customerId = Integer.parseInt(value.toString());
                             String customername = (String) tableCustomer.getValueAt(selectedRow, fullName);
-                            if (customername.contains("*")){
+                            if (customername.contains("*")) {
                                 JOptionPane.showMessageDialog(null, "Unblock customerId : " + customerId);
                                 customerController.block(false, customerId);
                                 JOptionPane.showMessageDialog(null, "Customer" + tableCustomer.getValueAt(selectedRow, fullName) + "Unblocked! ");
@@ -914,7 +923,7 @@ public class ManagerMainPanel extends JPanel {
                 writeToFileTXT = new JButton("to file.txt");
                 ButtonConfig.addButtonHoverEffect(writeToFileTXT, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(writeToFileTXT, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/bill.png",writeToFileTXT);
+                ButtonConfig.setIconBigButton("src/main/java/Icon/bill.png", writeToFileTXT);
                 writeToFileTXT.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
                 writeToFileTXT.setVerticalTextPosition(SwingConstants.BOTTOM);
                 writeToFileTXT.addActionListener(new ActionListener() {
@@ -933,25 +942,24 @@ public class ManagerMainPanel extends JPanel {
                 });
 
 
-
                 findCustomerText = new JTextField("Search by name");
                 findCustomerText.setForeground(Color.GRAY);
                 formatTextField(findCustomerText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
-                findCustomerText.addFocusListener( new FocusListener() {
-                       @Override
-                       public void focusGained(FocusEvent e) {
-                           if (findCustomerText.getText().equals("Search by name")) {
-                               findCustomerText.setText("");
-                               findCustomerText.setForeground(Color.BLACK);
-                           }
-                       }
+                findCustomerText.addFocusListener(new FocusListener() {
+                                                      @Override
+                                                      public void focusGained(FocusEvent e) {
+                                                          if (findCustomerText.getText().equals("Search by name")) {
+                                                              findCustomerText.setText("");
+                                                              findCustomerText.setForeground(Color.BLACK);
+                                                          }
+                                                      }
 
-                       @Override
-                       public void focusLost(FocusEvent e) {
-                           findCustomerText.setForeground(Color.GRAY);
-                           findCustomerText.setText("Search by name");
-                       }
-                   }
+                                                      @Override
+                                                      public void focusLost(FocusEvent e) {
+                                                          findCustomerText.setForeground(Color.GRAY);
+                                                          findCustomerText.setText("Search by name");
+                                                      }
+                                                  }
 
                 );
 
@@ -966,7 +974,7 @@ public class ManagerMainPanel extends JPanel {
 
                                 switch (getIndexSelectedTab()) {
 
-                                    case TAB_DATA_CUSTOMER : {
+                                    case TAB_DATA_CUSTOMER: {
                                         if (findCustomerText.getText().trim().isEmpty())
                                             return;
                                         ArrayList<Customer> cuss = customerController.find(findCustomerText.getText().trim());
@@ -977,19 +985,19 @@ public class ManagerMainPanel extends JPanel {
                                         upDataTable(cuss, modelCustomer, tableCustomer);
                                         break;
                                     }
-                                    case TAB_BILL :{
+                                    case TAB_BILL: {
                                         if (findCustomerText.getText().trim().isEmpty())
                                             return;
                                         try {
                                             int customerId = Integer.parseInt(findCustomerText.getText());
                                             bills = customerController.findCustomerOrderById(customerId);
-                                            if( bills.isEmpty())
-                                                JOptionPane.showMessageDialog(null,"No information available");
+                                            if (bills.isEmpty())
+                                                JOptionPane.showMessageDialog(null, "No information available");
                                             billTextDisplayPanal.setText(toBillsString(bills));
                                             billTextDisplayPanal.setTextEditable(false);
 
-                                        } catch (Exception ex){
-                                            JOptionPane.showMessageDialog(null,"You must enter the ID Customer");
+                                        } catch (Exception ex) {
+                                            JOptionPane.showMessageDialog(null, "You must enter the ID Customer");
                                             findCustomerText.setText("");
                                         }
                                         break;
@@ -1086,21 +1094,23 @@ public class ManagerMainPanel extends JPanel {
 
                 scrollPaneCustomer = new JScrollPane(tableCustomer);
                 tabbedPaneCustomer = createTabbedPane(scrollPaneCustomer, "Customer", Style.FONT_HEADER_ROW_TABLE);
-                tabbedPaneCustomer.add(new Schemas());
+                tabbedPaneCustomer.add("Sales Chart", new Schemas());
 
-                billTextDisplayPanal= new TextDisplayPanel();
-                tabbedPaneCustomer.add(billTextDisplayPanal);
+                billTextDisplayPanal = new TextDisplayPanel();
+                tabbedPaneCustomer.add("Customer Bill", billTextDisplayPanal);
                 add(tabbedPaneCustomer, BorderLayout.CENTER);
 
 
             }
         }
-        private void reload(){
+
+        private void reload() {
             customers = customerController.getAll();
             upDataTable(customers, modelCustomer, tableCustomer);
             billTextDisplayPanal.setText("You should continue to find the customer Id!!!");
         }
-        public int getIndexSelectedTab(){
+
+        public int getIndexSelectedTab() {
             return tabbedPaneCustomer.getSelectedIndex();
         }
 
@@ -1126,7 +1136,6 @@ public class ManagerMainPanel extends JPanel {
             }
 
 
-
             private CategoryDataset createDataset() {
                 DefaultCategoryDataset dataset = new DefaultCategoryDataset();
                 // Dữ liệu mẫu: Thay thế bằng dữ liệu từ database
@@ -1149,7 +1158,7 @@ public class ManagerMainPanel extends JPanel {
             }
         }
 
-        public static void upDataTable(ArrayList<Customer> customers, DefaultTableModel modelCustomerTable ,JTable tableCustomer) {
+        public static void upDataTable(ArrayList<Customer> customers, DefaultTableModel modelCustomerTable, JTable tableCustomer) {
             Object[][] rowData = Customer.getDataOnTable(customers);
             ProductPanel.TablePanel.removeDataTable(modelCustomerTable);
             for (int i = 0; i < rowData.length; i++) {
@@ -1382,7 +1391,7 @@ public class ManagerMainPanel extends JPanel {
                             new ProductModifyForm(products.get(selectedRow), InventoryPanel.this::updateProduct).setVisible(true);
                         });
                     } else {
-                        ToastNotification.showToast("Please select a row to modify.", 3000, 400, 50);
+                        ToastNotification.showToast("Please select a row to modify.", 3000, 50,-1,-1);
                     }
                 }
 
@@ -1800,27 +1809,37 @@ public class ManagerMainPanel extends JPanel {
             }
         }
     }
-   // private final String[] accountColumnNames = {"Serial Number", "ManagerID", "Fullname","Address","Birth Day", "Phone Number", "AccountID"," User Name","Password","Email", "Account creation date","Avata"};
 
     class AccManagementPanel extends JPanel {
-        private final String[] accountColumnNames = {"Serial Number", "ManagerID", "Fullname","Address","Birth Day", "Phone Number", "AccountID"," User Name","Password","Email", "Account creation date","Avata"};
-
+        private final String[] accountColumnNames = {"Serial Number", "ManagerID", "Fullname", "Address", "Birth Day", "Phone Number", "AccountID", " User Name", "Password", "Email", "Account creation date", "Avata"};
+        private final int informationPanel=0;
+        private final int addOrModify=1;
         private JTable tableAccManager;
         private DefaultTableModel modelAccManager;
-        private JTableHeader headerCustomer;
         private JScrollPane scrollPaneAccManager;
         private JTabbedPane tabbedPaneAccManager;
         private ToolPanel toolPanel = new ToolPanel();
         private TableCustomerPanel tableAccManagerPanel = new TableCustomerPanel();
 
-        private JButton addAccBt, modifyAccBt, exportAccExcelBt, searchAccBt, reloadAccBt, blockCustomer, writeToFileTXT;
-        private JTextField findAccText;
+        private JButton addAccBt, modifyAccBt, exportAccExcelBt, searchAccBt, reloadAccBt, blockCustomer;
+        private JTextField textField;
 
 
         private JPanel searchPanel, applicationPanel, mainPanel;
 
-        private ArrayList<ManagerInforDTO> managerInfors = new ArrayList<>();
+        // add
+        private JTextField txtFullName, txtAddress, txtBirthday, txtPhoneNumber;
+        private JTextField usernameField, emailField;
+        private JPasswordField passwordField;
+        private Date selectedDate;
+        private JLabel label;
+        private String contextPath = "";
+        private int modifyId=-1;
+        private static boolean  btnModifyStutus = false;
+        private static TableStatus tableStatus = TableStatus.NONE;
+        private static ArrayList<ManagerInforDTO> managerInfors = new ArrayList<>();
         private ManagerController managerController = new ManagerController();
+        private AccountController accountController = new AccountController();
 
         public AccManagementPanel() {
             setLayout(new BorderLayout());
@@ -1828,6 +1847,88 @@ public class ManagerMainPanel extends JPanel {
             add(toolPanel, BorderLayout.NORTH);
             add(tableAccManagerPanel, BorderLayout.CENTER);
         }
+
+        private Account getAcc() {
+            Account account = new Account();
+            account.setUsername(usernameField.getText());
+            account.setEmail(emailField.getText());
+            account.setPassword(new String(passwordField.getPassword()));
+            account.setAvataImg(contextPath);
+            account.setCreateDate(getCurrentDate());
+            return account;
+        }
+
+        private Manager getManager() {
+            Manager manager = new Manager();
+            try {
+                manager.setFullName(txtFullName.getText());
+                manager.setAddress(txtAddress.getText());
+
+                manager.setPhoneNumber(txtPhoneNumber.getText());
+                manager.setBirthDay(selectedDate);
+
+            } catch (NullPointerException nullPointerException){
+                System.out.println(nullPointerException.toString());
+            }
+            return manager;
+        }
+
+        private boolean verifier() {
+            return txtFullName.getInputVerifier().verify(txtFullName) &&
+                    txtAddress.getInputVerifier().verify(txtAddress) &&
+                    txtBirthday.getInputVerifier().verify(txtBirthday) &&
+                    txtPhoneNumber.getInputVerifier().verify(txtPhoneNumber) &&
+                    usernameField.getInputVerifier().verify(usernameField) &&
+                    passwordField.getInputVerifier().verify(passwordField) &&
+                    emailField.getInputVerifier().verify(emailField);
+        }
+
+        private void removeInfor(){
+            txtFullName.setText("");
+            txtAddress.setText("");
+            txtBirthday.setText("");
+            txtPhoneNumber.setText("");
+            usernameField.setText("");
+            passwordField.setText("");
+            emailField.setText("");
+            label.setIcon(null);
+            label.setText("Drop your image here");
+            btnModifyStutus =false;
+            addAccBt.setEnabled(true);
+        }
+
+        private int getIndexTableSelectedTab() {
+            return  tabbedPaneAccManager.getSelectedIndex();
+        }
+        private void setVisiblePanel(int panel){
+            tabbedPaneAccManager.setSelectedIndex(panel);
+        }
+
+         private void setDataToModify(ManagerInforDTO manager){
+             txtFullName.setText(manager.getFullName());
+             txtAddress.setText(manager.getAddress());
+             txtBirthday.setText(manager.getBirthDay().toString());
+             txtPhoneNumber.setText(manager.getPhoneNumber());
+             usernameField.setText(manager.getUsername());
+//             passwordField.setText("");
+             emailField.setText(manager.getEmail());
+             contextPath = manager.getAvataImg();
+             System.out.println("contextPart " + contextPath);
+             try {
+                 Path targetPath = Paths.get(contextPath);
+                 ImageIcon avatarIcon = new ImageIcon(targetPath.toString());
+                 Image scaledImage = avatarIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                 label.setIcon(new ImageIcon(scaledImage));
+                 label.setText("");
+
+             }catch (NullPointerException npe){
+                 System.out.println( "meo cos hinhf ");
+             }
+//             Files.createDirectories(targetPath.getParent());
+//             Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+
+         }
 
         public class ToolPanel extends JPanel {
             public ToolPanel() {
@@ -1842,7 +1943,61 @@ public class ManagerMainPanel extends JPanel {
                 addAccBt.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        setVisiblePanel(addOrModify);
+//                        switch (getIndexTableSelectedTab()){
+                        System.out.println(" modify btn ");
+//                            case 1 ->{
+                                tableStatus=TableStatus.ADD;
+                                try {
+                                    if (!verifier()) {
+                                        ToastNotification.showToast("verifier False ", 2500, 50,-1,-1);
+                                        return;
+                                    }
+                                    if (getAcc().getAvataImg().isEmpty()) {
+                                        Object[] options = {"Push image", "No avata", "Cancel"};
+                                        int status = JOptionPane.showOptionDialog(
+                                                null,
+                                                "Bạn chưa nhập hình?",
+                                                "Cảnh báo",
+                                                JOptionPane.YES_NO_CANCEL_OPTION,
+                                                JOptionPane.WARNING_MESSAGE,
+                                                null,
+                                                options, // Nút tùy chỉnh
+                                                options[0] // Nút mặc định
+                                        );
+                                        System.out.println(status);
+                                        switch (status) {
+                                            //YES
+                                            case (0) -> {
+                                                return;
+                                            }
+                                            //NO
+                                            case (1) -> {
 
+                                            }
+                                            //CANCEL
+                                            case (2) -> {
+                                                return;
+                                            }
+
+                                        }
+                                    }
+                                    System.out.println(getAcc());
+                                    System.out.println(getManager());
+                                    managerController.createManager(getManager(),getAcc());
+                                    removeInfor();
+                                    ToastNotification.showToast("Luu r nha ", 2500, 50,-1,-1);
+                                } catch (Exception exception) {
+                                    ToastNotification.showToast("Nhap lai thong tin ", 2500, 50,-1,-1);
+                                }
+//                            }
+//                        }
+
+
+
+                        // add valid
+
+//
                     }
                 });
 
@@ -1855,6 +2010,49 @@ public class ManagerMainPanel extends JPanel {
                 modifyAccBt.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        // nhấn zô chua )
+                        int selectedRow = tableAccManager.getSelectedRow();
+                        System.out.println(" modify btn ");
+                        if (btnModifyStutus== false && selectedRow != -1) {
+
+                            tableStatus = TableStatus.MODIFY;
+
+
+                            int columnIndex = 0;
+
+                                modifyId = (int) tableAccManager.getValueAt(selectedRow, columnIndex) - 1;
+//                            System.out.println(id);
+                                setDataToModify(managerInfors.get(modifyId));
+                                setVisiblePanel(addOrModify);
+                                addAccBt.setEnabled(false);
+                                btnModifyStutus = true;
+
+
+
+                        } else {
+
+                            System.out.println(" luu ra nha");
+                            Account account = getAcc();
+                            Manager manager = getManager();
+                            account.setId(managerInfors.get(modifyId).getAccountId());
+                            manager.setId(managerInfors.get(modifyId).getManagerId());
+
+                            if (manager.birthDayIsNull()){
+                                manager.setBirthDay((Date) managerInfors.get(modifyId).getBirthDay());
+                            }
+                            System.out.println(manager);
+                            System.out.println(account);
+                            managerController.update(manager);
+                            accountController.update(account);
+                            btnModifyStutus = false;
+                            reload();
+                            removeInfor();
+                            ToastNotification.showToast("Update thanh cong", 2500, 50,-1,-1);
+
+                            addAccBt.setEnabled(true);
+                        }
+//                        btnModifyStutus = !btnModifyStutus;
+
                     }
                 });
 
@@ -1868,9 +2066,18 @@ public class ManagerMainPanel extends JPanel {
                 blockCustomer.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
-
-
+                        int selectedRow = tableAccManager.getSelectedRow();
+                        int columnIndex = 6;
+                        int fullnameIndex = 2;
+                        if (selectedRow != -1) {
+                            Object value = tableAccManager.getValueAt(selectedRow, columnIndex);
+                            String name = (String) tableAccManager.getValueAt(selectedRow, fullnameIndex);
+                            boolean blocked = !name.contains("*");
+                            int id = Integer.parseInt(value.toString());
+                            accountController.updateBlock(blocked, id);
+                            reload();
+                            ToastNotification.showToast(name + (blocked ? " is blocked !!!" : " is unblocked !!!"), 2500, 50,-1,-1);
+                        }
                     }
                 });
 
@@ -1883,41 +2090,43 @@ public class ManagerMainPanel extends JPanel {
                 exportAccExcelBt.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
-
-
-                    }
-                });
-
-                writeToFileTXT = new JButton("to file.txt");
-                ButtonConfig.addButtonHoverEffect(writeToFileTXT, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                setStyleButton(writeToFileTXT, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setIconBigButton("src/main/java/Icon/bill.png",writeToFileTXT);
-                writeToFileTXT.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
-                writeToFileTXT.setVerticalTextPosition(SwingConstants.BOTTOM);
-                writeToFileTXT.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                        String fileName = JOptionPane.showInputDialog(null, "Enter file name excel:", "Input file", JOptionPane.QUESTION_MESSAGE);
+                        if (fileName != null && !fileName.trim().isEmpty()) {
+                            reload();
+                            ExcelConfig.writeManagersToExcel(managerInfors, fileName);
+                            ToastNotification.showToast(fileName + " is created !!!", 2500, 50,-1,-1);
+                        } else {
+                            ToastNotification.showToast("fall !!!", 2500, 50,-1,-1);
+                        }
 
                     }
                 });
 
 
 
-                findAccText = new JTextField("Search by name");
-                findAccText.setForeground(Color.GRAY);
-                formatTextField(findAccText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
-                findAccText.addFocusListener( new FocusListener() {
-                                                       @Override
-                                                       public void focusGained(FocusEvent e) {
 
-                                                       }
-
-                                                       @Override
-                                                       public void focusLost(FocusEvent e) {
-
-                                                       }
+                textField = new JTextField("Search by name");
+                textField.setForeground(Color.GRAY);
+                formatTextField(textField, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
+                textField.addFocusListener(new FocusListener() {
+                                               @Override
+                                               public void focusGained(FocusEvent e) {
+                                                   // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ "Search", nó sẽ biến mất
+                                                   if (textField.getText().equals("Search by name")) {
+                                                       textField.setText("");
+                                                       textField.setForeground(Color.BLACK);
                                                    }
+                                               }
+
+                                               @Override
+                                               public void focusLost(FocusEvent e) {
+                                                   // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ "Search"
+                                                   if (textField.getText().isEmpty()) {
+                                                       textField.setForeground(Color.GRAY);
+                                                       textField.setText("Search by name");
+                                                   }
+                                               }
+                                           }
 
                 );
 
@@ -1929,6 +2138,14 @@ public class ManagerMainPanel extends JPanel {
                         new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
+                                reload();
+                                String find = textField.getText().toLowerCase().trim();
+                                ArrayList<ManagerInforDTO> managerInforDTOS = (ArrayList<ManagerInforDTO>) managerInfors.stream()
+                                        .filter(p -> p.getFullnameLowerCase().contains(find))
+                                        .collect(Collectors.toList());
+                                upDataTable(managerInforDTOS, modelAccManager, tableAccManager);
+
+                                System.out.println(managerInfors);
 
                             }
                         }
@@ -1944,12 +2161,11 @@ public class ManagerMainPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         reload();
-
                     }
                 });
 
                 searchPanel = new JPanel(new FlowLayout());
-                searchPanel.add(findAccText);
+                searchPanel.add(textField);
                 searchPanel.add(searchAccBt);
                 searchPanel.setBackground(Style.WORD_COLOR_WHITE);
 
@@ -1968,7 +2184,6 @@ public class ManagerMainPanel extends JPanel {
 
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(exportAccExcelBt);
-                applicationPanel.add(writeToFileTXT);
 
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(reloadAccBt);
@@ -1999,6 +2214,8 @@ public class ManagerMainPanel extends JPanel {
         }
 
         public class TableCustomerPanel extends JPanel {
+            ModifyManager modifyManager;
+
             public TableCustomerPanel() {
                 setLayout(new BorderLayout());
                 setBackground(Style.WORD_COLOR_WHITE);
@@ -2008,51 +2225,396 @@ public class ManagerMainPanel extends JPanel {
                 tableAccManager.setRowHeight(100);
                 resizeColumnWidth(tableAccManager, 219);
                 modelAccManager = (DefaultTableModel) tableAccManager.getModel();
-                managerController= new ManagerController();
-                managerInfors = managerController.getManagerInforDTO();
-                upDataTable(managerInfors, modelAccManager, tableAccManager);
-
+                managerController = new ManagerController();
+                reload();
 
                 scrollPaneAccManager = new JScrollPane(tableAccManager);
-                tabbedPaneAccManager = createTabbedPane(scrollPaneAccManager, "Customer", Style.FONT_HEADER_ROW_TABLE);
+                tabbedPaneAccManager = createTabbedPane(scrollPaneAccManager, "Information", Style.FONT_HEADER_ROW_TABLE);
+                modifyManager = new ModifyManager();
+                tabbedPaneAccManager.add(tableStatus.getMessage(), modifyManager);
 
                 add(tabbedPaneAccManager, BorderLayout.CENTER);
 
             }
         }
-        private void reload(){
-//            customers = customerController.getAll();
-//            upDataTable(customers, modelCustomer, tableCustomer);
+
+        class ModifyManager extends JPanel {
+            ChangeInfo changeInfo;
+            Avatar avatar;
+
+            ModifyManager() {
+                setLayout(new GridLayout(2, 1));
+                changeInfo = new ChangeInfo();
+                avatar = new Avatar();
+                add(changeInfo);
+                add(avatar);
+            }
+
+            public static void addFocusListenerForTextField(JTextField textField) {
+                textField.addFocusListener(new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        textField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
+                    }
+
+                    @Override
+                    public void focusLost(FocusEvent e) {
+                        textField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
+                    }
+                });
+            }
+
+
+            class ChangeInfo extends JPanel {
+                LeftPn rightPn;
+                RightPn leftPn;
+
+                ChangeInfo() {
+                    setLayout(new GridLayout(1, 2));
+                    rightPn = new LeftPn();
+                    leftPn = new RightPn();
+                    add(rightPn);
+                    add(leftPn);
+                }
+
+                class LeftPn extends JPanel {
+
+                    LeftPn() {
+                        setLayout(new GridBagLayout());
+                        setBackground(Color.WHITE);
+                        setPreferredSize(new Dimension(400, 150));
+                        Border border = BorderFactory.createTitledBorder(
+                                BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3),
+                                "Personal Information",
+                                TitledBorder.LEFT,
+                                TitledBorder.TOP,
+                                Style.FONT_TITLE_PRODUCT_18,
+                                Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE
+                        );
+                        setBorder(border);
+
+                        GridBagConstraints gbc = new GridBagConstraints();
+                        gbc.insets = new Insets(5, 5, 5, 5);  // Thiết lập khoảng cách giữa các thành phần
+
+                        // Khởi tạo các thành phần giao diện
+                        JLabel lblFullName = new JLabel("Full Name:");
+                        txtFullName = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
+                        txtFullName.setInputVerifier(new NotNullVerifier());
+                        addFocusListenerForTextField(txtFullName);
+
+
+                        JLabel lblAddress = new JLabel("Address:");
+                        txtAddress = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
+                        txtAddress.setInputVerifier(new NotNullVerifier());
+                        addFocusListenerForTextField(txtAddress);
+
+                        JLabel lblBirthday = new JLabel("Birthday:");
+                        txtBirthday = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(250, 35));
+                        txtBirthday.setInputVerifier(new BirthDayVerifier());
+                        addFocusListenerForTextField(txtBirthday);
+                        txtBirthday.setEditable(false);
+                        JButton btnCalendar = new JButton();
+                        btnCalendar.setPreferredSize(new Dimension(35, 35));
+                        btnCalendar.setFocusable(false);
+                        btnCalendar.setBackground(Color.WHITE);
+                        btnCalendar.setIcon(new ImageIcon("src/main/java/Icon/calendarIcon.png"));
+
+                        // Tạo JDialog chứa JCalendar
+                        JDialog calendarDialog = new JDialog((Frame) null, "Select Date", true);
+                        calendarDialog.setSize(400, 400);
+                        calendarDialog.setLayout(new BorderLayout());
+                        calendarDialog.setLocation(700, 200);
+                        JCalendar calendar = new JCalendar();
+                        calendar.setBackground(Color.WHITE);
+                        calendar.setFont(Style.FONT_SIZE_MENU_BUTTON);
+
+                        calendar.setMaxSelectableDate(new java.util.Date());
+
+
+                        calendarDialog.add(calendar, BorderLayout.CENTER);
+
+                        JButton btnSelect = new JButton("Select");
+                        btnSelect.setBackground(Color.WHITE);
+                        btnSelect.setFocusable(false);
+                        btnSelect.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+                        calendarDialog.add(btnSelect, BorderLayout.SOUTH);
+
+                        // Sự kiện khi nhấn nút chọn ngày
+                        btnCalendar.addActionListener(e -> calendarDialog.setVisible(true));
+                        btnSelect.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                selectedDate = new java.sql.Date(calendar.getDate().getTime());
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                txtBirthday.setText(dateFormat.format(selectedDate));
+                                calendarDialog.setVisible(false);
+                            }
+                        });
+
+                        JLabel lblPhoneNumber = new JLabel("Phone Number:");
+                        txtPhoneNumber = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
+                        txtPhoneNumber.setInputVerifier(new PhoneNumberVerifer());
+                        addFocusListenerForTextField(txtPhoneNumber);
+
+                        // Cài đặt GridBagConstraints cho các thành phần
+                        gbc.gridx = 0;
+                        gbc.gridy = 0;
+                        gbc.anchor = GridBagConstraints.WEST;
+                        add(lblFullName, gbc);
+
+                        gbc.gridx = 1;
+                        add(txtFullName, gbc);
+
+                        gbc.gridx = 0;
+                        gbc.gridy = 1;
+                        add(lblAddress, gbc);
+
+                        gbc.gridx = 1;
+                        add(txtAddress, gbc);
+
+                        gbc.gridx = 0;
+                        gbc.gridy = 2;
+                        add(lblBirthday, gbc);
+
+                        // Sử dụng một JPanel để chứa cả TextField và Button
+                        JPanel birthdayPanel = new JPanel(new BorderLayout());
+                        birthdayPanel.setBackground(Color.WHITE);
+                        birthdayPanel.add(txtBirthday, BorderLayout.CENTER);
+                        birthdayPanel.add(btnCalendar, BorderLayout.EAST);
+
+                        gbc.gridx = 1;
+                        add(birthdayPanel, gbc);
+
+                        gbc.gridx = 0;
+                        gbc.gridy = 3;
+                        add(lblPhoneNumber, gbc);
+
+                        gbc.gridx = 1;
+                        add(txtPhoneNumber, gbc);
+                    }
+                }
+
+                class RightPn extends JPanel {
+
+                    RightPn() {
+                        setLayout(new GridBagLayout());
+                        setBackground(Color.WHITE);
+                        setPreferredSize(new Dimension(400, 150));
+                        Border border = BorderFactory.createTitledBorder(
+                                BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3), // Đường viền
+                                "Account Information", // Tiêu đề
+                                TitledBorder.LEFT, // Canh trái
+                                TitledBorder.TOP, // Canh trên
+                                Style.FONT_TITLE_PRODUCT_18, // Phông chữ và kiểu chữ
+                                Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE // Màu chữ
+                        );
+                        setBorder(border);
+                        GridBagConstraints gbc = new GridBagConstraints();
+                        gbc.insets = new Insets(5, 5, 5, 5);
+
+                        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+                        // Cột 1 (JLabel)
+                        gbc.gridx = 0;
+                        gbc.gridy = 0;
+                        add(new JLabel("User name:"), gbc);
+
+                        gbc.gridy = 1;
+                        add(new JLabel("Password:"), gbc);
+
+                        gbc.gridy = 2;
+                        add(new JLabel("Email:"), gbc);
+
+                        // Cột 2 (JTextField, JPasswordField, JTextField)
+                        gbc.gridx = 1;
+                        gbc.gridy = 0;
+                        usernameField = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
+                        usernameField.setInputVerifier(new UserNameAccoutVerifier());
+                        addFocusListenerForTextField(usernameField);
+                        add(usernameField, gbc);
+
+                        gbc.gridy = 1;
+                        JPanel passwdPanel = new JPanel(new BorderLayout());
+                        passwordField = createStyledJPasswordField(Style.FONT_PLAIN_16, Style.MEDIUM_BLUE, new Dimension(250, 35));
+                        passwordField.setInputVerifier(new NotNullVerifier());
+                        passwordField.addFocusListener(new FocusListener() {
+                            @Override
+                            public void focusGained(FocusEvent e) {
+                                passwordField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
+                            }
+
+                            @Override
+                            public void focusLost(FocusEvent e) {
+                                passwordField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
+                            }
+                        });
+
+                        JButton togglePasswordButton = createShowPasswdButton(passwordField);
+                        togglePasswordButton.setPreferredSize(new Dimension(45, 35));
+                        passwdPanel.setBackground(Color.WHITE);
+                        passwdPanel.add(passwordField, BorderLayout.CENTER);
+                        passwdPanel.add(togglePasswordButton, BorderLayout.EAST);
+
+                        add(passwdPanel, gbc);
+
+                        gbc.gridy = 2;
+                        emailField = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
+                        emailField.setInputVerifier(new EmailVerifier());
+                        addFocusListenerForTextField(emailField);
+                        add(emailField, gbc);
+
+                    }
+                }
+            }
+
+
+            class Avatar extends JPanel {
+                CustomButton importImage, undoBt, cancelBt;
+
+
+                Avatar() {
+                    setLayout(new BorderLayout());
+                    setBackground(Color.WHITE);
+                    label = new JLabel("Drop your image here", SwingConstants.CENTER);
+                    label.setBackground(Color.WHITE);
+                    Border dashedBorder = BorderFactory.createDashedBorder(Style.CONFIRM_BUTTON_COLOR_GREEN, 2, 10, 20, true);
+                    Border margin = BorderFactory.createEmptyBorder(5, 10, 5, 10);
+                    Border compoundBorder = BorderFactory.createCompoundBorder(margin, dashedBorder);
+                    label.setBorder(compoundBorder);
+                    label.setPreferredSize(new Dimension(400, 300));
+
+                    JPanel uploadImagePn = new JPanel();
+                    uploadImagePn.setBackground(Color.WHITE);
+                    importImage = new CustomButton("Upload Image from your computer");
+                    importImage.setDrawBorder(false);
+                    importImage.setPreferredSize(new Dimension(300, 40));
+                    importImage.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            // Tạo JFileChooser
+                            JFileChooser fileChooser = new JFileChooser();
+                            fileChooser.setDialogTitle("Chọn hình ảnh");
+
+                            // Lọc file chỉ cho phép chọn hình ảnh
+                            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                                    "Hình ảnh (JPG, PNG, GIF)", "jpg", "png", "gif"));
+
+                            // Hiển thị hộp thoại và lấy kết quả
+                            int result = fileChooser.showOpenDialog(null);
+                            if (result == JFileChooser.APPROVE_OPTION) {
+                                // Lấy file được chọn
+                                File selectedFile = fileChooser.getSelectedFile();
+                                contextPath = selectedFile.getAbsolutePath();
+
+                                // Hiển thị hình ảnh được chọn
+                                ImageIcon imageIcon = new ImageIcon(contextPath);
+                                Image scaledImage = imageIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+                                label.setIcon(new ImageIcon(scaledImage));
+                            }
+                        }
+                    });
+
+
+                    label.setTransferHandler(new ImageTransferHandler());
+                    label.setInputVerifier(new NotNullVerifier());
+
+                    undoBt = new CustomButton("Undo");
+                    undoBt.setPreferredSize(new Dimension(100, 40));
+                    undoBt.setDrawBorder(false);
+                    undoBt.addActionListener(e->{
+                        System.out.println(btnModifyStutus);
+                        if (btnModifyStutus== true)
+                            setDataToModify(managerInfors.get(modifyId));
+                    });
+
+                    cancelBt = new CustomButton("cancel");
+                    cancelBt.setPreferredSize(new Dimension(100, 40));
+                    cancelBt.setDrawBorder(false);
+                    cancelBt.addActionListener( e->{
+                                    removeInfor();
+                            });
+
+                    uploadImagePn.add(undoBt);
+                    uploadImagePn.add(importImage);
+                    uploadImagePn.add(cancelBt);
+
+                    add(label, BorderLayout.CENTER);
+                    add(uploadImagePn, BorderLayout.SOUTH);
+                }
+
+                private class ImageTransferHandler extends TransferHandler {
+                    @Override
+                    public boolean canImport(TransferSupport support) {
+                        return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
+                    }
+
+                    @Override
+                    public boolean importData(TransferSupport support) {
+                        if (!canImport(support)) return false;
+
+                        try {
+                            Transferable transferable = support.getTransferable();
+                            java.util.List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                            if (!files.isEmpty()) {
+                                File file = files.get(0);
+                                String fileName = file.getName();
+                                String nameImg = String.valueOf(files.hashCode());
+                                contextPath = "src/main/java/img/" + nameImg + fileName;
+                                System.out.println("contextPart " + contextPath);
+                                Path targetPath = Paths.get(contextPath);
+
+                                Files.createDirectories(targetPath.getParent());
+                                Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+                                ImageIcon avatarIcon = new ImageIcon(targetPath.toString());
+                                Image scaledImage = avatarIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                                label.setIcon(new ImageIcon(scaledImage));
+                                label.setText("");
+
+                                return true;
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        return false;
+                    }
+                }
+            }
+
+        }
+
+        private void reload() {
+            managerInfors = managerController.getManagerInforDTO();
+            upDataTable(managerInfors, modelAccManager, tableAccManager);
 //            billTextDisplayPanal.setText("You should continue to find the customer Id!!!");
         }
-        public int getIndexSelectedTab(){
+
+        public int getIndexSelectedTab() {
             return tabbedPaneAccManager.getSelectedIndex();
         }
 
+        private CategoryDataset createDataset() {
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            // Dữ liệu mẫu: Thay thế bằng dữ liệu từ database
+            Map<String, Integer> topCustomers = new HashMap<>();
 
-
-
-            private CategoryDataset createDataset() {
-                DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-                // Dữ liệu mẫu: Thay thế bằng dữ liệu từ database
-                Map<String, Integer> topCustomers = new HashMap<>();
-
-                // Thêm dữ liệu vào dataset
-                for (Map.Entry<String, Integer> entry : topCustomers.entrySet()) {
-                    dataset.addValue(entry.getValue(), "Số lượng mua", entry.getKey());
-                }
-
-                return dataset;
+            // Thêm dữ liệu vào dataset
+            for (Map.Entry<String, Integer> entry : topCustomers.entrySet()) {
+                dataset.addValue(entry.getValue(), "Số lượng mua", entry.getKey());
             }
 
-            private void consertCustomerToMap(ArrayList<Customer> customers, Map<String, Integer> map) {
-                for (Customer customer : customers) {
-                    map.put(customer.getFullName(), customer.getNumberOfPurchased());
-                }
+            return dataset;
+        }
+
+        private void consertCustomerToMap(ArrayList<Customer> customers, Map<String, Integer> map) {
+            for (Customer customer : customers) {
+                map.put(customer.getFullName(), customer.getNumberOfPurchased());
             }
+        }
 
 
-        public static void upDataTable(ArrayList<ManagerInforDTO> managerInforDTOS, DefaultTableModel modelCustomerTable ,JTable tableCustomer) {
+        public static void upDataTable(ArrayList<ManagerInforDTO> managerInforDTOS, DefaultTableModel modelCustomerTable, JTable tableCustomer) {
             Object[][] rowData = ManagerInforDTO.getDataOnTable(managerInforDTOS);
             ProductPanel.TablePanel.removeDataTable(modelCustomerTable);
             for (int i = 0; i < rowData.length; i++) {
@@ -2086,19 +2648,19 @@ public class ManagerMainPanel extends JPanel {
             cancelBt.setGradientColors(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.GRAY);
             cancelBt.setBackgroundColor(Style.LIGHT_BlUE);
             cancelBt.setBorderRadius(20);
-            cancelBt.setPreferredSize(new Dimension(200,50));
+            cancelBt.setPreferredSize(new Dimension(200, 50));
             cancelBt.setFont(Style.FONT_TITLE_PRODUCT);
 
             updateBt = new CustomButton("Update");
             updateBt.setGradientColors(new Color(58, 106, 227), Color.GREEN);
             updateBt.setBackgroundColor(Style.LIGHT_BlUE);
             updateBt.setBorderRadius(20);
-            updateBt.setPreferredSize(new Dimension(200,50));
+            updateBt.setPreferredSize(new Dimension(200, 50));
             updateBt.setFont(Style.FONT_TITLE_PRODUCT);
             updateBt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    JOptionPane.showConfirmDialog(null,"Confirm Your Change?", "Confirm",JOptionPane.YES_NO_OPTION );
+                    JOptionPane.showConfirmDialog(null, "Confirm Your Change?", "Confirm", JOptionPane.YES_NO_OPTION);
                 }
             });
 
@@ -2165,7 +2727,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(emailLabel, gbc);
 
-                emailField = createStyledTextField();
+                emailField = createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 2;
                 gbc.gridwidth = 1;
@@ -2178,7 +2740,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(nameLabel, gbc);
 
-                fullNameField = createStyledTextField();
+                fullNameField = createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 4;
                 gbc.gridwidth = 1;
@@ -2196,7 +2758,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(addressLabel, gbc);
 
-                addressField = createStyledTextField();
+                addressField = createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 6;
                 gbc.gridwidth = 1;
@@ -2213,7 +2775,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(oldPasswdLabel, gbc);
 
-                oldPasswordField = createStyledJPasswordField();
+                oldPasswordField = createStyledJPasswordField(Style.FONT_TEXT_CUSTOMER, Style.MEDIUM_BLUE, new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 8;
                 gbc.gridwidth = 1;
@@ -2231,7 +2793,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(newPasswdLabel, gbc);
 
-                newPasswordField = createStyledJPasswordField();
+                newPasswordField = createStyledJPasswordField(Style.FONT_TEXT_CUSTOMER, Style.MEDIUM_BLUE, new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 10;
                 gbc.gridwidth = 1;
@@ -2249,7 +2811,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(confirmPasswdLabel, gbc);
 
-                confirmPasswordField = createStyledJPasswordField();
+                confirmPasswordField = createStyledJPasswordField(Style.FONT_TEXT_CUSTOMER, Style.MEDIUM_BLUE, new Dimension(350, 40));
                 gbc.gridx = 0;
                 gbc.gridy = 12;
                 gbc.gridwidth = 1;
@@ -2262,29 +2824,6 @@ public class ManagerMainPanel extends JPanel {
                 add(showRetypeNewPasswd, gbc);
             }
 
-            private JTextField createStyledTextField() {
-                JTextField field = new JTextField();
-                field.setFont(Style.FONT_TEXT_CUSTOMER);
-                field.setPreferredSize(new Dimension(350, 40));
-                field.setEditable(false);
-                field.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(Style.MEDIUM_BLUE),
-                        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-                field.setBackground(Color.WHITE);
-                return field;
-            }
-
-            private JPasswordField createStyledJPasswordField() {
-                JPasswordField passwdField = new JPasswordField();
-                passwdField.setEchoChar('*');
-                passwdField.setFont(Style.FONT_BUTTON_PAY);
-                passwdField.setPreferredSize(new Dimension(350, 40));
-                passwdField.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(Style.MEDIUM_BLUE),
-                        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-
-                return passwdField;
-            }
 
             private JButton createEditFieldButton(JTextField textField) {
                 JButton editBt = new JButton();
@@ -2380,6 +2919,31 @@ public class ManagerMainPanel extends JPanel {
         that.setPreferredSize(size);
     }
 
+    private JTextField createStyledTextField(Font font, Color textColor, Color borderColor, Dimension size) {
+        JTextField field = new JTextField();
+        field.setFont(font);
+        field.setForeground(textColor);
+        field.setPreferredSize(size);
+        field.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        field.setBackground(Color.WHITE);
+        return field;
+    }
+
+    private JPasswordField createStyledJPasswordField(Font font, Color borderColor, Dimension size) {
+        JPasswordField passwdField = new JPasswordField();
+        passwdField.setEchoChar('*');
+        passwdField.setFont(font);
+        passwdField.setPreferredSize(size);
+        passwdField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+        return passwdField;
+    }
+
+
     private static void setStyleButton(JButton that, Font font, Color textColor, Color backgroundColor, int textPosition, Dimension size) {
         that.setFont(font);
         that.setForeground(textColor);
@@ -2409,6 +2973,42 @@ public class ManagerMainPanel extends JPanel {
         });
 
         return clearAllButton;
+    }
+
+    private static JButton createShowPasswdButton(JPasswordField passwordField) {
+        JButton toggleButton = new JButton();
+        toggleButton.setBackground(Style.LIGHT_BlUE);
+        toggleButton.setFocusPainted(false);
+        toggleButton.setFocusable(false);
+        toggleButton.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
+        ImageIcon showPasswd = new ImageIcon("src/main/java/Icon/showPasswd_Icon.png");
+        ImageIcon hidePasswd = new ImageIcon("src/main/java/Icon/hidePasswd_Icon.png");
+
+        toggleButton.setIcon(showPasswd);
+        toggleButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                toggleButton.setBackground(new Color(130, 180, 230));
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                toggleButton.setBackground(Style.LIGHT_BlUE);
+            }
+        });
+
+        toggleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (passwordField.getEchoChar() != '\u0000') {
+                    passwordField.setEchoChar('\u0000');
+                    toggleButton.setIcon(hidePasswd);
+                } else {
+                    // Ẩn mật khẩu
+                    passwordField.setEchoChar('*');
+                    toggleButton.setIcon(showPasswd);
+                }
+            }
+        });
+        return toggleButton;
     }
 
     // Phương thức xóa các JTextField trong panel
@@ -2448,6 +3048,7 @@ public class ManagerMainPanel extends JPanel {
 
         return table;
     }
+
     // thay đổi kích thước của cột trong bảng
     public void resizeColumnWidth(JTable table, int width) {
         for (int i = 0; i < table.getColumnCount(); i++) {
@@ -2456,6 +3057,7 @@ public class ManagerMainPanel extends JPanel {
             table.getColumnModel().getColumn(1).setPreferredWidth(120);
         }
     }
+
     // create a TabbedPane
     public JTabbedPane createTabbedPane(JScrollPane scrollPane, String title, Font font) {
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -2464,4 +3066,6 @@ public class ManagerMainPanel extends JPanel {
         tabbedPane.setFocusable(false);
         return tabbedPane;
     }
+
+
 }

@@ -13,6 +13,7 @@ public class Style {
     public static final Font FONT_SIZE_MIN_PRODUCT = new Font("Arial", Font.PLAIN, 13);
     public static final Font FONT_TEXT_TABLE = new Font("Arial", Font.PLAIN, 16);
     public static final Font FONT_HEADER_ROW_TABLE = new Font("Arial", Font.BOLD, 16);
+    public static final Font FONT_PLAIN_16 = new Font("Arial", Font.PLAIN, 16);
     public static final Color ADD_BUTTON_COLOR_GREEN = new Color(100, 218, 77);// màu xanh cho nút thêm sp
     public static final Color DELETE_BUTTON_COLOR_RED = new Color(204, 88, 88);
     public static final Color CANCEL_BUTTON_COLOR_RED = new Color(143, 66, 66);

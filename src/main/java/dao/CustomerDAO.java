@@ -156,7 +156,7 @@ public class CustomerDAO implements Repository<Customer> {
     @Override
     public Customer update(Customer customer) {
         try {
-            String sql = "UPDATE customer SET fullname = ?, email = ?, address = ?, password = ?,avata_img=? ,number_of__purchased =? WHERE id = ?";
+            String sql = "UPDATE customer SET fullname = ?, email = ?, address = ?, password = ?,avata_img=? ,number_of_purchased =? WHERE id = ?";
             preparedStatement = connection.prepareStatement(sql);
             setAccountParameter(preparedStatement, customer);
             preparedStatement.setInt(7, customer.getId());
@@ -257,6 +257,8 @@ public class CustomerDAO implements Repository<Customer> {
 
 
 
+
+
     @Override
     public ArrayList<Customer> sortByColumn(String column) {
         return null;
@@ -266,5 +268,17 @@ public class CustomerDAO implements Repository<Customer> {
         CustomerDAO customerDAO = new CustomerDAO();
         System.out.println(customerDAO.getDataCustomerOrderById(3));
 //        System.out.println(customerDAO.indByEmail("1233@abc.com")save(new Customer("nguyen huu duy","duynguyenavg@gmail.com","tien giang , chau thành diem hy","123")));
+    }
+
+    public void updatePassword(String s, int id) {
+        try {
+            String sql = "UPDATE customer SET password = ? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, s);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

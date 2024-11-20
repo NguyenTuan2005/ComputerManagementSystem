@@ -81,6 +81,23 @@ public class ProductDAO implements Repository<Product> {
         return products;
     }
 
+    public ArrayList<Product> getEager() {
+        ArrayList<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM product WHERE delete_row = 1 and status = '"+Product.AVAILABLE+"'";
+
+        try {
+            statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            while (rs.next()) {
+                Product product = mapResultSetToProduct(rs);
+                products.add(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
     @Override
     public ArrayList<Product> findByName(String name) {
 //        LOWER(product_name) LIKE LOWER('%từ_khóa_tìm_kiếm%')

@@ -2,8 +2,8 @@ package view;
 
 import Config.ButtonConfig;
 import Config.CustomerExporter;
-import Config.DateConfig;
 import Config.ExcelConfig;
+import Enum.TableStatus;
 import Model.*;
 import Verifier.*;
 import com.toedter.calendar.JCalendar;
@@ -18,16 +18,18 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import view.OtherComponent.*;
-import view.OverrideComponent.*;
-import Enum.*;
+import view.OverrideComponent.CircularImage;
+import view.OverrideComponent.CustomButton;
+import view.OverrideComponent.ToastNotification;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import java.awt.*;
 import java.awt.Image;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
@@ -36,9 +38,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1361,24 +1363,28 @@ public class ManagerMainPanel extends JPanel {
                             reloadProducts(Product.AVAILABLE);
                             yield tableExport;
                         }
-                        default -> null;
+                        default -> throw new IllegalStateException("Unexpected value: " + index);
                     };
                 }
 
                 private void setForSaleHandle() {
                     JTable selectedTable = getSelectedTable();
 
-                    if (selectedTable != null) {
-                        int[] selectedRows = selectedTable.getSelectedRows();
+                    int[] selectedRows = selectedTable.getSelectedRows();
+                    if (selectedRows.length > 0) {
+                        int y = -1, duration = 3000;
                         for (int row : selectedRows) {
                             int productId = Integer.parseInt(selectedTable.getValueAt(row, 1).toString());
-
-                            if (changeStatus(productId, Product.AVAILABLE)) ToastNotification.showToast("Success adding Product to sale", 3000, 600, 50);
-                            else ToastNotification.showToast("Fail adding Product to sale", 3000, 600, 50);
+                            String productName = (String) selectedTable.getValueAt(row, 2);
+                            if (changeStatus(productId, Product.AVAILABLE)) {
+                                ToastNotification.showToast("Successfully set product " + productName + " to Available for sale.", duration, 50, -1, y++);
+                            }
+                            else ToastNotification.showToast("Failed to set product " + productName + " to Available for sale.", duration, 50, -1, y++);
                             updateProduct();
+                            duration += 100;
                         }
                     } else {
-                        ToastNotification.showToast("Please select a row for add product to sale.", 3000, 600, 50);
+                        ToastNotification.showToast("Please select a row to add product for sale.", 3000, 50, -1, -1);
                     }
                 }
 
@@ -1404,7 +1410,7 @@ public class ManagerMainPanel extends JPanel {
                         deletedProduct(productId);
                         updateProduct();
                     } else {
-                        ToastNotification.showToast("Please select a row to deleted.", 3000, 400, 50);
+                        ToastNotification.showToast("Please select a row to deleted.", 3000, 50, -1, -1);
                     }
                 }
             }
@@ -2344,7 +2350,7 @@ public class ManagerMainPanel extends JPanel {
                         btnSelect.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                selectedDate = new java.sql.Date(calendar.getDate().getTime());
+                                selectedDate = new Date(calendar.getDate().getTime());
 
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                                 txtBirthday.setText(dateFormat.format(selectedDate));
@@ -2497,7 +2503,7 @@ public class ManagerMainPanel extends JPanel {
                             fileChooser.setDialogTitle("Chọn hình ảnh");
 
                             // Lọc file chỉ cho phép chọn hình ảnh
-                            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                            fileChooser.setFileFilter(new FileNameExtensionFilter(
                                     "Hình ảnh (JPG, PNG, GIF)", "jpg", "png", "gif"));
 
                             // Hiển thị hộp thoại và lấy kết quả
@@ -2555,7 +2561,7 @@ public class ManagerMainPanel extends JPanel {
 
                         try {
                             Transferable transferable = support.getTransferable();
-                            java.util.List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                            List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                             if (!files.isEmpty()) {
                                 File file = files.get(0);
                                 String fileName = file.getName();
@@ -2958,7 +2964,7 @@ public class ManagerMainPanel extends JPanel {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();
-        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
+        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
     }
 

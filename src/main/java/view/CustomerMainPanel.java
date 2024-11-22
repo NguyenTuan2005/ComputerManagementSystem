@@ -1,5 +1,6 @@
 package view;
 
+import Config.ProductOrderConfig;
 import Model.Customer;
 import Model.Product;
 import controller.ProductController;
@@ -38,6 +39,9 @@ public class CustomerMainPanel extends JPanel {
     static final String NOTIFICATION_CONSTRAINT = "notification";
     static final String PURCHASED_CONSTRAINT = "purchased";
     static final String CHANGE_INFORMATION_CONSTRAINT = "changeInformation";
+
+    private ArrayList<Panel> productOrderPanel = new ArrayList<>();
+    private ArrayList<ProductOrderConfig> productOrders = new ArrayList<>();
 
     //constructor
     public CustomerMainPanel() {
@@ -1380,7 +1384,8 @@ public class CustomerMainPanel extends JPanel {
         setStyleButton(addToCartBt, Style.FONT_HEADER_ROW_TABLE, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(80, 30));
         addToCartBt.addActionListener(e -> {
             ToastNotification.showToast("Product added to Cart!", 3000, 50,-1,-1);
-            addNewPanelToCartContainer(createPanelForCart(filePaths, product));
+            addNewPanelToCartContainer(createPanelForCart(product));
+
 
         });
         gbc.gridx = 1;
@@ -1401,13 +1406,15 @@ public class CustomerMainPanel extends JPanel {
         this.containerCart.repaint();
     }
 
-    public JPanel createPanelForCart(ArrayList<Model.Image> urls, Product product) {
+    //duy code
+    public JPanel createPanelForCart( Product product) {
+        ProductOrderConfig productOrderConfig = new ProductOrderConfig(product);
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
-
-        JLabel imageLabel = new JLabel(createImageForProduct(urls.get(0).getUrl(), 200, 200));
+        JLabel imageLabel = new JLabel(createImageForProduct(product.getImages().get(0).getUrl(), 200, 200));
         panel.add(imageLabel, BorderLayout.WEST);
+
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.setBackground(Color.WHITE);
@@ -1432,9 +1439,18 @@ public class CustomerMainPanel extends JPanel {
 
         // Thêm JComboBox cho số lượng
         JComboBox<Integer> quantityComboBox = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+//        System.out.println(quantityComboBox.getSelectedIndex());
         quantityComboBox.setPreferredSize(new Dimension(60, 30));
         quantityComboBox.setFont(Style.FONT_TITLE_PRODUCT_18);
         setComboBoxScrollBarColor(quantityComboBox,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.LIGHT_BlUE);
+        quantityComboBox.addActionListener(e -> {
+            Integer selectedNumber = (Integer) quantityComboBox.getSelectedItem();
+            System.out.println("Số đã chọn: " + selectedNumber);
+            productOrderConfig.setQuatity(selectedNumber);
+            this.productOrders.add(productOrderConfig);
+
+
+        });
         bot.add(quantityComboBox);
         bot.add(Box.createHorizontalStrut(50));
 

@@ -83,7 +83,6 @@ public class CustomerMenuPanel extends JPanel {
             setIcon("src/main/java/Icon/catalog_Icon.png", productCatalogBt);
             add(productCatalogBt);
 
-
             orderHistoryBt = new JButton("ORDER HISTORY");
             setFormatButton(orderHistoryBt);
             setIcon("src/main/java/Icon/purchasedList_Icon.png", orderHistoryBt);
@@ -144,18 +143,15 @@ public class CustomerMenuPanel extends JPanel {
     public void setProductCatalogBtListener(ActionListener listener) {
         productCatalogBt.addActionListener(listener);
     }
-
     public void setNotificationBtListener(ActionListener listener) {
         notificationBt.addActionListener(listener);
     }
-
     public void setPurchasedBtListener(ActionListener listener) {
         orderHistoryBt.addActionListener(listener);
     }
     public void setChangeInfoBtListener(ActionListener listener) {
         changeInfoBt.addActionListener(listener);
     }
-
     //thiết lập ActionListener cho nút "log out"
     public void setLogoutBtListener(ActionListener listener) {
         logoutBt.addActionListener(listener);

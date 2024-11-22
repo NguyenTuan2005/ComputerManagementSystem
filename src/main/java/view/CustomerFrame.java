@@ -64,7 +64,8 @@ public class CustomerFrame extends JFrame {
                         JOptionPane.YES_NO_OPTION);
                 if (confirmed == JOptionPane.YES_OPTION) {
 
-
+                    setVisible(false);
+                    new LoginFrame();
 
                 }
             }

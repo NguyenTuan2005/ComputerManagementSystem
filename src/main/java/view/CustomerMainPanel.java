@@ -1383,7 +1383,7 @@ public class CustomerMainPanel extends JPanel {
         setStyleButton(addToCartBt, Style.FONT_HEADER_ROW_TABLE, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(80, 30));
         addToCartBt.addActionListener(e -> {
             ToastNotification.showToast("Product added to Cart!", 3000, 50,-1,-1);
-            addNewPanelToCartContainer(createPanelForCart(filePaths, product));
+            addNewPanelToCartContainer(createPanelForCart(urls, product));
 
         });
         gbc.gridx = 1;

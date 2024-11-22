@@ -41,7 +41,9 @@ public class ToastNotification {
         if (x == -1) {
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             int screenWidth = screenSize.width;
-            x = screenWidth - width - 10; // Đặt cách mép phải
+            int screenHeight = screenSize.height;
+            x = screenWidth - width - 10;// Đặt cách mép phải
+            y = screenHeight - height - (50 * (y + 2));
         }
 
         window.setLocation(x, y);

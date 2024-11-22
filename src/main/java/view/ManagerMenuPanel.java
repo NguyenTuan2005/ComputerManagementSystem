@@ -3,6 +3,7 @@ package view;
 import Config.CurrentUser;
 
 import view.OverrideComponent.CircularImage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -12,7 +13,7 @@ public class ManagerMenuPanel extends JPanel {
     ManagerFrame managerFrame;
     JLabel role, name, credit;
     CircularImage avatar;
-    JButton productBt, supplierBt, customerBt, inventoryBt, accountManagementBt, notificationBt, changeInformBt, logoutBt, switchToCustomerBt;
+    JButton productBt, supplierBt, customerBt, inventoryBt, accountManagementBt, notificationBt, changeInformBt, logoutBt, switchToLoginBt;
     GridBagConstraints gbc;
 
     public ManagerMenuPanel(LoginFrame loginFrame, ManagerFrame managerFrame) {
@@ -49,23 +50,31 @@ public class ManagerMenuPanel extends JPanel {
         public ComponentTop() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBackground(Style.BACKGROUND_COLOR);
-            setBorder(BorderFactory.createEmptyBorder());
-//            role = new JLabel(loginFrame.roleComboBox.getSelectedItem().toString());
-//            role.setFont(new Font("Arial", Font.PLAIN, 25));
-//            role.setHorizontalAlignment(JLabel.CENTER);
-//            role.setForeground(Color.GREEN);
-//            add(role, BorderLayout.NORTH);
-            avatar = new CircularImage("src/main/java/Icon/dragon_Icon.png",60,60,true);
+            setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Viền tổng thể
+
+            // JLabel role
+            role = new JLabel("Manager", SwingConstants.CENTER);
+            role.setFont(Style.FONT_BUTTON_LOGIN_FRAME);
+            role.setForeground(Color.WHITE);
+            role.setAlignmentX(Component.CENTER_ALIGNMENT); // Căn giữa
+            add(role);
+
+            add(Box.createVerticalStrut(10));
+            avatar = new CircularImage("src/main/java/Icon/dragon_Icon.png", 60, 60, true);
             avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(avatar);
 
-            name = new JLabel(CurrentUser.USER_NAME+" ");
-            name.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            // Thêm khoảng cách giữa role và name
+            add(Box.createVerticalStrut(10));
+
+            // JLabel name
+            name = new JLabel(CurrentUser.USER_NAME + " ");
+            name.setAlignmentX(Component.CENTER_ALIGNMENT); // Căn giữa
             name.setForeground(Style.WORD_COLOR_WHITE);
             name.setFont(new Font("Arial", Font.PLAIN, 25));
-
-
             add(name);
+
         }
     }
 
@@ -74,33 +83,30 @@ public class ManagerMenuPanel extends JPanel {
             setLayout(new GridLayout(0, 1, 0, 20));
             setBackground(Style.BACKGROUND_COLOR);
 
-            productBt = new JButton("PRODUCT");
-            setFormatButton(productBt);
+            productBt = createButton("PRODUCT", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/productIcon.png", productBt);
             add(productBt);
 
-            supplierBt = new JButton("SUPPLIER");
-            setFormatButton(supplierBt);
+            supplierBt = createButton("SUPPLIER", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
+
             setIcon("src/main/java/Icon/supplierIcon.png", supplierBt);
             add(supplierBt);
 
-            customerBt = new JButton("CUSTOMER");
-            setFormatButton(customerBt);
+            customerBt = createButton("CUSTOMER", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
+
             setIcon("src/main/java/Icon/iconCustomer.png", customerBt);
             add(customerBt);
 
-            inventoryBt = new JButton("INVENTORY");
-            setFormatButton(inventoryBt);
+            inventoryBt = createButton("INVENTORY", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
+
             setIcon("src/main/java/Icon/inventory_Icon.png", inventoryBt);
             add(inventoryBt);
 
-            accountManagementBt = new JButton("ACCOUNT");
-            setFormatButton(accountManagementBt);
+            accountManagementBt = createButton("ACCOUNT", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/user_15094854.png", accountManagementBt);
             add(accountManagementBt);
 
-            notificationBt = new JButton("NOTIFICATION");
-            setFormatButton(notificationBt);
+            notificationBt = createButton("NOTIFICATION", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/iconNotification.png", notificationBt);
             add(notificationBt);
         }
@@ -108,27 +114,28 @@ public class ManagerMenuPanel extends JPanel {
 
     class ComponentBottom extends JPanel {
         public ComponentBottom() {
-            setLayout(new GridLayout(3, 1, 0, 10));
+            setLayout(new GridLayout(4, 1, 0, 5));
             setBackground(Style.BACKGROUND_COLOR);
 
-            changeInformBt = new JButton("CHANGE INFORMATION");
-            setFormatButton(changeInformBt);
+            changeInformBt = createButton("CHANGE INFORMATION", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/iconChangeInform.png", changeInformBt);
             add(changeInformBt);
 
-            logoutBt = new JButton("LOGOUT");
-            setFormatButton(logoutBt);
-            logoutBt.setForeground(new Color(176, 52, 52));
-            logoutBt.setFont(new Font("Arial", Font.BOLD, 15));
+            switchToLoginBt = createButton("SWITCH TO LOGIN", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
+            setIcon("src/main/java/Icon/switchRole_Icon.png", switchToLoginBt);
+            add(switchToLoginBt);
+
+            logoutBt = createButton("LOGOUT", Style.FONT_SIZE_MENU_BUTTON, Style.CANCEL_BUTTON_COLOR_RED, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
             add(logoutBt);
+
             credit = new JLabel("     Group 2");
             add(credit);
         }
     }
 
     // set icon cho button duy đã tại conflict tại đây >>>
-    public static  void setIcon(String url, JButton that) {
+    public static void setIcon(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();
@@ -136,14 +143,15 @@ public class ManagerMenuPanel extends JPanel {
         that.setIcon(new ImageIcon(resizedImage));
     }
 
-    // format lai dinh dang button
-    private void setFormatButton(JButton that) {
-        that.setFocusable(false);
-        that.setBackground(Style.BACKGROUND_COLOR);
-        that.setForeground(Style.WORD_COLOR_WHITE);
-        that.setFont(Style.FONT_SIZE_MENU_BUTTON);
-        that.setHorizontalAlignment(SwingConstants.LEFT);
-        that.setBorderPainted(false);
+    public JButton createButton(String title, Font font, Color textColor, Color backgroundColor) {
+        JButton bt = new JButton(title);
+        bt.setBackground(backgroundColor);
+        bt.setForeground(textColor);
+        bt.setFont(font);
+        bt.setHorizontalAlignment(SwingConstants.LEFT);
+        bt.setBorderPainted(false);
+        bt.setFocusable(false);
+        return bt;
     }
 
     // thiết lập ActionListener cho nút "Sản phẩm"
@@ -170,6 +178,7 @@ public class ManagerMenuPanel extends JPanel {
     public void setAccountManagementButtonListener(ActionListener listener) {
         accountManagementBt.addActionListener(listener);
     }
+
     //thiết lập ActionListener cho nút "notification"
     public void setNotificationButtonListener(ActionListener listener) {
         notificationBt.addActionListener(listener);
@@ -180,6 +189,9 @@ public class ManagerMenuPanel extends JPanel {
         changeInformBt.addActionListener(listener);
     }
 
+    public void setswitchToLoginListener(ActionListener listener) {
+        switchToLoginBt.addActionListener(listener);
+    }
     //thiết lập ActionListener cho nút "log out"
     public void setLogoutButtonListener(ActionListener listener) {
         logoutBt.addActionListener(listener);

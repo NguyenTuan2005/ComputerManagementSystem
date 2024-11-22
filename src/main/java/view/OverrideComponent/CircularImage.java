@@ -19,16 +19,8 @@ public class CircularImage extends JLabel {
 		this.width = width;
 		this.height = height;
 		this.isAvatar = isAvatar;
-		try {
-			BufferedImage originalImage = ImageIO.read(new File(imagePath));
-			BufferedImage tickImage = ImageIO.read(new File("src/main/java/Icon/tick_Icon.png")); // Tải ảnh dấu tích xanh
-			circularImage = createCircularImage(originalImage, tickImage, width, height);
-			setIcon(new ImageIcon(circularImage)); // Đặt hình ảnh tròn làm Icon
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		setImage(imagePath);
 	}
-
 
 	private BufferedImage createCircularImage(BufferedImage image, BufferedImage tickImage, int width, int height) {
 		int diameter = Math.min(width, height);
@@ -66,6 +58,17 @@ public class CircularImage extends JLabel {
 			return circularImage;
 		}
 		return circularImage;
+	}
+
+	public void setImage(String imagePath) {
+		try {
+			BufferedImage originalImage = ImageIO.read(new File(imagePath));
+			BufferedImage tickImage = ImageIO.read(new File("src/main/java/Icon/tick_Icon.png")); // Tải ảnh dấu tích xanh
+			circularImage = createCircularImage(originalImage, tickImage, width, height);
+			setIcon(new ImageIcon(circularImage));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
 

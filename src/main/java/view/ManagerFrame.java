@@ -81,6 +81,18 @@ public class ManagerFrame extends JFrame {
                 setHover(ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT);
             }
         });
+        managerMenuPanel.setswitchToLoginListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int confirmed = JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to switch to Login Screen?", "Switch to Login Screen",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (confirmed == JOptionPane.YES_OPTION) {
+                    loginFrame.setVisible(true);
+                }
+            }
+        });
 
         managerMenuPanel.setLogoutButtonListener(new ActionListener() {
             @Override

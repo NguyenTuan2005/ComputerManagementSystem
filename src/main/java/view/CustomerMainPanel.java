@@ -8,6 +8,7 @@ import Model.Supplier;
 import view.OverrideComponent.*;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -22,7 +23,8 @@ import java.util.Arrays;
 public class CustomerMainPanel extends JPanel {
     JPanel containerCatalog;
     JPanel containerCart = new JPanel(new GridBagLayout());
-    JPanel containerProductDetail = new JPanel(new BorderLayout());;
+    JPanel containerProductDetail = new JPanel(new BorderLayout());
+    ;
     JPanel notificationContainer;
 
     CardLayout cardLayout;
@@ -94,11 +96,10 @@ public class CustomerMainPanel extends JPanel {
         private CustomButton cartButton, allBt, gaming, office, pcCase, cheapest, luxury, selectedButton;
         JLabel shopName;
         JTextField searchTextField;
-
-
+        private static ProductController productController = new ProductController();
+        private static ArrayList<Product> productsAll = productController.getAll();
         CardLayout cardLayoutMain = new CardLayout();
-//        private static ProductController productController = new ProductController();
-//        private static ArrayList<Product> productsAll = productController.getAll();
+
 
         public ProductCatalogMainPanel() {
             setLayout(cardLayoutMain);
@@ -143,39 +144,14 @@ public class CustomerMainPanel extends JPanel {
                 gbc.anchor = GridBagConstraints.LINE_START;
                 searchBar.add(shopName, gbc);
 
-                searchTextField = new JTextField("Search");
-                searchTextField.setPreferredSize(new Dimension(320, 40));
-                searchTextField.setFont(Style.FONT_TEXT_CUSTOMER);
-                searchTextField.setForeground(Color.GRAY);
-                searchTextField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
-                // Thêm FocusListener để kiểm soát khi người dùng nhấn và rời khỏi JTextField
-                searchTextField.addFocusListener(new FocusListener() {
-                    @Override
-                    public void focusGained(FocusEvent e) {
-                        // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ "Search", nó sẽ biến mất
-                        if (searchTextField.getText().equals("Search")) {
-                            searchTextField.setText("");
-                            searchTextField.setForeground(Color.BLACK);
-                        }
-                    }
-
-                    @Override
-                    public void focusLost(FocusEvent e) {
-                        // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ "Search"
-                        if (searchTextField.getText().isEmpty()) {
-                            searchTextField.setForeground(Color.GRAY);
-                            searchTextField.setText("Search");
-                        }
-                    }
-                });
+                searchTextField = createTextFieldWithPlaceholder("Search",Style.FONT_TEXT_CUSTOMER,new Dimension(320, 40));
                 gbc.gridx = 1;
                 gbc.weightx = 0;
                 gbc.anchor = GridBagConstraints.CENTER;
                 gbc.insets = new Insets(10, 0, 0, 0);
                 searchBar.add(searchTextField, gbc);
 
-                searchBt = new JButton();
-                setStyleButton(searchBt, Style.FONT_TEXT_CUSTOMER, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT, new Dimension(68, 40));
+                searchBt =  createCustomButton("",Style.FONT_TEXT_LOGIN_FRAME, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.LIGHT_BlUE,SwingConstants.CENTER,0, new Dimension(50, 40));
                 setIconSmallButton("src/main/java/Icon/search_Icon.png", searchBt);
                 gbc.gridx = 2;
                 gbc.weightx = 0;
@@ -191,7 +167,6 @@ public class CustomerMainPanel extends JPanel {
                     ProductCatalogMainPanel.this.show("cart");
                 });
 
-
                 gbc.gridx = 3;
                 gbc.weightx = 1.0;
                 gbc.anchor = GridBagConstraints.LINE_END;
@@ -204,22 +179,53 @@ public class CustomerMainPanel extends JPanel {
                 TabBar.setBackground(Color.WHITE);
 
                 allBt = createCustomButton("All", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
-                allBt.addActionListener(e -> updateSelectedButton(allBt));
+                allBt.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateSelectedButton(allBt);
 
+                    }
+                });
                 gaming = createCustomButton("Laptop Gaming", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(150, 25));
-                gaming.addActionListener(e -> updateSelectedButton(gaming));
+                gaming.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateSelectedButton(gaming);
 
+                    }
+                });
                 office = createCustomButton("Laptop Office", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(150, 25));
-                office.addActionListener(e -> updateSelectedButton(office));
+                office.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateSelectedButton(office);
 
+                    }
+                });
                 pcCase = createCustomButton("PC Case", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
-                pcCase.addActionListener(e -> updateSelectedButton(pcCase));
-
+                pcCase.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateSelectedButton(pcCase);
+                    }
+                });
                 cheapest = createCustomButton("Cheapest", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
-                cheapest.addActionListener(e -> updateSelectedButton(cheapest));
+                cheapest.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateSelectedButton(cheapest);
+
+                    }
+                });
 
                 luxury = createCustomButton("Luxury", Style.FONT_SIZE_MENU_BUTTON, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
-                luxury.addActionListener(e -> updateSelectedButton(luxury));
+                luxury.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateSelectedButton(luxury);
+
+                    }
+                });
 
                 TabBar.add(allBt);
                 TabBar.add(gaming);
@@ -232,6 +238,7 @@ public class CustomerMainPanel extends JPanel {
                 add(searchBar, BorderLayout.CENTER);
                 add(TabBar, BorderLayout.SOUTH);
             }
+
             private void updateSelectedButton(CustomButton button) {
                 Color defaultColor = Color.WHITE;
                 Color selectedColor = Style.BACKGROUND_COLOR;
@@ -259,12 +266,9 @@ public class CustomerMainPanel extends JPanel {
             DisplayProductPanel() {
                 cardLayoutDisplayProduct = new CardLayout();
                 setLayout(cardLayoutDisplayProduct);
-
                 add(displayProductList, "list");
                 add(displaySingleProductPn, "oneProduct");
-
                 cardLayoutDisplayProduct.show(this, "list");
-
             }
 
             public void showProduct(String title) {
@@ -278,32 +282,17 @@ public class CustomerMainPanel extends JPanel {
                     setLayout(new BorderLayout());
                     containerCatalog = new JPanel(new GridBagLayout());
                     containerCatalog.setBackground(Color.WHITE);
-                    ProductController  productController = new ProductController();
+                    ProductController productController = new ProductController();
                     ArrayList<Product> products = productController.getEagerProducts();
+                    System.out.println( products.size());
                     for (int i = 0; i < products.size(); i++) {
-
-                        String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
-
-                        String[] filePaths1 = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
-                        Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
-                        JPanel p1 = createPanelForProductInCatalog(filePaths, products.get(i));
+                        JPanel p1 = createPanelForProductInCatalog(products.get(i));
                         addNewPanelToCatalogContainer(p1);
-
                     }
 
-                    JPanel[] panels = new JPanel[10];
-
-                    // tạo các panel sản phầm
-//                    for (int i = 0; i < panels.length; i++) {
-//                        panels[i] = createPanelForProductInCatalog(filePaths1, productsAll.get(i));
-//                        addNewPanelToCatalogContainer(panels[i]);
-//                    }
-
-
                     scrollPane = new JScrollPane(containerCatalog);
-                    setColorScrollPane(scrollPane,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.WHITE);
+                    setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Color.WHITE);
                     add(scrollPane, BorderLayout.CENTER);
-
                 }
             }
 
@@ -502,13 +491,14 @@ public class CustomerMainPanel extends JPanel {
     class OrderHistoryPanel extends JPanel {
         private TablePanel tablePanel;
         private ToolPanel toolPanel;
-        private String[] columnNames ={"Serial Number","Order ID","Order Date","Product Name","Product ID","Quantity","Total Price", "Status","Shipping Address","Delivery Date"};
+        private String[] columnNames = {"Serial Number", "Order ID", "Order Date", "Product Name", "Product ID", "Quantity", "Total Price", "Status", "Shipping Address", "Delivery Date"};
         private JTable table;
         private DefaultTableModel model;
         private JTableHeader header;
         private JScrollPane scrollPane;
         private JTabbedPane tabbedPane;
-        private CustomButton  detailBt, viewInvoiceBt, exportExcelBt;
+        private CustomButton detailBt, viewInvoiceBt,feedbackBt, exportExcelBt, searchBt;
+        private JTextField searchField;
         private JComboBox<String> sortComboBox;
 
         public OrderHistoryPanel() {
@@ -518,47 +508,68 @@ public class CustomerMainPanel extends JPanel {
             add(toolPanel, BorderLayout.NORTH);
             add(tablePanel, BorderLayout.CENTER);
         }
-        class ToolPanel extends JPanel{
-            ToolPanel(){
+
+        class ToolPanel extends JPanel {
+            ToolPanel() {
                 setLayout(new FlowLayout());
-                detailBt = createCustomButton("More Detail",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
+                setBackground(Color.WHITE);
+                detailBt = createCustomButton("More Detail", Style.FONT_BOLD_13, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 8, new Dimension(120, 80));
                 detailBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 detailBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                detailBt.setIcon(new ImageIcon("src/main/java/Icon/detail_Icon.png"));
 
-                viewInvoiceBt = createCustomButton("View Invoice",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
+                viewInvoiceBt = createCustomButton("View Bill", Style.FONT_BOLD_13, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 8, new Dimension(100, 80));
+                viewInvoiceBt.setIcon(new ImageIcon("src/main/java/Icon/bill_Icon.png"));
                 viewInvoiceBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 viewInvoiceBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
+                feedbackBt = createCustomButton("Feedback", Style.FONT_BOLD_13, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 8, new Dimension(100, 80));
+                feedbackBt.setIcon(new ImageIcon("src/main/java/Icon/feedback_Icon.png"));
+                feedbackBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                feedbackBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
-                exportExcelBt = createCustomButton("Export Excel",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(115,80));
+                exportExcelBt = createCustomButton("Export Excel", Style.FONT_BOLD_13, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 8, new Dimension(115, 80));
                 exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-                exportExcelBt.setIcon(new ImageIcon("src/main/java/Icon/exportExcel_Icon.png"));
+                exportExcelBt.setIcon(new ImageIcon("src/main/java/Icon/export_Excel_Icon.png"));
+
+                String[] sortCriteria = {"Sort by Name", "Sort by Date", "Sort by Price", "Sort by Quantity", "Sort by Delivery date"};
+                sortComboBox = new JComboBox<>(sortCriteria);
+                sortComboBox.setFont(Style.FONT_TEXT_LOGIN_FRAME);
+                sortComboBox.setBackground(Color.WHITE);
+                sortComboBox.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+                sortComboBox.setPreferredSize(new Dimension(200, 60));
+
+                searchField = createTextFieldWithPlaceholder("Search Order", Style.FONT_TEXT_LOGIN_FRAME, new Dimension(280, 60));
+
+                searchBt = createCustomButton("",Style.FONT_TEXT_LOGIN_FRAME, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.LIGHT_BlUE,SwingConstants.CENTER,0, new Dimension(65, 60));
+                setIconSmallButton("src/main/java/Icon/search_Icon.png", searchBt);
 
                 add(detailBt);
                 add(viewInvoiceBt);
+                add(feedbackBt);
                 add(exportExcelBt);
+                add(sortComboBox);
+                add(searchField);
+                add(searchBt);
             }
 
         }
 
         class TablePanel extends JPanel {
-
-            TablePanel(){
+            TablePanel() {
                 setLayout(new BorderLayout());
+                setBackground(Color.WHITE);
                 model = new DefaultTableModel();
                 header = new JTableHeader();
-                table = createTable(model,header,columnNames);
-                resizeColumnWidth(table,180);
+                table = createTable(model, header, columnNames);
+                resizeColumnWidth(table, 180);
                 scrollPane = new JScrollPane(table);
-                setColorScrollPane(scrollPane,Style.BACKGROUND_COLOR,Color.WHITE);
-                tabbedPane = createTabbedPane(scrollPane, "Order History",Style.FONT_TITLE_PRODUCT_18);
+                setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Color.WHITE);
+                tabbedPane = createTabbedPane(scrollPane, "Order History", Style.FONT_TITLE_PRODUCT_18);
                 add(tabbedPane, BorderLayout.CENTER);
             }
         }
-
-
-
     }
 
     class NotificationPanel extends JPanel {
@@ -571,69 +582,45 @@ public class CustomerMainPanel extends JPanel {
             setLayout(new BorderLayout());
             JPanel title = new JPanel(new FlowLayout(FlowLayout.CENTER));
             title.setBackground(Color.WHITE);
-            JButton addBt = new JButton("Add");
-            addBt.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    Customer customer1 = new Customer("Nguyen Thi Ngoc Huyen", "23130075@st.hcmuaf.edu.vn", "tien giang chau thanh duong diem",
-                            "$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO", "src/main/java/img/cus_huyen.jpg");
+//            JButton addBt = new JButton("Add");
+//            addBt.addActionListener(new ActionListener() {
+//                public void actionPerformed(ActionEvent e) {
+//                    Customer customer1 = new Customer("Nguyen Thi Ngoc Huyen", "23130075@st.hcmuaf.edu.vn", "tien giang chau thanh duong diem",
+//                            "$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO", "src/main/java/img/cus_huyen.jpg");
+//
+//
+//                    addCustomerNotification(customer1, "ok good good ehavd hvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadm liw ehavd hvoqjbkhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .");
+//                }
+//            });
+//            JButton Bt = new JButton("Add");
+//            Bt.addActionListener(new ActionListener() {
+//                public void actionPerformed(ActionEvent e) {
+//                    Customer customer1 = new Customer("Nguyen Thi Ngoc Huyen", "23130075@st.hcmuaf.edu.vn", "tien giang chau thanh duong diem",
+//                            "$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO", "src/main/java/img/cus_huyen.jpg");
+//
+//
+//                    addCustomerNotification(customer1, "ok good good ehavd hvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadm liw ehavd hvoqjbkhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .");
+//                }
+//            });
+//            JButton Bt1 = new JButton("Add");
+//            Bt1.addActionListener(new ActionListener() {
+//                public void actionPerformed(ActionEvent e) {
+//                    Customer customer1 = new Customer("Nguyen Thi Ngoc Huyen", "23130075@st.hcmuaf.edu.vn", "tien giang chau thanh duong diem",
+//                            "$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO", "src/main/java/img/cus_huyen.jpg");
+//
+//
+//                    addCustomerNotification(customer1,"!");
+//                }
+//            });
+//            title.add(addBt);
+//            title.add(Bt);
+//            title.add(Bt1);
 
-
-                    addCustomerNotification(customer1, "ok good good ehavd hvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadm liw ehavd hvoqjbkhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .");
-                }
-            });
-            JButton Bt = new JButton("Add");
-            Bt.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    Customer customer1 = new Customer("Nguyen Thi Ngoc Huyen", "23130075@st.hcmuaf.edu.vn", "tien giang chau thanh duong diem",
-                            "$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO", "src/main/java/img/cus_huyen.jpg");
-
-
-                    addCustomerNotification(customer1, "ok good good ehavd hvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadm liw ehavd hvoqjbkhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .");
-                }
-            });
-            JButton Bt1 = new JButton("Add");
-            Bt1.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    Customer customer1 = new Customer("Nguyen Thi Ngoc Huyen", "23130075@st.hcmuaf.edu.vn", "tien giang chau thanh duong diem",
-                            "$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO", "src/main/java/img/cus_huyen.jpg");
-
-
-                    addCustomerNotification(customer1,"Mình làm quen nha anh! e hâm mộ anh từ lâu rồi!");
-                }
-            });
-
-            searchField = new JTextField("Search Notification");
-            searchField.setPreferredSize(new Dimension(320, 40));
-            searchField.setFont(Style.FONT_TEXT_CUSTOMER);
-            searchField.setForeground(Color.GRAY);
-            // Thêm FocusListener để kiểm soát khi người dùng nhấn và rời khỏi JTextField
-            searchField.addFocusListener(new FocusListener() {
-                @Override
-                public void focusGained(FocusEvent e) {
-                    // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ "Search", nó sẽ biến mất
-                    if (searchField.getText().equals("Search Notification")) {
-                        searchField.setText("");
-                        searchField.setForeground(Color.BLACK);
-                    }
-                }
-
-                @Override
-                public void focusLost(FocusEvent e) {
-                    // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ "Search"
-                    if (searchField.getText().isEmpty()) {
-                        searchField.setForeground(Color.GRAY);
-                        searchField.setText("Search Notification");
-                    }
-                }
-            });
-            searchButton = new JButton();
-            setStyleButton(searchButton, Style.FONT_TEXT_CUSTOMER, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(50, 40));
+            searchField = createTextFieldWithPlaceholder("Search Notification", Style.FONT_TEXT_CUSTOMER, new Dimension(320, 40));
+            searchButton =  createCustomButton("",Style.FONT_TEXT_LOGIN_FRAME, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.LIGHT_BlUE,SwingConstants.CENTER,0, new Dimension(50, 40));
             setIconSmallButton("src/main/java/Icon/search_Icon.png", searchButton);
 
 
-            title.add(addBt);
-            title.add(Bt);
-            title.add(Bt1);
             title.add(searchField);
             title.add(searchButton);
 
@@ -650,6 +637,7 @@ public class CustomerMainPanel extends JPanel {
                 setLayout(new BorderLayout());
 
                 notificationContainer = new JPanel();
+                notificationContainer.setBackground(Color.WHITE);
                 notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
 
                 scrollPane = new JScrollPane(notificationContainer);
@@ -699,6 +687,7 @@ public class CustomerMainPanel extends JPanel {
         }
 
         class ChangeAvatarPanel extends JPanel {
+            JLabel avatarLb;
             CircularImage avatar;
 
             ChangeAvatarPanel() {
@@ -708,25 +697,32 @@ public class CustomerMainPanel extends JPanel {
                 avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 
-                changeAvaBt = new CustomButton("Upload new image from Computer");
-                changeAvaBt.setGradientColors(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.GREEN);
-                changeAvaBt.setBackgroundColor(Style.LIGHT_BlUE);
-                changeAvaBt.setBorderRadius(20);
-                changeAvaBt.setPreferredSize(new Dimension(400, 40));
-                changeAvaBt.setFont(Style.FONT_BUTTON_CUSTOMER);
+                changeAvaBt = createCustomButtonGradientBorder("Upload new image from Computer", Style.FONT_BUTTON_CUSTOMER, Color.BLACK,
+                        Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.GREEN, 2, 20, new Dimension(400, 40));
                 changeAvaBt.setHorizontalAlignment(SwingConstants.CENTER);
                 changeAvaBt.setAlignmentX(Component.CENTER_ALIGNMENT);
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    SwingUtilities.updateComponentTreeUI(this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 changeAvaBt.addActionListener(e -> {
+
                     JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setDialogTitle("Select Excel file to import");
+                    fileChooser.setDialogTitle("Select an Image");
+
+                    // Bộ lọc để chỉ chọn file ảnh
+                    fileChooser.setFileFilter(new FileNameExtensionFilter(
+                            "Image Files", "jpg", "jpeg", "png", "gif"));
 
                     int result = fileChooser.showOpenDialog(null);
                     if (result == JFileChooser.APPROVE_OPTION) {
                         File selectedFile = fileChooser.getSelectedFile();
                         if (selectedFile != null) {
-                            // Use ExcelConfig to import suppliers from the selected file
-                            ArrayList<Supplier> importedSuppliers = ExcelConfig.importFromExcel(selectedFile, Supplier.class);
+                            String filePath = selectedFile.getAbsolutePath();
 
+                            avatar.setImage(filePath);
 
                         }
                     }
@@ -764,6 +760,7 @@ public class CustomerMainPanel extends JPanel {
                 add(title, gbc);
 
                 JLabel emailLabel = new JLabel("Email: ");
+                emailLabel.setFont(Style.FONT_PLAIN_16);
                 gbc.gridx = 0;
                 gbc.gridy = 1;
                 gbc.gridwidth = 2;
@@ -782,6 +779,7 @@ public class CustomerMainPanel extends JPanel {
 
                 // Thêm Label 2, TextField 2, và Button 2
                 JLabel nameLabel = new JLabel("Name: ");
+                nameLabel.setFont(Style.FONT_PLAIN_16);
                 gbc.gridx = 0;
                 gbc.gridy = 3;
                 gbc.gridwidth = 2;
@@ -800,6 +798,7 @@ public class CustomerMainPanel extends JPanel {
 
                 // Thêm Label 3, TextField 3, và Button 3
                 JLabel addressLabel = new JLabel("Address: ");
+                addressLabel.setFont(Style.FONT_PLAIN_16);
                 gbc.gridx = 0;
                 gbc.gridy = 5;
                 gbc.gridwidth = 2;
@@ -817,6 +816,7 @@ public class CustomerMainPanel extends JPanel {
                 add(button3, gbc);
 
                 JLabel oldPasswdLabel = new JLabel("Old Password: ");
+                oldPasswdLabel.setFont(Style.FONT_PLAIN_16);
                 gbc.gridx = 0;
                 gbc.gridy = 7;
                 gbc.gridwidth = 2;
@@ -835,6 +835,7 @@ public class CustomerMainPanel extends JPanel {
                 add(showOldPasswd, gbc);
 
                 JLabel newPasswdLabel = new JLabel("New Password: ");
+                newPasswdLabel.setFont(Style.FONT_PLAIN_16);
                 gbc.gridx = 0;
                 gbc.gridy = 9;
                 gbc.gridwidth = 2;
@@ -853,6 +854,7 @@ public class CustomerMainPanel extends JPanel {
                 add(showNewPasswd, gbc);
 
                 JLabel confirmPasswdLabel = new JLabel("Confirm Password: ");
+                confirmPasswdLabel.setFont(Style.FONT_PLAIN_16);
                 gbc.gridx = 0;
                 gbc.gridy = 11;
                 gbc.gridwidth = 2;
@@ -1049,13 +1051,14 @@ public class CustomerMainPanel extends JPanel {
         return field;
     }
 
-    private static CustomButton createCustomButton(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, int textPosition, Dimension size) {
+    private static CustomButton createCustomButton(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, int textPosition, int radius, Dimension size) {
         CustomButton button = new CustomButton(title);
         button.setFont(font);
         button.setTextColor(textColor);
         button.setBackgroundColor(backgroundColor);
         button.setHoverColor(hoverColor);
         button.setHorizontalAlignment(textPosition);
+        button.setBorderRadius(radius);
         button.setDrawBorder(false);
         button.setPreferredSize(size);
         return button;
@@ -1116,6 +1119,7 @@ public class CustomerMainPanel extends JPanel {
         setColorScrollBar(scrollPane.getVerticalScrollBar(), thumbColor, trackColor);
         setColorScrollBar(scrollPane.getHorizontalScrollBar(), thumbColor, trackColor);
     }
+
     private static void setColorScrollBar(JScrollBar scrollBar, Color scrollBarColor, Color trackBackGroundColor) {
         scrollBar.setUI(new BasicScrollBarUI() {
             @Override
@@ -1151,6 +1155,7 @@ public class CustomerMainPanel extends JPanel {
 
         return table;
     }
+
     // thay đổi kích thước của cột trong bảng
     public void resizeColumnWidth(JTable table, int width) {
         for (int i = 0; i < table.getColumnCount(); i++) {
@@ -1158,6 +1163,7 @@ public class CustomerMainPanel extends JPanel {
             table.getColumnModel().getColumn(0).setPreferredWidth(120);
         }
     }
+
     public JTabbedPane createTabbedPane(JScrollPane scrollPane, String title, Font font) {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setFont(font);
@@ -1181,14 +1187,16 @@ public class CustomerMainPanel extends JPanel {
     }
 
     // panel chứa thông tin từng sản phẩm
-    public JPanel createPanelForProductInCatalog(String[] filePaths, Product product) {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+    public JPanel createPanelForProductInCatalog(Product product) {
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(2, 10, 2, 10);
+
         ArrayList<Model.Image> urls = product.getImages();
         ImageIcon[] images = new ImageIcon[urls.size()];
+
         for (int i = 0; i < images.length; i++) {
             images[i] = createImageForProduct(urls.get(i).getUrl(), 300, 300);
         }
@@ -1199,7 +1207,7 @@ public class CustomerMainPanel extends JPanel {
         gbc.gridy = 0;
         gbc.gridwidth = 2; // Chiếm toàn bộ chiều rộng
         gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(imageLabel, gbc);
+        mainPanel.add(imageLabel, gbc);
 
         JButton previousButton = new JButton("<Previous");
         setStyleButton(previousButton, Style.FONT_SIZE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, SwingConstants.CENTER, new Dimension(60, 20));
@@ -1223,30 +1231,28 @@ public class CustomerMainPanel extends JPanel {
         JPanel switchPn = new JPanel(new GridLayout(1, 2));
         switchPn.add(previousButton);
         switchPn.add(nextButton);
-
         // Thêm nút vào panel
         gbc.gridy++;
-        gbc.gridwidth = 2; // Chiếm toàn bộ chiều rộng
-        gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(switchPn, gbc);
+        mainPanel.add(switchPn, gbc);
 
         // Từ hàng thứ hai: thông tin sản phẩm (căn giữa)
         JLabel productName = new JLabel("<html>" + product.getName() + "<html>");// product Name
         productName.setFont(Style.FONT_TITLE_PRODUCT);
-        gbc.gridx = 0;
-        gbc.gridwidth = 2;
         gbc.gridy++;
-        panel.add(productName, gbc);
+        mainPanel.add(productName, gbc);
 
         // Thêm thông tin sản phẩm khác
         gbc.gridy++;
-        panel.add(new JLabel("Brand: " + product.getBrand()), gbc);
+        JLabel productIDLabel =new JLabel("Product ID: "+ product.getId());
+        mainPanel.add(productIDLabel, gbc);
         gbc.gridy++;
-        panel.add(new JLabel("CPU: " + product.getCpu()), gbc);
+        mainPanel.add(new JLabel("Brand: " + product.getBrand()), gbc);
         gbc.gridy++;
-        panel.add(new JLabel("RAM: " + product.getRam()), gbc);
+        mainPanel.add(new JLabel("CPU: " + product.getCpu()), gbc);
         gbc.gridy++;
-        panel.add(new JLabel("Storage capacity: " + product.getMemory()), gbc);
+        mainPanel.add(new JLabel("RAM: " + product.getRam()), gbc);
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Storage capacity: " + product.getMemory()), gbc);
 
         JLabel productPrice = new JLabel("$ " + product.getPrice());
         productPrice.setFont(new Font("Arial", Font.BOLD, 25));
@@ -1254,33 +1260,34 @@ public class CustomerMainPanel extends JPanel {
         gbc.gridy++;
         gbc.gridwidth = 1; // Chỉ chiếm một cột
         gbc.anchor = GridBagConstraints.WEST;
-        panel.add(productPrice, gbc);
+        mainPanel.add(productPrice, gbc);
 
         JButton detailBt = new JButton("More details");
         setStyleButton(detailBt, Style.FONT_HEADER_ROW_TABLE, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(80, 30));
         detailBt.addActionListener(e -> {
             this.productCatalogPanel.displayProductPanel.showProduct("oneProduct");
+            addProductToSingleProduct(product);
         });
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        panel.add(detailBt, gbc);
+        mainPanel.add(detailBt, gbc);
 
 
         JButton addToCartBt = new JButton("Add to Cart");
         setStyleButton(addToCartBt, Style.FONT_HEADER_ROW_TABLE, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(80, 30));
         addToCartBt.addActionListener(e -> {
-            ToastNotification.showToast("Product added to Cart!", 3000, 50,-1,-1);
-//            addNewPanelToCartContainer(createPanelForCart(filePaths, product));
+            ToastNotification.showToast("Product added to Cart!", 3000, 50, -1, -1);
+            addNewPanelToCartContainer(createPanelForCart(urls, product));
 
         });
         gbc.gridx = 1;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.EAST;
-        panel.add(addToCartBt, gbc);
+        mainPanel.add(addToCartBt, gbc);
 
-        return panel;
+        return mainPanel;
     }
 
     public void addProductToSingleProduct(Product product) {
@@ -1307,39 +1314,44 @@ public class CustomerMainPanel extends JPanel {
         gbc.gridwidth = 1;
         imagePn.add(backPn, gbc);
 
-//        images = new ImageIcon[filePaths.length];
-//        for (int i = 0; i < filePaths.length; i++) {
-//            images[i] = createImageForProduct(filePaths[i], 420, 420);
-//        }
-//
-//        image = new JLabel(createImageForProduct("src/main/java/Icon/laptopAsus1.jpg", 420, 420));// create image of product
-//        gbc.gridx = 0;
-//        gbc.gridy = 2;
-//        gbc.gridwidth = 4;
-//        imagePn.add(image, gbc);
-//
-//        // 2 button switching between product image
-//        JButton previousBt = new JButton("Previous");
-//        setStyleButton(previousBt, Style.FONT_BUTTON_CUSTOMER, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, SwingConstants.CENTER, new Dimension(150, 30));
-//        JButton nextBt = new JButton("Next");
-//        setStyleButton(nextBt, Style.FONT_BUTTON_CUSTOMER, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, SwingConstants.CENTER, new Dimension(150, 30));
-//        int[] currentIndex = {0};
-//
-//        // Thêm ActionListener cho nút "Previous"
-//        previousBt.addActionListener(e -> {
-//            currentIndex[0] = (currentIndex[0] - 1 + images.length) % images.length; // Cập nhật chỉ số
-//            image.setIcon(images[currentIndex[0]]); // Cập nhật hình ảnh
-//        });
-//
-//        // Thêm ActionListener cho nút "Next"
-//        nextBt.addActionListener(e -> {
-//            currentIndex[0] = (currentIndex[0] + 1) % images.length; // Cập nhật chỉ số
-//            image.setIcon(images[currentIndex[0]]); // Cập nhật hình ảnh
-//        });
+
+        ArrayList<Model.Image> urls = product.getImages();
+        ImageIcon[] images = new ImageIcon[urls.size()];
+
+        for (int i = 0; i < images.length; i++) {
+            images[i] = createImageForProduct(urls.get(i).getUrl(), 300, 300);
+        }
+
+        JLabel imageLabel = new JLabel(images[0]); // Hiển thị hình ảnh đầu tiên
+        imageLabel.setHorizontalAlignment(JLabel.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2; // Chiếm toàn bộ chiều rộng
+        gbc.anchor = GridBagConstraints.CENTER;
+        imagePn.add(imageLabel, gbc);
+
+        // 2 button switching between product image
+        JButton previousBt = new JButton("Previous");
+        setStyleButton(previousBt, Style.FONT_BUTTON_CUSTOMER, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, SwingConstants.CENTER, new Dimension(150, 30));
+        JButton nextBt = new JButton("Next");
+        setStyleButton(nextBt, Style.FONT_BUTTON_CUSTOMER, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, SwingConstants.CENTER, new Dimension(150, 30));
+        int[] currentIndex = {0};
+
+        // Thêm ActionListener cho nút "Previous"
+        previousBt.addActionListener(e -> {
+            currentIndex[0] = (currentIndex[0] - 1 + images.length) % images.length; // Cập nhật chỉ số
+            imageLabel.setIcon(images[currentIndex[0]]); // Cập nhật hình ảnh
+        });
+
+        // Thêm ActionListener cho nút "Next"
+        nextBt.addActionListener(e -> {
+            currentIndex[0] = (currentIndex[0] + 1) % images.length; // Cập nhật chỉ số
+            imageLabel.setIcon(images[currentIndex[0]]); // Cập nhật hình ảnh
+        });
 
         JPanel switchPn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-//        switchPn.add(previousBt);
-//        switchPn.add(nextBt);
+        switchPn.add(previousBt);
+        switchPn.add(nextBt);
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 4;
@@ -1408,12 +1420,12 @@ public class CustomerMainPanel extends JPanel {
         paymentPn.add(status, gbc2);
 
         gbc2.insets = new Insets(10, 5, 10, 5);
-        CustomButton addToCart = createCustomButton("Add to Cart", Style.FONT_TITLE_PRODUCT_18, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, new Color(162, 236, 132), SwingConstants.CENTER, new Dimension(200, 50));
+        CustomButton addToCart = createCustomButton("Add to Cart", Style.FONT_TITLE_PRODUCT_18, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, new Color(162, 236, 132), SwingConstants.CENTER, 15,new Dimension(200, 50));
         addToCart.addActionListener(e -> ToastNotification.showToast("Product added to Cart!", 3000, 50, -1, -1));
         gbc2.gridy = 3;
         paymentPn.add(addToCart, gbc2);
 
-        CustomButton buyNowBt = createCustomButton("Buy Now", Style.FONT_TITLE_PRODUCT_18, Color.white, new Color(227, 138, 97), new Color(227, 178, 148), SwingConstants.CENTER, new Dimension(200, 50));
+        CustomButton buyNowBt = createCustomButton("Buy Now", Style.FONT_TITLE_PRODUCT_18, Color.white, new Color(227, 138, 97), new Color(227, 178, 148), SwingConstants.CENTER,15, new Dimension(200, 50));
         gbc2.gridy = 4;
         paymentPn.add(buyNowBt, gbc2);
 
@@ -1426,15 +1438,6 @@ public class CustomerMainPanel extends JPanel {
         this.containerProductDetail.revalidate();
         this.containerProductDetail.repaint();
     }
-
-//    public void testAddPanel(Product product){
-//        JPanel test = new JPanel();
-//        test.setBackground(Color.PINK);
-//
-//        this.containerProductDetail.add(test);
-//        this.containerProductDetail.revalidate();
-//        this.containerProductDetail.repaint();
-//    }
 
     public void addNewPanelToCartContainer(JPanel panel) {
         panel.setPreferredSize(new Dimension(700, 220));
@@ -1479,11 +1482,11 @@ public class CustomerMainPanel extends JPanel {
         JComboBox<Integer> quantityComboBox = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
         quantityComboBox.setPreferredSize(new Dimension(60, 30));
         quantityComboBox.setFont(Style.FONT_TITLE_PRODUCT_18);
-        setComboBoxScrollBarColor(quantityComboBox,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.LIGHT_BlUE);
+        setComboBoxScrollBarColor(quantityComboBox, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE);
         bot.add(quantityComboBox);
         bot.add(Box.createHorizontalStrut(50));
 
-        CustomButton remove = createCustomButton("Remove", Style.FONT_SIZE_MENU_BUTTON, Color.red, Color.white, Color.white, SwingConstants.CENTER, new Dimension(100, 40));
+        CustomButton remove = createCustomButton("Remove", Style.FONT_SIZE_MENU_BUTTON, Color.red, Color.white, Color.white, SwingConstants.CENTER, 15, new Dimension(100, 40));
         remove.addActionListener(e -> {
             Container parentContainer = panel.getParent();
             if (parentContainer != null) {

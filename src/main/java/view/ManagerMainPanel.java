@@ -1412,8 +1412,10 @@ public class ManagerMainPanel extends JPanel {
                     if (selectedTable != null && selectedTable.getSelectedRow() != -1) {
                         int selectedRow = selectedTable.getSelectedRow();
                         int productId = Integer.parseInt(selectedTable.getValueAt(selectedRow, 1).toString());
+                        String productName = (String) selectedTable.getValueAt(selectedRow, 2);
                         deletedProduct(productId);
                         updateProduct();
+                        ToastNotification.showToast("Successfully delete product " + productName, 3000, 50, -1, -1);
                     } else {
                         ToastNotification.showToast("Please select a row to deleted.", 3000, 50, -1, -1);
                     }
@@ -2215,7 +2217,7 @@ public class ManagerMainPanel extends JPanel {
         }
 
         public class TableCustomerPanel extends JPanel {
-            ModifyManager modifyManager;
+            AddManager addManager;
 
             public TableCustomerPanel() {
                 setLayout(new BorderLayout());
@@ -2231,19 +2233,19 @@ public class ManagerMainPanel extends JPanel {
 
                 scrollPaneAccManager = new JScrollPane(tableAccManager);
                 tabbedPaneAccManager = createTabbedPane(scrollPaneAccManager, "Information", Style.FONT_HEADER_ROW_TABLE);
-                modifyManager = new ModifyManager();
-                tabbedPaneAccManager.add(tableStatus.getMessage(), modifyManager);
+                addManager = new AddManager();
+                tabbedPaneAccManager.add(tableStatus.getMessage(), addManager);
 
                 add(tabbedPaneAccManager, BorderLayout.CENTER);
 
             }
         }
 
-        class ModifyManager extends JPanel {
+        class AddManager extends JPanel {
             ChangeInfo changeInfo;
             Avatar avatar;
 
-            ModifyManager() {
+            AddManager() {
                 setLayout(new GridLayout(2, 1));
                 changeInfo = new ChangeInfo();
                 avatar = new Avatar();
@@ -3082,27 +3084,6 @@ public class ManagerMainPanel extends JPanel {
         that.setBorderPainted(false);
         that.setFocusable(false);
         that.setPreferredSize(size);
-    }
-
-    private void setIconSmallButton(String url, JButton that) {
-        ImageIcon iconButton = new ImageIcon(url);
-        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
-        Dimension buttonSize = that.getPreferredSize();
-        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, Image.SCALE_SMOOTH); // Resize
-        that.setIcon(new ImageIcon(resizedImage));
-    }
-
-    // Phương thức tạo nút Clear All
-    public JButton createClearAllButton(JPanel panel) {
-        JButton clearAllButton = new JButton("Clear All");
-        clearAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearTextFields(panel);
-            }
-        });
-
-        return clearAllButton;
     }
 
     private static JButton createShowPasswdButton(JPasswordField passwordField) {

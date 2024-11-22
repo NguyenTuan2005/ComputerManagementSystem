@@ -47,6 +47,7 @@ public class ManagerMenuPanel extends JPanel {
     }
 
     class ComponentTop extends JPanel {
+
         public ComponentTop() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBackground(Style.BACKGROUND_COLOR);

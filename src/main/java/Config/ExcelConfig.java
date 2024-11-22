@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 public class ExcelConfig {
 
@@ -243,7 +240,7 @@ public class ExcelConfig {
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
-            cell.setCellStyle(createHeaderStyle(workbook));
+            cell.setCellStyle(createHeaderCellStyle(workbook));
         }
 
         // Ghi dữ liệu từ danh sách managers
@@ -277,14 +274,6 @@ public class ExcelConfig {
                 e.printStackTrace();
             }
         }
-    }
-
-    private static CellStyle createHeaderStyle(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
-        Font font = workbook.createFont();
-        font.setBold(true);
-        style.setFont(font);
-        return style;
     }
 
     public static void main(String[] args) {

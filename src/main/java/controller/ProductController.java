@@ -79,6 +79,7 @@ public class ProductController implements ModelController<Product> {
 
     public ArrayList<Product> getEagerProducts(){
         ArrayList<Product> products = productDAO.getEager();
+
         for(Product product: products){
             int id = product.getId();
             product.setImages(imageDAO.findByProductId(id));
@@ -89,6 +90,6 @@ public class ProductController implements ModelController<Product> {
 
     public static void main(String[] args) {
         ProductController p = new ProductController();
-        p.getEagerProducts();
+        System.out.println(" chao "); p.getEagerProducts();
     }
 }

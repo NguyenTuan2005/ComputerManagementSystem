@@ -7,6 +7,8 @@ import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import static java.awt.SystemColor.window;
+
 public class BirthDayVerifier extends InputVerifier {
     @Override
     public boolean verify(JComponent input) {
@@ -22,8 +24,10 @@ public class BirthDayVerifier extends InputVerifier {
 
             // Bạn có thể kiểm tra thêm logic như không cho phép ngày tương lai:
             if (isFutureDate(birthday, dateFormat)) {
-                input.setBackground(java.awt.Color.PINK); // Màu hồng nếu lỗi
-                ToastNotification.showToast("SAi roi má",2500,400,100);
+                input.setBackground(java.awt.Color.PINK);
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                JWindow window = new JWindow();
+                ToastNotification.showToast("SAi roi má",2500,50,screenSize.width - window.getWidth() - 10,screenSize.height - window.getHeight() - 50);
                 return false;
             }
 
@@ -31,8 +35,10 @@ public class BirthDayVerifier extends InputVerifier {
             return true;
         } catch (ParseException e) {
             // Lỗi định dạng ngày
-            input.setBackground(java.awt.Color.PINK); // Màu hồng nếu lỗi
-            ToastNotification.showToast("SAi roi má",2500,400,100);
+            input.setBackground(java.awt.Color.PINK);
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            JWindow window = new JWindow();
+            ToastNotification.showToast("SAi roi má",2500,50,screenSize.width - window.getWidth() - 10,screenSize.height - window.getHeight() - 50);
             return false;
         }
     }

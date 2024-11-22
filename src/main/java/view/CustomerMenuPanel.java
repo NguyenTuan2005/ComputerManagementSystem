@@ -115,7 +115,7 @@ public class CustomerMenuPanel extends JPanel {
             setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
             add(logoutBt);
 
-            credit = new JLabel("     Group high!");
+            credit = new JLabel("     Group 2");
             add(credit);
 
         }

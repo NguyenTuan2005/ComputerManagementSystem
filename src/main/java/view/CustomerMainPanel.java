@@ -432,7 +432,7 @@ public class CustomerMainPanel extends JPanel {
 
                     gbc2.insets = new Insets(10, 5, 10, 5);
                     addToCart = createCustomButton("Add to Cart", Style.FONT_TITLE_PRODUCT_18, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, new Color(162, 236, 132), SwingConstants.CENTER, new Dimension(200, 50));
-                    addToCart.addActionListener(e -> ToastNotification.showToast("Product added to Cart!", 3000, 350, 60));
+                    addToCart.addActionListener(e -> ToastNotification.showToast("Product added to Cart!", 3000, 50,-1,-1));
                     gbc2.gridy = 3;
                     paymentPn.add(addToCart, gbc2);
 
@@ -656,9 +656,10 @@ public class CustomerMainPanel extends JPanel {
                 viewInvoiceBt.setVerticalTextPosition(SwingConstants.BOTTOM);
 
 
-                exportExcelBt = createCustomButton("Export Excel",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(120,80));
+                exportExcelBt = createCustomButton("Export Excel",Style.FONT_BOLD_13,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,1,5,new Dimension(115,80));
                 exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                exportExcelBt.setIcon(new ImageIcon("src/main/java/Icon/exportExcel_Icon.png"));
 
                 add(detailBt);
                 add(viewInvoiceBt);
@@ -1378,8 +1379,8 @@ public class CustomerMainPanel extends JPanel {
         JButton addToCartBt = new JButton("Add to Cart");
         setStyleButton(addToCartBt, Style.FONT_HEADER_ROW_TABLE, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(80, 30));
         addToCartBt.addActionListener(e -> {
-            ToastNotification.showToast("Product added to Cart!", 3000, 350, 60);
-            addNewPanelToCartContainer(createPanelForCart(urls, product));
+            ToastNotification.showToast("Product added to Cart!", 3000, 50,-1,-1);
+            addNewPanelToCartContainer(createPanelForCart(filePaths, product));
 
         });
         gbc.gridx = 1;

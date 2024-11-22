@@ -1,44 +1,57 @@
 package view.OverrideComponent;
 
-import view.Style;
-
 import javax.swing.*;
 import java.awt.*;
-
 public class ToastNotification {
 
-    public static void showToast(String message, int duration, int width, int height ) {
-        // Tạo một JWindow để hiển thị thông báo
+    public static void showToast(String message, int duration, int height, int x, int y) {
         JWindow window = new JWindow();
         window.setLayout(new BorderLayout());
-        window.setSize(width, height);
-        window.setLocationRelativeTo(null); // Đặt vị trí ở giữa màn hình
 
-        // Tạo JLabel để chứa thông điệp
         JLabel label = new JLabel(message, SwingConstants.CENTER);
         label.setOpaque(true);
         label.setBackground(new Color(180, 231, 224));
         label.setForeground(new Color(173, 99, 34));
-        label.setFont(new Font("Arial", Font.BOLD, 25));
+        label.setFont(new Font("Arial", Font.BOLD, 20));
 
+        // Thêm icon nếu có
         ImageIcon iconButton = new ImageIcon("src/main/java/Icon/iconNotification.png");
-        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
-        Image resizedImage = image.getScaledInstance(28,28 , java.awt.Image.SCALE_SMOOTH);
+        Image image = iconButton.getImage();
+        Image resizedImage = image.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
         label.setIcon(new ImageIcon(resizedImage));
-        label.setBorder(BorderFactory.createLineBorder(Style.ADD_BUTTON_COLOR_GREEN));
+        label.setBorder(BorderFactory.createLineBorder(new Color(34, 139, 34)));
+
         window.add(label, BorderLayout.CENTER);
 
-        // Hiển thị thông báo
+        // Tính toán kích thước dựa trên nội dung
+        label.setSize(label.getPreferredSize());
+        int width = label.getPreferredSize().width + 20; // Thêm khoảng cách padding
+        window.setSize(width, height);
+
+        // Nếu x và y được truyền là -1, tự căn góc xuống dưới cùng bên phải
+        if (x == -1 && y == -1) {
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            int screenWidth = screenSize.width;
+            int screenHeight = screenSize.height;
+
+            x = screenWidth - width - 10; // Đặt cách mép phải
+            y = screenHeight - height -50; // Đặt cách mép dưới
+        }
+        // nếu chỉ có x là -1 thì căn góc theo x
+        if (x == -1) {
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            int screenWidth = screenSize.width;
+            x = screenWidth - width - 10; // Đặt cách mép phải
+        }
+
+        window.setLocation(x, y);
+
         window.setVisible(true);
 
-        // Thay đổi vị trí của thông báo
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        window.setLocation(screenSize.width - window.getWidth() - 10, screenSize.height - window.getHeight() - 50);
-
-        // Tạo một thread để tự động ẩn thông báo sau một khoảng thời gian nhất định
         new Timer(duration, e -> {
             window.setVisible(false);
-            window.dispose(); // Giải phóng tài nguyên
+            window.dispose();
         }).start();
     }
+
 }

@@ -29,7 +29,7 @@ public class UserNameAccoutVerifier extends InputVerifier {
         if (acc.sameUsername(name)){
             System.out.println("ok nef");
             input.setBackground(Color.PINK);
-            ToastNotification.showToast("Username used !!!",2500,400,100);
+            ToastNotification.showToast("Username used !!!",2500,50,-1,-1);
             return false;
         }else {
             input.setBackground(Color.white);

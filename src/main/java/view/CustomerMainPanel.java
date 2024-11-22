@@ -280,11 +280,9 @@ public class CustomerMainPanel extends JPanel {
                     ProductController  productController = new ProductController();
                     ArrayList<Product> products = productController.getEagerProducts();
                     for (int i = 0; i < products.size(); i++) {
-
                         String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
-
-                        String[] filePaths1 = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
-                        Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
+//                        String[] filePaths1 = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
+//                        Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
                         JPanel p1 = createPanelForProductInCatalog(filePaths, products.get(i));
                         addNewPanelToCatalogContainer(p1);
 
@@ -297,7 +295,6 @@ public class CustomerMainPanel extends JPanel {
 //                        panels[i] = createPanelForProductInCatalog(filePaths1, productsAll.get(i));
 //                        addNewPanelToCatalogContainer(panels[i]);
 //                    }
-
 
                     scrollPane = new JScrollPane(containerCatalog);
                     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -1277,7 +1274,7 @@ public class CustomerMainPanel extends JPanel {
     }
 
     public void addNewPanelToCatalogContainer(JPanel panel) {
-        panel.setPreferredSize(new Dimension(315, 550));
+        panel.setPreferredSize(new Dimension(312, 550));
         panel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE));
 
         GridBagConstraints gbc = new GridBagConstraints();

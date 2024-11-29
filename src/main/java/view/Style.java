@@ -47,10 +47,15 @@ public class Style {
     public static final Font FONT_TITLE_PRODUCT = new Font("Arial", Font.BOLD, 24);
     public static final Font FONT_PLAIN_25 = new Font("Arial", Font.PLAIN, 25);
     public static final Font FONT_TITLE_PRODUCT_30 = new Font("Arial", Font.BOLD, 30);
+    public static final Font FONT_TITLE_PRODUCT_35 = new Font("Arial", Font.BOLD, 35);
     public static final Font FONT_TITLE_BOLD_55 = new Font("Arial", Font.BOLD, 55);
     public static final Font FONT_TITLE_PRODUCT_18 = new Font("Arial", Font.BOLD, 18);
+    public static final Font FONT_PLAIN_18 = new Font("Arial", Font.PLAIN, 18);
     public static final Font FONT_BOLD_13 = new Font("Arial", Font.BOLD, 13);
+    public static final Font FONT_BOLD_16 = new Font("Arial", Font.BOLD, 16);
+
     public static final Color LIGHT_BlUE = new Color(201, 222, 232);
+    public static final Color LIGHT_GREEN = new Color(162, 236, 132);
     public static final Color MEDIUM_BLUE = new Color(51, 153, 255);
 
 }

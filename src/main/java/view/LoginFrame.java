@@ -1,6 +1,8 @@
 package view;
 
 import Config.EmailConfig;
+import Config.PasswordFieldConfig;
+import Config.TextFieldConfig;
 import Model.Account;
 import Model.Customer;
 import Model.Manager;
@@ -104,12 +106,17 @@ public class LoginFrame extends JFrame {
             switchBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     if (switchBt.getText().equals("Sign Up")) {
-                        // sự kiện để reset lại panel signup
-                        inputFormPanel.showPanel("signUp");
-//                        inputFormPanel.signUpPanel.signUpFormPanel.addressField.setText("");
                         switchBt.setText("Sign In");
                         welcomeLabel.setText(SignUpGreeting);
                         subTextLabel.setText(SignInString);
+                        // reset signup panel
+                        inputFormPanel.showPanel("signUp");
+                        TextFieldConfig.resetTextField(inputFormPanel.signUpPanel.signUpFormPanel.nameField,"User Name");
+                        TextFieldConfig.resetTextField(inputFormPanel.signUpPanel.signUpFormPanel.emailField,"User Email");
+                        TextFieldConfig.resetTextField(inputFormPanel.signUpPanel.signUpFormPanel.addressField,"User Address");
+                        PasswordFieldConfig.resetPasswordField(inputFormPanel.signUpPanel.signUpFormPanel.passwdFieldSignup, "Password");
+                        inputFormPanel.signUpPanel.showPanelSignUp("signUpForm");
+
                     } else {
                         inputFormPanel.showPanel("signIn");
                         switchBt.setText("Sign Up");
@@ -261,7 +268,7 @@ public class LoginFrame extends JFrame {
             add(nameIcon, gbc);
 
             gbc.gridx = 1;
-            nameField = createTextField("User Name", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            nameField =  TextFieldConfig.createTextFieldWithPlaceHolder("User Name", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
             nameField.addActionListener(e -> signUpButton.doClick());
             add(nameField, gbc);
 
@@ -273,7 +280,7 @@ public class LoginFrame extends JFrame {
             add(emailIcon, gbc);
 
             gbc.gridx = 1;
-            emailField = createTextField("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            emailField =  TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
             emailField.addActionListener(e -> signUpButton.doClick());
             add(emailField, gbc);
 
@@ -297,7 +304,7 @@ public class LoginFrame extends JFrame {
             popup.add(hintLabel);
             popup.setSize(300, 70);
 
-            addressField = createTextField("User Address", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            addressField = TextFieldConfig.createTextFieldWithPlaceHolder("User Address", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
             addressField.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -321,7 +328,7 @@ public class LoginFrame extends JFrame {
             add(passwordIcon, gbc);
 
             gbc.gridx = 1;
-            passwdFieldSignup = createPasswordField("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            passwdFieldSignup = PasswordFieldConfig.createPasswordField("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
             passwdFieldSignup.addActionListener(e -> signUpButton.doClick());
             add(passwdFieldSignup, gbc);
 
@@ -679,7 +686,7 @@ public class LoginFrame extends JFrame {
             gbc.gridx = 1;
             nameField = new JTextField("User Email");
 
-            nameField = createTextField("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            nameField =  TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
             nameField.addFocusListener(new FocusListener() {
                 @Override
                 public void focusGained(FocusEvent e) {
@@ -714,7 +721,7 @@ public class LoginFrame extends JFrame {
             add(passwordIcon, gbc);
 
             gbc.gridx = 1;
-            passwdFieldSignin = createPasswordField("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            passwdFieldSignin = PasswordFieldConfig.createPasswordField("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
             passwdFieldSignin.addActionListener(e -> signInButton.doClick());
             add(passwdFieldSignin, gbc);
 
@@ -778,7 +785,7 @@ public class LoginFrame extends JFrame {
                             }
                             case CUSTOMER_ROLE: {
                                 CustomerController customerController = new CustomerController();
-//                                System.out.println(emailField.getText());
+
                                 if (customerController.isValidAccount(email, password)) {
                                     loginFrame.setVisible(false);
                                     customerFrame = new CustomerFrame();
@@ -810,8 +817,7 @@ public class LoginFrame extends JFrame {
             forgotPasswdBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     inputFormPanel.showPanel("forgotPasswd");
-                    inputFormPanel.forgotPasswdPanel.inputEmail.emailField.setForeground(Color.GRAY);
-                    inputFormPanel.forgotPasswdPanel.inputEmail.emailField.setText("User Email");
+                    TextFieldConfig.resetTextField(inputFormPanel.forgotPasswdPanel.inputEmail.emailField,"UserEmail");
                 }
             });
             gbc.gridy++;
@@ -968,10 +974,8 @@ public class LoginFrame extends JFrame {
                 emailIcon.setPreferredSize(new Dimension(30, 30));
                 add(emailIcon, gbc);
                 gbc.gridx = 1;
-                emailField = createTextField("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
-                emailField.addActionListener(e -> {
-                    sendCodeBt.doClick();
-                });
+                emailField =  TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+                emailField.addActionListener(e -> {sendCodeBt.doClick();});
                 add(emailField, gbc);
 
                 // add send code button to panel
@@ -1310,7 +1314,7 @@ public class LoginFrame extends JFrame {
 
                 add(passwordIconLb1, gbc);
                 gbc.gridx = 1;
-                newPasswdField = createPasswordField("Enter your new password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+                newPasswdField = PasswordFieldConfig.createPasswordField("Enter your new password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
                 newPasswdField.addActionListener(e -> resetPasswdBt.doClick());
                 add(newPasswdField, gbc);
 
@@ -1319,7 +1323,7 @@ public class LoginFrame extends JFrame {
                 gbc.gridx = 0;
                 add(passwordIconLb2, gbc);
                 gbc.gridx = 1;
-                confirmPasswdField = createPasswordField("Confirm your new password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+                confirmPasswdField = PasswordFieldConfig.createPasswordField("Confirm your new password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
                 confirmPasswdField.addActionListener(e -> resetPasswdBt.doClick());
                 add(confirmPasswdField, gbc);
 
@@ -1395,35 +1399,6 @@ public class LoginFrame extends JFrame {
         });
     }
 
-    public void addFocusListenerForJPasswordField(JPasswordField passwdfield, String originText) {
-        passwdfield.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                String passwd = new String(passwdfield.getPassword());
-                // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ giống originText, nó sẽ biến mất
-                passwdfield.setForeground(Color.BLACK);
-                if (passwd.equals(originText)) {
-                    passwdfield.setText("");
-                    passwdfield.setEchoChar('*');
-                }
-                passwdfield.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
-
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                String passwd = new String(passwdfield.getPassword());
-                // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ giống originText
-                if (passwd.isEmpty()) {
-                    passwdfield.setText(originText);
-                    passwdfield.setEchoChar((char) 0);
-                    passwdfield.setForeground(Color.GRAY);
-                }
-                passwdfield.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
-            }
-        });
-    }
-
     private static CustomButton createCustomButtonWithBorder(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, Color borderColor, int thickness, int radius, Dimension size) {
         CustomButton bt = new CustomButton(title);
         bt.setFont(font);
@@ -1435,27 +1410,6 @@ public class LoginFrame extends JFrame {
         bt.setBorderRadius(radius);
         bt.setPreferredSize(size);
         return bt;
-    }
-
-    private JTextField createTextField(String text, Font font, Color textColor, Dimension size) {
-        JTextField field = new JTextField(text);
-        field.setForeground(textColor);
-        field.setPreferredSize(size);
-        field.setFont(font);
-        field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
-        addFocusListenerForTextField(field, text);
-        return field;
-    }
-
-    private JPasswordField createPasswordField(String text, Font font, Color textColor, Dimension size) {
-        JPasswordField pwfield = new JPasswordField(text);
-        pwfield.setForeground(textColor);
-        pwfield.setPreferredSize(size);
-        pwfield.setFont(font);
-        pwfield.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
-        pwfield.setEchoChar((char) 0);
-        addFocusListenerForJPasswordField(pwfield, text);
-        return pwfield;
     }
 
     public static void main(String[] args) {

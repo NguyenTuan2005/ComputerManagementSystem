@@ -20,6 +20,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import view.OtherComponent.*;
 import view.OverrideComponent.CircularImage;
 import view.OverrideComponent.CustomButton;
+import view.OverrideComponent.RoundedBorder;
 import view.OverrideComponent.ToastNotification;
 
 import javax.swing.*;

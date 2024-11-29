@@ -5,6 +5,8 @@ import view.Style;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 public class TextFieldConfig {
 
@@ -50,5 +52,43 @@ public class TextFieldConfig {
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
         return passwdField;
+    }
+
+    public static JTextField createTextFieldWithPlaceHolder(String text, Font font, Color textColor, Dimension size) {
+        JTextField field = new JTextField(text);
+        field.setForeground(textColor);
+        field.setPreferredSize(size);
+        field.setFont(font);
+        field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
+        addFocusListenerForTextField(field, text);
+        return field;
+    }
+
+    public static void addFocusListenerForTextField(JTextField field, String originText) {
+        field.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                field.setForeground(Color.BLACK);
+                if (field.getText().equals(originText)) {
+                    field.setText("");
+                }
+                field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ giống originText
+                if (field.getText().isEmpty()) {
+                    field.setForeground(Color.GRAY);
+                    field.setText(originText);
+                }
+                field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
+            }
+        });
+    }
+
+    public static void resetTextField(JTextField that, String placeHolder) {
+        that.setText(placeHolder);
+        that.setForeground(Color.GRAY);
     }
 }

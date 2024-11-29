@@ -1,5 +1,6 @@
 package Config;
 
+import view.OverrideComponent.CustomButton;
 import view.Style;
 
 import javax.swing.*;
@@ -95,18 +96,112 @@ public class ButtonConfig {
         });
     }
 
+    public static JButton createEditFieldButton(JTextField textField) {
+        JButton editBt = new JButton();
+        editBt.setIcon(new ImageIcon("src/main/java/Icon/penIcon1.png"));
+        editBt.setPreferredSize(new Dimension(45, 40));
 
+        Color hoverBackground = new Color(130, 180, 230); // Màu sáng hơn khi hover
 
+        editBt.setBackground(Style.LIGHT_BlUE);
+        editBt.setFocusPainted(false);
+        editBt.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
+        editBt.setContentAreaFilled(true); // Đảm bảo nền được vẽ
 
+        // Thêm hiệu ứng hover
+        editBt.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                editBt.setBackground(hoverBackground);
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                editBt.setBackground(Style.LIGHT_BlUE);
+            }
+        });
+
+        // Thêm hiệu ứng click để làm sáng lên
+        editBt.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                editBt.setBackground(hoverBackground.darker()); // Tối hơn khi nhấn
+            }
+
+            public void mouseReleased(MouseEvent evt) {
+                editBt.setBackground(hoverBackground); // Quay lại màu hover sau khi thả chuột
+            }
+        });
+
+        editBt.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.setEditable(!textField.isEditable());
+                textField.setForeground(textField.isEditable() ? Color.BLACK : Color.GRAY);
+            }
+        });
+
+        return editBt;
+    }
+
+    // nút ẩn hiện cho mật khẩu
+    public static JButton createShowPasswdButton(JPasswordField passwordField) {
+        JButton toggleButton = new JButton();
+        toggleButton.setBackground(Style.LIGHT_BlUE);
+        toggleButton.setFocusPainted(false);
+        toggleButton.setFocusable(false);
+        toggleButton.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
+        ImageIcon showPasswd = new ImageIcon("src/main/java/Icon/showPasswd_Icon.png");
+        ImageIcon hidePasswd = new ImageIcon("src/main/java/Icon/hidePasswd_Icon.png");
+
+        toggleButton.setIcon(showPasswd);
+        toggleButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                toggleButton.setBackground(new Color(130, 180, 230));
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                toggleButton.setBackground(Style.LIGHT_BlUE);
+            }
+        });
+
+        toggleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (passwordField.getEchoChar() != '\u0000') {
+                    passwordField.setEchoChar('\u0000');
+                    toggleButton.setIcon(hidePasswd);
+                } else {
+                    // Ẩn mật khẩu
+                    passwordField.setEchoChar('*');
+                    toggleButton.setIcon(showPasswd);
+                }
+            }
+        });
+        return toggleButton;
+    }
+
+    public static CustomButton createCustomButton(String text) {
+        CustomButton button = new CustomButton(text);
+        FontMetrics metrics = button.getFontMetrics(button.getFont());
+        int textWidth = metrics.stringWidth(text);
+        int padding = 40;
+        button.setGradientColors(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.GRAY);
+        button.setBackgroundColor(Style.LIGHT_BlUE);
+        button.setBorderRadius(20);
+        button.setPreferredSize(new Dimension(textWidth + padding, 50));
+
+        return button;
+    }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Cooldown Button");
         JButton btn = new JButton("Click Me");
         JLabel label = new JLabel("Ready", SwingConstants.CENTER);
+        CustomButton button = createCustomButton("Change Password");
 
         // Bố cục
         frame.setLayout(new java.awt.BorderLayout());
         frame.add(btn, java.awt.BorderLayout.CENTER);
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.add(button);
+        frame.add(panel, java.awt.BorderLayout.NORTH);
         frame.add(label, java.awt.BorderLayout.SOUTH);
 
         // Lắng nghe sự kiện nhấn nút

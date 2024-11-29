@@ -1,8 +1,6 @@
 package view;
 
-import Config.ButtonConfig;
-import Config.CustomerExporter;
-import Config.ExcelConfig;
+import Config.*;
 import Enum.TableStatus;
 import Model.*;
 import Verifier.*;
@@ -20,13 +18,14 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import view.OtherComponent.*;
 import view.OverrideComponent.CircularImage;
 import view.OverrideComponent.CustomButton;
+import view.OverrideComponent.RoundedBorder;
 import view.OverrideComponent.ToastNotification;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.Image;
@@ -600,13 +599,11 @@ public class ManagerMainPanel extends JPanel {
                         if (result == JFileChooser.APPROVE_OPTION) {
                             File selectedFile = fileChooser.getSelectedFile();
                             if (selectedFile != null) {
-                                // Use ExcelConfig to import suppliers from the selected file
                                 ArrayList<Supplier> importedSuppliers = ExcelConfig.importFromExcel(selectedFile, Supplier.class);
 
-                                // Clear current suppliers and update with imported data
                                 suppliers.clear();
                                 suppliers.addAll(importedSuppliers);
-                                updateSuppliers(selectedOption); // Refresh the table to show imported data
+                                updateSuppliers(selectedOption);
                             }
                         }
                     });
@@ -1274,9 +1271,23 @@ public class ManagerMainPanel extends JPanel {
                         ButtonConfig.setIconBigButton("src/main/java/Icon/product-selling.png", setForSaleBt);
                         setForSaleBt.setHorizontalTextPosition(SwingConstants.CENTER);
                         setForSaleBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-                        setForSaleBt.addActionListener(e -> setForSaleHandle());
+                        setForSaleBt.addActionListener(e -> setStatusHandle(Product.AVAILABLE));
                         buttonPanel.add(setForSaleBt);
                     }
+
+                    // Set Re-stock
+                    {
+                        JButton setForSaleBt = new JButton("Set Re-stock");
+                        ButtonConfig.setStyleButton(setForSaleBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(110, 80));
+                        ButtonConfig.addButtonHoverEffect(setForSaleBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                        ButtonConfig.setIconBigButton("src/main/java/Icon/product-restock.png", setForSaleBt);
+                        setForSaleBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                        setForSaleBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                        setForSaleBt.addActionListener(e -> setStatusHandle(Product.IN_STOCK));
+                        buttonPanel.add(setForSaleBt);
+                    }
+
+                    buttonPanel.add(ButtonConfig.createVerticalSeparator());
 
                     //Export Product
                     {
@@ -1372,24 +1383,29 @@ public class ManagerMainPanel extends JPanel {
                     };
                 }
 
-                private void setForSaleHandle() {
+                private void setStatusHandle(String status) {
+                    String[] messages = switch (status) {
+                            case (Product.AVAILABLE) -> new String[] {"Available for sale", "add product for sale."};
+                            case (Product.IN_STOCK) -> new String[] {"Re-stocked", "re-stock the product."};
+                            default -> null;
+                    };
                     JTable selectedTable = getSelectedTable();
 
                     int[] selectedRows = selectedTable.getSelectedRows();
-                    if (selectedRows.length > 0) {
+                    if (selectedRows.length > 0 && messages != null) {
                         int y = -1, duration = 3000;
                         for (int row : selectedRows) {
                             int productId = Integer.parseInt(selectedTable.getValueAt(row, 1).toString());
                             String productName = (String) selectedTable.getValueAt(row, 2);
-                            if (changeStatus(productId, Product.AVAILABLE)) {
-                                ToastNotification.showToast("Successfully set product " + productName + " to Available for sale.", duration, 50, -1, y++);
+                            if (changeStatus(productId, status)) {
+                                ToastNotification.showToast("Successfully set product " + productName + " to " + messages[0], duration, 50, -1, y++);
                             }
-                            else ToastNotification.showToast("Failed to set product " + productName + " to Available for sale.", duration, 50, -1, y++);
-                            updateProduct();
+                            else ToastNotification.showToast("Failed to set product " + productName + " to " + messages[0], duration, 50, -1, y++);
                             duration += 100;
                         }
+                        updateProduct();
                     } else {
-                        ToastNotification.showToast("Please select a row to add product for sale.", 3000, 50, -1, -1);
+                        ToastNotification.showToast("Please select a row to " + messages[1], 3000, 50, -1, -1);
                     }
                 }
 
@@ -2299,18 +2315,18 @@ public class ManagerMainPanel extends JPanel {
 
                         // Khởi tạo các thành phần giao diện
                         JLabel lblFullName = new JLabel("Full Name:");
-                        txtFullName = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
+                        txtFullName = TextFieldConfig.createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
                         txtFullName.setInputVerifier(new NotNullVerifier());
                         addFocusListenerForTextField(txtFullName);
 
 
                         JLabel lblAddress = new JLabel("Address:");
-                        txtAddress = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
+                        txtAddress = TextFieldConfig.createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
                         txtAddress.setInputVerifier(new NotNullVerifier());
                         addFocusListenerForTextField(txtAddress);
 
                         JLabel lblBirthday = new JLabel("Birthday:");
-                        txtBirthday = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(250, 35));
+                        txtBirthday = TextFieldConfig.createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(250, 35));
                         txtBirthday.setInputVerifier(new BirthDayVerifier());
                         addFocusListenerForTextField(txtBirthday);
                         txtBirthday.setEditable(false);
@@ -2354,7 +2370,7 @@ public class ManagerMainPanel extends JPanel {
                         });
 
                         JLabel lblPhoneNumber = new JLabel("Phone Number:");
-                        txtPhoneNumber = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
+                        txtPhoneNumber = TextFieldConfig.createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
                         txtPhoneNumber.setInputVerifier(new PhoneNumberVerifer());
                         addFocusListenerForTextField(txtPhoneNumber);
 
@@ -2430,14 +2446,14 @@ public class ManagerMainPanel extends JPanel {
                         // Cột 2 (JTextField, JPasswordField, JTextField)
                         gbc.gridx = 1;
                         gbc.gridy = 0;
-                        usernameField = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
+                        usernameField = TextFieldConfig.createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
                         usernameField.setInputVerifier(new UserNameAccoutVerifier());
                         addFocusListenerForTextField(usernameField);
                         add(usernameField, gbc);
 
                         gbc.gridy = 1;
                         JPanel passwdPanel = new JPanel(new BorderLayout());
-                        passwordField = createStyledJPasswordField(Style.FONT_PLAIN_16, Style.MEDIUM_BLUE, new Dimension(250, 35));
+                        passwordField = TextFieldConfig.createStyledJPasswordField(Style.FONT_PLAIN_16, Style.MEDIUM_BLUE, new Dimension(250, 35));
                         passwordField.setInputVerifier(new NotNullVerifier());
                         passwordField.addFocusListener(new FocusListener() {
                             @Override
@@ -2451,7 +2467,7 @@ public class ManagerMainPanel extends JPanel {
                             }
                         });
 
-                        JButton togglePasswordButton = createShowPasswdButton(passwordField);
+                        JButton togglePasswordButton = ButtonConfig.createShowPasswdButton(passwordField);
                         togglePasswordButton.setPreferredSize(new Dimension(45, 35));
                         passwdPanel.setBackground(Color.WHITE);
                         passwdPanel.add(passwordField, BorderLayout.CENTER);
@@ -2460,7 +2476,7 @@ public class ManagerMainPanel extends JPanel {
                         add(passwdPanel, gbc);
 
                         gbc.gridy = 2;
-                        emailField = createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
+                        emailField = TextFieldConfig.createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
                         emailField.setInputVerifier(new EmailVerifier());
                         addFocusListenerForTextField(emailField);
                         add(emailField, gbc);
@@ -2693,7 +2709,7 @@ public class ManagerMainPanel extends JPanel {
             });
             searchButton = new JButton();
             setStyleButton(searchButton, Style.FONT_TEXT_CUSTOMER, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(50, 40));
-            setIconSmallButton("src/main/java/Icon/search_Icon.png", searchButton);
+            ButtonConfig.setIconSmallButton("src/main/java/Icon/search_Icon.png", searchButton);
 
 
 
@@ -2735,9 +2751,11 @@ public class ManagerMainPanel extends JPanel {
 
 
     class ChangeInformationPanel extends JPanel {
+        JTextField emailField, fullNameField, addressField;
+        CircularImage avatar;
         ChangeAvatarPanel changeAvatarPanel = new ChangeAvatarPanel();
         ChangeInfo changeInfo = new ChangeInfo();
-        CustomButton updateBt, cancelBt, changeAvaBt;
+        CustomButton updateBt, cancelBt, changePassBt, changeAvaBt;
 
         public ChangeInformationPanel() {
             setLayout(new BorderLayout());
@@ -2747,41 +2765,26 @@ public class ManagerMainPanel extends JPanel {
             ChangePn.add(changeInfo);
             add(ChangePn, BorderLayout.CENTER);
 
-            cancelBt = new CustomButton("Cancel");
-            cancelBt.setGradientColors(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.GRAY);
-            cancelBt.setBackgroundColor(Style.LIGHT_BlUE);
-            cancelBt.setBorderRadius(20);
-            cancelBt.setPreferredSize(new Dimension(200, 50));
-            cancelBt.setFont(Style.FONT_TITLE_PRODUCT);
-
-            updateBt = new CustomButton("Update");
-            updateBt.setGradientColors(new Color(58, 106, 227), Color.GREEN);
-            updateBt.setBackgroundColor(Style.LIGHT_BlUE);
-            updateBt.setBorderRadius(20);
-            updateBt.setPreferredSize(new Dimension(200, 50));
-            updateBt.setFont(Style.FONT_TITLE_PRODUCT);
-            updateBt.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    JOptionPane.showConfirmDialog(null, "Confirm Your Change?", "Confirm", JOptionPane.YES_NO_OPTION);
-                }
-            });
-
+            cancelBt = ButtonConfig.createCustomButton("Cancel");
+            cancelBt.addActionListener(e -> cancelHandle());
+            updateBt = ButtonConfig.createCustomButton("Update");
+            changePassBt = ButtonConfig.createCustomButton("Change Password");
+            changePassBt.addActionListener(e -> new ChangePasswordFrame().showVisible());
 
             JPanel updatePn = new JPanel(new FlowLayout(FlowLayout.CENTER));
             updatePn.add(cancelBt);
             updatePn.add(updateBt);
+            updatePn.add(changePassBt);
             add(updatePn, BorderLayout.SOUTH);
-
-
+            reloadData();
         }
 
         class ChangeAvatarPanel extends JPanel {
 
-            ChangeAvatarPanel() {
+            public ChangeAvatarPanel() {
                 setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
                 setBorder(BorderFactory.createEmptyBorder(20, 50, 30, 50));
-                CircularImage avatar = new CircularImage("src/main/java/Icon/fit_nlu_logo.jpg", 300, 300, false);
+                avatar = new CircularImage(CurrentUser.URL, 300, 300, false);
                 avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 
@@ -2793,6 +2796,24 @@ public class ManagerMainPanel extends JPanel {
                 changeAvaBt.setFont(Style.FONT_BUTTON_CUSTOMER);
                 changeAvaBt.setHorizontalAlignment(SwingConstants.CENTER);
                 changeAvaBt.setAlignmentX(Component.CENTER_ALIGNMENT);
+                changeAvaBt.addActionListener(e -> {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setDialogTitle("Select an Image");
+
+                    fileChooser.setAcceptAllFileFilterUsed(false);
+                    fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif"));
+
+                    int result = fileChooser.showOpenDialog(null);
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = fileChooser.getSelectedFile();
+                        if (selectedFile != null && isImageFile(selectedFile)) {
+                            avatar.setImage(selectedFile.getAbsolutePath());
+                            JOptionPane.showMessageDialog(null, "Avatar updated successfully!");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Please select a valid image file!", "Invalid File", JOptionPane.WARNING_MESSAGE);
+                        }
+                    }
+                });
 
                 add(Box.createVerticalGlue());
                 add(avatar);
@@ -2801,14 +2822,21 @@ public class ManagerMainPanel extends JPanel {
                 add(Box.createVerticalGlue());
             }
 
+            private boolean isImageFile(File file) {
+                String[] allowedExtensions = { "jpg", "jpeg", "png", "gif" };
+                String fileName = file.getName().toLowerCase();
+                for (String ext : allowedExtensions) {
+                    if (fileName.endsWith("." + ext)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
 
         class ChangeInfo extends JPanel {
-            JTextField emailField, fullNameField, addressField;
-            JPasswordField oldPasswordField, newPasswordField, confirmPasswordField;
-            JButton showOldPasswd, showNewPasswd, showRetypeNewPasswd;
 
-            ChangeInfo() {
+            public ChangeInfo() {
                 setLayout(new GridBagLayout());
 
                 // Tạo layout constraints
@@ -2816,7 +2844,7 @@ public class ManagerMainPanel extends JPanel {
                 gbc.insets = new Insets(5, 5, 5, 5);
                 gbc.fill = GridBagConstraints.HORIZONTAL;
 
-                JLabel title = new JLabel("Customer Information", SwingConstants.CENTER);
+                JLabel title = new JLabel("Change Your Information", SwingConstants.CENTER);
                 title.setFont(Style.FONT_TITLE_PRODUCT);
                 title.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
                 gbc.gridx = 0;
@@ -2830,7 +2858,9 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(emailLabel, gbc);
 
-                emailField = createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
+                emailField = TextFieldConfig.createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
+                emailField.setForeground(Color.GRAY);
+                emailField.setEditable(false);
                 gbc.gridx = 0;
                 gbc.gridy = 2;
                 gbc.gridwidth = 1;
@@ -2843,16 +2873,18 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(nameLabel, gbc);
 
-                fullNameField = createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
+                fullNameField = TextFieldConfig.createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
+                fullNameField.setForeground(Color.GRAY);
+                fullNameField.setEditable(false);
                 gbc.gridx = 0;
                 gbc.gridy = 4;
                 gbc.gridwidth = 1;
                 add(fullNameField, gbc);
 
-                JButton button2 = createEditFieldButton(fullNameField);
+                JButton showName = ButtonConfig.createEditFieldButton(fullNameField);
                 gbc.gridx = 1;
                 gbc.gridy = 4;
-                add(button2, gbc);
+                add(showName, gbc);
 
                 // Thêm Label 3, TextField 3, và Button 3
                 JLabel addressLabel = new JLabel("Address: ");
@@ -2861,153 +2893,58 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridwidth = 2;
                 add(addressLabel, gbc);
 
-                addressField = createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
+                addressField = TextFieldConfig.createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
+                addressField.setForeground(Color.GRAY);
+                addressField.setEditable(false);
                 gbc.gridx = 0;
                 gbc.gridy = 6;
                 gbc.gridwidth = 1;
                 add(addressField, gbc);
 
-                JButton button3 = createEditFieldButton(addressField);
+                JButton showAddress = ButtonConfig.createEditFieldButton(addressField);
                 gbc.gridx = 1;
                 gbc.gridy = 6;
-                add(button3, gbc);
-
-                JLabel oldPasswdLabel = new JLabel("Old Password: ");
-                gbc.gridx = 0;
-                gbc.gridy = 7;
-                gbc.gridwidth = 2;
-                add(oldPasswdLabel, gbc);
-
-                oldPasswordField = createStyledJPasswordField(Style.FONT_TEXT_CUSTOMER, Style.MEDIUM_BLUE, new Dimension(350, 40));
-                gbc.gridx = 0;
-                gbc.gridy = 8;
-                gbc.gridwidth = 1;
-                add(oldPasswordField, gbc);
-
-                showOldPasswd = createShowPasswdButton(oldPasswordField);
-                gbc.gridx = 1;
-                gbc.gridy = 8;
-                gbc.gridwidth = 1;
-                add(showOldPasswd, gbc);
-
-                JLabel newPasswdLabel = new JLabel("New Password: ");
-                gbc.gridx = 0;
-                gbc.gridy = 9;
-                gbc.gridwidth = 2;
-                add(newPasswdLabel, gbc);
-
-                newPasswordField = createStyledJPasswordField(Style.FONT_TEXT_CUSTOMER, Style.MEDIUM_BLUE, new Dimension(350, 40));
-                gbc.gridx = 0;
-                gbc.gridy = 10;
-                gbc.gridwidth = 1;
-                add(newPasswordField, gbc);
-
-                showNewPasswd = createShowPasswdButton(newPasswordField);
-                gbc.gridx = 1;
-                gbc.gridy = 10;
-                gbc.gridwidth = 1;
-                add(showNewPasswd, gbc);
-
-                JLabel confirmPasswdLabel = new JLabel("Confirm Password: ");
-                gbc.gridx = 0;
-                gbc.gridy = 11;
-                gbc.gridwidth = 2;
-                add(confirmPasswdLabel, gbc);
-
-                confirmPasswordField = createStyledJPasswordField(Style.FONT_TEXT_CUSTOMER, Style.MEDIUM_BLUE, new Dimension(350, 40));
-                gbc.gridx = 0;
-                gbc.gridy = 12;
-                gbc.gridwidth = 1;
-                add(confirmPasswordField, gbc);
-
-                showRetypeNewPasswd = createShowPasswdButton(confirmPasswordField);
-                gbc.gridx = 1;
-                gbc.gridy = 12;
-                gbc.gridwidth = 1;
-                add(showRetypeNewPasswd, gbc);
+                add(showAddress, gbc);
             }
+        }
 
-
-            private JButton createEditFieldButton(JTextField textField) {
-                JButton editBt = new JButton();
-                editBt.setIcon(new ImageIcon("src/main/java/Icon/penIcon1.png"));
-                editBt.setPreferredSize(new Dimension(45, 40));
-
-                Color hoverBackground = new Color(130, 180, 230); // Màu sáng hơn khi hover
-
-                editBt.setBackground(Style.LIGHT_BlUE);
-                editBt.setFocusPainted(false);
-                editBt.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
-                editBt.setContentAreaFilled(true); // Đảm bảo nền được vẽ
-
-                // Thêm hiệu ứng hover
-                editBt.addMouseListener(new MouseAdapter() {
-                    public void mouseEntered(MouseEvent evt) {
-                        editBt.setBackground(hoverBackground);
-                    }
-
-                    public void mouseExited(MouseEvent evt) {
-                        editBt.setBackground(Style.LIGHT_BlUE);
-                    }
-                });
-
-                // Thêm hiệu ứng click để làm sáng lên
-                editBt.addMouseListener(new MouseAdapter() {
-                    public void mousePressed(MouseEvent evt) {
-                        editBt.setBackground(hoverBackground.darker()); // Tối hơn khi nhấn
-                    }
-
-                    public void mouseReleased(MouseEvent evt) {
-                        editBt.setBackground(hoverBackground); // Quay lại màu hover sau khi thả chuột
-                    }
-                });
-
-                editBt.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        textField.setEditable(true);
-                    }
-                });
-
-                return editBt;
+        private void reloadData() {
+            try {
+                emailField.setText(CurrentUser.MANAGER_INFOR.getEmail());
+                fullNameField.setText(CurrentUser.MANAGER_INFOR.getFullName());
+                addressField.setText(CurrentUser.MANAGER_INFOR.getAddress());
+                avatar.setImage(CurrentUser.URL);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }
 
-            // nút ẩn hiện cho mật khẩu
-            private JButton createShowPasswdButton(JPasswordField passwordField) {
-                JButton toggleButton = new JButton();
-                toggleButton.setBackground(Style.LIGHT_BlUE);
-                toggleButton.setFocusPainted(false);
-                toggleButton.setFocusable(false);
-                toggleButton.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
-                ImageIcon showPasswd = new ImageIcon("src/main/java/Icon/showPasswd_Icon.png");
-                ImageIcon hidePasswd = new ImageIcon("src/main/java/Icon/hidePasswd_Icon.png");
+        private boolean hasNotChanged() {
+            return emailField.getText().equals(CurrentUser.MANAGER_INFOR.getEmail()) &&
+                    fullNameField.getText().equals(CurrentUser.MANAGER_INFOR.getFullName()) &&
+                    addressField.getText().equals(CurrentUser.MANAGER_INFOR.getAddress()) &&
+                    this.avatar.equals(new CircularImage(CurrentUser.URL, avatar.getWidth(), avatar.getHeight(), false));
+        }
 
-                toggleButton.setIcon(showPasswd);
-                toggleButton.addMouseListener(new MouseAdapter() {
-                    public void mouseEntered(MouseEvent evt) {
-                        toggleButton.setBackground(new Color(130, 180, 230));
-                    }
+        private void cancelHandle() {
+            if (!hasNotChanged()) {
+                int response = JOptionPane.showConfirmDialog(
+                        null,
+                        "You have unsaved changes. Are you sure you want to cancel?",
+                        "Confirm Cancel",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                );
 
-                    public void mouseExited(MouseEvent evt) {
-                        toggleButton.setBackground(Style.LIGHT_BlUE);
-                    }
-                });
-
-                toggleButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (passwordField.getEchoChar() != '\u0000') {
-                            passwordField.setEchoChar('\u0000');
-                            toggleButton.setIcon(hidePasswd);
-                        } else {
-                            // Ẩn mật khẩu
-                            passwordField.setEchoChar('*');
-                            toggleButton.setIcon(showPasswd);
-                        }
-                    }
-                });
-                return toggleButton;
+                if (response == JOptionPane.YES_OPTION) {
+                    reloadData();
+                    JOptionPane.showMessageDialog(null, "Changes have been canceled.", "Action Canceled", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Continue editing your changes.", "Action Resumed", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "No changes to cancel.", "Action Canceled", JOptionPane.INFORMATION_MESSAGE);
             }
-
         }
     }
 
@@ -3050,32 +2987,6 @@ public class ManagerMainPanel extends JPanel {
         return field;
     }
 
-    private JTextField createStyledTextField(Font font, Color textColor, Color borderColor, Dimension size) {
-        JTextField field = new JTextField();
-        field.setFont(font);
-        field.setForeground(textColor);
-        field.setPreferredSize(size);
-        field.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(borderColor),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        field.setBackground(Color.WHITE);
-        return field;
-    }
-
-
-    private JPasswordField createStyledJPasswordField(Font font, Color borderColor, Dimension size) {
-        JPasswordField passwdField = new JPasswordField();
-        passwdField.setEchoChar('*');
-        passwdField.setFont(font);
-        passwdField.setPreferredSize(size);
-        passwdField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(borderColor),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-
-        return passwdField;
-    }
-
-
     private static void setStyleButton(JButton that, Font font, Color textColor, Color backgroundColor, int textPosition, Dimension size) {
         that.setFont(font);
         that.setForeground(textColor);
@@ -3084,42 +2995,6 @@ public class ManagerMainPanel extends JPanel {
         that.setBorderPainted(false);
         that.setFocusable(false);
         that.setPreferredSize(size);
-    }
-
-    private static JButton createShowPasswdButton(JPasswordField passwordField) {
-        JButton toggleButton = new JButton();
-        toggleButton.setBackground(Style.LIGHT_BlUE);
-        toggleButton.setFocusPainted(false);
-        toggleButton.setFocusable(false);
-        toggleButton.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
-        ImageIcon showPasswd = new ImageIcon("src/main/java/Icon/showPasswd_Icon.png");
-        ImageIcon hidePasswd = new ImageIcon("src/main/java/Icon/hidePasswd_Icon.png");
-
-        toggleButton.setIcon(showPasswd);
-        toggleButton.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent evt) {
-                toggleButton.setBackground(new Color(130, 180, 230));
-            }
-
-            public void mouseExited(MouseEvent evt) {
-                toggleButton.setBackground(Style.LIGHT_BlUE);
-            }
-        });
-
-        toggleButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (passwordField.getEchoChar() != '\u0000') {
-                    passwordField.setEchoChar('\u0000');
-                    toggleButton.setIcon(hidePasswd);
-                } else {
-                    // Ẩn mật khẩu
-                    passwordField.setEchoChar('*');
-                    toggleButton.setIcon(showPasswd);
-                }
-            }
-        });
-        return toggleButton;
     }
 
     // Phương thức xóa các JTextField trong panel

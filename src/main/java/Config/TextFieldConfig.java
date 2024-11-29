@@ -27,4 +27,28 @@ public class TextFieldConfig {
         ));
         return textField;
     }
+
+    public static JTextField createStyledTextField(Font font, Color textColor, Color borderColor, Dimension size) {
+        JTextField field = new JTextField();
+        field.setFont(font);
+        field.setForeground(textColor);
+        field.setPreferredSize(size);
+        field.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        field.setBackground(Color.WHITE);
+        return field;
+    }
+
+    public static JPasswordField createStyledJPasswordField(Font font, Color borderColor, Dimension size) {
+        JPasswordField passwdField = new JPasswordField();
+        passwdField.setEchoChar('*');
+        passwdField.setFont(font);
+        passwdField.setPreferredSize(size);
+        passwdField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+        return passwdField;
+    }
 }

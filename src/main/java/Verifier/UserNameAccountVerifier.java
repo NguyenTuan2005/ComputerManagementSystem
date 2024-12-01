@@ -5,9 +5,8 @@ import view.OverrideComponent.ToastNotification;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.SQLOutput;
 
-public class UserNameAccoutVerifier extends InputVerifier {
+public class UserNameAccountVerifier extends InputVerifier {
     private AccountController accountController;
     @Override
     public boolean verify(JComponent input) {

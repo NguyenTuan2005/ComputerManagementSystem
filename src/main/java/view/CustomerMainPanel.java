@@ -580,16 +580,16 @@ public class CustomerMainPanel extends JPanel {
 //                    addCustomerNotification(customer1, "ok good good ehavd hvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadm liw ehavd hvoqjbkhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .");
 //                }
 //            });
-//            JButton Bt = new JButton("Add");
-//            Bt.addActionListener(new ActionListener() {
-//                public void actionPerformed(ActionEvent e) {
-//                    Customer customer1 = new Customer("Nguyen Thi Ngoc Huyen", "23130075@st.hcmuaf.edu.vn", "tien giang chau thanh duong diem",
-//                            "$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO", "src/main/java/img/cus_huyen.jpg");
-//
-//
-//                    addCustomerNotification(customer1, "ok good good ehavd hvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadm liw ehavd hvoqjbkhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .");
-//                }
-//            });
+            JButton Bt = new JButton("Add");
+            Bt.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    Customer customer1 = new Customer("Nguyen Thi Ngoc Huyen", "23130075@st.hcmuaf.edu.vn", "tien giang chau thanh duong diem",
+                            "$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO", "src/main/java/img/cus_huyen.jpg");
+
+
+                    addCustomerNotification(customer1, "ok good good ehavd hvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadm liw ehavd hvoqjbkhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .");
+                }
+            });
 //            JButton Bt1 = new JButton("Add");
 //            Bt1.addActionListener(new ActionListener() {
 //                public void actionPerformed(ActionEvent e) {
@@ -601,13 +601,12 @@ public class CustomerMainPanel extends JPanel {
 //                }
 //            });
 //            title.add(addBt);
-//            title.add(Bt);
+            title.add(Bt);
 //            title.add(Bt1);
 
             searchField = createTextFieldWithPlaceholder("Search Notification", Style.FONT_TEXT_CUSTOMER, new Dimension(320, 40));
             searchButton = createCustomButton("", Style.FONT_TEXT_LOGIN_FRAME, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE, SwingConstants.CENTER, 0, new Dimension(50, 40));
             setIconSmallButton("src/main/java/Icon/search_Icon.png", searchButton);
-
 
             title.add(searchField);
             title.add(searchButton);
@@ -1538,7 +1537,7 @@ public class CustomerMainPanel extends JPanel {
         message.setOpaque(true);
 
         // Cố định chiều rộng và tính toán chiều cao phù hợp
-        int width = 600;
+        int width = 800;
         message.setSize(new Dimension(width, Short.MAX_VALUE));
         int preferredHeight = message.getPreferredSize().height;
         message.setPreferredSize(new Dimension(width, preferredHeight));
@@ -1547,7 +1546,7 @@ public class CustomerMainPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(message);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Tắt border mặc định của JScrollPane
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
         JPanel textAreaPanel = new JPanel();
         textAreaPanel.setLayout(new BoxLayout(textAreaPanel, BoxLayout.Y_AXIS));
@@ -1578,6 +1577,5 @@ public class CustomerMainPanel extends JPanel {
         notificationContainer.revalidate();
         notificationContainer.repaint();
     }
-
 
 }

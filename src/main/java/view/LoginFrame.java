@@ -47,7 +47,7 @@ public class LoginFrame extends JFrame {
     LoginFrame() {
         setLayout(new BorderLayout());
         setTitle("Computer Management");
-        setSize(1000, 600);
+        setSize(1100, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
@@ -252,6 +252,9 @@ public class LoginFrame extends JFrame {
                         inputFormPanel.signUpPanel.showPanelSignUp("verifyEmail");
                     }
 
+                    for (int i = 0; i < inputFormPanel.signUpPanel.verifyEmailPanel.otpFields.length; i++) {
+                        inputFormPanel.signUpPanel.verifyEmailPanel.otpFields[i].setText("");
+                    }
                 }
                 public void highlightEmptyField(JTextField field) {
                     field.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
@@ -412,44 +415,6 @@ public class LoginFrame extends JFrame {
                 }
             });
 
-//            verifyBt.addActionListener(new ActionListener() {
-//                public void actionPerformed(ActionEvent e) {
-//                    boolean isEmpty = false;
-//                    int otpInput = 0;
-//                    try {
-//                        for (int i = 0; i < otpFields.length; i++) {
-//                            int num = Integer.parseInt(otpFields[i].getText().trim());
-//                            otpInput += num;
-//                            if (i < otpFields.length - 1)
-//                                otpInput *= 10;
-//                        }
-//                    }catch (NullPointerException exception){
-//                        System.out.println(exception);
-//                        setColorTextField();
-//
-//                    }
-//
-//                    System.out.println(otpInput + "   " + otp);
-//                    if (otp == otpInput) {
-//                        showInnerPanel("setNewPasswd");
-//                        otp = RESET_OTP;
-//                        for (int i = 0; i < otpFields.length; i++) {
-//                            otpFields[i].setText("");
-//                        }
-//                    } else {
-//                        System.out.println("sai roi ");
-//                        setColorTextField();
-//                        ToastNotification.showToast("Wrong OTP",2500,50,-1,-1);
-//                    }
-//                }
-//
-//                private static void resetPasswdField(JPasswordField passwordField, String placeholder) {
-//                    passwordField.setForeground(Color.GRAY);
-//                    passwordField.setText(placeholder);
-//                    passwordField.setEchoChar((char) 0);
-//                }
-//            });
-
             //create re-send code button
             resendCodeBt = new JButton("Re-send Verify Code");
             resendCodeBt.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
@@ -466,43 +431,42 @@ public class LoginFrame extends JFrame {
                     resendCodeBt.setBackground(Color.WHITE);
                 }
             });
-//            resendCodeBt.addActionListener(new ActionListener() {
-//                private boolean isCooldown = false;
-//                private Timer timer = new Timer();
-//
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    if (!isCooldown) {
-//                        isCooldown = true;
-//                        resendCodeBt.setEnabled(false);
-//                        startCooldown();
-//                    }
-//                    EmailConfig emailConfig = new EmailConfig();
+            resendCodeBt.addActionListener(new ActionListener() {
+                private boolean isCooldown = false;
+                private Timer timer = new Timer();
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (!isCooldown) {
+                        isCooldown = true;
+                        resendCodeBt.setEnabled(false);
+                        startCooldown();
+                    }
+                    EmailConfig emailConfig = new EmailConfig();
 //                    otp = emailConfig.generateOTP();
 //                    System.out.println(otp +" new ");
 //                    boolean sent =  sendOTP(to,name,otp);
-//                    JOptionPane.showMessageDialog(null, "We have sent a new verification code to your email!");
-//                }
-//                private void startCooldown() {
-//                    TimerTask task = new TimerTask() {
-//                        int remainingTime = 25;
-//
-//                        @Override
-//                        public void run() {
-//                            if (remainingTime > 0) {
-//                                resendCodeBt.setText("Wait " + remainingTime + "s");
-//                                remainingTime--;
-//                            } else {
-//                                resendCodeBt.setText("Re-send Verify Code");
-//                                resendCodeBt.setEnabled(true);
-//                                isCooldown = false;
-//                                cancel();
-//                            }
-//                        }
-//                    };
-//                    timer.scheduleAtFixedRate(task, 0, 1000);
-//                }
-//            });
+                    JOptionPane.showMessageDialog(null, "We have sent a new verification code to your email!");
+                }
+                private void startCooldown() {
+                    TimerTask task = new TimerTask() {
+                        int remainingTime = 25;
+
+                        @Override
+                        public void run() {
+                            if (remainingTime > 0) {
+                                resendCodeBt.setText("Wait " + remainingTime + "s");
+                                remainingTime--;
+                            } else {
+                                resendCodeBt.setText("Re-send Verify Code");
+                                resendCodeBt.setEnabled(true);
+                                isCooldown = false;
+                                cancel();
+                            }
+                        }
+                    };
+                    timer.scheduleAtFixedRate(task, 0, 1000);
+                }
+            });
 
             // create backBt
             backBt = createCustomButtonWithBorder("Back", Style.FONT_BUTTON_LOGIN_FRAME, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 50));
@@ -589,19 +553,19 @@ public class LoginFrame extends JFrame {
             gbc.gridy++;
             add(backPn, gbc);
         }
-        private  void setColorTextField(){
-            for (int i = 0; i < otpFields.length; i++) {
-                otpFields[i].setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-            }
-        }
     }
 
     class RegistrationSuccessPanel extends JPanel{
-        private CustomButton go;
+        private CustomButton goToSignIn;
+
         RegistrationSuccessPanel(){
             setBackground(Color.WHITE);
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBorder(BorderFactory.createEmptyBorder(0, 50, 50, 50));
+            JLabel titleLabel = new JLabel("<html>Verification Successful</html>",SwingConstants.CENTER);
+            titleLabel.setFont(Style.FONT_TITLE_BOLD_45);
+            titleLabel.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+            titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JLabel greetingLb = new JLabel("<html>You're all set!!!<br>Sign in with your new account and enjoy using the application.</html>");
             greetingLb.setFont(Style.FONT_TITLE_PRODUCT_30);
@@ -609,15 +573,19 @@ public class LoginFrame extends JFrame {
             greetingLb.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 
-            add(Box.createVerticalGlue());
-            add(Box.createRigidArea(new Dimension(0, 10)));
-            add(greetingLb);
-            add(Box.createRigidArea(new Dimension(0, 30)));
+            ImageIcon congrats = new ImageIcon("src/main/java/img/congratulation_Image.jpg");
+            JLabel congratsImage = new JLabel(congrats);
+            congratsImage.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+            add(Box.createVerticalGlue());
+            add(Box.createRigidArea(new Dimension(0, 20)));
+            add(titleLabel);
+            add(Box.createRigidArea(new Dimension(0, 40)));
+            add(greetingLb);
+            add(congratsImage);
             add(Box.createVerticalGlue());
         }
     }
-
 
     class SignInPanel extends JPanel {
         private LoginFrame loginFrame;

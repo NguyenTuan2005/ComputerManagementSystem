@@ -61,7 +61,6 @@ public class CustomerMenuPanel extends JPanel {
             add(Box.createRigidArea(new Dimension(0, 5)));
             add(avatar, BorderLayout.CENTER);
 
-
             name = new JLabel("Duy vip pro");
             name.setHorizontalAlignment(JLabel.CENTER);
             name.setForeground(Color.GREEN);

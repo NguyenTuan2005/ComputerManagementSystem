@@ -3,6 +3,7 @@ package view;
 import Config.ButtonConfig;
 import Config.CustomerExporter;
 import Config.ExcelConfig;
+import Config.TextFieldConfig;
 import Enum.TableStatus;
 import Model.*;
 import Verifier.*;
@@ -124,7 +125,6 @@ public class ManagerMainPanel extends JPanel {
         ToolPanel toolPanel = new ToolPanel();
         JButton addBt, modifyBt, deleteBt, sortBt, exportExcelBt, importExcelBt, searchBt, reloadBt;
         JTextField findText;
-
         TablePanel tablePanel = new TablePanel();
         JTable tableProduct;
         DefaultTableModel modelProductTable;
@@ -132,6 +132,7 @@ public class ManagerMainPanel extends JPanel {
         JTabbedPane tabbedPaneProductTable;
         JPanel sortPanel;
         JLabel sortLabel;
+        JComboBox<String> sortComboBox;
 
         JPanel searchPanel, applicationPanel, mainPanel;
         private static ProductController productController = new ProductController();
@@ -225,6 +226,7 @@ public class ManagerMainPanel extends JPanel {
                         }
                     }
                 });
+
                 sortBt = new JButton("Sort");
                 ButtonConfig.addButtonHoverEffect(sortBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(sortBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
@@ -285,28 +287,8 @@ public class ManagerMainPanel extends JPanel {
                         }
                     }
                 });
-                findText = new JTextField("Search by name");
-                findText.setForeground(Color.GRAY);
-                formatTextField(findText, new Font("Arial", Font.PLAIN, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
-                findText.addFocusListener(new FocusListener() {
-                    @Override
-                    public void focusGained(FocusEvent e) {
-                        // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ "Search", nó sẽ biến mất
-                        if (findText.getText().equals("Search by name")) {
-                            findText.setText("");
-                            findText.setForeground(Color.BLACK);
-                        }
-                    }
-
-                    @Override
-                    public void focusLost(FocusEvent e) {
-                        // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ "Search"
-                        if (findText.getText().isEmpty()) {
-                            findText.setForeground(Color.GRAY);
-                            findText.setText("Search by name");
-                        }
-                    }
-                });
+                findText = TextFieldConfig.createTextFieldWithPlaceHolder("Search by Name",new Font("Arial", Font.PLAIN, 24),Color.GRAY,new Dimension(280, 50));
+                findText.addActionListener(e -> searchBt.doClick());
 
                 searchBt = new JButton();
                 ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -331,8 +313,8 @@ public class ManagerMainPanel extends JPanel {
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(modifyBt);
                 String[] sortOptions = {"NAME", "MEMORY", "PRICE", "RAM"};
-                JComboBox<String> sortComboBox = new JComboBox<>(sortOptions);
-                sortComboBox.setPreferredSize(new Dimension(74, 59));
+                sortComboBox = new JComboBox<>(sortOptions);
+                sortComboBox.setPreferredSize(new Dimension(80, 50));
                 sortComboBox.setBackground(Style.WORD_COLOR_WHITE);
                 sortComboBox.setForeground(Style.WORD_COLOR_BLACK);
                 sortComboBox.setFont(Style.FONT_SIZE_BUTTON);
@@ -340,7 +322,6 @@ public class ManagerMainPanel extends JPanel {
                     @Override
                     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                         Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
                         if (isSelected) {
                             c.setBackground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);  // Màu nền khi mục được chọn
                             c.setForeground(Color.WHITE); // Màu chữ khi mục được chọn
@@ -388,20 +369,10 @@ public class ManagerMainPanel extends JPanel {
                     }
                 });
 
-
                 sortPanel = new JPanel(new BorderLayout());
-                sortLabel = new JLabel("Sort");
-                sortLabel.setHorizontalAlignment(SwingConstants.CENTER); // Căn ngang giữa
-                sortLabel.setVerticalAlignment(SwingConstants.CENTER);
+                sortLabel = new JLabel("Sort",SwingConstants.CENTER);
                 sortLabel.setFont(Style.FONT_SIZE_MIN_PRODUCT);
-                JLabel none = new JLabel("");
-                none.setFont(Style.FONT_SIZE_MIN_PRODUCT);
-                none.setHorizontalAlignment(SwingConstants.CENTER); // Căn ngang giữa
-                none.setVerticalAlignment(SwingConstants.CENTER);
-
-
                 sortPanel.add(sortComboBox, BorderLayout.CENTER);
-                sortPanel.add(none, BorderLayout.NORTH);
                 sortPanel.add(sortLabel, BorderLayout.SOUTH);
                 sortPanel.setBackground(Style.WORD_COLOR_WHITE);
 
@@ -447,7 +418,7 @@ public class ManagerMainPanel extends JPanel {
                         ArrayList<Product> products = productController.find(findText.getText().trim());
 
                         if (products.isEmpty()) {
-                            JOptionPane.showMessageDialog(tablePanel, "có caái ni");
+                            JOptionPane.showMessageDialog(tablePanel, "Product not found in the List!");
                             return;
                         }
                         upDataProducts(products, modelProductTable);
@@ -613,31 +584,8 @@ public class ManagerMainPanel extends JPanel {
                     });
 
                 }
-
-                // Search Text Field
-                {
-                    findText = new JTextField("Search by name");
-                    findText.setForeground(Color.GRAY);
-                    formatTextField(findText, new Font("Arial", Font.PLAIN, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
-                    findText.addFocusListener(new FocusListener() {
-                        @Override
-                        public void focusGained(FocusEvent e) {
-                            if (findText.getText().equals("Search by name")) {
-                                findText.setText("");
-                                findText.setForeground(Color.BLACK);
-                            }
-                        }
-
-                        @Override
-                        public void focusLost(FocusEvent e) {
-                            if (findText.getText().isEmpty()) {
-                                findText.setForeground(Color.GRAY);
-                                findText.setText("Search by name");
-                                updateSuppliers(selectedOption);
-                            }
-                        }
-                    });
-                }
+                findText = TextFieldConfig.createTextFieldWithPlaceHolder("Search by Name",new Font("Arial", Font.PLAIN, 24),Color.GRAY,new Dimension(280, 50));
+                findText.addActionListener(e -> searchBt.doClick());
 
                 // Search Button
                 searchBt = new JButton();
@@ -800,7 +748,7 @@ public class ManagerMainPanel extends JPanel {
         private TableCustomerPanel tableCustomerPanel = new TableCustomerPanel();
 
         private JButton addCustomerBt, modifyCustomerBt, exportCustomerExcelBt, searchCustomerBt, reloadCustomerBt, blockCustomer, writeToFileTXT;
-        private JTextField findCustomerText;
+        private JTextField findCustomerField;
 
         private TextDisplayPanel billTextDisplayPanal;
         private int index = 0;
@@ -950,26 +898,8 @@ public class ManagerMainPanel extends JPanel {
                 });
 
 
-                findCustomerText = new JTextField("Search by name");
-                findCustomerText.setForeground(Color.GRAY);
-                formatTextField(findCustomerText, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
-                findCustomerText.addFocusListener(new FocusListener() {
-                                                      @Override
-                                                      public void focusGained(FocusEvent e) {
-                                                          if (findCustomerText.getText().equals("Search by name")) {
-                                                              findCustomerText.setText("");
-                                                              findCustomerText.setForeground(Color.BLACK);
-                                                          }
-                                                      }
-
-                                                      @Override
-                                                      public void focusLost(FocusEvent e) {
-                                                          findCustomerText.setForeground(Color.GRAY);
-                                                          findCustomerText.setText("Search by name");
-                                                      }
-                                                  }
-
-                );
+                findCustomerField = TextFieldConfig.createTextFieldWithPlaceHolder("Search by Name",new Font("Arial", Font.PLAIN, 24),Color.GRAY,new Dimension(280, 50));
+                findCustomerField.addActionListener(e -> searchCustomerBt.doClick());
 
                 searchCustomerBt = new JButton();
                 ButtonConfig.addButtonHoverEffect(searchCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -983,9 +913,9 @@ public class ManagerMainPanel extends JPanel {
                                 switch (getIndexSelectedTab()) {
 
                                     case TAB_DATA_CUSTOMER: {
-                                        if (findCustomerText.getText().trim().isEmpty())
+                                        if (findCustomerField.getText().trim().isEmpty())
                                             return;
-                                        ArrayList<Customer> cuss = customerController.find(findCustomerText.getText().trim());
+                                        ArrayList<Customer> cuss = customerController.find(findCustomerField.getText().trim());
                                         if (cuss.isEmpty()) {
                                             JOptionPane.showMessageDialog(tableCustomerPanel, "có caái ni");
                                             return;
@@ -994,10 +924,10 @@ public class ManagerMainPanel extends JPanel {
                                         break;
                                     }
                                     case TAB_BILL: {
-                                        if (findCustomerText.getText().trim().isEmpty())
+                                        if (findCustomerField.getText().trim().isEmpty())
                                             return;
                                         try {
-                                            int customerId = Integer.parseInt(findCustomerText.getText());
+                                            int customerId = Integer.parseInt(findCustomerField.getText());
                                             bills = customerController.findCustomerOrderById(customerId);
                                             if (bills.isEmpty())
                                                 JOptionPane.showMessageDialog(null, "No information available");
@@ -1006,7 +936,7 @@ public class ManagerMainPanel extends JPanel {
 
                                         } catch (Exception ex) {
                                             JOptionPane.showMessageDialog(null, "You must enter the ID Customer");
-                                            findCustomerText.setText("");
+                                            findCustomerField.setText("");
                                         }
                                         break;
                                     }
@@ -1030,7 +960,7 @@ public class ManagerMainPanel extends JPanel {
                 });
 
                 searchPanel = new JPanel(new FlowLayout());
-                searchPanel.add(findCustomerText);
+                searchPanel.add(findCustomerField);
                 searchPanel.add(searchCustomerBt);
                 searchPanel.setBackground(Style.WORD_COLOR_WHITE);
 
@@ -1459,10 +1389,13 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridy = 0;
                 gbc.weightx = 1.0;
                 gbc.fill = GridBagConstraints.HORIZONTAL;
-                searchPanel.add(createSearchField(), gbc);
+                searchTextField = TextFieldConfig.createTextFieldWithPlaceHolder("Search by Name",new Font("Arial", Font.PLAIN, 24),Color.GRAY,new Dimension(280, 50));
+                searchTextField.addActionListener(e -> searchBt.doClick());
+                searchPanel.add(searchTextField, gbc);
 
                 gbc.gridx = 1;
                 gbc.weightx = 0;
+
                 searchPanel.add(createSearchButton(), gbc);
 
                 return searchPanel;
@@ -1474,31 +1407,6 @@ public class ManagerMainPanel extends JPanel {
 
             private boolean changeStatus(int id, String status) {
                 return ProductPanel.changeStatus(id, status);
-            }
-
-            private JTextField createSearchField() {
-                searchTextField = new JTextField("Search by name");
-                searchTextField.setForeground(Color.BLACK);
-                formatTextField(searchTextField, new Font("Arial", Font.PLAIN, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
-                searchTextField.addFocusListener(new FocusListener() {
-                    @Override
-                    public void focusGained(FocusEvent e) {
-                        if (searchTextField.getText().equals("Search by name")) {
-                            searchTextField.setText("");
-                            searchTextField.setForeground(Color.GRAY);
-                        }
-                    }
-
-                    @Override
-                    public void focusLost(FocusEvent e) {
-                        if (searchTextField.getText().isEmpty()) {
-                            searchTextField.setForeground(Color.BLACK);
-                            searchTextField.setText("Search by name");
-                            updateProduct();
-                        }
-                    }
-                });
-                return searchTextField;
             }
 
             private JButton createSearchButton() {
@@ -1834,7 +1742,7 @@ public class ManagerMainPanel extends JPanel {
         private TableCustomerPanel tableAccManagerPanel = new TableCustomerPanel();
 
         private JButton addAccBt, modifyAccBt, exportAccExcelBt, searchAccBt, reloadAccBt, blockCustomer;
-        private JTextField textField;
+        private JTextField accManagerField;
 
 
         private JPanel searchPanel, applicationPanel, mainPanel;
@@ -2103,34 +2011,8 @@ public class ManagerMainPanel extends JPanel {
 
                     }
                 });
-
-
-
-
-                textField = new JTextField("Search by name");
-                textField.setForeground(Color.GRAY);
-                formatTextField(textField, new Font("Arial", 0, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
-                textField.addFocusListener(new FocusListener() {
-                                               @Override
-                                               public void focusGained(FocusEvent e) {
-                                                   // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ "Search", nó sẽ biến mất
-                                                   if (textField.getText().equals("Search by name")) {
-                                                       textField.setText("");
-                                                       textField.setForeground(Color.BLACK);
-                                                   }
-                                               }
-
-                                               @Override
-                                               public void focusLost(FocusEvent e) {
-                                                   // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ "Search"
-                                                   if (textField.getText().isEmpty()) {
-                                                       textField.setForeground(Color.GRAY);
-                                                       textField.setText("Search by name");
-                                                   }
-                                               }
-                                           }
-
-                );
+                accManagerField = TextFieldConfig.createTextFieldWithPlaceHolder("Search by Name",new Font("Arial", Font.PLAIN, 24),Color.GRAY,new Dimension(280, 50));
+                accManagerField.addActionListener(e -> searchAccBt.doClick());
 
                 searchAccBt = new JButton();
                 ButtonConfig.addButtonHoverEffect(searchAccBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -2141,7 +2023,7 @@ public class ManagerMainPanel extends JPanel {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 reload();
-                                String find = textField.getText().toLowerCase().trim();
+                                String find = accManagerField.getText().toLowerCase().trim();
                                 ArrayList<ManagerInforDTO> managerInforDTOS = (ArrayList<ManagerInforDTO>) managerInfors.stream()
                                         .filter(p -> p.getFullnameLowerCase().contains(find))
                                         .collect(Collectors.toList());
@@ -2157,7 +2039,7 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.addButtonHoverEffect(reloadAccBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(reloadAccBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/reload-icon.png", reloadAccBt);
-                reloadAccBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                reloadAccBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 reloadAccBt.setVerticalTextPosition(SwingConstants.BOTTOM);
                 reloadAccBt.addActionListener(new ActionListener() {
                     @Override
@@ -2167,7 +2049,7 @@ public class ManagerMainPanel extends JPanel {
                 });
 
                 searchPanel = new JPanel(new FlowLayout());
-                searchPanel.add(textField);
+                searchPanel.add(accManagerField);
                 searchPanel.add(searchAccBt);
                 searchPanel.setBackground(Style.WORD_COLOR_WHITE);
 
@@ -2180,7 +2062,7 @@ public class ManagerMainPanel extends JPanel {
 
                 JLabel none = new JLabel("");
                 none.setFont(Style.FONT_SIZE_MIN_PRODUCT);
-                none.setHorizontalAlignment(SwingConstants.CENTER); // Căn ngang giữa
+                none.setHorizontalAlignment(SwingConstants.CENTER);
                 none.setVerticalAlignment(SwingConstants.CENTER);
 
 

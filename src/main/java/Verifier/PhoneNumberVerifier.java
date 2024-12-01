@@ -5,7 +5,7 @@ import view.OverrideComponent.ToastNotification;
 import javax.swing.*;
 import java.awt.*;
 
-public class PhoneNumberVerifer extends InputVerifier {
+public class PhoneNumberVerifier extends InputVerifier {
     @Override
     public boolean verify(JComponent input) {
         String phonenum = ((JTextField) input).getText().trim();

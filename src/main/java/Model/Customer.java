@@ -106,4 +106,7 @@ public class Customer {
         return this.block == 1;
     }
 
+    public boolean authenticateOldPassword(String password) {
+        return this.password.equals(password);
+    }
 }

@@ -54,6 +54,20 @@ public class TextFieldConfig {
         return passwdField;
     }
 
+    public static JTextField createUneditableTextField(String label) {
+        JTextField textField = TextFieldConfig.createStyledTextField(
+                Style.FONT_TEXT_CUSTOMER,
+                Color.BLACK,
+                Style.MEDIUM_BLUE,
+                new Dimension(350, 40)
+        );
+
+        textField.setForeground(Color.GRAY);
+        textField.setEditable(false);
+
+        return textField;
+    }
+
     public static JTextField createTextFieldWithPlaceHolder(String text, Font font, Color textColor, Dimension size) {
         JTextField field = new JTextField(text);
         field.setForeground(textColor);

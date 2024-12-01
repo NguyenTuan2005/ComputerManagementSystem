@@ -42,10 +42,8 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static Model.Account.getCurrentDate;
@@ -81,7 +79,8 @@ public class ManagerMainPanel extends JPanel {
     static final String[] columnNamesPRODUCT = {"Serial Number", "ProductID", "Product Name", "Quantity", "Unit Price", "Type of Device", "Brand",
             "Operating System", "CPU", "Storage", "RAM", "Made In", "Status", "Disk", "Weight", "Monitor", "Card"};
     static final String[] columnNamesSUPPLIER = {"Serial Number", "Supplier ID:", "Supplier Name:", "Email:", "Phone number:", "Address:", "Contract Start Date:"};
-    static final String[] columnNamesCUSTOMER = {"Customer ID:", "Customer Name:","Phone Number:", "Email:", "Address:", "Date of Birth:"};
+    static final String[] columnNamesCUSTOMER = {"Customer ID:", "Customer Name:", "Phone Number:", "Email:", "Address:", "Date of Birth:"};
+
     //main constructor
     public ManagerMainPanel() {
         //tao giao dien
@@ -153,7 +152,7 @@ public class ManagerMainPanel extends JPanel {
         }
 
         public static void deletedProduct(int id) {
-            productController.setDeleteRow(id , false);
+            productController.setDeleteRow(id, false);
         }
 
         public static boolean changeStatus(int id, String status) {
@@ -502,7 +501,7 @@ public class ManagerMainPanel extends JPanel {
 
     // Hoang's code // tuan/
     class SupplierPanel extends JPanel {
-        JButton addBt, modifyBt, deleteBt, exportExcelBt, importExcelBt, searchBt;
+        JButton addBt, modifyBt, deleteBt, exportExcelBt, importExcelBt, reloadBt, searchBt;
         JTextField findText;
         private JTable tableSupplier;
         private DefaultTableModel modelSupplier;
@@ -530,7 +529,7 @@ public class ManagerMainPanel extends JPanel {
                 // Add Button
                 {
                     addBt = new JButton("Add");
-                    ButtonConfig.setStyleButton(addBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
+                    ButtonConfig.setStyleButton(addBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.addButtonHoverEffect(addBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                     ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addBt);
                     addBt.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -555,7 +554,7 @@ public class ManagerMainPanel extends JPanel {
                 // Delete Button
                 {
                     deleteBt = new JButton("Delete");
-                    ButtonConfig.setStyleButton(deleteBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
+                    ButtonConfig.setStyleButton(deleteBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt);
                     ButtonConfig.addButtonHoverEffect(deleteBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                     deleteBt.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -586,7 +585,7 @@ public class ManagerMainPanel extends JPanel {
                 // Import Excel Button
                 {
                     importExcelBt = new JButton("Import");
-                    ButtonConfig.setStyleButton(importExcelBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
+                    ButtonConfig.setStyleButton(importExcelBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-export-excel-50.png", importExcelBt);
                     ButtonConfig.addButtonHoverEffect(importExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                     importExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -610,11 +609,22 @@ public class ManagerMainPanel extends JPanel {
 
                 }
 
+                // Reload button
+                {
+                    reloadBt = new JButton("Reload");
+                    ButtonConfig.setStyleButton(reloadBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/reload-icon.png", reloadBt);
+                    reloadBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    reloadBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                    reloadBt.addActionListener(e -> updateSuppliers(selectedOption));
+                }
+
                 // Search Text Field
                 {
                     findText = new JTextField("Search by name");
                     findText.setForeground(Color.GRAY);
-                    formatTextField(findText, new Font("Arial", Font.PLAIN, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
+                    formatTextField(findText, new Font("Arial", Font.PLAIN, 24), Style.WORD_COLOR_BLACK, new Dimension(230, 45));
                     findText.addFocusListener(new FocusListener() {
                         @Override
                         public void focusGained(FocusEvent e) {
@@ -658,7 +668,7 @@ public class ManagerMainPanel extends JPanel {
 
                 String[] sortOptions = {"ALL", "NAME", "EMAIL", "PHONE NUMBER", "ADDRESS", "DATE"};
                 JComboBox<String> sortComboBox = new JComboBox<>(sortOptions);
-                sortComboBox.setPreferredSize(new Dimension(130, 59));
+                sortComboBox.setPreferredSize(new Dimension(100, 59));
                 sortComboBox.setBackground(Style.WORD_COLOR_WHITE);
                 sortComboBox.setForeground(Style.WORD_COLOR_BLACK);
                 sortComboBox.setFont(Style.FONT_SIZE_BUTTON);
@@ -676,6 +686,7 @@ public class ManagerMainPanel extends JPanel {
                 applicationPanel.add(ButtonConfig.createVerticalSeparator());
                 applicationPanel.add(exportExcelBt);
                 applicationPanel.add(importExcelBt);
+                applicationPanel.add(reloadBt);
                 applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
 
                 // Main panel with GridBagLayout
@@ -713,7 +724,7 @@ public class ManagerMainPanel extends JPanel {
                     ModifySupplierFrame modifySupplierFrame = new ModifySupplierFrame(() -> updateSuppliers(selectedOption), supplierDAO.findById(supplierId));
                     modifySupplierFrame.showFrame();
                 } else {
-                    ToastNotification.showToast("Please select a row to modify.", 3000, 50,-1,-1);
+                    ToastNotification.showToast("Please select a row to modify.", 3000, 50, -1, -1);
                 }
             }
 
@@ -728,9 +739,9 @@ public class ManagerMainPanel extends JPanel {
                     // Remove the row from the table model
                     modelSupplier.removeRow(selectedRow);
 
-                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 50,-1,-1);
+                    ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 50, -1, -1);
                 } else {
-                    ToastNotification.showToast("Please select a row to delete.", 3000, 50,-1,-1);
+                    ToastNotification.showToast("Please select a row to delete.", 3000, 50, -1, -1);
                 }
             }
         }
@@ -744,7 +755,7 @@ public class ManagerMainPanel extends JPanel {
                 tableSupplier = createTable(modelSupplier, columnNamesSUPPLIER);
                 tableSupplier.setRowHeight(40);
                 resizeColumnWidth(tableSupplier, 300);
-                tableSupplier.getColumnModel().getColumn(tableSupplier.getColumnCount()-1).setPreferredWidth(400);
+                tableSupplier.getColumnModel().getColumn(tableSupplier.getColumnCount() - 1).setPreferredWidth(400);
                 JScrollPane scrollPaneSupplier = new JScrollPane(tableSupplier);
                 modelSupplier = (DefaultTableModel) tableSupplier.getModel();
                 suppliers = supplierController.reloadData();
@@ -1196,46 +1207,6 @@ public class ManagerMainPanel extends JPanel {
             cardLayoutInventory.show(this, INVENTORY_CONTROL_CONSTRAINT);
         }
 
-        public void showPanelInInventory(String panelName) {
-            cardLayoutInventory.show(this, panelName); // method chuyển đổi giữa các panel
-        }
-
-        private void reloadProducts() {
-            products = ProductPanel.reloadProducts();
-        }
-
-        private void reloadProducts(String status) {
-            reloadProducts();
-            products.removeIf(product -> !(status.equals(product.getStatus())));
-        }
-
-        private void upDataProducts(DefaultTableModel tableModel, String status) {
-            if (status == null || status.isEmpty()) reloadProducts();
-            else reloadProducts(status);
-            ProductPanel.upDataProducts(products, tableModel);
-        }
-
-        private void upDataProducts(DefaultTableModel tableModel, String status, String searchText) {
-            if (status == null || status.isEmpty()) reloadProducts();
-            else reloadProducts(status);
-            if (searchText != null && !searchText.isEmpty()) {
-                products.removeIf(product -> !product.getName().toLowerCase().contains(searchText.toLowerCase()));
-            }
-            ProductPanel.upDataProducts(products, tableModel);
-        }
-
-        private void updateProduct() {
-            upDataProducts(modelInventory, null);
-            upDataProducts(modelImport, Product.IN_STOCK);
-            upDataProducts(modelExport, Product.AVAILABLE);
-        }
-
-        private void searchProduct(String searchText) {
-            upDataProducts(modelInventory, null, searchText);
-            upDataProducts(modelImport, Product.IN_STOCK, searchText);
-            upDataProducts(modelExport, Product.AVAILABLE, searchText);
-        }
-
         // panel chứa các chức năng tương tác của inventory
         public class InventoryControlPanel extends JPanel {
             private JTabbedPane tabbedPaneMain;
@@ -1265,8 +1236,8 @@ public class ManagerMainPanel extends JPanel {
                     buttonPanel.setBackground(Style.WORD_COLOR_WHITE);
                     // Set for Sale
                     {
-                        JButton setForSaleBt = new JButton("Set for Sale");
-                        ButtonConfig.setStyleButton(setForSaleBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(110, 80));
+                        JButton setForSaleBt = new JButton("Sale");
+                        ButtonConfig.setStyleButton(setForSaleBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                         ButtonConfig.addButtonHoverEffect(setForSaleBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                         ButtonConfig.setIconBigButton("src/main/java/Icon/product-selling.png", setForSaleBt);
                         setForSaleBt.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -1277,8 +1248,8 @@ public class ManagerMainPanel extends JPanel {
 
                     // Set Re-stock
                     {
-                        JButton setForSaleBt = new JButton("Set Re-stock");
-                        ButtonConfig.setStyleButton(setForSaleBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(110, 80));
+                        JButton setForSaleBt = new JButton("Re-stock");
+                        ButtonConfig.setStyleButton(setForSaleBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
                         ButtonConfig.addButtonHoverEffect(setForSaleBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                         ButtonConfig.setIconBigButton("src/main/java/Icon/product-restock.png", setForSaleBt);
                         setForSaleBt.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -1349,6 +1320,18 @@ public class ManagerMainPanel extends JPanel {
                         buttonPanel.add(exportExcelBt);
                     }
 
+                    //Reload
+                    {
+                        JButton reloadBt = new JButton("Reload");
+                        ButtonConfig.setStyleButton(reloadBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                        ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                        ButtonConfig.setIconBigButton("src/main/java/Icon/reload-icon.png", reloadBt);
+                        reloadBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                        reloadBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                        reloadBt.addActionListener(e -> updateProduct());
+                        buttonPanel.add(reloadBt);
+                    }
+
                     gbc.gridx = 0;
                     gbc.gridy = 0;
                     gbc.weightx = 1;
@@ -1385,9 +1368,9 @@ public class ManagerMainPanel extends JPanel {
 
                 private void setStatusHandle(String status) {
                     String[] messages = switch (status) {
-                            case (Product.AVAILABLE) -> new String[] {"Available for sale", "add product for sale."};
-                            case (Product.IN_STOCK) -> new String[] {"Re-stocked", "re-stock the product."};
-                            default -> null;
+                        case (Product.AVAILABLE) -> new String[]{"Available for sale", "add product for sale."};
+                        case (Product.IN_STOCK) -> new String[]{"Re-stocked", "re-stock the product."};
+                        default -> null;
                     };
                     JTable selectedTable = getSelectedTable();
 
@@ -1399,8 +1382,8 @@ public class ManagerMainPanel extends JPanel {
                             String productName = (String) selectedTable.getValueAt(row, 2);
                             if (changeStatus(productId, status)) {
                                 ToastNotification.showToast("Successfully set product " + productName + " to " + messages[0], duration, 50, -1, y++);
-                            }
-                            else ToastNotification.showToast("Failed to set product " + productName + " to " + messages[0], duration, 50, -1, y++);
+                            } else
+                                ToastNotification.showToast("Failed to set product " + productName + " to " + messages[0], duration, 50, -1, y++);
                             duration += 100;
                         }
                         updateProduct();
@@ -1418,7 +1401,7 @@ public class ManagerMainPanel extends JPanel {
                             new ProductModifyForm(products.get(selectedRow), InventoryPanel.this::updateProduct).setVisible(true);
                         });
                     } else {
-                        ToastNotification.showToast("Please select a row to modify.", 3000, 50,-1,-1);
+                        ToastNotification.showToast("Please select a row to modify.", 3000, 50, -1, -1);
                     }
                 }
 
@@ -1496,7 +1479,7 @@ public class ManagerMainPanel extends JPanel {
             private JTextField createSearchField() {
                 searchTextField = new JTextField("Search by name");
                 searchTextField.setForeground(Color.BLACK);
-                formatTextField(searchTextField, new Font("Arial", Font.PLAIN, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
+                formatTextField(searchTextField, new Font("Arial", Font.PLAIN, 24), Style.WORD_COLOR_BLACK, new Dimension(200, 45));
                 searchTextField.addFocusListener(new FocusListener() {
                     @Override
                     public void focusGained(FocusEvent e) {
@@ -1837,12 +1820,52 @@ public class ManagerMainPanel extends JPanel {
                 }
             }
         }
+
+        public void showPanelInInventory(String panelName) {
+            cardLayoutInventory.show(this, panelName); // method chuyển đổi giữa các panel
+        }
+
+        private void reloadProducts() {
+            products = ProductPanel.reloadProducts();
+        }
+
+        private void reloadProducts(String status) {
+            reloadProducts();
+            products.removeIf(product -> !(status.equals(product.getStatus())));
+        }
+
+        private void upDataProducts(DefaultTableModel tableModel, String status) {
+            if (status == null || status.isEmpty()) reloadProducts();
+            else reloadProducts(status);
+            ProductPanel.upDataProducts(products, tableModel);
+        }
+
+        private void upDataProducts(DefaultTableModel tableModel, String status, String searchText) {
+            if (status == null || status.isEmpty()) reloadProducts();
+            else reloadProducts(status);
+            if (searchText != null && !searchText.isEmpty()) {
+                products.removeIf(product -> !product.getName().toLowerCase().contains(searchText.toLowerCase()));
+            }
+            ProductPanel.upDataProducts(products, tableModel);
+        }
+
+        private void updateProduct() {
+            upDataProducts(modelInventory, null);
+            upDataProducts(modelImport, Product.IN_STOCK);
+            upDataProducts(modelExport, Product.AVAILABLE);
+        }
+
+        private void searchProduct(String searchText) {
+            upDataProducts(modelInventory, null, searchText);
+            upDataProducts(modelImport, Product.IN_STOCK, searchText);
+            upDataProducts(modelExport, Product.AVAILABLE, searchText);
+        }
     }
 
     class AccManagementPanel extends JPanel {
         private final String[] accountColumnNames = {"Serial Number", "ManagerID", "Fullname", "Address", "Birth Day", "Phone Number", "AccountID", " User Name", "Password", "Email", "Account creation date", "Avata"};
-        private final int informationPanel=0;
-        private final int addOrModify=1;
+        private final int informationPanel = 0;
+        private final int addOrModify = 1;
         private JTable tableAccManager;
         private DefaultTableModel modelAccManager;
         private JScrollPane scrollPaneAccManager;
@@ -1863,8 +1886,8 @@ public class ManagerMainPanel extends JPanel {
         private Date selectedDate;
         private JLabel label;
         private String contextPath = "";
-        private int modifyId=-1;
-        private static boolean  btnModifyStutus = false;
+        private int modifyId = -1;
+        private static boolean btnModifyStutus = false;
         private static TableStatus tableStatus = TableStatus.NONE;
         private static ArrayList<ManagerInforDTO> managerInfors = new ArrayList<>();
         private ManagerController managerController = new ManagerController();
@@ -1896,7 +1919,7 @@ public class ManagerMainPanel extends JPanel {
                 manager.setPhoneNumber(txtPhoneNumber.getText());
                 manager.setBirthDay(selectedDate);
 
-            } catch (NullPointerException nullPointerException){
+            } catch (NullPointerException nullPointerException) {
                 System.out.println(nullPointerException.toString());
             }
             return manager;
@@ -1912,7 +1935,7 @@ public class ManagerMainPanel extends JPanel {
                     emailField.getInputVerifier().verify(emailField);
         }
 
-        private void removeInfor(){
+        private void removeInfor() {
             txtFullName.setText("");
             txtAddress.setText("");
             txtBirthday.setText("");
@@ -1922,42 +1945,43 @@ public class ManagerMainPanel extends JPanel {
             emailField.setText("");
             label.setIcon(null);
             label.setText("Drop your image here");
-            btnModifyStutus =false;
+            btnModifyStutus = false;
             addAccBt.setEnabled(true);
         }
 
         private int getIndexTableSelectedTab() {
-            return  tabbedPaneAccManager.getSelectedIndex();
+            return tabbedPaneAccManager.getSelectedIndex();
         }
-        private void setVisiblePanel(int panel){
+
+        private void setVisiblePanel(int panel) {
             tabbedPaneAccManager.setSelectedIndex(panel);
         }
 
-         private void setDataToModify(ManagerInforDTO manager){
-             txtFullName.setText(manager.getFullName());
-             txtAddress.setText(manager.getAddress());
-             txtBirthday.setText(manager.getBirthDay().toString());
-             txtPhoneNumber.setText(manager.getPhoneNumber());
-             usernameField.setText(manager.getUsername());
+        private void setDataToModify(ManagerInforDTO manager) {
+            txtFullName.setText(manager.getFullName());
+            txtAddress.setText(manager.getAddress());
+            txtBirthday.setText(manager.getBirthDay().toString());
+            txtPhoneNumber.setText(manager.getPhoneNumber());
+            usernameField.setText(manager.getUsername());
 //             passwordField.setText("");
-             emailField.setText(manager.getEmail());
-             contextPath = manager.getAvataImg();
-             System.out.println("contextPart " + contextPath);
-             try {
-                 Path targetPath = Paths.get(contextPath);
-                 ImageIcon avatarIcon = new ImageIcon(targetPath.toString());
-                 Image scaledImage = avatarIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-                 label.setIcon(new ImageIcon(scaledImage));
-                 label.setText("");
+            emailField.setText(manager.getEmail());
+            contextPath = manager.getAvataImg();
+            System.out.println("contextPart " + contextPath);
+            try {
+                Path targetPath = Paths.get(contextPath);
+                ImageIcon avatarIcon = new ImageIcon(targetPath.toString());
+                Image scaledImage = avatarIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                label.setIcon(new ImageIcon(scaledImage));
+                label.setText("");
 
-             }catch (NullPointerException npe){
-                 System.out.println( "meo cos hinhf ");
-             }
+            } catch (NullPointerException npe) {
+                System.out.println("meo cos hinhf ");
+            }
 //             Files.createDirectories(targetPath.getParent());
 //             Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
 
-         }
+        }
 
         public class ToolPanel extends JPanel {
             public ToolPanel() {
@@ -1976,49 +2000,49 @@ public class ManagerMainPanel extends JPanel {
 //                        switch (getIndexTableSelectedTab()){
                         System.out.println(" modify btn ");
 //                            case 1 ->{
-                                tableStatus=TableStatus.ADD;
-                                try {
-                                    if (!verifier()) {
-                                        ToastNotification.showToast("Verifier False ", 2500, 50,-1,-1);
+                        tableStatus = TableStatus.ADD;
+                        try {
+                            if (!verifier()) {
+                                ToastNotification.showToast("Verifier False ", 2500, 50, -1, -1);
+                                return;
+                            }
+                            if (getAcc().getAvataImg().isEmpty()) {
+                                Object[] options = {"Push image", "No avata", "Cancel"};
+                                int status = JOptionPane.showOptionDialog(
+                                        null,
+                                        "You haven't uploaded an image!",
+                                        "Warning",
+                                        JOptionPane.YES_NO_CANCEL_OPTION,
+                                        JOptionPane.WARNING_MESSAGE,
+                                        null,
+                                        options, // Nút tùy chỉnh
+                                        options[0] // Nút mặc định
+                                );
+                                System.out.println(status);
+                                switch (status) {
+                                    //YES
+                                    case (0) -> {
                                         return;
                                     }
-                                    if (getAcc().getAvataImg().isEmpty()) {
-                                        Object[] options = {"Push image", "No avata", "Cancel"};
-                                        int status = JOptionPane.showOptionDialog(
-                                                null,
-                                                "You haven't uploaded an image!",
-                                                "Warning",
-                                                JOptionPane.YES_NO_CANCEL_OPTION,
-                                                JOptionPane.WARNING_MESSAGE,
-                                                null,
-                                                options, // Nút tùy chỉnh
-                                                options[0] // Nút mặc định
-                                        );
-                                        System.out.println(status);
-                                        switch (status) {
-                                            //YES
-                                            case (0) -> {
-                                                return;
-                                            }
-                                            //NO
-                                            case (1) -> {
+                                    //NO
+                                    case (1) -> {
 
-                                            }
-                                            //CANCEL
-                                            case (2) -> {
-                                                return;
-                                            }
-
-                                        }
                                     }
-                                    System.out.println(getAcc());
-                                    System.out.println(getManager());
-                                    managerController.createManager(getManager(),getAcc());
-                                    removeInfor();
-                                    ToastNotification.showToast("The image has been saved!", 2500, 50,-1,-1);
-                                } catch (Exception exception) {
-                                    ToastNotification.showToast("Please, upload your image again!", 2500, 50,-1,-1);
+                                    //CANCEL
+                                    case (2) -> {
+                                        return;
+                                    }
+
                                 }
+                            }
+                            System.out.println(getAcc());
+                            System.out.println(getManager());
+                            managerController.createManager(getManager(), getAcc());
+                            removeInfor();
+                            ToastNotification.showToast("The image has been saved!", 2500, 50, -1, -1);
+                        } catch (Exception exception) {
+                            ToastNotification.showToast("Please, upload your image again!", 2500, 50, -1, -1);
+                        }
 //                            }
 //                        }
                     }
@@ -2036,20 +2060,19 @@ public class ManagerMainPanel extends JPanel {
                         // nhấn zô chua )
                         int selectedRow = tableAccManager.getSelectedRow();
                         System.out.println(" modify btn ");
-                        if (btnModifyStutus== false && selectedRow != -1) {
+                        if (btnModifyStutus == false && selectedRow != -1) {
 
                             tableStatus = TableStatus.MODIFY;
 
 
                             int columnIndex = 0;
 
-                                modifyId = (int) tableAccManager.getValueAt(selectedRow, columnIndex) - 1;
+                            modifyId = (int) tableAccManager.getValueAt(selectedRow, columnIndex) - 1;
 //                            System.out.println(id);
-                                setDataToModify(managerInfors.get(modifyId));
-                                setVisiblePanel(addOrModify);
-                                addAccBt.setEnabled(false);
-                                btnModifyStutus = true;
-
+                            setDataToModify(managerInfors.get(modifyId));
+                            setVisiblePanel(addOrModify);
+                            addAccBt.setEnabled(false);
+                            btnModifyStutus = true;
 
 
                         } else {
@@ -2058,7 +2081,7 @@ public class ManagerMainPanel extends JPanel {
                             account.setId(managerInfors.get(modifyId).getAccountId());
                             manager.setId(managerInfors.get(modifyId).getManagerId());
 
-                            if (manager.birthDayIsNull()){
+                            if (manager.birthDayIsNull()) {
                                 manager.setBirthDay((Date) managerInfors.get(modifyId).getBirthDay());
                             }
                             System.out.println(manager);
@@ -2068,7 +2091,7 @@ public class ManagerMainPanel extends JPanel {
                             btnModifyStutus = false;
                             reload();
                             removeInfor();
-                            ToastNotification.showToast("Your information has been updated successfully.", 2500, 50,-1,-1);
+                            ToastNotification.showToast("Your information has been updated successfully.", 2500, 50, -1, -1);
 
                             addAccBt.setEnabled(true);
                         }
@@ -2095,7 +2118,7 @@ public class ManagerMainPanel extends JPanel {
                             int id = Integer.parseInt(value.toString());
                             accountController.updateBlock(blocked, id);
                             reload();
-                            ToastNotification.showToast(name + (blocked ? " is blocked !!!" : " is unblocked !!!"), 2500, 50,-1,-1);
+                            ToastNotification.showToast(name + (blocked ? " is blocked !!!" : " is unblocked !!!"), 2500, 50, -1, -1);
                         }
                     }
                 });
@@ -2113,15 +2136,13 @@ public class ManagerMainPanel extends JPanel {
                         if (fileName != null && !fileName.trim().isEmpty()) {
                             reload();
                             ExcelConfig.writeManagersToExcel(managerInfors, fileName);
-                            ToastNotification.showToast(fileName + " is created!", 2500, 50,-1,-1);
+                            ToastNotification.showToast(fileName + " is created!", 2500, 50, -1, -1);
                         } else {
-                            ToastNotification.showToast("Failed to export Excel file!", 2500, 50,-1,-1);
+                            ToastNotification.showToast("Failed to export Excel file!", 2500, 50, -1, -1);
                         }
 
                     }
                 });
-
-
 
 
                 textField = new JTextField("Search by name");
@@ -2371,7 +2392,7 @@ public class ManagerMainPanel extends JPanel {
 
                         JLabel lblPhoneNumber = new JLabel("Phone Number:");
                         txtPhoneNumber = TextFieldConfig.createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
-                        txtPhoneNumber.setInputVerifier(new PhoneNumberVerifer());
+                        txtPhoneNumber.setInputVerifier(new PhoneNumberVerifier());
                         addFocusListenerForTextField(txtPhoneNumber);
 
                         // Cài đặt GridBagConstraints cho các thành phần
@@ -2447,7 +2468,7 @@ public class ManagerMainPanel extends JPanel {
                         gbc.gridx = 1;
                         gbc.gridy = 0;
                         usernameField = TextFieldConfig.createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
-                        usernameField.setInputVerifier(new UserNameAccoutVerifier());
+                        usernameField.setInputVerifier(new UserNameAccountVerifier());
                         addFocusListenerForTextField(usernameField);
                         add(usernameField, gbc);
 
@@ -2539,18 +2560,18 @@ public class ManagerMainPanel extends JPanel {
                     undoBt = new CustomButton("Undo");
                     undoBt.setPreferredSize(new Dimension(100, 40));
                     undoBt.setDrawBorder(false);
-                    undoBt.addActionListener(e->{
+                    undoBt.addActionListener(e -> {
                         System.out.println(btnModifyStutus);
-                        if (btnModifyStutus== true)
+                        if (btnModifyStutus == true)
                             setDataToModify(managerInfors.get(modifyId));
                     });
 
                     cancelBt = new CustomButton("cancel");
                     cancelBt.setPreferredSize(new Dimension(100, 40));
                     cancelBt.setDrawBorder(false);
-                    cancelBt.addActionListener( e->{
-                                    removeInfor();
-                            });
+                    cancelBt.addActionListener(e -> {
+                        removeInfor();
+                    });
 
                     uploadImagePn.add(undoBt);
                     uploadImagePn.add(importImage);
@@ -2646,36 +2667,37 @@ public class ManagerMainPanel extends JPanel {
         private JScrollPane scrollPane;
         private JTextField searchField;
         private JButton searchButton;
-        private CustomButton allNotify,managerNotify, customerNotify;
+        private CustomButton allNotify, managerNotify, customerNotify;
+
         public NotificationPanel() {
             setLayout(new BorderLayout());
             JPanel toolPn = new JPanel(new FlowLayout(FlowLayout.CENTER));
             toolPn.setBackground(Color.WHITE);
 
-            allNotify = createCustomButton("All",Style.FONT_SIZE_MENU_BUTTON,Color.white,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2,15,new Dimension(120,40));
+            allNotify = createCustomButton("All", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2, 15, new Dimension(120, 40));
             allNotify.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    setColorSelectedButton(allNotify,customerNotify,managerNotify);
+                    setColorSelectedButton(allNotify, customerNotify, managerNotify);
 
 
                 }
             });
-            managerNotify = createCustomButton("Manager",Style.FONT_SIZE_MENU_BUTTON,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2,15,new Dimension(120,40));
+            managerNotify = createCustomButton("Manager", Style.FONT_SIZE_MENU_BUTTON, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2, 15, new Dimension(120, 40));
             managerNotify.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    setColorSelectedButton(managerNotify,customerNotify,allNotify);
+                    setColorSelectedButton(managerNotify, customerNotify, allNotify);
 
 
                 }
             });
 
-            customerNotify = createCustomButton("Customer",Style.FONT_SIZE_MENU_BUTTON,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2,15,new Dimension(120,40));
+            customerNotify = createCustomButton("Customer", Style.FONT_SIZE_MENU_BUTTON, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2, 15, new Dimension(120, 40));
             customerNotify.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    setColorSelectedButton(customerNotify,managerNotify,allNotify);
+                    setColorSelectedButton(customerNotify, managerNotify, allNotify);
 
                 }
             });
@@ -2685,8 +2707,7 @@ public class ManagerMainPanel extends JPanel {
             toolPn.add(customerNotify);
 
 
-
-            searchField = createTextFieldWithPlaceholder("Search Notification",Style.FONT_TEXT_CUSTOMER,new Dimension(320, 40));
+            searchField = createTextFieldWithPlaceholder("Search Notification", Style.FONT_TEXT_CUSTOMER, new Dimension(320, 40));
             // Thêm FocusListener để kiểm soát khi người dùng nhấn và rời khỏi JTextField
             searchField.addFocusListener(new FocusListener() {
                 @Override
@@ -2712,7 +2733,6 @@ public class ManagerMainPanel extends JPanel {
             ButtonConfig.setIconSmallButton("src/main/java/Icon/search_Icon.png", searchButton);
 
 
-
             toolPn.add(searchField);
             toolPn.add(searchButton);
 
@@ -2720,7 +2740,8 @@ public class ManagerMainPanel extends JPanel {
             add(toolPn, BorderLayout.NORTH);
             add(notificationMainPanel, BorderLayout.CENTER);
         }
-        public void setColorSelectedButton(CustomButton selected, CustomButton notSelected1,CustomButton notSelected2){
+
+        public void setColorSelectedButton(CustomButton selected, CustomButton notSelected1, CustomButton notSelected2) {
             selected.setBackgroundColor(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             selected.setForeground(Color.WHITE);
             notSelected1.setBackgroundColor(Color.WHITE);
@@ -2749,13 +2770,15 @@ public class ManagerMainPanel extends JPanel {
 
     }
 
-
     class ChangeInformationPanel extends JPanel {
-        JTextField emailField, fullNameField, addressField;
+        JTextField emailField, fullNameField, addressField, phoneNumField, dateOfBirthField, createDateField;
         CircularImage avatar;
         ChangeAvatarPanel changeAvatarPanel = new ChangeAvatarPanel();
         ChangeInfo changeInfo = new ChangeInfo();
         CustomButton updateBt, cancelBt, changePassBt, changeAvaBt;
+
+        AccountController accountController = new AccountController();
+        ManagerController managerController = new ManagerController();
 
         public ChangeInformationPanel() {
             setLayout(new BorderLayout());
@@ -2768,8 +2791,9 @@ public class ManagerMainPanel extends JPanel {
             cancelBt = ButtonConfig.createCustomButton("Cancel");
             cancelBt.addActionListener(e -> cancelHandle());
             updateBt = ButtonConfig.createCustomButton("Update");
+            updateBt.addActionListener(e -> updateHandle());
             changePassBt = ButtonConfig.createCustomButton("Change Password");
-            changePassBt.addActionListener(e -> new ChangePasswordFrame().showVisible());
+            changePassBt.addActionListener(e -> new ChangePasswordFrame("Manager").showVisible());
 
             JPanel updatePn = new JPanel(new FlowLayout(FlowLayout.CENTER));
             updatePn.add(cancelBt);
@@ -2823,7 +2847,7 @@ public class ManagerMainPanel extends JPanel {
             }
 
             private boolean isImageFile(File file) {
-                String[] allowedExtensions = { "jpg", "jpeg", "png", "gif" };
+                String[] allowedExtensions = {"jpg", "jpeg", "png", "gif"};
                 String fileName = file.getName().toLowerCase();
                 for (String ext : allowedExtensions) {
                     if (fileName.endsWith("." + ext)) {
@@ -2835,15 +2859,56 @@ public class ManagerMainPanel extends JPanel {
         }
 
         class ChangeInfo extends JPanel {
+            private final String[] labels = {
+                    "Email",
+                    "Name",
+                    "Address",
+                    "Phone Number",
+                    "Date of Birth",
+                    "Create Date"
+            };
+            private final JTextField[] editableFields = new JTextField[labels.length];
+            JButton[] editButtons = new JButton[labels.length];
 
             public ChangeInfo() {
                 setLayout(new GridBagLayout());
-
-                // Tạo layout constraints
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.insets = new Insets(5, 5, 5, 5);
                 gbc.fill = GridBagConstraints.HORIZONTAL;
 
+                addTitle(gbc);
+                initializeFields();
+
+                for (int i = 0; i < labels.length; i++) {
+                    gbc.gridx = 0;
+                    gbc.gridy = 2 * i + 1;
+                    gbc.gridwidth = 2;
+                    add(new JLabel(labels[i] + ": "), gbc);
+
+                    gbc.gridx = 0;
+                    gbc.gridy = 2 * i + 2;
+                    gbc.gridwidth = 1;
+                    add(editableFields[i], gbc);
+
+                    if (i != 0) {
+                        gbc.gridx = 1;
+                        JButton editButton = ButtonConfig.createEditFieldButton(editableFields[i]);
+                        editButtons[i] = editButton;
+                        add(editButton, gbc);
+                    }
+                }
+            }
+
+            private void initializeFields() {
+                editableFields[0] = emailField = TextFieldConfig.createUneditableTextField(labels[0]);
+                editableFields[1] = fullNameField = TextFieldConfig.createUneditableTextField(labels[1]);
+                editableFields[2] = addressField = TextFieldConfig.createUneditableTextField(labels[2]);
+                editableFields[3] = phoneNumField = TextFieldConfig.createUneditableTextField(labels[3]);
+                editableFields[4] = dateOfBirthField = TextFieldConfig.createUneditableTextField(labels[4]);
+                editableFields[5] = createDateField = TextFieldConfig.createUneditableTextField(labels[5]);
+            }
+
+            private void addTitle(GridBagConstraints gbc) {
                 JLabel title = new JLabel("Change Your Information", SwingConstants.CENTER);
                 title.setFont(Style.FONT_TITLE_PRODUCT);
                 title.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
@@ -2851,60 +2916,6 @@ public class ManagerMainPanel extends JPanel {
                 gbc.gridy = 0;
                 gbc.gridwidth = 2;
                 add(title, gbc);
-
-                JLabel emailLabel = new JLabel("Email: ");
-                gbc.gridx = 0;
-                gbc.gridy = 1;
-                gbc.gridwidth = 2;
-                add(emailLabel, gbc);
-
-                emailField = TextFieldConfig.createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
-                emailField.setForeground(Color.GRAY);
-                emailField.setEditable(false);
-                gbc.gridx = 0;
-                gbc.gridy = 2;
-                gbc.gridwidth = 1;
-                add(emailField, gbc);
-
-                // Thêm Label 2, TextField 2, và Button 2
-                JLabel nameLabel = new JLabel("Name: ");
-                gbc.gridx = 0;
-                gbc.gridy = 3;
-                gbc.gridwidth = 2;
-                add(nameLabel, gbc);
-
-                fullNameField = TextFieldConfig.createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
-                fullNameField.setForeground(Color.GRAY);
-                fullNameField.setEditable(false);
-                gbc.gridx = 0;
-                gbc.gridy = 4;
-                gbc.gridwidth = 1;
-                add(fullNameField, gbc);
-
-                JButton showName = ButtonConfig.createEditFieldButton(fullNameField);
-                gbc.gridx = 1;
-                gbc.gridy = 4;
-                add(showName, gbc);
-
-                // Thêm Label 3, TextField 3, và Button 3
-                JLabel addressLabel = new JLabel("Address: ");
-                gbc.gridx = 0;
-                gbc.gridy = 5;
-                gbc.gridwidth = 2;
-                add(addressLabel, gbc);
-
-                addressField = TextFieldConfig.createStyledTextField(Style.FONT_TEXT_CUSTOMER, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(350, 40));
-                addressField.setForeground(Color.GRAY);
-                addressField.setEditable(false);
-                gbc.gridx = 0;
-                gbc.gridy = 6;
-                gbc.gridwidth = 1;
-                add(addressField, gbc);
-
-                JButton showAddress = ButtonConfig.createEditFieldButton(addressField);
-                gbc.gridx = 1;
-                gbc.gridy = 6;
-                add(showAddress, gbc);
             }
         }
 
@@ -2913,6 +2924,9 @@ public class ManagerMainPanel extends JPanel {
                 emailField.setText(CurrentUser.MANAGER_INFOR.getEmail());
                 fullNameField.setText(CurrentUser.MANAGER_INFOR.getFullName());
                 addressField.setText(CurrentUser.MANAGER_INFOR.getAddress());
+                phoneNumField.setText(CurrentUser.MANAGER_INFOR.getPhoneNumber());
+                dateOfBirthField.setText(CurrentUser.MANAGER_INFOR.getBirthDay().toString());
+                createDateField.setText(CurrentUser.MANAGER_INFOR.getCreateDate().toString());
                 avatar.setImage(CurrentUser.URL);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -2920,9 +2934,12 @@ public class ManagerMainPanel extends JPanel {
         }
 
         private boolean hasNotChanged() {
-            return emailField.getText().equals(CurrentUser.MANAGER_INFOR.getEmail()) &&
-                    fullNameField.getText().equals(CurrentUser.MANAGER_INFOR.getFullName()) &&
-                    addressField.getText().equals(CurrentUser.MANAGER_INFOR.getAddress()) &&
+            return emailField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getEmail()) &&
+                    fullNameField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getFullName()) &&
+                    addressField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getAddress()) &&
+                    phoneNumField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getPhoneNumber()) &&
+                    dateOfBirthField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getBirthDay().toString()) &&
+                    createDateField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getCreateDate().toString()) &&
                     this.avatar.equals(new CircularImage(CurrentUser.URL, avatar.getWidth(), avatar.getHeight(), false));
         }
 
@@ -2945,6 +2962,63 @@ public class ManagerMainPanel extends JPanel {
             } else {
                 JOptionPane.showMessageDialog(null, "No changes to cancel.", "Action Canceled", JOptionPane.INFORMATION_MESSAGE);
             }
+        }
+
+        private void updateHandle() {
+            if (hasNotChanged()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No changes detected. Please modify your information before updating.",
+                        "No Updates Made",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                return;
+            }
+            Map<JTextField, InputVerifier[]> fieldVerifierMap = new HashMap<>();
+            fieldVerifierMap.put(emailField, new InputVerifier[]{new NotNullVerifier(), new EmailVerifier()});
+            fieldVerifierMap.put(fullNameField, new InputVerifier[]{new NotNullVerifier(), new UserNameAccountVerifier()});
+            fieldVerifierMap.put(addressField, new InputVerifier[]{new NotNullVerifier()});
+            fieldVerifierMap.put(phoneNumField, new InputVerifier[]{new NotNullVerifier(), new PhoneNumberVerifier()});
+            fieldVerifierMap.put(dateOfBirthField, new InputVerifier[]{new NotNullVerifier(), new BirthDayVerifier()});
+            fieldVerifierMap.put(createDateField, new InputVerifier[]{new NotNullVerifier()});
+
+            for (Map.Entry<JTextField, InputVerifier[]> entry : fieldVerifierMap.entrySet()) {
+                JTextField field = entry.getKey();
+                InputVerifier[] verifiers = entry.getValue();
+
+                for (InputVerifier verifier : verifiers) {
+                    if (!verifier.verify(field)) {
+                        field.requestFocus();
+                        return;
+                    }
+                }
+            }
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "All fields are valid. Proceeding with update...",
+                    "Validation Successful",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            performUpdate();
+        }
+
+        private void performUpdate() {
+            Account account = accountController.findById(CurrentUser.MANAGER_INFOR.getAccountId());
+            account.setAvataImg(avatar.getImagePath());
+            account.setEmail(emailField.getText().trim());
+            account.setCreateDate(Date.valueOf(createDateField.getText().trim()));
+            Manager manager = managerController.findById(CurrentUser.MANAGER_INFOR.getManagerId());
+            manager.setFullName(fullNameField.getText().trim());
+            manager.setAddress(addressField.getText().trim());
+            manager.setBirthDay(Date.valueOf(dateOfBirthField.getText().trim()));
+            manager.setPhoneNumber(phoneNumField.getText().trim());
+
+            accountController.update(account);
+            managerController.update(manager);
+
+            ToastNotification.showToast("Your information has been successfully updated.", 2500, 50, -1, -1);
         }
     }
 
@@ -2997,20 +3071,12 @@ public class ManagerMainPanel extends JPanel {
         that.setPreferredSize(size);
     }
 
-    // Phương thức xóa các JTextField trong panel
-    private void clearTextFields(JPanel panel) {
-        // Lặp qua tất cả các thành phần trong panel để kiếm textfield cần xóa
-        for (Component comp : panel.getComponents()) {
-            if (comp instanceof JTextField) {
-                ((JTextField) comp).setText("");
-            }
-        }
-    }
     // chỉnh màu cho scrollbar
     private static void setColorScrollPane(JScrollPane scrollPane, Color thumbColor, Color trackColor) {
         setColorScrollBar(scrollPane.getVerticalScrollBar(), thumbColor, trackColor);
         setColorScrollBar(scrollPane.getHorizontalScrollBar(), thumbColor, trackColor);
     }
+
     private static void setColorScrollBar(JScrollBar scrollBar, Color scrollBarColor, Color trackBackGroundColor) {
         scrollBar.setUI(new BasicScrollBarUI() {
             @Override
@@ -3020,6 +3086,7 @@ public class ManagerMainPanel extends JPanel {
             }
         });
     }
+
     private static CustomButton createCustomButton(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, Color borderColor, int thickness, int radius, Dimension size) {
         CustomButton bt = new CustomButton(title);
         bt.setFont(font);
@@ -3080,6 +3147,7 @@ public class ManagerMainPanel extends JPanel {
         tabbedPane.setFocusable(false);
         return tabbedPane;
     }
+
     //
     public void addCustomerNotification(Customer customer, String text) {
         LocalDateTime now = LocalDateTime.now();

@@ -80,7 +80,7 @@ public class AccountController implements ModelController<Account> {
 
     @Override
     public Account findById(int id) {
-        return null;
+        return accountDAO.findById(id);
     }
 
     @Override

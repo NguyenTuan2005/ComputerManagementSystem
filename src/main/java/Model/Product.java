@@ -3,12 +3,14 @@ package Model;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class Product {
 
     private int id;
@@ -121,5 +123,16 @@ public class Product {
         return datas;
     }
 
-    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return id == product.id ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, suppliersId, name, quantity, price, genre, brand, operatingSystem, cpu, memory, ram, madeIn, status, disk, monitor, weight, card, deleteRow, images);
+    }
 }

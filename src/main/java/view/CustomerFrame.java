@@ -1,5 +1,7 @@
 package view;
 
+import Config.CurrentUser;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -63,6 +65,9 @@ public class CustomerFrame extends JFrame {
                         "Are you sure you want to logout?", "Logout Confirmation",
                         JOptionPane.YES_NO_OPTION);
                 if (confirmed == JOptionPane.YES_OPTION) {
+
+                    setVisible(false);
+                    new LoginFrame();
 
                 }
             }

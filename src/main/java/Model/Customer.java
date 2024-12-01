@@ -14,6 +14,7 @@ import static view.OtherComponent.ImageInJTable.resizeImageIcon;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Customer {
 
     private int id;

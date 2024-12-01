@@ -35,6 +35,8 @@ public class CustomerController implements ModelController<Customer> {
             passwordSecurity.setPlainPassword(password);
             if (passwordSecurity.isVariablePassword(customer.getPassword())){
                 CurrentUser.CURRENT_CUSTOMER = customer;
+                CurrentUser.USER_NAME = customer.getFullName();
+                CurrentUser.URL = customer.getAvataImg();
                 return true;
             }else {
                 loginStatus =LoginStatus.WORNG_PASSWORD;

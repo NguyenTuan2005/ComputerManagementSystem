@@ -1,5 +1,6 @@
 package view;
 
+import Config.CurrentUser;
 import view.OverrideComponent.CircularImage;
 
 import javax.swing.*;
@@ -56,13 +57,13 @@ public class CustomerMenuPanel extends JPanel {
             role.setForeground(Color.GREEN);
             add(role, BorderLayout.NORTH);
 
-            avatar = new CircularImage("src/main/java/img/anhDuyVipPro.png", 75, 75,true);
+            avatar = new CircularImage(CurrentUser.URL, 75, 75,true);
             avatar.setHorizontalAlignment(JLabel.CENTER);
             add(Box.createRigidArea(new Dimension(0, 5)));
             add(avatar, BorderLayout.CENTER);
 
 
-            name = new JLabel("Duy vip pro");
+            name = new JLabel(CurrentUser.USER_NAME);
             name.setHorizontalAlignment(JLabel.CENTER);
             name.setForeground(Color.GREEN);
             name.setFont(new Font("Arial", Font.PLAIN, 25));
@@ -82,7 +83,6 @@ public class CustomerMenuPanel extends JPanel {
             productCatalogBt.setBackground(Style.MENU_BUTTON_COLOR_GREEN);
             setIcon("src/main/java/Icon/catalog_Icon.png", productCatalogBt);
             add(productCatalogBt);
-
 
             orderHistoryBt = new JButton("ORDER HISTORY");
             setFormatButton(orderHistoryBt);
@@ -144,18 +144,15 @@ public class CustomerMenuPanel extends JPanel {
     public void setProductCatalogBtListener(ActionListener listener) {
         productCatalogBt.addActionListener(listener);
     }
-
     public void setNotificationBtListener(ActionListener listener) {
         notificationBt.addActionListener(listener);
     }
-
     public void setPurchasedBtListener(ActionListener listener) {
         orderHistoryBt.addActionListener(listener);
     }
     public void setChangeInfoBtListener(ActionListener listener) {
         changeInfoBt.addActionListener(listener);
     }
-
     //thiết lập ActionListener cho nút "log out"
     public void setLogoutBtListener(ActionListener listener) {
         logoutBt.addActionListener(listener);

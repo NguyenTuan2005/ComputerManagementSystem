@@ -22,7 +22,7 @@ public class TextDisplayPanel extends JPanel {
 
         // Create and configure the text area
         textArea = new JTextArea();
-        textArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        textArea.setFont(new Font("Arial", Font.PLAIN, 12));
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         textArea.setBackground(Color.WHITE);

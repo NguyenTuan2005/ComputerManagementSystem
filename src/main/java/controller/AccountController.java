@@ -28,7 +28,7 @@ public class AccountController implements ModelController<Account> {
     public boolean isValidAccount(String username , String password ){
         loginStatus = LoginStatus.NOT_FOUND;
         Account account = accountDAO.findOneByName(username);
-        ManagerInforDTO managerInfor = managerDAO.getManagerWithAccountById(username);
+        ManagerInforDTO managerInfor = managerDAO.getManagerWithAccountByName(username);
         System.out.println(managerInfor);
         if ( managerInfor == null )
             return false;
@@ -44,6 +44,7 @@ public class AccountController implements ModelController<Account> {
             if(isValdAccount) {
                 CurrentUser.USER_NAME = managerInfor.getFullName();
                 CurrentUser.URL = managerInfor.getAvataImg();
+                CurrentUser.MANAGER_INFOR = managerInfor;
                 return  true;
             }else {
                 loginStatus = LoginStatus.WORNG_PASSWORD;
@@ -79,7 +80,7 @@ public class AccountController implements ModelController<Account> {
 
     @Override
     public Account findById(int id) {
-        return null;
+        return accountDAO.findById(id);
     }
 
     @Override

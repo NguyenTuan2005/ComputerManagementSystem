@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 public class ExcelConfig {
 
@@ -30,11 +27,9 @@ public class ExcelConfig {
 
             Sheet sheet = workbook.getSheetAt(0);
 
-            // Loop through rows and create instances of the generic type M
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header row
+                if (row.getRowNum() == 0) continue;
 
-                // Create an instance of M and set its properties based on the row data
                 M item = mapRowToInstance(row, clazz);
                 if (item != null) {
                     importedItems.add(item);
@@ -71,19 +66,16 @@ public class ExcelConfig {
             cell.setCellStyle(createHeaderCellStyle(workbook));
         }
 
-        // Fill data rows
         int rowNum = 1;
         for (M data : dataList) {
             Row row = sheet.createRow(rowNum++);
             mapInstanceToRow(row, data);
         }
 
-        // Autosize columns
         for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
         }
 
-        // Save workbook to a file
         try (FileOutputStream fileOut = new FileOutputStream(fileName)) {
             workbook.write(fileOut);
             System.out.println("Excel file created successfully.");
@@ -103,8 +95,6 @@ public class ExcelConfig {
             Constructor<M> constructor = clazz.getDeclaredConstructor();
             M instance = constructor.newInstance();
 
-            // Here, you'll need to set properties on the instance based on row cell data.
-            // For example, if M is Products, set product properties like this:
             if (instance instanceof Supplier supplier) {
                 supplier.setId((int) row.getCell(0).getNumericCellValue());
                 supplier.setCompanyName(row.getCell(1).getStringCellValue());
@@ -243,7 +233,7 @@ public class ExcelConfig {
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
-            cell.setCellStyle(createHeaderStyle(workbook));
+            cell.setCellStyle(createHeaderCellStyle(workbook));
         }
 
         // Ghi dữ liệu từ danh sách managers
@@ -277,14 +267,6 @@ public class ExcelConfig {
                 e.printStackTrace();
             }
         }
-    }
-
-    private static CellStyle createHeaderStyle(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
-        Font font = workbook.createFont();
-        font.setBold(true);
-        style.setFont(font);
-        return style;
     }
 
     public static void main(String[] args) {

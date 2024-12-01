@@ -71,6 +71,10 @@ public class ManagerInforDTO {
         return results;
     }
 
+    public boolean authenticateOldPassword(String oldPassword) {
+        return this.password.equals(oldPassword);
+    }
+
     public boolean isBlocked(){
         return this.block == 1;
     }

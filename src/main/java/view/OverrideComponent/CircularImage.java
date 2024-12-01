@@ -1,25 +1,42 @@
 package view.OverrideComponent;
 
+import lombok.Getter;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import javax.imageio.ImageIO;
 import java.io.IOException;
 
 // create a logo, avatar in circle
-
+@Getter
 public class CircularImage extends JLabel {
 	private BufferedImage circularImage;
 	private int width, height;
 	private boolean isAvatar;
+	private String imagePath;
 
 	public CircularImage(String imagePath, int width, int height, boolean isAvatar) {
 		this.width = width;
 		this.height = height;
 		this.isAvatar = isAvatar;
 		setImage(imagePath);
+		this.imagePath = imagePath;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || obj.getClass() != this.getClass())
+			return false;
+		else {
+			CircularImage that = (CircularImage) obj;
+			return this.imagePath.equals(that.imagePath) &&
+					this.width == that.width &&
+					this.height == that.height &&
+					this.isAvatar == that.isAvatar;
+		}
 	}
 
 	private BufferedImage createCircularImage(BufferedImage image, BufferedImage tickImage, int width, int height) {
@@ -62,6 +79,7 @@ public class CircularImage extends JLabel {
 
 	public void setImage(String imagePath) {
 		try {
+			this.imagePath = imagePath;
 			BufferedImage originalImage = ImageIO.read(new File(imagePath));
 			BufferedImage tickImage = ImageIO.read(new File("src/main/java/Icon/tick_Icon.png")); // Tải ảnh dấu tích xanh
 			circularImage = createCircularImage(originalImage, tickImage, width, height);

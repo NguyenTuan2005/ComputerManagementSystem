@@ -192,7 +192,7 @@ public class ManagerDAO implements Repository<Manager> {
         return managerInfor;
     }
 
-    public ManagerInforDTO getManagerWithAccountById(String nameOfAccount) {
+    public ManagerInforDTO getManagerWithAccountByName(String nameOfAccount) {
         String sql = "SELECT m.id AS managerId, m.fullname, m.address, m.birthday, m.phone_number, " +
                 "a.id AS accountId, a.username, a.password, a.email, a.create_date , a.avata_img, a.block " +
                 "FROM Manager AS m " +
@@ -202,7 +202,7 @@ public class ManagerDAO implements Repository<Manager> {
         ResultSet resultSet = null;
         try {
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1,"%"+ nameOfAccount+"%");
+            preparedStatement.setString(1,"%"+ nameOfAccount+"%" );
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {

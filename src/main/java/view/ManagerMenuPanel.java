@@ -47,6 +47,7 @@ public class ManagerMenuPanel extends JPanel {
     }
 
     class ComponentTop extends JPanel {
+
         public ComponentTop() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBackground(Style.BACKGROUND_COLOR);
@@ -60,7 +61,7 @@ public class ManagerMenuPanel extends JPanel {
             add(role);
 
             add(Box.createVerticalStrut(10));
-            avatar = new CircularImage("src/main/java/Icon/dragon_Icon.png", 60, 60, true);
+            avatar = new CircularImage(CurrentUser.URL, 60, 60, true);
             avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(avatar);
 

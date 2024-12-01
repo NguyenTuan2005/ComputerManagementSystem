@@ -1,5 +1,6 @@
 package view;
 
+import Config.CurrentUser;
 import view.OverrideComponent.CircularImage;
 
 import javax.swing.*;
@@ -56,13 +57,13 @@ public class CustomerMenuPanel extends JPanel {
             role.setForeground(Color.GREEN);
             add(role, BorderLayout.NORTH);
 
-            avatar = new CircularImage("src/main/java/img/anhDuyVipPro.png", 75, 75,true);
+            avatar = new CircularImage(CurrentUser.URL, 75, 75,true);
             avatar.setHorizontalAlignment(JLabel.CENTER);
             add(Box.createRigidArea(new Dimension(0, 5)));
             add(avatar, BorderLayout.CENTER);
 
 
-            name = new JLabel("Duy vip pro");
+            name = new JLabel(CurrentUser.USER_NAME);
             name.setHorizontalAlignment(JLabel.CENTER);
             name.setForeground(Color.GREEN);
             name.setFont(new Font("Arial", Font.PLAIN, 25));

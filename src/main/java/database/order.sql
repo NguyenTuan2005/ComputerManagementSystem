@@ -40,8 +40,9 @@ where o.customer_id = 1
 
 CREATE VIEW customer_order_view AS
 SELECT
+    o.id as order_id,
     o.customer_id AS customer_id,
-    o.orderdata AS order_date,
+    o.order_date AS order_date,
     o.ship_address AS ship_address,
     o.status AS status_item,
     m.fullname AS saler,

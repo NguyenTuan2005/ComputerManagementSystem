@@ -1,5 +1,7 @@
 package view;
 
+import Config.CurrentUser;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

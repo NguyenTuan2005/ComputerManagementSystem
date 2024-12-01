@@ -1,9 +1,10 @@
 package view;
 
+import Config.BillConfig;
 import Config.ButtonConfig;
 import Config.CustomerExporter;
-import Config.DateConfig;
 import Config.ExcelConfig;
+import Enum.TableStatus;
 import Model.*;
 import Verifier.*;
 import com.toedter.calendar.JCalendar;
@@ -18,16 +19,20 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import view.OtherComponent.*;
-import view.OverrideComponent.*;
-import Enum.*;
+import view.OverrideComponent.CircularImage;
+import view.OverrideComponent.CustomButton;
+import view.OverrideComponent.RoundedBorder;
+import view.OverrideComponent.ToastNotification;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import java.awt.*;
 import java.awt.Image;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
@@ -36,16 +41,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static Config.BillConfig.toBillsString;
+import static Config.ButtonConfig.setIconSmallButton;
 import static Model.Account.getCurrentDate;
-import static dto.CustomerOrderDTO.toBillsString;
+//import static dto.CustomerOrderDTO.toBillsString;
 
 
 public class ManagerMainPanel extends JPanel {
@@ -60,6 +69,7 @@ public class ManagerMainPanel extends JPanel {
     NotificationPanel notificationPanel = new NotificationPanel();
     ChangeInformationPanel changeInformationPanel = new ChangeInformationPanel();
 
+    JPanel notificationContainer;
     //create constraint to switch between panels
     static final String WELCOME_CONSTRAINT = "welcome";
     static final String PRODUCT_CONSTRAINT = "product";
@@ -67,7 +77,6 @@ public class ManagerMainPanel extends JPanel {
     static final String CUSTOMER_CONSTRAINT = "customer";
     static final String INVENTORY_CONSTRAINT = "inventory";
     static final String INVENTORY_CONTROL_CONSTRAINT = "inventoryControl";
-    static final String IMPORT_CONSTRAINT = "import";
     static final String EXPORT_CONSTRAINT = "export";
     static final String ACC_MANAGEMENT_CONSTRAINT = "accManagement";
     static final String NOTIFICATION_CONSTRAINT = "notification";
@@ -76,8 +85,8 @@ public class ManagerMainPanel extends JPanel {
     // create data for column Names
     static final String[] columnNamesPRODUCT = {"Serial Number", "ProductID", "Product Name", "Quantity", "Unit Price", "Type of Device", "Brand",
             "Operating System", "CPU", "Storage", "RAM", "Made In", "Status", "Disk", "Weight", "Monitor", "Card"};
-    static final String[] columnNamesSUPPLIER = {"Supplier ID:", "Supplier Name:", "Address", "Phone number:", "Email:", "Contract Start Date:"};
-
+    static final String[] columnNamesSUPPLIER = {"Serial Number", "Supplier ID:", "Supplier Name:", "Email:", "Phone number:", "Address:", "Contract Start Date:"};
+    static final String[] columnNamesCUSTOMER = {"Customer ID:", "Customer Name:","Phone Number:", "Email:", "Address:", "Date of Birth:"};
     //main constructor
     public ManagerMainPanel() {
         //tao giao dien
@@ -146,6 +155,14 @@ public class ManagerMainPanel extends JPanel {
             for (int i = 0; i < rowData.length; i++) {
                 modelProductTable.addRow(rowData[i]);
             }
+        }
+
+        public static void deletedProduct(int id) {
+            productController.setDeleteRow(id , false);
+        }
+
+        public static boolean changeStatus(int id, String status) {
+            return productController.setStatus(id, status);
         }
 
         public ProductPanel() {
@@ -297,7 +314,7 @@ public class ManagerMainPanel extends JPanel {
                 searchBt = new JButton();
                 ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(searchBt, Style.FONT_SIZE_MIN_PRODUCT, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
-                ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
 
                 reloadBt = new JButton("reload");
                 ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -519,8 +536,8 @@ public class ManagerMainPanel extends JPanel {
                 {
                     addBt = new JButton("Add");
                     ButtonConfig.setStyleButton(addBt, Style.FONT_BUTTON_CUSTOMER, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
-                    ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addBt);
                     ButtonConfig.addButtonHoverEffect(addBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addBt);
                     addBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     addBt.setVerticalTextPosition(SwingConstants.BOTTOM);
                     addBt.addActionListener(e -> {
@@ -628,11 +645,11 @@ public class ManagerMainPanel extends JPanel {
                 // Search Button
                 searchBt = new JButton();
                 ButtonConfig.setStyleButton(searchBt, Style.FONT_SIZE, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
-                ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
                 ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 searchBt.addActionListener(e -> {
                     if (!findText.getText().isBlank()) {
-                        String text = findText.getText();
+                        String text = findText.getText().toLowerCase().trim();
                         suppliers = supplierController.find(text);
                         updateSuppliers(selectedOption, text);
                     } else {
@@ -713,7 +730,7 @@ public class ManagerMainPanel extends JPanel {
                 if (selectedRow != -1) {
                     int supplierId = Integer.parseInt((String) modelSupplier.getValueAt(selectedRow, 1));
 
-                    supplierDAO.setDeleteRow(supplierId, true);
+                    supplierController.setDeleteRow(supplierId, false);
 
                     // Remove the row from the table model
                     modelSupplier.removeRow(selectedRow);
@@ -733,7 +750,8 @@ public class ManagerMainPanel extends JPanel {
 
                 tableSupplier = createTable(modelSupplier, columnNamesSUPPLIER);
                 tableSupplier.setRowHeight(40);
-                resizeColumnWidth(tableSupplier, 200);
+                resizeColumnWidth(tableSupplier, 300);
+                tableSupplier.getColumnModel().getColumn(tableSupplier.getColumnCount()-1).setPreferredWidth(400);
                 JScrollPane scrollPaneSupplier = new JScrollPane(tableSupplier);
                 modelSupplier = (DefaultTableModel) tableSupplier.getModel();
                 suppliers = supplierController.reloadData();
@@ -927,7 +945,10 @@ public class ManagerMainPanel extends JPanel {
                         else {
                             String fileName = JOptionPane.showInputDialog(null, "Enter bill file name :", "Input file", JOptionPane.QUESTION_MESSAGE);
                             JOptionPane.showMessageDialog(null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
-                            CustomerExporter.writeBillToFile(toBillsString(bills), fileName);
+
+                            CustomerExporter.writeBillToFile(
+                                    new BillConfig(bills).getLastBill()
+                                    , fileName);
                             JOptionPane.showMessageDialog(null, "Created !!! ", "Message", JOptionPane.ERROR_MESSAGE);
                             reload();
                         }
@@ -959,7 +980,7 @@ public class ManagerMainPanel extends JPanel {
                 searchCustomerBt = new JButton();
                 ButtonConfig.addButtonHoverEffect(searchCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(searchCustomerBt, Style.FONT_SIZE_MIN_PRODUCT, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
-                ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchCustomerBt);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchCustomerBt);
                 searchCustomerBt.addActionListener(
                         new ActionListener() {
                             @Override
@@ -986,7 +1007,9 @@ public class ManagerMainPanel extends JPanel {
                                             bills = customerController.findCustomerOrderById(customerId);
                                             if (bills.isEmpty())
                                                 JOptionPane.showMessageDialog(null, "No information available");
-                                            billTextDisplayPanal.setText(toBillsString(bills));
+                                            System.out.println(toBillsString(bills));
+                                            BillConfig billConfig = new BillConfig(bills);
+                                            billTextDisplayPanal.setText(billConfig.getLastBill());
                                             billTextDisplayPanal.setTextEditable(false);
 
                                         } catch (Exception ex) {
@@ -1131,7 +1154,7 @@ public class ManagerMainPanel extends JPanel {
 
             private CategoryDataset createDataset() {
                 DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-                // Dữ liệu mẫu: Thay thế bằng dữ liệu từ database
+
                 Map<String, Integer> topCustomers = new HashMap<>();
 
                 consertCustomerToMap(customers, topCustomers);
@@ -1166,24 +1189,20 @@ public class ManagerMainPanel extends JPanel {
     class InventoryPanel extends JPanel {
         private JTable tableInventory, tableImport, tableExport;
         InventoryControlPanel inventoryControlPanel;
-        ImportPanel importPanel;
         ExportPanel exportPanel;
         CardLayout cardLayoutInventory;
 
         private DefaultTableModel modelInventory, modelImport, modelExport;
-        private ArrayList<Supplier> suppliers = SupplierPanel.reloadSuppliers();
-        private ArrayList<Product> products = ProductPanel.reloadProducts();
+        private ArrayList<Product> products;
 
         InventoryPanel() {
             cardLayoutInventory = new CardLayout();
             setLayout(cardLayoutInventory);
 
-            importPanel = new ImportPanel();
             exportPanel = new ExportPanel();
             inventoryControlPanel = new InventoryControlPanel();
 
             add(inventoryControlPanel, INVENTORY_CONTROL_CONSTRAINT);
-            add(importPanel, IMPORT_CONSTRAINT);
             add(exportPanel, EXPORT_CONSTRAINT);
 
             cardLayoutInventory.show(this, INVENTORY_CONTROL_CONSTRAINT);
@@ -1202,153 +1221,150 @@ public class ManagerMainPanel extends JPanel {
             products.removeIf(product -> !(status.equals(product.getStatus())));
         }
 
-        private void upDataProducts(DefaultTableModel tableModel) {
-            reloadProducts();
+        private void upDataProducts(DefaultTableModel tableModel, String status) {
+            if (status == null || status.isEmpty()) reloadProducts();
+            else reloadProducts(status);
             ProductPanel.upDataProducts(products, tableModel);
         }
 
-        private void upDataProductsByStatus(DefaultTableModel tableModel, String status) {
-            reloadProducts(status);
+        private void upDataProducts(DefaultTableModel tableModel, String status, String searchText) {
+            if (status == null || status.isEmpty()) reloadProducts();
+            else reloadProducts(status);
+            if (searchText != null && !searchText.isEmpty()) {
+                products.removeIf(product -> !product.getName().toLowerCase().contains(searchText.toLowerCase()));
+            }
             ProductPanel.upDataProducts(products, tableModel);
         }
 
         private void updateProduct() {
-            upDataProducts(modelInventory);
-            upDataProductsByStatus(modelImport, Product.IN_STOCK);
-            upDataProductsByStatus(modelExport, Product.AVAILABLE);
+            upDataProducts(modelInventory, null);
+            upDataProducts(modelImport, Product.IN_STOCK);
+            upDataProducts(modelExport, Product.AVAILABLE);
         }
+
+        private void searchProduct(String searchText) {
+            upDataProducts(modelInventory, null, searchText);
+            upDataProducts(modelImport, Product.IN_STOCK, searchText);
+            upDataProducts(modelExport, Product.AVAILABLE, searchText);
+        }
+
         // panel chứa các chức năng tương tác của inventory
-
         public class InventoryControlPanel extends JPanel {
-
             private JTabbedPane tabbedPaneMain;
+            private ToolsPanel toolsPanel;
             private JTextField searchTextField;
             private JButton searchBt;
 
-            InventoryControlPanel() {
-                setLayout(new GridBagLayout());
-                GridBagConstraints gbc = new GridBagConstraints();
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                gbc.insets = new Insets(5, 5, 5, 5);
-                gbc.gridy = 0;
-                gbc.weightx = 1.0;
+            public InventoryControlPanel() {
+                setLayout(new BorderLayout(5, 5));
+                setBackground(Style.WORD_COLOR_WHITE);
 
-                // Add button panel
-                ButtonPanel buttonPanel = new ButtonPanel();
-                gbc.gridwidth = 6;
-                gbc.gridx = 0;
-                add(buttonPanel, gbc);
+                toolsPanel = new ToolsPanel();
+                add(toolsPanel, BorderLayout.NORTH);
 
-                // Add search field and search button
-                gbc.gridy = 1;
-                gbc.gridwidth = 2;
-                add(createSearchField(), gbc);
-                gbc.gridx = 4;
-                gbc.gridwidth = 1;
-                add(createSearchButton(), gbc);
-
-                // Add table panel
-                gbc.gridx = 0;
-                gbc.gridy = 2;
-                gbc.gridwidth = 6;
-                gbc.fill = GridBagConstraints.BOTH;
-                gbc.weightx = 1.0;
-                gbc.weighty = 1.0;
-                add(new TablePanel(), gbc);
+                TablePanel tablePanel = new TablePanel();
+                add(tablePanel, BorderLayout.CENTER);
             }
 
-            private JTextField createSearchField() {
-                searchTextField = new JTextField("Search");
-                searchTextField.setPreferredSize(new Dimension(250, 40));
-                searchTextField.setFont(Style.FONT_TEXT_CUSTOMER);
-                searchTextField.setForeground(Color.GRAY);
-                searchTextField.addFocusListener(new FocusListener() {
-                    @Override
-                    public void focusGained(FocusEvent e) {
-                        if (searchTextField.getText().equals("Search")) {
-                            searchTextField.setText("");
-                            searchTextField.setForeground(Color.BLACK);
-                        }
-                    }
-
-                    @Override
-                    public void focusLost(FocusEvent e) {
-                        if (searchTextField.getText().isEmpty()) {
-                            searchTextField.setForeground(Color.GRAY);
-                            searchTextField.setText("Search");
-                        }
-                    }
-                });
-                return searchTextField;
-            }
-
-            private JButton createSearchButton() {
-                searchBt = new JButton();
-                setStyleButton(searchBt, Style.FONT_TEXT_CUSTOMER, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(68, 38));
-                setIconSmallButton("src/main/java/Icon/search_Icon.png", searchBt);
-                return searchBt;
-            }
-
-            private class ButtonPanel extends JPanel {
-                public ButtonPanel() {
+            private class ToolsPanel extends JPanel {
+                ToolsPanel() {
                     setLayout(new GridBagLayout());
+                    setBorder(BorderFactory.createTitledBorder("Tools"));
+                    setBackground(Style.WORD_COLOR_WHITE);
+
                     GridBagConstraints gbc = new GridBagConstraints();
-                    gbc.fill = GridBagConstraints.HORIZONTAL;
-                    gbc.insets = new Insets(5, 5, 5, 5);
-                    gbc.weightx = 1.0;
-
-
-                    //Add to Sale
+                    JPanel buttonPanel = new JPanel(new FlowLayout());
+                    buttonPanel.setBackground(Style.WORD_COLOR_WHITE);
+                    // Set for Sale
                     {
-                        JButton addToSaleListBt = new JButton("Add To Sale");
-                        gbc.gridx = 0;
-                        add(addToSaleListBt, gbc);
-                    }
-
-                    //Import Product
-                    {
-                        JButton importProduct = new JButton("Import Product");
-                        importProduct.addActionListener(e -> showPanelInInventory(IMPORT_CONSTRAINT));
-                        gbc.gridx = 1;
-                        add(importProduct, gbc);
+                        JButton setForSaleBt = new JButton("Set for Sale");
+                        ButtonConfig.setStyleButton(setForSaleBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(110, 80));
+                        ButtonConfig.addButtonHoverEffect(setForSaleBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                        ButtonConfig.setIconBigButton("src/main/java/Icon/product-selling.png", setForSaleBt);
+                        setForSaleBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                        setForSaleBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                        setForSaleBt.addActionListener(e -> setForSaleHandle());
+                        buttonPanel.add(setForSaleBt);
                     }
 
                     //Export Product
                     {
                         JButton exportProduct = new JButton("Export Product");
+                        ButtonConfig.setStyleButton(exportProduct, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(120, 80));
+                        ButtonConfig.addButtonHoverEffect(exportProduct, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                        ButtonConfig.setIconBigButton("src/main/java/Icon/delivery-box.png", exportProduct);
+                        exportProduct.setHorizontalTextPosition(SwingConstants.CENTER);
+                        exportProduct.setVerticalTextPosition(SwingConstants.BOTTOM);
                         exportProduct.addActionListener(e -> showPanelInInventory(EXPORT_CONSTRAINT));
-                        gbc.gridx = 2;
-                        add(exportProduct, gbc);
+                        buttonPanel.add(exportProduct);
                     }
 
-                    //Export Excel
+                    buttonPanel.add(ButtonConfig.createVerticalSeparator());
+
+                    //Delete
                     {
-                        JButton exportExcelBt = new JButton("Export Excel");
-                        gbc.gridx = 3;
-                        add(exportExcelBt, gbc);
+                        JButton deleteBt = new JButton("Delete");
+                        ButtonConfig.setStyleButton(deleteBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                        ButtonConfig.addButtonHoverEffect(deleteBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                        ButtonConfig.setIconBigButton("src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt);
+                        deleteBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                        deleteBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                        deleteBt.addActionListener(e -> deletedHandle());
+                        buttonPanel.add(deleteBt);
                     }
 
                     //Modify
                     {
                         JButton modifyBt = new JButton("Modify");
-                        modifyBt.addActionListener(e -> modifyTable());
-                        gbc.gridx = 4;
-                        add(modifyBt, gbc);
+                        ButtonConfig.setStyleButton(modifyBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                        ButtonConfig.addButtonHoverEffect(modifyBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                        ButtonConfig.setIconBigButton("src/main/java/Icon/modify.png", modifyBt);
+                        modifyBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                        modifyBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                        modifyBt.addActionListener(e -> modifyHandle());
+                        buttonPanel.add(modifyBt);
                     }
 
-
-                    //Delete
+                    //Export Excel
                     {
-                        JButton deleteBt = new JButton("Delete");
-                        gbc.gridx = 5;
-                        add(deleteBt, gbc);
+                        JButton exportExcelBt = new JButton("Export");
+                        ButtonConfig.setStyleButton(exportExcelBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                        ButtonConfig.addButtonHoverEffect(exportExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                        ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt);
+                        exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                        exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                        exportExcelBt.addActionListener(e -> {
+                            String fileName = JOptionPane.showInputDialog("Enter the name of the Excel file:");
+                            if (fileName != null && !fileName.trim().isEmpty()) {
+                                fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
+                                getSelectedTable();
+                                ExcelConfig.exportToExcel(products, fileName, columnNamesPRODUCT);
+                                JOptionPane.showMessageDialog(null, "Exported to " + fileName);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "File name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        });
+                        buttonPanel.add(exportExcelBt);
                     }
+
+                    gbc.gridx = 0;
+                    gbc.gridy = 0;
+                    gbc.weightx = 1;
+                    gbc.anchor = GridBagConstraints.WEST;
+                    add(buttonPanel, gbc);
+
+                    JPanel searchPanel = createSearchPanel();
+                    gbc.gridx = 1;
+                    gbc.gridy = 0;
+                    gbc.weightx = 0;
+                    gbc.anchor = GridBagConstraints.EAST;
+                    add(searchPanel, gbc);
                 }
 
-                private void modifyTable() {
+                private JTable getSelectedTable() {
                     int index = tabbedPaneMain.getSelectedIndex();
 
-                    JTable selectedTable = switch (index) {
+                    return switch (index) {
                         case 0 -> {
                             reloadProducts();
                             yield tableInventory;
@@ -1361,8 +1377,33 @@ public class ManagerMainPanel extends JPanel {
                             reloadProducts(Product.AVAILABLE);
                             yield tableExport;
                         }
-                        default -> null;
+                        default -> throw new IllegalStateException("Unexpected value: " + index);
                     };
+                }
+
+                private void setForSaleHandle() {
+                    JTable selectedTable = getSelectedTable();
+
+                    int[] selectedRows = selectedTable.getSelectedRows();
+                    if (selectedRows.length > 0) {
+                        int y = -1, duration = 3000;
+                        for (int row : selectedRows) {
+                            int productId = Integer.parseInt(selectedTable.getValueAt(row, 1).toString());
+                            String productName = (String) selectedTable.getValueAt(row, 2);
+                            if (changeStatus(productId, Product.AVAILABLE)) {
+                                ToastNotification.showToast("Successfully set product " + productName + " to Available for sale.", duration, 50, -1, y++);
+                            }
+                            else ToastNotification.showToast("Failed to set product " + productName + " to Available for sale.", duration, 50, -1, y++);
+                            updateProduct();
+                            duration += 100;
+                        }
+                    } else {
+                        ToastNotification.showToast("Please select a row to add product for sale.", 3000, 50, -1, -1);
+                    }
+                }
+
+                private void modifyHandle() {
+                    JTable selectedTable = getSelectedTable();
 
                     if (selectedTable != null && selectedTable.getSelectedRow() != -1) {
                         int selectedRow = selectedTable.getSelectedRow();
@@ -1373,11 +1414,27 @@ public class ManagerMainPanel extends JPanel {
                         ToastNotification.showToast("Please select a row to modify.", 3000, 50,-1,-1);
                     }
                 }
+
+                private void deletedHandle() {
+                    JTable selectedTable = getSelectedTable();
+
+                    if (selectedTable != null && selectedTable.getSelectedRow() != -1) {
+                        int selectedRow = selectedTable.getSelectedRow();
+                        int productId = Integer.parseInt(selectedTable.getValueAt(selectedRow, 1).toString());
+                        String productName = (String) selectedTable.getValueAt(selectedRow, 2);
+                        deletedProduct(productId);
+                        updateProduct();
+                        ToastNotification.showToast("Successfully delete product " + productName, 3000, 50, -1, -1);
+                    } else {
+                        ToastNotification.showToast("Please select a row to deleted.", 3000, 50, -1, -1);
+                    }
+                }
             }
 
             private class TablePanel extends JPanel {
                 public TablePanel() {
                     setLayout(new BorderLayout());
+                    setBackground(Style.WORD_COLOR_WHITE);
 
                     // Create tables
                     tableInventory = createTable(modelInventory, columnNamesPRODUCT);
@@ -1385,506 +1442,98 @@ public class ManagerMainPanel extends JPanel {
                     tableExport = createTable(modelExport, columnNamesPRODUCT);
 
                     modelInventory = (DefaultTableModel) tableInventory.getModel();
-                    upDataProducts(modelInventory);
+                    upDataProducts(modelInventory, null);
                     modelImport = (DefaultTableModel) tableImport.getModel();
-                    upDataProductsByStatus(modelImport, Product.IN_STOCK);
+                    upDataProducts(modelImport, Product.IN_STOCK);
                     modelExport = (DefaultTableModel) tableExport.getModel();
-                    upDataProductsByStatus(modelExport, Product.AVAILABLE);
+                    upDataProducts(modelExport, Product.AVAILABLE);
 
                     // Add tables to tabbed pane
                     tabbedPaneMain = new JTabbedPane();
                     tabbedPaneMain.setFont(Style.FONT_HEADER_ROW_TABLE);
                     tabbedPaneMain.addTab("Inventory", new JScrollPane(tableInventory));
-                    tabbedPaneMain.addTab("In Stock Products", new JScrollPane(tableImport));
-                    tabbedPaneMain.addTab("Sold Out Products", new JScrollPane(tableExport));
+                    tabbedPaneMain.addTab("In Stock", new JScrollPane(tableImport));
+                    tabbedPaneMain.addTab("Available for Sale", new JScrollPane(tableExport));
 
                     add(tabbedPaneMain, BorderLayout.CENTER);
                 }
             }
 
-            // Helper methods for setting button styles
-            private void setStyleButton(JButton button, Font font, Color textColor, Color bgColor, int alignment, Dimension size) {
-                button.setFont(font);
-                button.setForeground(textColor);
-                button.setBackground(bgColor);
-                button.setHorizontalAlignment(alignment);
-                button.setPreferredSize(size);
-            }
-        }
+            private JPanel createSearchPanel() {
+                JPanel searchPanel = new JPanel(new GridBagLayout());
+                searchPanel.setBackground(Style.WORD_COLOR_WHITE);
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(5, 5, 5, 5);
 
-        class ImportPanel extends JPanel {
-            LeftPn leftPn;
-            RightPn rightPn;
-            private JTextField SupplierIDTF, nameSupplierTF, addressSupplierTF, phoneSupplierTF, emailSupplierTF, cooperationDayTF,
-                    productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF, statusTF, diskTF, weightTF, monitorTF, cardTF;
-            // tôi đã thêm :"Disk","Weight","Monitor","Card"
-            private JTextField[] supplierTFArray = {SupplierIDTF, nameSupplierTF, addressSupplierTF, phoneSupplierTF, emailSupplierTF, cooperationDayTF};
-            private final JTextField[] productTFArray = {productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF, statusTF, diskTF, weightTF, monitorTF, cardTF};
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                gbc.weightx = 1.0;
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                searchPanel.add(createSearchField(), gbc);
 
-            ImportPanel() {
-                setLayout(new GridLayout(1, 2));
-                leftPn = new LeftPn();
-                rightPn = new RightPn();
-                add(leftPn);
-                add(rightPn);
+                gbc.gridx = 1;
+                gbc.weightx = 0;
+                searchPanel.add(createSearchButton(), gbc);
 
+                return searchPanel;
             }
 
-            // panel chung chứa ( panel thông tin nhà cung cấp | panel mã đơn hàng, người đăt )
-            class LeftPn extends JPanel {
-                SupplierPn supplierPn;
-                OrderInfo orderInfo;
-
-                LeftPn() {
-                    setLayout(new BorderLayout());
-                    supplierPn = new SupplierPn();
-                    orderInfo = new OrderInfo();
-                    add(supplierPn, BorderLayout.CENTER);
-                    add(orderInfo, BorderLayout.SOUTH);
-                }
+            private void deletedProduct(int id) {
+                ProductPanel.deletedProduct(id);
             }
 
-            class SupplierPn extends JPanel {
-                AddNewSupplierPn addNewSupplierPn;
-                AddSupplierFromListPn addSupplierFromListPn;
-                CardLayout cardLayoutSupplierPn;
+            private boolean changeStatus(int id, String status) {
+                return ProductPanel.changeStatus(id, status);
+            }
 
-                JButton addFromListBt, clearAllBt, addBt, backBt;
-
-                static final String ADD_NEW_SUPPLIER_CONSTRAINT = "addNewSupplier";
-                static final String ADD_SUPPLIER_FROM_LIST_CONSTRAINT = "addSupplierFromList";
-
-                SupplierPn() {
-                    Border border = BorderFactory.createTitledBorder(
-                            BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3), // Đường viền
-                            "Supplier", // Tiêu đề
-                            TitledBorder.LEFT, // Canh trái
-                            TitledBorder.TOP, // Canh trên
-                            new Font("Arial", Font.BOLD, 20), // Phông chữ và kiểu chữ
-                            Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE // Màu chữ
-                    );
-                    setBorder(border);
-
-                    addNewSupplierPn = new AddNewSupplierPn();
-                    addSupplierFromListPn = new AddSupplierFromListPn();
-
-                    cardLayoutSupplierPn = new CardLayout();
-                    setLayout(cardLayoutSupplierPn);
-
-                    cardLayoutSupplierPn.show(this, ADD_NEW_SUPPLIER_CONSTRAINT);
-
-                    add(addNewSupplierPn, ADD_NEW_SUPPLIER_CONSTRAINT);
-                    add(addSupplierFromListPn, ADD_SUPPLIER_FROM_LIST_CONSTRAINT);
-
-                }
-
-                public void showPanelAddSupplier(String panelName) {
-                    cardLayoutSupplierPn.show(this, panelName); // method chuyển đổi giữa các panel
-                }
-
-                class AddNewSupplierPn extends JPanel {
-                    AddNewSupplierPn() {
-                        setLayout(new GridBagLayout());
-                        GridBagConstraints gbc = new GridBagConstraints();
-                        gbc.insets = new Insets(15, 5, 15, 5);
-                        gbc.gridx = 0; // Cột đầu tiên
-                        gbc.gridy = 0; // Dòng đầu tiên
-                        gbc.gridwidth = 1; // Mỗi nút bấm chiếm 1 cột
-                        gbc.fill = GridBagConstraints.BOTH; // Nút sẽ lấp đầy cả không gian
-                        gbc.weightx = 0.5; // Phân bổ chiều rộng đều cho cả hai nút
-                        gbc.weighty = 0.0;
-
-                        clearAllBt = createClearAllButton(this);
-                        addFromListBt = new JButton("Add From Supplier List");
-                        addFromListBt.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelAddSupplier(ADD_SUPPLIER_FROM_LIST_CONSTRAINT);
-                            }
-                        });
-
-                        gbc.gridx = 0;
-                        gbc.gridy = 0;
-                        gbc.gridwidth = 1; // mỗi nút bấm chiếm 1 cột
-                        add(clearAllBt, gbc);
-
-                        gbc.gridx = 1;
-                        gbc.gridy = 0;
-                        add(addFromListBt, gbc);
-
-                        // Thiết lập GridBagConstraints cho các label và text field
-                        gbc.fill = GridBagConstraints.HORIZONTAL;
-                        gbc.gridwidth = 1;
-                        gbc.weightx = 1.0; // Cân bằng không gian theo chiều ngang
-                        gbc.weighty = 0.1;
-                        gbc.gridy = 1;
-
-                        for (int i = 0; i < columnNamesSUPPLIER.length; i++) {
-                            gbc.gridx = 0; // Cột 1: Label
-                            // Bắt đầu từ dòng thứ 2
-                            gbc.gridwidth = 1;
-                            gbc.fill = GridBagConstraints.BOTH;
-                            gbc.anchor = GridBagConstraints.WEST;// cân nhắc
-
-                            JLabel lb = new JLabel(columnNamesSUPPLIER[i]);
-                            lb.setFont(Style.FONT_BUTTON_CUSTOMER);
-                            lb.setPreferredSize(new Dimension(150, 30));
-                            add(lb, gbc);
-
-                            gbc.gridx = 1; // Cột 2: TextField
-                            gbc.anchor = GridBagConstraints.EAST;
-                            supplierTFArray[i] = new JTextField();
-                            supplierTFArray[i].setPreferredSize(new Dimension(280, 30));
-                            supplierTFArray[i].setFont(Style.FONT_TEXT_LOGIN_FRAME);
-                            add(supplierTFArray[i], gbc);
-
-                            gbc.gridy++;
+            private JTextField createSearchField() {
+                searchTextField = new JTextField("Search by name");
+                searchTextField.setForeground(Color.BLACK);
+                formatTextField(searchTextField, new Font("Arial", Font.PLAIN, 24), Style.WORD_COLOR_BLACK, new Dimension(250, 45));
+                searchTextField.addFocusListener(new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        if (searchTextField.getText().equals("Search by name")) {
+                            searchTextField.setText("");
+                            searchTextField.setForeground(Color.GRAY);
                         }
                     }
-                }
 
-                class AddSupplierFromListPn extends JPanel {
-                    JTable tableGetDataSupplier;
-                    DefaultTableModel modelGetDataSupplier;
-                    JScrollPane scrollPaneGetDataSupplierTable;
-                    JTabbedPane tabbedPaneAddSupplier;
-
-                    AddSupplierFromListPn() {
-                        setLayout(new GridBagLayout());
-                        GridBagConstraints gbc = new GridBagConstraints();
-                        gbc.insets = new Insets(5, 5, 5, 5);
-
-                        gbc.gridx = 0; // Cột đầu tiên
-                        gbc.gridy = 0; // Dòng đầu tiên
-                        gbc.gridwidth = 1; // Mỗi nút bấm chiếm 1 cột
-                        gbc.fill = GridBagConstraints.BOTH; // Nút sẽ lấp đầy cả không gian
-                        gbc.weightx = 0.5; // Phân bổ chiều rộng đều cho cả hai nút
-                        gbc.weighty = 0.0;
-
-                        backBt = new JButton("Back");// nút quay trở lại form thêm mới sản phẩm
-                        backBt.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelAddSupplier(ADD_NEW_SUPPLIER_CONSTRAINT);
-                            }
-                        });
-                        add(backBt, gbc);
-
-                        gbc.gridx = 1; // Cột thứ hai
-                        gbc.fill = GridBagConstraints.BOTH;
-                        addBt = new JButton("Add to Form");// nút thêm nhà cung cấp từ bảng vào form
-                        add(addBt, gbc);
-
-                        // thêm bảng chứa dữ liệu supplier vào để trích xuất ra form
-                        tableGetDataSupplier = createTable(modelGetDataSupplier, columnNamesSUPPLIER);
-                        resizeColumnWidth(tableGetDataSupplier, 100);
-                        scrollPaneGetDataSupplierTable = new JScrollPane(tableGetDataSupplier);
-
-                        tabbedPaneAddSupplier = createTabbedPane(scrollPaneGetDataSupplierTable, "Supplier List", Style.FONT_HEADER_ROW_TABLE);
-
-                        gbc.gridx = 0; // Quay lại cột đầu tiên
-                        gbc.gridy = 1; // Dòng thứ hai
-                        gbc.gridwidth = 2; // JTable chiếm cả 2 cột
-                        gbc.fill = GridBagConstraints.BOTH; // JTable lấp đầy cả chiều rộng và chiều cao
-                        gbc.weightx = 1.0; // Phân bổ chiều rộng cho JTable
-                        gbc.weighty = 1.0;
-                        add(tabbedPaneAddSupplier, gbc);
-                    }
-                }
-            }
-
-            class OrderInfo extends JPanel {
-                JLabel receiptNoteCode, receiptNoteCreator;
-                JTextField receiptNoteCodeTF, receiptNoteCreatorTF;
-
-                OrderInfo() {
-                    setLayout(new GridLayout(2, 2));
-                    setPreferredSize(new Dimension(300, 80));
-
-                    receiptNoteCode = new JLabel("Receipt Note Code:");
-                    formatLabel(receiptNoteCode, Style.FONT_TEXT_LOGIN_FRAME, Color.black);
-
-                    receiptNoteCreator = new JLabel("Receipt Note Creator:");
-                    formatLabel(receiptNoteCreator, Style.FONT_TEXT_LOGIN_FRAME, Color.black);
-
-                    receiptNoteCodeTF = new JTextField(20);
-                    formatTextField(receiptNoteCodeTF, Style.FONT_TEXT_LOGIN_FRAME, Color.black, new Dimension(200, 30));
-
-                    receiptNoteCreatorTF = new JTextField(20);
-                    formatTextField(receiptNoteCreatorTF, Style.FONT_TEXT_LOGIN_FRAME, Color.black, new Dimension(200, 30));
-
-                    add(receiptNoteCode);
-                    add(receiptNoteCodeTF);
-                    add(receiptNoteCreator);
-                    add(receiptNoteCreatorTF);
-                }
-            }
-
-
-            //panel chứa thông tin sản phẩm cần mua, xác nhận thanh toán
-            class RightPn extends JPanel {
-                ProductPn productPn;
-                PaymentConfirmationPn paymentConfirmationPn;
-
-                RightPn() {
-                    setLayout(new BorderLayout());
-                    productPn = new ProductPn();// thông tin sản phẩm cần mua
-                    paymentConfirmationPn = new PaymentConfirmationPn(); //xác nhận thanh toán
-                    add(productPn, BorderLayout.CENTER);
-                    add(paymentConfirmationPn, BorderLayout.SOUTH);
-                }
-            }
-
-            class ProductPn extends JPanel {
-                ProductListPn productList;
-                AddProductFromList addProductFromList;
-                AddNewProductPn addNewProductPn;
-                CardLayout cardLayout = new CardLayout();
-                final String PRODUCT_LIST = "ProductList";
-                final String ADD_NEW_PRODUCT = "addNewProduct";
-                final String ADD_PRODUCT_FROM_LIST = "addProductFromList";
-
-                ProductPn() {
-                    Border border = BorderFactory.createTitledBorder(
-                            BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3), // Đường viền
-                            "Product", // Tiêu đề
-                            TitledBorder.LEFT, // Canh trái
-                            TitledBorder.TOP, // Canh trên
-                            new Font("Arial", Font.BOLD, 20), // Phông chữ và kiểu chữ
-                            Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE // Màu chữ
-                    );
-                    setBorder(border);
-                    setLayout(cardLayout);
-
-                    productList = new ProductListPn();
-                    addProductFromList = new AddProductFromList();
-                    addNewProductPn = new AddNewProductPn();
-
-                    add(addProductFromList, ADD_PRODUCT_FROM_LIST);
-                    add(productList, PRODUCT_LIST);
-                    add(addNewProductPn, ADD_NEW_PRODUCT);
-
-                    cardLayout.show(this, PRODUCT_LIST);
-                }
-
-                public void showPanelImportProduct(String panelName) {
-                    cardLayout.show(this, panelName); // method chuyển đổi giữa các panel
-                }
-
-
-                class ProductListPn extends JPanel {
-                    JButton addNewBt, addFromListBt, deleteProduct;
-
-                    JTable tableImportProductList;
-                    DefaultTableModel modelImportProductList;
-                    JTableHeader tableHeaderImportProductList;
-                    JScrollPane scrollPaneImportProductList;
-                    JTabbedPane tabbedPaneImportProductList;
-
-                    ProductListPn() {
-                        setLayout(new GridBagLayout());
-                        GridBagConstraints gbc = new GridBagConstraints();
-                        gbc.insets = new Insets(5, 5, 5, 5);
-                        gbc.gridx = 0;
-                        gbc.gridy = 0;
-                        gbc.gridwidth = 1;
-                        gbc.fill = GridBagConstraints.BOTH;
-                        gbc.weightx = 0.5;
-                        gbc.weighty = 0.0;
-
-                        addNewBt = new JButton("Add new Product");// button add product to list
-                        addNewBt.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelImportProduct(ADD_NEW_PRODUCT);
-                            }
-                        });
-                        add(addNewBt, gbc);
-
-                        gbc.gridx = 1;
-                        gbc.fill = GridBagConstraints.BOTH;
-                        addFromListBt = new JButton("Add product from list ");
-                        addFromListBt.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelImportProduct(ADD_PRODUCT_FROM_LIST);
-                            }
-                        });
-                        add(addFromListBt, gbc);
-
-                        gbc.gridx = 2;
-                        gbc.fill = GridBagConstraints.BOTH;
-                        deleteProduct = new JButton("Delete product");
-                        add(deleteProduct, gbc);
-
-                        tableImportProductList = createTable(modelImportProductList, columnNamesPRODUCT);
-                        resizeColumnWidth(tableImportProductList, 100);
-                        scrollPaneImportProductList = new JScrollPane(tableImportProductList);
-
-                        tabbedPaneImportProductList = createTabbedPane(scrollPaneImportProductList, "Inventory Import List", Style.FONT_HEADER_ROW_TABLE);
-                        gbc.gridx = 0; // Quay lại cột đầu tiên
-                        gbc.gridy = 1; // Dòng thứ hai
-                        gbc.gridwidth = 3; // JTable chiếm cả 2 cột
-                        gbc.fill = GridBagConstraints.BOTH; // JTable lấp đầy cả chiều rộng và chiều cao
-                        gbc.weightx = 1.0;
-                        gbc.weighty = 1.0;
-                        add(tabbedPaneImportProductList, gbc);
-                    }
-                }
-
-                // bug
-                class AddNewProductPn extends JPanel {
-                    JButton backBt, clearAllBt, addBt;
-
-                    AddNewProductPn() {
-                        setLayout(new GridBagLayout());
-                        GridBagConstraints gbc = new GridBagConstraints();
-
-                        gbc.gridx = 0;
-                        gbc.gridy = 0;
-                        gbc.gridwidth = 2;
-                        gbc.fill = GridBagConstraints.HORIZONTAL;
-                        gbc.weightx = 1.0;
-                        gbc.weighty = 0.0;
-
-                        backBt = new JButton("Back");
-                        backBt.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelImportProduct(PRODUCT_LIST);
-                            }
-                        });
-                        clearAllBt = createClearAllButton(this);
-
-                        addBt = new JButton("Add to List");
-                        JPanel buttonPanel = new JPanel();
-                        buttonPanel.add(backBt);
-                        buttonPanel.add(clearAllBt);
-                        buttonPanel.add(addBt);
-                        add(buttonPanel, gbc);
-
-                        gbc.gridwidth = 1;
-                        gbc.fill = GridBagConstraints.HORIZONTAL;
-                        gbc.weightx = 1.0;
-                        gbc.weighty = 0.1;
-                        gbc.gridy = 1;
-                        // add label and textfield to panel
-                        int index = 0;
-                        for (int i = 1; i < columnNamesPRODUCT.length; i++) {
-                            gbc.gridx = 0; // Cột 1: Label
-                            gbc.gridwidth = 1;
-                            gbc.fill = GridBagConstraints.BOTH;
-                            gbc.anchor = GridBagConstraints.WEST;// cân nhắc
-
-                            JLabel lb = new JLabel(columnNamesPRODUCT[i]);
-                            lb.setFont(Style.FONT_BUTTON_CUSTOMER);
-                            lb.setPreferredSize(new Dimension(150, 30));
-                            add(lb, gbc);
-
-                            gbc.gridx = 1; // Cột 2: TextField
-                            gbc.anchor = GridBagConstraints.EAST;
-                            productTFArray[index] = new JTextField();
-                            productTFArray[index].setPreferredSize(new Dimension(250, 30));
-                            productTFArray[index].setFont(Style.FONT_TEXT_LOGIN_FRAME);
-                            add(productTFArray[index], gbc);
-
-                            index++;
-                            gbc.gridy++;
+                    @Override
+                    public void focusLost(FocusEvent e) {
+                        if (searchTextField.getText().isEmpty()) {
+                            searchTextField.setForeground(Color.BLACK);
+                            searchTextField.setText("Search by name");
+                            updateProduct();
                         }
                     }
-                }
-
-                class AddProductFromList extends JPanel {
-                    JButton backBt, addBt;
-
-                    JTable tableAddProductFromList;
-                    DefaultTableModel modelAddProductFromList;
-                    JScrollPane scrollPaneAddProductFromList;
-                    JTabbedPane tabbedPaneAddProductFromList;
-
-                    AddProductFromList() {
-                        setLayout(new GridBagLayout());
-                        GridBagConstraints gbc = new GridBagConstraints();
-                        gbc.insets = new Insets(5, 5, 5, 5);
-
-                        gbc.gridx = 0; // Cột đầu tiên
-                        gbc.gridy = 0; // Dòng đầu tiên
-                        gbc.gridwidth = 1; // Mỗi nút bấm chiếm 1 cột
-                        gbc.fill = GridBagConstraints.BOTH; // Nút sẽ lấp đầy cả không gian
-                        gbc.weightx = 0.5; // Phân bổ chiều rộng đều cho cả hai nút
-                        gbc.weighty = 0.0;
-
-                        backBt = new JButton("Back");
-                        backBt.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelImportProduct(PRODUCT_LIST);
-                            }
-                        });
-                        add(backBt, gbc);
-
-                        gbc.gridx = 1; // Cột thứ hai
-                        gbc.fill = GridBagConstraints.BOTH;
-                        addBt = new JButton("Add to Form");
-                        add(addBt, gbc);
-
-                        // thêm bảng chứa dữ liệu vào để trích xuất ra form
-                        tableAddProductFromList = createTable(modelAddProductFromList, columnNamesPRODUCT);
-                        resizeColumnWidth(tableAddProductFromList, 100);
-                        scrollPaneAddProductFromList = new JScrollPane(tableAddProductFromList);
-                        tabbedPaneAddProductFromList = createTabbedPane(scrollPaneAddProductFromList, "Inventory", Style.FONT_HEADER_ROW_TABLE);
-                        gbc.gridx = 0;
-                        gbc.gridy = 1;
-                        gbc.gridwidth = 3;
-                        gbc.fill = GridBagConstraints.BOTH;
-                        gbc.weightx = 1.0;
-                        gbc.weighty = 1.0;
-                        add(tabbedPaneAddProductFromList, gbc);
-                    }
-                }
+                });
+                return searchTextField;
             }
 
-            class PaymentConfirmationPn extends JPanel {
-                JLabel totalPrice, totalPriceValue;
-                JButton cancelBt, importBt;
-
-                PaymentConfirmationPn() {
-                    setLayout(new GridLayout(2, 2));
-                    setPreferredSize(new Dimension(300, 80));
-
-                    totalPrice = new JLabel("Total Price:");
-                    formatLabel(totalPrice, Style.FONT_TEXT_LOGIN_FRAME, Color.black);
-                    totalPriceValue = new JLabel(" $1000000000");
-                    formatLabel(totalPriceValue, Style.FONT_BUTTON_LOGIN_FRAME, Color.RED);
-
-
-                    cancelBt = new JButton("Cancel");
-                    setStyleButton(cancelBt, Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.DELETE_BUTTON_COLOR_RED, SwingConstants.CENTER, new Dimension(200, 40));
-                    cancelBt.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            showPanelInInventory(INVENTORY_CONTROL_CONSTRAINT);
-                        }
-                    });
-
-                    importBt = new JButton("Import");
-                    setStyleButton(importBt, Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.CENTER, new Dimension(200, 40));
-
-                    add(totalPrice);
-                    add(totalPriceValue);
-                    add(cancelBt);
-                    add(importBt);
-                }
+            private JButton createSearchButton() {
+                searchBt = new JButton();
+                ButtonConfig.setStyleButton(searchBt, Style.FONT_SIZE, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
+                ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
+                searchBt.addActionListener(e -> searchHandle());
+                return searchBt;
             }
 
-
+            private void searchHandle() {
+                if (!searchTextField.getText().isBlank()) {
+                    String searchText = searchTextField.getText().toLowerCase().trim();
+                    searchProduct(searchText);
+                } else updateProduct();
+            }
         }
 
         class ExportPanel extends JPanel {
             LeftPn leftPn;
             RightPn rightPn;
 
-            private JTextField customerIDTF, customerNameTF, customerPhoneNumberTF, customerEmailTF, customerAddressTF, orderDateTF, productIDTF, productNameTF, amountTF,
-                    priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF, statusTF, diskTF, weightTF, monitorTF, cardTF;
+            private JTextField customerIDTF, customerNameTF, customerPhoneNumberTF, customerEmailTF, customerAddressTF, orderDateTF;
             private final JTextField[] customerTFArray = {customerIDTF, customerNameTF, customerPhoneNumberTF, customerEmailTF, customerAddressTF, orderDateTF};
-            private final JTextField[] productTFArray = {productIDTF, productNameTF, amountTF, priceTF, typeTF, brandTF, operatingSystemTF, cpuTF, memoryTF, ramTF, madeInTF, statusTF, diskTF, weightTF, monitorTF, cardTF};
 
             ExportPanel() {
                 setLayout(new GridLayout(1, 2));
@@ -1944,7 +1593,7 @@ public class ManagerMainPanel extends JPanel {
                 }
 
 
-                public void showPanelAddSupplier(String panelName) {
+                public void showPanelAddCustomer(String panelName) {
                     cardLayoutCustomerPn.show(this, panelName); // method chuyển đổi giữa các panel
                 }
 
@@ -1960,23 +1609,8 @@ public class ManagerMainPanel extends JPanel {
                         gbc.weightx = 0.5; // Phân bổ chiều rộng đều cho cả hai nút
                         gbc.weighty = 0.0;
 
-                        clearAllBt = createClearAllButton(this);
-                        addFromListBt = new JButton("Add From Supplier List");
-                        addFromListBt.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelAddSupplier(ADD_CUSTOMER_FROM_LIST_CONSTRAINT);
-                            }
-                        });
-
-                        gbc.gridx = 0;
-                        gbc.gridy = 0;
-                        gbc.gridwidth = 1; // mỗi nút bấm chiếm 1 cột
-                        add(clearAllBt, gbc);
-
-                        gbc.gridx = 1;
-                        gbc.gridy = 0;
-                        add(addFromListBt, gbc);
+                        JTextField searchTF = new JTextField("Search");
+                        add(searchTF, gbc);
 
                         // Thiết lập GridBagConstraints cho các label và text field
                         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -1985,14 +1619,14 @@ public class ManagerMainPanel extends JPanel {
                         gbc.weighty = 0.1;
                         gbc.gridy = 1;
 
-                        for (int i = 0; i < columnNamesSUPPLIER.length; i++) {
+                        for (int i = 0; i < columnNamesCUSTOMER.length; i++) {
                             gbc.gridx = 0; // Cột 1: Label
                             // Bắt đầu từ dòng thứ 2
                             gbc.gridwidth = 1;
                             gbc.fill = GridBagConstraints.BOTH;
                             gbc.anchor = GridBagConstraints.WEST;// cân nhắc
 
-                            JLabel lb = new JLabel(columnNamesSUPPLIER[i]);
+                            JLabel lb = new JLabel(columnNamesCUSTOMER[i]);
                             lb.setFont(Style.FONT_BUTTON_CUSTOMER);
                             lb.setPreferredSize(new Dimension(150, 30));
                             add(lb, gbc);
@@ -2031,7 +1665,7 @@ public class ManagerMainPanel extends JPanel {
                         backBt.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                showPanelAddSupplier(ADD_NEW_CUSTOMER_CONSTRAINT);
+                                showPanelAddCustomer(ADD_NEW_CUSTOMER_CONSTRAINT);
                             }
                         });
                         add(backBt, gbc);
@@ -2089,7 +1723,6 @@ public class ManagerMainPanel extends JPanel {
                 }
             }
 
-
             //panel chứa thông tin sản phẩm cần mua, xác nhận thanh toán
             class RightPn extends JPanel {
                 ProductPn productPn;
@@ -2107,8 +1740,6 @@ public class ManagerMainPanel extends JPanel {
 
             class ProductPn extends JPanel {
                 ProductListPn productList;
-                AddProductFromList addProductFromList;
-                AddNewProductPn addNewProductPn;
                 CardLayout cardLayout = new CardLayout();
                 final String PRODUCT_LIST = "ProductList";
                 final String ADD_NEW_PRODUCT = "addNewProduct";
@@ -2127,12 +1758,8 @@ public class ManagerMainPanel extends JPanel {
                     setLayout(cardLayout);
 
                     productList = new ProductListPn();
-                    addProductFromList = new AddProductFromList();
-                    addNewProductPn = new AddNewProductPn();
 
-                    add(addProductFromList, ADD_PRODUCT_FROM_LIST);
                     add(productList, PRODUCT_LIST);
-                    add(addNewProductPn, ADD_NEW_PRODUCT);
 
                     cardLayout.show(this, PRODUCT_LIST);
                 }
@@ -2143,8 +1770,6 @@ public class ManagerMainPanel extends JPanel {
 
 
                 class ProductListPn extends JPanel {
-                    JButton addNewBt, addFromListBt, deleteProduct;
-
                     JTable tableImportProductList;
                     DefaultTableModel modelImportProductList;
                     JScrollPane scrollPaneImportProductList;
@@ -2154,36 +1779,6 @@ public class ManagerMainPanel extends JPanel {
                         setLayout(new GridBagLayout());
                         GridBagConstraints gbc = new GridBagConstraints();
                         gbc.insets = new Insets(5, 5, 5, 5);
-                        gbc.gridx = 0;
-                        gbc.gridy = 0;
-                        gbc.gridwidth = 1;
-                        gbc.fill = GridBagConstraints.BOTH;
-                        gbc.weightx = 0.5;
-                        gbc.weighty = 0.0;
-
-                        addNewBt = new JButton("Add new Product");// button add product to list
-                        addNewBt.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelImportProduct(ADD_NEW_PRODUCT);
-                            }
-                        });
-                        add(addNewBt, gbc);
-
-                        gbc.gridx = 1;
-                        gbc.fill = GridBagConstraints.BOTH;
-                        addFromListBt = new JButton("Add product from list ");
-                        addFromListBt.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelImportProduct(ADD_PRODUCT_FROM_LIST);
-                            }
-                        });
-                        add(addFromListBt, gbc);
-
-                        gbc.gridx = 2;
-                        gbc.fill = GridBagConstraints.BOTH;
-                        deleteProduct = new JButton("Delete product");
-                        add(deleteProduct, gbc);
 
                         tableImportProductList = createTable(modelImportProductList, columnNamesPRODUCT);
                         resizeColumnWidth(tableImportProductList, 100);
@@ -2191,121 +1786,12 @@ public class ManagerMainPanel extends JPanel {
 
                         tabbedPaneImportProductList = createTabbedPane(scrollPaneImportProductList, "Inventory Import List", Style.FONT_HEADER_ROW_TABLE);
                         gbc.gridx = 0; // Quay lại cột đầu tiên
-                        gbc.gridy = 1; // Dòng thứ hai
+                        gbc.gridy = 0; // Dòng thứ hai
                         gbc.gridwidth = 3; // JTable chiếm cả 2 cột
                         gbc.fill = GridBagConstraints.BOTH; // JTable lấp đầy cả chiều rộng và chiều cao
                         gbc.weightx = 1.0;
                         gbc.weighty = 1.0;
                         add(tabbedPaneImportProductList, gbc);
-                    }
-                }
-
-                class AddNewProductPn extends JPanel {
-                    JButton backBt, clearAllBt, addBt;
-
-                    AddNewProductPn() {
-                        setLayout(new GridBagLayout());
-                        GridBagConstraints gbc = new GridBagConstraints();
-
-                        gbc.gridx = 0;
-                        gbc.gridy = 0;
-                        gbc.gridwidth = 2;
-                        gbc.fill = GridBagConstraints.HORIZONTAL;
-                        gbc.weightx = 1.0;
-                        gbc.weighty = 0.0;
-
-                        backBt = new JButton("Back");
-                        backBt.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelImportProduct(PRODUCT_LIST);
-                            }
-                        });
-                        clearAllBt = createClearAllButton(this);
-
-                        addBt = new JButton("Add to List");
-                        JPanel buttonPanel = new JPanel();
-                        buttonPanel.add(backBt);
-                        buttonPanel.add(clearAllBt);
-                        buttonPanel.add(addBt);
-                        add(buttonPanel, gbc);
-
-                        gbc.gridwidth = 1;
-                        gbc.fill = GridBagConstraints.HORIZONTAL;
-                        gbc.weightx = 1.0;
-                        gbc.weighty = 0.1;
-                        gbc.gridy = 1;
-                        // add label and textfield to panel
-                        int index = 0;
-                        for (int i = 1; i < columnNamesPRODUCT.length; i++) {
-                            gbc.gridx = 0; // Cột 1: Label
-                            gbc.gridwidth = 1;
-                            gbc.fill = GridBagConstraints.BOTH;
-                            gbc.anchor = GridBagConstraints.WEST;// cân nhắc
-
-                            JLabel lb = new JLabel(columnNamesPRODUCT[i]);
-                            lb.setFont(Style.FONT_BUTTON_CUSTOMER);
-                            lb.setPreferredSize(new Dimension(150, 30));
-                            add(lb, gbc);
-
-                            gbc.gridx = 1; // Cột 2: TextField
-                            gbc.anchor = GridBagConstraints.EAST;
-                            productTFArray[index] = new JTextField();
-                            productTFArray[index].setPreferredSize(new Dimension(250, 30));
-                            productTFArray[index].setFont(Style.FONT_TEXT_LOGIN_FRAME);
-                            add(productTFArray[index], gbc);
-
-                            index++;
-                            gbc.gridy++;
-                        }
-                    }
-                }
-
-                class AddProductFromList extends JPanel {
-                    JButton backBt, addBt;
-
-                    JTable tableAddProductFromList;
-                    DefaultTableModel modelAddProductFromList;
-                    JScrollPane scrollPaneAddProductFromList;
-                    JTabbedPane tabbedPaneAddProductFromList;
-
-                    AddProductFromList() {
-                        setLayout(new GridBagLayout());
-                        GridBagConstraints gbc = new GridBagConstraints();
-                        gbc.insets = new Insets(5, 5, 5, 5);
-
-                        gbc.gridx = 0; // Cột đầu tiên
-                        gbc.gridy = 0; // Dòng đầu tiên
-                        gbc.gridwidth = 1; // Mỗi nút bấm chiếm 1 cột
-                        gbc.fill = GridBagConstraints.BOTH; // Nút sẽ lấp đầy cả không gian
-                        gbc.weightx = 0.5; // Phân bổ chiều rộng đều cho cả hai nút
-                        gbc.weighty = 0.0;
-
-                        backBt = new JButton("Back");
-                        backBt.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                showPanelImportProduct(PRODUCT_LIST);
-                            }
-                        });
-                        add(backBt, gbc);
-
-                        gbc.gridx = 1; // Cột thứ hai
-                        gbc.fill = GridBagConstraints.BOTH;
-                        addBt = new JButton("Add to Form");
-                        add(addBt, gbc);
-
-                        // thêm bảng chứa dữ liệu vào để trích xuất ra form
-                        tableAddProductFromList = createTable(modelAddProductFromList, columnNamesPRODUCT);
-                        resizeColumnWidth(tableAddProductFromList, 100);
-                        scrollPaneAddProductFromList = new JScrollPane(tableAddProductFromList);
-                        tabbedPaneAddProductFromList = createTabbedPane(scrollPaneAddProductFromList, "Inventory", Style.FONT_HEADER_ROW_TABLE);
-                        gbc.gridx = 0;
-                        gbc.gridy = 1;
-                        gbc.gridwidth = 3;
-                        gbc.fill = GridBagConstraints.BOTH;
-                        gbc.weightx = 1.0;
-                        gbc.weighty = 1.0;
-                        add(tabbedPaneAddProductFromList, gbc);
                     }
                 }
             }
@@ -2343,8 +1829,6 @@ public class ManagerMainPanel extends JPanel {
                     add(importBt);
                 }
             }
-
-
         }
     }
 
@@ -2476,7 +1960,7 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.addButtonHoverEffect(addAccBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(addAccBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/database-add-icon.png", addAccBt);
-                addAccBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                addAccBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 addAccBt.setVerticalTextPosition(SwingConstants.BOTTOM);
                 addAccBt.addActionListener(new ActionListener() {
                     @Override
@@ -2488,15 +1972,15 @@ public class ManagerMainPanel extends JPanel {
                                 tableStatus=TableStatus.ADD;
                                 try {
                                     if (!verifier()) {
-                                        ToastNotification.showToast("verifier False ", 2500, 50,-1,-1);
+                                        ToastNotification.showToast("Verifier False ", 2500, 50,-1,-1);
                                         return;
                                     }
                                     if (getAcc().getAvataImg().isEmpty()) {
                                         Object[] options = {"Push image", "No avata", "Cancel"};
                                         int status = JOptionPane.showOptionDialog(
                                                 null,
-                                                "Bạn chưa nhập hình?",
-                                                "Cảnh báo",
+                                                "You haven't uploaded an image!",
+                                                "Warning",
                                                 JOptionPane.YES_NO_CANCEL_OPTION,
                                                 JOptionPane.WARNING_MESSAGE,
                                                 null,
@@ -2524,18 +2008,12 @@ public class ManagerMainPanel extends JPanel {
                                     System.out.println(getManager());
                                     managerController.createManager(getManager(),getAcc());
                                     removeInfor();
-                                    ToastNotification.showToast("Luu r nha ", 2500, 50,-1,-1);
+                                    ToastNotification.showToast("The image has been saved!", 2500, 50,-1,-1);
                                 } catch (Exception exception) {
-                                    ToastNotification.showToast("Nhap lai thong tin ", 2500, 50,-1,-1);
+                                    ToastNotification.showToast("Please, upload your image again!", 2500, 50,-1,-1);
                                 }
 //                            }
 //                        }
-
-
-
-                        // add valid
-
-//
                     }
                 });
 
@@ -2543,7 +2021,7 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.addButtonHoverEffect(modifyAccBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(modifyAccBt, Style.FONT_SIZE_MIN_PRODUCT, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setIconBigButton("src/main/java/Icon/modify.png", modifyAccBt);
-                modifyAccBt.setHorizontalTextPosition(SwingConstants.CENTER); // Chữ ở giữa theo chiều ngang
+                modifyAccBt.setHorizontalTextPosition(SwingConstants.CENTER);
                 modifyAccBt.setVerticalTextPosition(SwingConstants.BOTTOM);
                 modifyAccBt.addActionListener(new ActionListener() {
                     @Override
@@ -2568,8 +2046,6 @@ public class ManagerMainPanel extends JPanel {
 
 
                         } else {
-
-                            System.out.println(" luu ra nha");
                             Account account = getAcc();
                             Manager manager = getManager();
                             account.setId(managerInfors.get(modifyId).getAccountId());
@@ -2585,12 +2061,10 @@ public class ManagerMainPanel extends JPanel {
                             btnModifyStutus = false;
                             reload();
                             removeInfor();
-                            ToastNotification.showToast("Update thanh cong", 2500, 50,-1,-1);
+                            ToastNotification.showToast("Your information has been updated successfully.", 2500, 50,-1,-1);
 
                             addAccBt.setEnabled(true);
                         }
-//                        btnModifyStutus = !btnModifyStutus;
-
                     }
                 });
 
@@ -2632,9 +2106,9 @@ public class ManagerMainPanel extends JPanel {
                         if (fileName != null && !fileName.trim().isEmpty()) {
                             reload();
                             ExcelConfig.writeManagersToExcel(managerInfors, fileName);
-                            ToastNotification.showToast(fileName + " is created !!!", 2500, 50,-1,-1);
+                            ToastNotification.showToast(fileName + " is created!", 2500, 50,-1,-1);
                         } else {
-                            ToastNotification.showToast("fall !!!", 2500, 50,-1,-1);
+                            ToastNotification.showToast("Failed to export Excel file!", 2500, 50,-1,-1);
                         }
 
                     }
@@ -2671,7 +2145,7 @@ public class ManagerMainPanel extends JPanel {
                 searchAccBt = new JButton();
                 ButtonConfig.addButtonHoverEffect(searchAccBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(searchAccBt, Style.FONT_SIZE_MIN_PRODUCT, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
-                ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchAccBt);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchAccBt);
                 searchAccBt.addActionListener(
                         new ActionListener() {
                             @Override
@@ -2752,7 +2226,7 @@ public class ManagerMainPanel extends JPanel {
         }
 
         public class TableCustomerPanel extends JPanel {
-            ModifyManager modifyManager;
+            AddManager addManager;
 
             public TableCustomerPanel() {
                 setLayout(new BorderLayout());
@@ -2768,19 +2242,19 @@ public class ManagerMainPanel extends JPanel {
 
                 scrollPaneAccManager = new JScrollPane(tableAccManager);
                 tabbedPaneAccManager = createTabbedPane(scrollPaneAccManager, "Information", Style.FONT_HEADER_ROW_TABLE);
-                modifyManager = new ModifyManager();
-                tabbedPaneAccManager.add(tableStatus.getMessage(), modifyManager);
+                addManager = new AddManager();
+                tabbedPaneAccManager.add(tableStatus.getMessage(), addManager);
 
                 add(tabbedPaneAccManager, BorderLayout.CENTER);
 
             }
         }
 
-        class ModifyManager extends JPanel {
+        class AddManager extends JPanel {
             ChangeInfo changeInfo;
             Avatar avatar;
 
-            ModifyManager() {
+            AddManager() {
                 setLayout(new GridLayout(2, 1));
                 changeInfo = new ChangeInfo();
                 avatar = new Avatar();
@@ -2802,7 +2276,6 @@ public class ManagerMainPanel extends JPanel {
                 });
             }
 
-
             class ChangeInfo extends JPanel {
                 LeftPn rightPn;
                 RightPn leftPn;
@@ -2816,7 +2289,6 @@ public class ManagerMainPanel extends JPanel {
                 }
 
                 class LeftPn extends JPanel {
-
                     LeftPn() {
                         setLayout(new GridBagLayout());
                         setBackground(Color.WHITE);
@@ -2882,7 +2354,7 @@ public class ManagerMainPanel extends JPanel {
                         btnSelect.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                selectedDate = new java.sql.Date(calendar.getDate().getTime());
+                                selectedDate = new Date(calendar.getDate().getTime());
 
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                                 txtBirthday.setText(dateFormat.format(selectedDate));
@@ -3035,7 +2507,7 @@ public class ManagerMainPanel extends JPanel {
                             fileChooser.setDialogTitle("Chọn hình ảnh");
 
                             // Lọc file chỉ cho phép chọn hình ảnh
-                            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                            fileChooser.setFileFilter(new FileNameExtensionFilter(
                                     "Hình ảnh (JPG, PNG, GIF)", "jpg", "png", "gif"));
 
                             // Hiển thị hộp thoại và lấy kết quả
@@ -3093,7 +2565,7 @@ public class ManagerMainPanel extends JPanel {
 
                         try {
                             Transferable transferable = support.getTransferable();
-                            java.util.List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                            List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                             if (!files.isEmpty()) {
                                 File file = files.get(0);
                                 String fileName = file.getName();
@@ -3163,7 +2635,109 @@ public class ManagerMainPanel extends JPanel {
     }
 
     class NotificationPanel extends JPanel {
+        private NotificationMainPanel notificationMainPanel;
+        private JScrollPane scrollPane;
+        private JTextField searchField;
+        private JButton searchButton;
+        private CustomButton allNotify,managerNotify, customerNotify;
         public NotificationPanel() {
+            setLayout(new BorderLayout());
+            JPanel toolPn = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            toolPn.setBackground(Color.WHITE);
+
+            allNotify = createCustomButton("All",Style.FONT_SIZE_MENU_BUTTON,Color.white,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2,15,new Dimension(120,40));
+            allNotify.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setColorSelectedButton(allNotify,customerNotify,managerNotify);
+
+
+                }
+            });
+            managerNotify = createCustomButton("Manager",Style.FONT_SIZE_MENU_BUTTON,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2,15,new Dimension(120,40));
+            managerNotify.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setColorSelectedButton(managerNotify,customerNotify,allNotify);
+
+
+                }
+            });
+
+            customerNotify = createCustomButton("Customer",Style.FONT_SIZE_MENU_BUTTON,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Color.white,Style.LIGHT_BlUE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2,15,new Dimension(120,40));
+            customerNotify.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setColorSelectedButton(customerNotify,managerNotify,allNotify);
+
+                }
+            });
+
+            toolPn.add(allNotify);
+            toolPn.add(managerNotify);
+            toolPn.add(customerNotify);
+
+
+
+            searchField = createTextFieldWithPlaceholder("Search Notification",Style.FONT_TEXT_CUSTOMER,new Dimension(320, 40));
+            // Thêm FocusListener để kiểm soát khi người dùng nhấn và rời khỏi JTextField
+            searchField.addFocusListener(new FocusListener() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ "Search", nó sẽ biến mất
+                    if (searchField.getText().equals("Search Notification")) {
+                        searchField.setText("");
+                        searchField.setForeground(Color.BLACK);
+                    }
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+                    // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ "Search"
+                    if (searchField.getText().isEmpty()) {
+                        searchField.setForeground(Color.GRAY);
+                        searchField.setText("Search Notification");
+                    }
+                }
+            });
+            searchButton = new JButton();
+            setStyleButton(searchButton, Style.FONT_TEXT_CUSTOMER, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER, new Dimension(50, 40));
+            setIconSmallButton("src/main/java/Icon/search_Icon.png", searchButton);
+
+
+
+            toolPn.add(searchField);
+            toolPn.add(searchButton);
+
+            notificationMainPanel = new NotificationMainPanel();
+            add(toolPn, BorderLayout.NORTH);
+            add(notificationMainPanel, BorderLayout.CENTER);
+        }
+        public void setColorSelectedButton(CustomButton selected, CustomButton notSelected1,CustomButton notSelected2){
+            selected.setBackgroundColor(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+            selected.setForeground(Color.WHITE);
+            notSelected1.setBackgroundColor(Color.WHITE);
+            notSelected1.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+            notSelected2.setBackgroundColor(Color.WHITE);
+            notSelected2.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+        }
+
+        class NotificationMainPanel extends JPanel {
+
+            NotificationMainPanel() {
+                setLayout(new BorderLayout());
+
+                notificationContainer = new JPanel();
+                notificationContainer.setBackground(Color.WHITE);
+                notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
+
+                scrollPane = new JScrollPane(notificationContainer);
+                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+                setColorScrollPane(scrollPane, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE);
+
+                add(scrollPane, BorderLayout.CENTER);
+
+            }
         }
 
     }
@@ -3457,6 +3031,34 @@ public class ManagerMainPanel extends JPanel {
         that.setPreferredSize(size);
     }
 
+    public JTextField createTextFieldWithPlaceholder(String placeholderText, Font font, Dimension size) {
+        JTextField field = new JTextField(placeholderText);
+        field.setFont(font);
+        field.setForeground(Color.GRAY);
+        field.setPreferredSize(size);
+        field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
+        field.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (field.getText().equals(placeholderText)) {
+                    field.setText("");
+                    field.setForeground(Color.BLACK);
+                }
+                field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (field.getText().isEmpty()) {
+                    field.setForeground(Color.GRAY);
+                    field.setText(placeholderText);
+                }
+                field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
+            }
+        });
+        return field;
+    }
+
     private JTextField createStyledTextField(Font font, Color textColor, Color borderColor, Dimension size) {
         JTextField field = new JTextField();
         field.setFont(font);
@@ -3468,6 +3070,7 @@ public class ManagerMainPanel extends JPanel {
         field.setBackground(Color.WHITE);
         return field;
     }
+
 
     private JPasswordField createStyledJPasswordField(Font font, Color borderColor, Dimension size) {
         JPasswordField passwdField = new JPasswordField();
@@ -3490,27 +3093,6 @@ public class ManagerMainPanel extends JPanel {
         that.setBorderPainted(false);
         that.setFocusable(false);
         that.setPreferredSize(size);
-    }
-
-    private void setIconSmallButton(String url, JButton that) {
-        ImageIcon iconButton = new ImageIcon(url);
-        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
-        Dimension buttonSize = that.getPreferredSize();
-        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
-        that.setIcon(new ImageIcon(resizedImage));
-    }
-
-    // Phương thức tạo nút Clear All
-    public JButton createClearAllButton(JPanel panel) {
-        JButton clearAllButton = new JButton("Clear All");
-        clearAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearTextFields(panel);
-            }
-        });
-
-        return clearAllButton;
     }
 
     private static JButton createShowPasswdButton(JPasswordField passwordField) {
@@ -3558,6 +3140,33 @@ public class ManagerMainPanel extends JPanel {
             }
         }
     }
+    // chỉnh màu cho scrollbar
+    private static void setColorScrollPane(JScrollPane scrollPane, Color thumbColor, Color trackColor) {
+        setColorScrollBar(scrollPane.getVerticalScrollBar(), thumbColor, trackColor);
+        setColorScrollBar(scrollPane.getHorizontalScrollBar(), thumbColor, trackColor);
+    }
+    private static void setColorScrollBar(JScrollBar scrollBar, Color scrollBarColor, Color trackBackGroundColor) {
+        scrollBar.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = scrollBarColor;
+                this.trackColor = trackBackGroundColor;
+            }
+        });
+    }
+    private static CustomButton createCustomButton(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, Color borderColor, int thickness, int radius, Dimension size) {
+        CustomButton bt = new CustomButton(title);
+        bt.setFont(font);
+        bt.setTextColor(textColor);
+        bt.setBackgroundColor(backgroundColor);
+        bt.setHoverColor(hoverColor);
+        bt.setBorderColor(borderColor);
+        bt.setBorderThickness(thickness);
+        bt.setBorderRadius(radius);
+        bt.setPreferredSize(size);
+        return bt;
+    }
+
 
     // phương thức tạo ra một bảng cho việc nhập sản phẩm
     public JTable createTable(DefaultTableModel model, String[] columnNames) {
@@ -3593,6 +3202,7 @@ public class ManagerMainPanel extends JPanel {
             table.getColumnModel().getColumn(i).setPreferredWidth(width);
             table.getColumnModel().getColumn(0).setPreferredWidth(100);
             table.getColumnModel().getColumn(1).setPreferredWidth(120);
+            table.getColumnModel().getColumn(2).setPreferredWidth(300);
         }
     }
 
@@ -3604,6 +3214,71 @@ public class ManagerMainPanel extends JPanel {
         tabbedPane.setFocusable(false);
         return tabbedPane;
     }
+    //
+    public void addCustomerNotification(Customer customer, String text) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        JLabel timeLabel = new JLabel("<html>" + now.format(timeFormatter) + "<br>" + now.format(dateFormatter) + "</html>");
 
+        CircularImage avatar = new CircularImage(customer.getAvataImg(), 80, 80, true);
+
+        JLabel customerName = new JLabel(customer.getFullName());
+        customerName.setFont(Style.FONT_PLAIN_25);
+
+        JTextArea message = new JTextArea(text);
+        message.setBackground(Color.WHITE);
+        message.setForeground(Color.BLACK);
+        message.setFont(new Font("Arial", Font.PLAIN, 16));
+        message.setBorder(BorderFactory.createCompoundBorder(
+                new RoundedBorder(20, 2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE),
+                BorderFactory.createEmptyBorder(3, 3, 3, 8)
+        ));
+        message.setLineWrap(true);
+        message.setWrapStyleWord(true);
+        message.setEditable(false);
+        message.setOpaque(true);
+
+        // Cố định chiều rộng và tính toán chiều cao phù hợp
+        int width = 600;
+        message.setSize(new Dimension(width, Short.MAX_VALUE));
+        int preferredHeight = message.getPreferredSize().height;
+        message.setPreferredSize(new Dimension(width, preferredHeight));
+
+        // Bọc JTextArea trong JScrollPane nhưng tắt thanh cuộn ngang
+        JScrollPane scrollPane = new JScrollPane(message);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        JPanel textAreaPanel = new JPanel();
+        textAreaPanel.setLayout(new BoxLayout(textAreaPanel, BoxLayout.Y_AXIS));
+        textAreaPanel.add(scrollPane);
+        textAreaPanel.setBackground(Color.WHITE);
+
+        JPanel main = new JPanel(new GridBagLayout());
+        main.setBackground(Color.WHITE);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 15, 5, 15);
+        gbc.anchor = GridBagConstraints.WEST;
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        main.add(avatar, gbc);
+
+        gbc.gridx = 1;
+        main.add(customerName, gbc);
+
+        gbc.gridy = 1;
+        main.add(textAreaPanel, gbc);
+
+        gbc.gridx = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        main.add(timeLabel, gbc);
+
+        notificationContainer.add(main);
+        notificationContainer.revalidate();
+        notificationContainer.repaint();
+    }
 
 }

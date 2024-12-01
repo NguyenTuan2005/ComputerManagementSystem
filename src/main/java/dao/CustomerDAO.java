@@ -1,5 +1,6 @@
 package dao;
 
+import Config.BillConfig;
 import Config.DatabaseConfig;
 import Model.Customer;
 import dto.CustomerOrderDTO;
@@ -188,13 +189,14 @@ public class CustomerDAO implements Repository<Customer> {
 
     public ArrayList<CustomerOrderDTO> getDataCustomerOrderById(int customerId) {
         ArrayList<CustomerOrderDTO> orders = new ArrayList<>();
-        String query = "SELECT * FROM customer_order_view WHERE customer_id = ?";
+        String query = "SELECT * FROM customer_order_view  WHERE customer_id = ?   ORDER BY  order_date";
         try {
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, customerId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 CustomerOrderDTO order = new CustomerOrderDTO();
+                order.setOrderId(rs.getInt("order_id"));
                 order.setCustomerId(rs.getInt("customer_id"));
                 order.setOrderDate(rs.getDate("order_date"));
                 order.setShipAddress(rs.getString("ship_address"));
@@ -266,8 +268,11 @@ public class CustomerDAO implements Repository<Customer> {
 
     public static void main(String[] args) {
         CustomerDAO customerDAO = new CustomerDAO();
-        System.out.println(customerDAO.getDataCustomerOrderById(3));
-//        System.out.println(customerDAO.indByEmail("1233@abc.com")save(new Customer("nguyen huu duy","duynguyenavg@gmail.com","tien giang , chau thành diem hy","123")));
+        var u =customerDAO.getDataCustomerOrderById(3);
+        BillConfig billConfig = new BillConfig(u);
+        System.out.println(billConfig.getLastBill());
+
+
     }
 
     public void updatePassword(String s, int id) {

@@ -845,9 +845,9 @@ public class CustomerMainPanel extends JPanel {
         }
 
         private boolean hasNotChanged() {
-            return emailField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getEmail()) &&
-                    fullNameField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getFullName()) &&
-                    addressField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getAddress()) &&
+            return emailField.getText().trim().equals(CurrentUser.CURRENT_CUSTOMER.getEmail()) &&
+                    fullNameField.getText().trim().equals(CurrentUser.CURRENT_CUSTOMER.getFullName()) &&
+                    addressField.getText().trim().equals(CurrentUser.CURRENT_CUSTOMER.getAddress()) &&
                     avatar.equals(new CircularImage(CurrentUser.URL, avatar.getWidth(), avatar.getHeight(), false));
         }
 

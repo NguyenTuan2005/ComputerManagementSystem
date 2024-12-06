@@ -53,7 +53,7 @@ public class EmailVerifier extends InputVerifier {
 //                    }
 //                }
 //            });
-            textField.setInputVerifier(new UserNameAccoutVerifier());
+            textField.setInputVerifier(new UserNameAccountVerifier());
 
             JButton submitButton = new JButton("Submit");
             submitButton.addActionListener(e -> {

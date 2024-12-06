@@ -1,7 +1,6 @@
 package Config;
 
 import Model.Customer;
-import Model.Manager;
 import dto.ManagerInforDTO;
 
 public  class CurrentUser {

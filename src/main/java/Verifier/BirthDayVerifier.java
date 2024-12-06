@@ -10,37 +10,39 @@ import java.text.SimpleDateFormat;
 import static java.awt.SystemColor.window;
 
 public class BirthDayVerifier extends InputVerifier {
+    private static final String[] DATE_FORMATS = {"yyyy-MM-dd", "dd/MM/yyyy"};
     @Override
     public boolean verify(JComponent input) {
         String birthday = ((JTextField) input).getText().trim();
 
-        // Định dạng ngày
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        dateFormat.setLenient(false); // Không cho phép ngày không hợp lệ (vd: 30/02/2024)
+        for (String format : DATE_FORMATS) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+            dateFormat.setLenient(false);
+            try {
+                // Kiểm tra xem ngày có hợp lệ không
+                dateFormat.parse(birthday);
 
-        try {
-            // Kiểm tra xem ngày có hợp lệ không
-            dateFormat.parse(birthday);
+                // Bạn có thể kiểm tra thêm logic như không cho phép ngày tương lai:
+                if (isFutureDate(birthday, dateFormat)) {
+                    input.setBackground(java.awt.Color.PINK);
+                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                    JWindow window = new JWindow();
+                    ToastNotification.showToast("SAi roi má", 2500, 50, screenSize.width - window.getWidth() - 10, screenSize.height - window.getHeight() - 50);
+                    return false;
+                }
 
-            // Bạn có thể kiểm tra thêm logic như không cho phép ngày tương lai:
-            if (isFutureDate(birthday, dateFormat)) {
+                input.setBackground(java.awt.Color.WHITE); // Trả lại màu trắng nếu hợp lệ
+                return true;
+            } catch (ParseException e) {
+                // Lỗi định dạng ngày
                 input.setBackground(java.awt.Color.PINK);
                 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                 JWindow window = new JWindow();
-                ToastNotification.showToast("SAi roi má",2500,50,screenSize.width - window.getWidth() - 10,screenSize.height - window.getHeight() - 50);
+                ToastNotification.showToast("SAi roi má", 2500, 50, screenSize.width - window.getWidth() - 10, screenSize.height - window.getHeight() - 50);
                 return false;
             }
-
-            input.setBackground(java.awt.Color.WHITE); // Trả lại màu trắng nếu hợp lệ
-            return true;
-        } catch (ParseException e) {
-            // Lỗi định dạng ngày
-            input.setBackground(java.awt.Color.PINK);
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            JWindow window = new JWindow();
-            ToastNotification.showToast("SAi roi má",2500,50,screenSize.width - window.getWidth() - 10,screenSize.height - window.getHeight() - 50);
-            return false;
         }
+        return false;
     }
 
     // Hàm kiểm tra nếu ngày nằm trong tương lai

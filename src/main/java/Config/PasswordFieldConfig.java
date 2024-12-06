@@ -33,7 +33,6 @@ public class PasswordFieldConfig {
         });
     }
 
-
     public static JPasswordField createPasswordFieldWithPlaceHolder(String text, Font font, Color textColor, Dimension size) {
         JPasswordField pwField = new JPasswordField(text);
         pwField.setForeground(textColor);

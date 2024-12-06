@@ -331,7 +331,7 @@ public class LoginFrame extends JFrame {
             add(passwordIcon, gbc);
 
             gbc.gridx = 1;
-            passwdFieldSignup = PasswordFieldConfig.createPasswordField("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            passwdFieldSignup = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
             passwdFieldSignup.addActionListener(e -> signUpButton.doClick());
             add(passwdFieldSignup, gbc);
 
@@ -689,7 +689,7 @@ public class LoginFrame extends JFrame {
             add(passwordIcon, gbc);
 
             gbc.gridx = 1;
-            passwdFieldSignin = PasswordFieldConfig.createPasswordField("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            passwdFieldSignin = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
             passwdFieldSignin.addActionListener(e -> signInButton.doClick());
             add(passwdFieldSignin, gbc);
 
@@ -1282,7 +1282,7 @@ public class LoginFrame extends JFrame {
 
                 add(passwordIconLb1, gbc);
                 gbc.gridx = 1;
-                newPasswdField = PasswordFieldConfig.createPasswordField("Enter your new password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+                newPasswdField = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Enter your new password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
                 newPasswdField.addActionListener(e -> resetPasswdBt.doClick());
                 add(newPasswdField, gbc);
 
@@ -1291,7 +1291,7 @@ public class LoginFrame extends JFrame {
                 gbc.gridx = 0;
                 add(passwordIconLb2, gbc);
                 gbc.gridx = 1;
-                confirmPasswdField = PasswordFieldConfig.createPasswordField("Confirm your new password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+                confirmPasswdField = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Confirm your new password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
                 confirmPasswdField.addActionListener(e -> resetPasswdBt.doClick());
                 add(confirmPasswdField, gbc);
 

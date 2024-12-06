@@ -16,7 +16,7 @@ public class Image {
 
     private String url;
 
-    private String  alt;
+    private String alt;
 
     public Image(int productId, String url, String alt) {
         this.productId = productId;

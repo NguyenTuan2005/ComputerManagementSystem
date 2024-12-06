@@ -15,12 +15,39 @@ public class PasswordFieldConfig {
         pwField.setPreferredSize(size);
         pwField.setFont(font);
         pwField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
-        pwField.setEchoChar((char) 0);
-        addFocusListenerForJPasswordField(pwField, text);
+        pwField.setEchoChar('*');
+        addFocusListenerPasswdField(pwField);
         return pwField;
     }
 
-    public static void addFocusListenerForJPasswordField(JPasswordField that, String originText) {
+    public static void addFocusListenerPasswdField(JPasswordField that) {
+        that.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                that.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                that.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
+            }
+        });
+    }
+
+
+    public static JPasswordField createPasswordFieldWithPlaceHolder(String text, Font font, Color textColor, Dimension size) {
+        JPasswordField pwField = new JPasswordField(text);
+        pwField.setForeground(textColor);
+        pwField.setPreferredSize(size);
+        pwField.setFont(font);
+        pwField.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
+        pwField.setEchoChar((char) 0);
+        addFocusListenerPasswdField(pwField, text);
+        return pwField;
+    }
+
+
+
+    public static void addFocusListenerPasswdField(JPasswordField that, String originText) {
         that.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {

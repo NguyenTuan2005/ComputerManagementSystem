@@ -1,5 +1,7 @@
 package view.OverrideComponent;
 
+import view.Style;
+
 import javax.swing.*;
 import java.awt.*;
 public class ToastNotification {
@@ -10,9 +12,15 @@ public class ToastNotification {
 
         JLabel label = new JLabel(message, SwingConstants.CENTER);
         label.setOpaque(true);
-        label.setBackground(new Color(180, 231, 224));
+//        label.setBackground(new Color(180, 231, 224));
+//        label.setForeground(new Color(173, 99, 34));
+//        label.setFont(new Font("Arial", Font.BOLD, 20));
+
+
+        label.setBackground(Style.LIGHT_BlUE);
         label.setForeground(new Color(173, 99, 34));
-        label.setFont(new Font("Arial", Font.BOLD, 20));
+        label.setFont(new Font("Arial", Font.PLAIN, 20));
+
 
         // Thêm icon nếu có
         ImageIcon iconButton = new ImageIcon("src/main/java/Icon/iconNotification.png");
@@ -20,6 +28,8 @@ public class ToastNotification {
         Image resizedImage = image.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
         label.setIcon(new ImageIcon(resizedImage));
         label.setBorder(BorderFactory.createLineBorder(new Color(34, 139, 34)));
+//        label.setBorder(BorderFactory.createLineBorder(Style.BACKGROUND_COLOR,3));
+
 
         window.add(label, BorderLayout.CENTER);
 

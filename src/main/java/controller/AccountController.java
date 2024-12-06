@@ -44,19 +44,17 @@ public class AccountController implements ModelController<Account> {
             if(isValdAccount) {
                 CurrentUser.USER_NAME = managerInfor.getFullName();
                 CurrentUser.URL = managerInfor.getAvataImg();
-                CurrentUser.MANAGER_INFOR = managerInfor;
+                CurrentUser.CURRENT_MANAGER = managerInfor;
                 return  true;
             }else {
                 loginStatus = LoginStatus.WORNG_PASSWORD;
 //                System.out.println("sai pw");
                 return false;
             }
-
         } else {
             loginStatus = LoginStatus.WRONG_USER_NAME;
             return false;
         }
-
     }
     public Account create(Account theAcount){
         passwordSecurity = new PasswordSecurity(theAcount.getPassword());

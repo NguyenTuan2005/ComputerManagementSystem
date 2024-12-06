@@ -1,14 +1,14 @@
 package dto;
 
 import Config.EmailConfig;
+import controller.CustomerController;
 import lombok.*;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 @ToString
 @Getter
@@ -16,6 +16,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerOrderDTO {
+    private int orderId;
+//    private String customerName;
     private int customerId;
     private Date orderDate;
     private String shipAddress;
@@ -70,61 +72,25 @@ public class CustomerOrderDTO {
                 .append("    Total Price : $").append(String.format("%.2f", unitPrice * quantity)).append("\n")
                 .append("--------------------------------\n")
                 .append("Thank you for your purchase!\n")
-                .append("For inquiries, contact us at: "+ EmailConfig.APP_EMAIL +"\n")
+                .append("For inquiries, contact us at: " + EmailConfig.APP_EMAIL + "\n")
                 .append("--------------------------------\n");
 
         return bill.toString();
     }
 
-    public static  String toBillsString(ArrayList<CustomerOrderDTO> customerOrderDTOS){
-        String bill="";
 
-        for (CustomerOrderDTO c : customerOrderDTOS) {
-            bill += c.toBillString();
-            bill +="\n";
-        }
 
-        return bill;
-    }
+
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            // Tạo dữ liệu mẫu
-            String[] columnNames = {"ID", "Name", "Status"};
-            Object[][] data = {
-                    {1, "Alice", "Active"},
-                    {2, "Bob", "Inactive"},
-                    {3, "Charlie", "Active"},
-            };
+        // Tạo danh sách sản phẩm
+        ArrayList<CustomerOrderDTO> orders = new ArrayList<>();
+        CustomerController c = new CustomerController();
+        orders = c.findCustomerOrderById(3);
 
-            // Tạo mô hình bảng
-            DefaultTableModel model = new DefaultTableModel(data, columnNames);
-            JTable table = new JTable(model);
-
-            // Tùy chỉnh renderer cho cột "Status" (cột thứ 2)
-            table.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value,
-                                                               boolean isSelected, boolean hasFocus, int row, int column) {
-                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-                    // Đặt màu chữ (foreground) cho cột
-                    if (!isSelected) {
-                        c.setForeground(Color.BLUE); // Màu chữ xanh
-                    } else {
-                        c.setForeground(table.getSelectionForeground()); // Giữ màu chữ khi được chọn
-                    }
-                    return c;
-                }
-            });
-
-            // Tạo giao diện
-            JFrame frame = new JFrame("Text Color Column Example");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.add(new JScrollPane(table));
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
     }
 
+    public boolean sameOderId(int id) {
+        return  this.orderId == id;
+    }
 }

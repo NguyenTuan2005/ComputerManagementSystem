@@ -1,5 +1,6 @@
 package view;
 
+
 import Config.*;
 import Enum.TableStatus;
 import Model.*;
@@ -46,8 +47,10 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static Config.BillConfig.toBillsString;
+import static Config.ButtonConfig.setIconSmallButton;
 import static Model.Account.getCurrentDate;
-import static dto.CustomerOrderDTO.toBillsString;
+//import static dto.CustomerOrderDTO.toBillsString;
 
 
 public class ManagerMainPanel extends JPanel {
@@ -288,7 +291,7 @@ public class ManagerMainPanel extends JPanel {
                 searchBt = new JButton();
                 ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(searchBt, Style.FONT_SIZE_MIN_PRODUCT, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
-                ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
 
                 reloadBt = new JButton("reload");
                 ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -594,7 +597,7 @@ public class ManagerMainPanel extends JPanel {
                 // Search Button
                 searchBt = new JButton();
                 ButtonConfig.setStyleButton(searchBt, Style.FONT_SIZE, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
-                ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
                 ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 searchBt.addActionListener(e -> {
                     if (!findText.getText().isBlank()) {
@@ -895,7 +898,10 @@ public class ManagerMainPanel extends JPanel {
                         else {
                             String fileName = JOptionPane.showInputDialog(null, "Enter bill file name :", "Input file", JOptionPane.QUESTION_MESSAGE);
                             JOptionPane.showMessageDialog(null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
-                            CustomerExporter.writeBillToFile(toBillsString(bills), fileName);
+
+                            CustomerExporter.writeBillToFile(
+                                    new BillConfig(bills).getLastBill()
+                                    , fileName);
                             JOptionPane.showMessageDialog(null, "Created !!! ", "Message", JOptionPane.ERROR_MESSAGE);
                             reload();
                         }
@@ -909,7 +915,7 @@ public class ManagerMainPanel extends JPanel {
                 searchCustomerBt = new JButton();
                 ButtonConfig.addButtonHoverEffect(searchCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(searchCustomerBt, Style.FONT_SIZE_MIN_PRODUCT, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
-                ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchCustomerBt);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchCustomerBt);
                 searchCustomerBt.addActionListener(
                         new ActionListener() {
                             @Override
@@ -936,7 +942,9 @@ public class ManagerMainPanel extends JPanel {
                                             bills = customerController.findCustomerOrderById(customerId);
                                             if (bills.isEmpty())
                                                 JOptionPane.showMessageDialog(null, "No information available");
-                                            billTextDisplayPanal.setText(toBillsString(bills));
+                                            System.out.println(toBillsString(bills));
+                                            BillConfig billConfig = new BillConfig(bills);
+                                            billTextDisplayPanal.setText(billConfig.getLastBill());
                                             billTextDisplayPanal.setTextEditable(false);
 
                                         } catch (Exception ex) {
@@ -1081,7 +1089,7 @@ public class ManagerMainPanel extends JPanel {
 
             private CategoryDataset createDataset() {
                 DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-                // Dữ liệu mẫu: Thay thế bằng dữ liệu từ database
+
                 Map<String, Integer> topCustomers = new HashMap<>();
 
                 consertCustomerToMap(customers, topCustomers);
@@ -1410,7 +1418,7 @@ public class ManagerMainPanel extends JPanel {
                 searchBt = new JButton();
                 ButtonConfig.setStyleButton(searchBt, Style.FONT_SIZE, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
                 ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
                 searchBt.addActionListener(e -> searchHandle());
                 return searchBt;
             }
@@ -2054,7 +2062,7 @@ public class ManagerMainPanel extends JPanel {
                 searchAccBt = new JButton();
                 ButtonConfig.addButtonHoverEffect(searchAccBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 setStyleButton(searchAccBt, Style.FONT_SIZE_MIN_PRODUCT, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
-                ButtonConfig.setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchAccBt);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchAccBt);
                 searchAccBt.addActionListener(
                         new ActionListener() {
                             @Override
@@ -2802,12 +2810,12 @@ public class ManagerMainPanel extends JPanel {
 
         private void reloadData() {
             try {
-                emailField.setText(CurrentUser.MANAGER_INFOR.getEmail());
-                fullNameField.setText(CurrentUser.MANAGER_INFOR.getFullName());
-                addressField.setText(CurrentUser.MANAGER_INFOR.getAddress());
-                phoneNumField.setText(CurrentUser.MANAGER_INFOR.getPhoneNumber());
-                dateOfBirthField.setText(CurrentUser.MANAGER_INFOR.getBirthDay().toString());
-                createDateField.setText(CurrentUser.MANAGER_INFOR.getCreateDate().toString());
+                emailField.setText(CurrentUser.CURRENT_MANAGER.getEmail());
+                fullNameField.setText(CurrentUser.CURRENT_MANAGER.getFullName());
+                addressField.setText(CurrentUser.CURRENT_MANAGER.getAddress());
+                phoneNumField.setText(CurrentUser.CURRENT_MANAGER.getPhoneNumber());
+                dateOfBirthField.setText(CurrentUser.CURRENT_MANAGER.getBirthDay().toString());
+                createDateField.setText(CurrentUser.CURRENT_MANAGER.getCreateDate().toString());
                 avatar.setImage(CurrentUser.URL);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -2815,12 +2823,12 @@ public class ManagerMainPanel extends JPanel {
         }
 
         private boolean hasNotChanged() {
-            return emailField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getEmail()) &&
-                    fullNameField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getFullName()) &&
-                    addressField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getAddress()) &&
-                    phoneNumField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getPhoneNumber()) &&
-                    dateOfBirthField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getBirthDay().toString()) &&
-                    createDateField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getCreateDate().toString()) &&
+            return emailField.getText().trim().equals(CurrentUser.CURRENT_MANAGER.getEmail()) &&
+                    fullNameField.getText().trim().equals(CurrentUser.CURRENT_MANAGER.getFullName()) &&
+                    addressField.getText().trim().equals(CurrentUser.CURRENT_MANAGER.getAddress()) &&
+                    phoneNumField.getText().trim().equals(CurrentUser.CURRENT_MANAGER.getPhoneNumber()) &&
+                    dateOfBirthField.getText().trim().equals(CurrentUser.CURRENT_MANAGER.getBirthDay().toString()) &&
+                    createDateField.getText().trim().equals(CurrentUser.CURRENT_MANAGER.getCreateDate().toString()) &&
                     this.avatar.equals(new CircularImage(CurrentUser.URL, avatar.getWidth(), avatar.getHeight(), false));
         }
 
@@ -2886,11 +2894,11 @@ public class ManagerMainPanel extends JPanel {
         }
 
         private void performUpdate() {
-            Account account = accountController.findById(CurrentUser.MANAGER_INFOR.getAccountId());
+            Account account = accountController.findById(CurrentUser.CURRENT_MANAGER.getAccountId());
             account.setAvataImg(avatar.getImagePath());
             account.setEmail(emailField.getText().trim());
             account.setCreateDate(Date.valueOf(createDateField.getText().trim()));
-            Manager manager = managerController.findById(CurrentUser.MANAGER_INFOR.getManagerId());
+            Manager manager = managerController.findById(CurrentUser.CURRENT_MANAGER.getManagerId());
             manager.setFullName(fullNameField.getText().trim());
             manager.setAddress(addressField.getText().trim());
             manager.setBirthDay(Date.valueOf(dateOfBirthField.getText().trim()));

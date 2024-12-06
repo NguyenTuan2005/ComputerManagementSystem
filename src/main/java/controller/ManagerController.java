@@ -50,7 +50,6 @@ public class ManagerController implements ModelController<Manager>{
 
     @Override
     public void saves(ArrayList<Manager> m) {
-
     }
 
     @Override

@@ -81,25 +81,12 @@ public class ChangePasswordFrame extends JFrame {
         }
 
         try {
-            if (!CurrentUser.MANAGER_INFOR.authenticateOldPassword(oldPassword) ||
+            if (!CurrentUser.CURRENT_MANAGER.authenticateOldPassword(oldPassword) ||
                 !CurrentUser.CURRENT_CUSTOMER.authenticateOldPassword(oldPassword)) {
                 JOptionPane.showMessageDialog(this,
                         "Incorrect old password.",
                         "Authentication Error",
                         JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (!isPasswordStrong(newPassword)) {
-                JOptionPane.showMessageDialog(this,
-                        "New password does not meet strength requirements:\n" +
-                                "- Minimum 8 characters\n" +
-                                "- At least one uppercase letter\n" +
-                                "- At least one lowercase letter\n" +
-                                "- At least one number\n" +
-                                "- At least one special character",
-                        "Password Strength Error",
-                        JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -154,16 +141,11 @@ public class ChangePasswordFrame extends JFrame {
         return true;
     }
 
-    private boolean isPasswordStrong(String password) {
-        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
-        return password.matches(passwordRegex);
-    }
-
     private boolean updatePassword(String newPassword) {
         try {
             switch (role) {
                 case ("Customer") -> new CustomerController().updatePassword(newPassword, CurrentUser.CURRENT_CUSTOMER.getId());
-                case ("Manager") -> new AccountController().updatePassword(newPassword, CurrentUser.MANAGER_INFOR.getAccountId());
+                case ("Manager") -> new AccountController().updatePassword(newPassword, CurrentUser.CURRENT_MANAGER.getAccountId());
                 default -> JOptionPane.showMessageDialog(this,
                         "Invalid role",
                         "Error",

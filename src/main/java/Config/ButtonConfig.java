@@ -196,7 +196,6 @@ public class ButtonConfig {
         JLabel label = new JLabel("Ready", SwingConstants.CENTER);
         CustomButton button = createCustomButton("Change Password");
 
-        // Bố cục
         frame.setLayout(new java.awt.BorderLayout());
         frame.add(btn, java.awt.BorderLayout.CENTER);
         JPanel panel = new JPanel(new FlowLayout());
@@ -204,36 +203,35 @@ public class ButtonConfig {
         frame.add(panel, java.awt.BorderLayout.NORTH);
         frame.add(label, java.awt.BorderLayout.SOUTH);
 
-        // Lắng nghe sự kiện nhấn nút
+
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                btn.setEnabled(false); // Vô hiệu hóa nút
-                int cooldown = 10; // Thời gian chờ 10 giây
+                btn.setEnabled(false);
+                int cooldown = 10;
                 label.setText("Wait " + cooldown + " seconds...");
 
-                // Sử dụng Timer để đếm ngược và bật lại nút
                 Timer countdownTimer = new Timer(1000, new ActionListener() {
-                    int secondsLeft = cooldown; // Biến đếm ngược
+                    int secondsLeft = cooldown;
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        secondsLeft--; // Giảm số giây
+                        secondsLeft--;
                         if (secondsLeft > 0) {
                             label.setText("Wait " + secondsLeft + " seconds...");
                         } else {
-                            ((Timer) e.getSource()).stop(); // Dừng Timer
-                            btn.setEnabled(true); // Bật lại nút
+                            ((Timer) e.getSource()).stop();
+                            btn.setEnabled(true);
                             label.setText("Ready");
                         }
                     }
                 });
 
-                countdownTimer.start(); // Bắt đầu đếm ngược
+                countdownTimer.start();
             }
         });
 
-        // Thiết lập JFrame
+
         frame.setSize(300, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);

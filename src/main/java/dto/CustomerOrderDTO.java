@@ -38,6 +38,7 @@ public class CustomerOrderDTO {
     private String weight;
     private String monitor;
     private String card;
+    private String productImage;
 
 
     public String toBillString() {

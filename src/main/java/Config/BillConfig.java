@@ -26,7 +26,7 @@ public class BillConfig {
             int len = this.bills.size() - 1;
             var id = this.bills.get(len).getOrderId();
             var newBills = new ArrayList<CustomerOrderDTO>();
-            System.out.println(this.bills);
+
 
             var m = this.bills.stream()
                     .filter(item -> item.getOrderId() == id) // Kiểm tra phần tử có giống `targetItem` không
@@ -200,5 +200,7 @@ public class BillConfig {
         unitBills.add(that);
         return unitBills;
     }
+
+
 
 }

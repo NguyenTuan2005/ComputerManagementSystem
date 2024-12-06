@@ -17,7 +17,6 @@ import java.util.Locale;
 @NoArgsConstructor
 public class CustomerOrderDTO {
     private int orderId;
-//    private String customerName;
     private int customerId;
     private Date orderDate;
     private String shipAddress;

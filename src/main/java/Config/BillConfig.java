@@ -1,15 +1,15 @@
 package Config;
 
+import dao.CustomerDAO;
 import dto.CustomerOrderDTO;
+import dto.KeyOrderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -21,7 +21,7 @@ public class BillConfig {
 
     private ArrayList<CustomerOrderDTO> bills;
 
-    private ArrayList<CustomerOrderDTO> getLastItem(){
+    private ArrayList<CustomerOrderDTO> getLastItem() {
         try {
             int len = this.bills.size() - 1;
             var id = this.bills.get(len).getOrderId();
@@ -32,11 +32,11 @@ public class BillConfig {
                     .filter(item -> item.getOrderId() == id) // Kiểm tra phần tử có giống `targetItem` không
                     .collect(Collectors.toList());
             return (ArrayList<CustomerOrderDTO>) m;
-        } catch (Exception e ){
+        } catch (Exception e) {
 
         }
 
-       return null;
+        return null;
     }
 
     public String getLastBill() {
@@ -57,11 +57,10 @@ public class BillConfig {
         int actualLength = text.length();
         int padding = len - actualLength; // Số khoảng trắng cần thêm
         if (padding > 0) {
-            return text+ "_".repeat(padding); // Thêm khoảng trắng
+            return text + "_".repeat(padding); // Thêm khoảng trắng
         }
         return text; // Nếu chuỗi đã đủ dài, trả về chuỗi gốc
     }
-
 
 
     public static String generateBill(ArrayList<CustomerOrderDTO> orderList) {
@@ -73,7 +72,7 @@ public class BillConfig {
 
         StringBuilder bill = new StringBuilder();
 
-        int columnWidth = 150 ;
+        int columnWidth = 76;
 
         String headerLine = createDynamicLine(columnWidth, '=');
         bill.append(headerLine).append("\n");
@@ -89,7 +88,7 @@ public class BillConfig {
                 truncateText(firstOrder.getShipAddress(), columnWidth)));
 
 
-        String productHeader = String.format("%-50s %-15s %-20s %-20s",
+        String productHeader = String.format("%-48s %-37s %-28s %-28s",
                 "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền");
         bill.append(productHeader).append("\n");
         bill.append(createDynamicLine(columnWidth, '='));
@@ -101,8 +100,8 @@ public class BillConfig {
         for (CustomerOrderDTO order : orderList) {
             double productTotal = order.getUnitPrice() * order.getQuantity();
 
-            bill.append(String.format("%-50s %-"+ sapce +"d %-20s %-20s\n",
-                    truncateText(order.getProductName() , 53),
+            bill.append(String.format("%-50s %-" + sapce + "d %-20s %-20s\n",
+                    truncateText(order.getProductName(), 53),
                     order.getQuantity(),
                     currencyFormatter.format(order.getUnitPrice()),
                     currencyFormatter.format(productTotal)
@@ -171,11 +170,35 @@ public class BillConfig {
         return line.toString();
     }
 
-    // Phương thức cắt ngắn văn bản nếu quá dài
     private static String truncateText(String text, int maxLength) {
         if (text == null) return "";
         return text.length() > maxLength
                 ? text.substring(0, maxLength - 3) + "..."
                 : text;
     }
+    // tac cac order ra
+    public Map<KeyOrderDTO, ArrayList<CustomerOrderDTO>> convertDataToBills() {
+        ListIterator<CustomerOrderDTO> datas = this.bills.listIterator();
+        Map<KeyOrderDTO, ArrayList<CustomerOrderDTO>> mapBills = new HashMap<>();
+        while (datas.hasNext()) {
+            CustomerOrderDTO data = datas.next();
+            KeyOrderDTO key = new KeyOrderDTO(data.getCustomerId(), data.getOrderId());
+            var value = mapBills.getOrDefault(key, new ArrayList<>());
+            if (value.isEmpty()) {
+                mapBills.put(key, addToArrayList(data));
+            } else {
+                value.add(data);
+                mapBills.put(key, value);
+            }
+        }
+
+        return mapBills;
+    }
+
+    private ArrayList<CustomerOrderDTO> addToArrayList(CustomerOrderDTO that) {
+        ArrayList<CustomerOrderDTO> unitBills = new ArrayList<>();
+        unitBills.add(that);
+        return unitBills;
+    }
+
 }

@@ -483,7 +483,7 @@ public class CustomerMainPanel extends JPanel {
                                 bill = customerController.findCustomerOrderById(customerId);
                                 var c =new Customer();
                                 c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
-                                addCustomerNotification(c, new BillConfig(bill).getLastBill());
+                                addCustomerNotification(c, new BillConfig(bill).getLastBill());// thong bao bill
                                 ToastNotification.showToast("Successful purchase !!!",2500,50,-1,-1);
 
                             }else{
@@ -1584,7 +1584,7 @@ public class CustomerMainPanel extends JPanel {
         JTextArea message = new JTextArea(text);
         message.setBackground(Color.WHITE);
         message.setForeground(Color.BLACK);
-        message.setFont(new Font("Arial", Font.PLAIN, 16));
+        message.setFont(new Font("Arial", Font.PLAIN, 10));
         message.setBorder(BorderFactory.createCompoundBorder(
                 new RoundedBorder(20, 2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE),
                 BorderFactory.createEmptyBorder(3, 3, 3, 8)

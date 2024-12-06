@@ -89,5 +89,3 @@ public class CircularImage extends JLabel {
 		}
 	}
 }
-
-

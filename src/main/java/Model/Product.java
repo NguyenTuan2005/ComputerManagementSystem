@@ -55,6 +55,11 @@ public class Product {
 
     public static final String AVAILABLE = "Available";
 
+    public Product(int id , String name){
+        this.id = id;
+        this.name = name;
+    }
+
     public Product(int suppliersId, String name, int quantity, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status,int deleteRow) {
         this.suppliersId = suppliersId;
         this.name = name;
@@ -128,7 +133,7 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return id == product.id ;
+        return id == product.id  && this.name.equals(product.name);
     }
 
     @Override

@@ -4,7 +4,7 @@ public enum TableStatus {
 
     ADD("Add manager"),
     MODIFY("Modify manager"),
-    NONE("Chua co ");
+    NONE("No operation ");
 
     private final String message ;
 

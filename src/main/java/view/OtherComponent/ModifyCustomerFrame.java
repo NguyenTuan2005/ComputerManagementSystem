@@ -205,7 +205,7 @@ public class ModifyCustomerFrame extends JFrame {
 
     private JTextField createStyledTextField(String text) {
         JTextField field = new JTextField(text);
-        field.setFont(Style.FONT_SIZE_MIN_PRODUCT);
+        field.setFont(Style.FONT_PLAIN_13);
         field.setPreferredSize(new Dimension(200, 30));
         field.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(MEDIUM_BLUE),

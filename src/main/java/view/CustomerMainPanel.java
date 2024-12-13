@@ -1,20 +1,22 @@
 package view;
-import Config.ButtonConfig;
-import Config.CurrentUser;
-import Config.TextFieldConfig;
-import Config.ProductOrderConfig;
+
+import Config.*;
 import Model.Customer;
 import Model.Product;
 import Verifier.EmailVerifier;
 import Verifier.NotNullVerifier;
 import Verifier.UserNameAccountVerifier;
 import controller.CustomerController;
-import controller.ProductController;
 import controller.OrderController;
 import controller.OrderDetailController;
 import controller.ProductController;
 import dto.CustomerOrderDTO;
-import view.OverrideComponent.*;
+import view.OtherComponent.ChangePasswordFrame;
+import view.OverrideComponent.CircularImage;
+import view.OverrideComponent.CustomButton;
+import view.OverrideComponent.RoundedBorder;
+import view.OverrideComponent.ToastNotification;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -26,16 +28,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CustomerMainPanel extends JPanel {
     JPanel containerCatalog;
@@ -845,9 +840,9 @@ public class CustomerMainPanel extends JPanel {
         }
 
         private boolean hasNotChanged() {
-            return emailField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getEmail()) &&
-                    fullNameField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getFullName()) &&
-                    addressField.getText().trim().equals(CurrentUser.MANAGER_INFOR.getAddress()) &&
+            return emailField.getText().trim().equals(CurrentUser.CURRENT_CUSTOMER.getEmail()) &&
+                    fullNameField.getText().trim().equals(CurrentUser.CURRENT_CUSTOMER.getFullName()) &&
+                    addressField.getText().trim().equals(CurrentUser.CURRENT_CUSTOMER.getAddress()) &&
                     avatar.equals(new CircularImage(CurrentUser.URL, avatar.getWidth(), avatar.getHeight(), false));
         }
 
@@ -1110,7 +1105,7 @@ public class CustomerMainPanel extends JPanel {
         for (int i = 0; i < images.length; i++) {
             images[i] = createImageForProduct(urls.get(i).getUrl(), 300, 300);
         }
-        JLabel imageLabel = new JLabel(images[0]); // Hiển thị hình ảnh đầu tiên
+        JLabel imageLabel = new JLabel(images[0]);// Hiển thị hình ảnh đầu tiên
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
         gbc.gridx = 0;
         gbc.gridy = 0;

@@ -7,7 +7,6 @@ import Verifier.EmailVerifier;
 import Verifier.NotNullVerifier;
 import Verifier.UserNameAccountVerifier;
 import controller.CustomerController;
-import controller.ProductController;
 import controller.OrderController;
 import controller.OrderDetailController;
 import controller.ProductController;
@@ -27,17 +26,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class CustomerMainPanel extends JPanel {
     JPanel containerCatalog;
@@ -1087,7 +1078,7 @@ public class CustomerMainPanel extends JPanel {
         for (int i = 0; i < images.length; i++) {
             images[i] = createImageForProduct(urls.get(i).getUrl(), 300, 300);
         }
-        JLabel imageLabel = new JLabel(images[0]); // Hiển thị hình ảnh đầu tiên
+        JLabel imageLabel = new JLabel(images[0]);// Hiển thị hình ảnh đầu tiên
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
         gbc.gridx = 0;
         gbc.gridy = 0;

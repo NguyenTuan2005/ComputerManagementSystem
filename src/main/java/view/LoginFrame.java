@@ -15,6 +15,7 @@ import view.OverrideComponent.CustomButton;
 import view.OverrideComponent.ToastNotification;
 import Enum.*;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -756,7 +757,11 @@ public class LoginFrame extends JFrame {
 
                                 if (customerController.isValidAccount(email, password)) {
                                     loginFrame.setVisible(false);
-                                    customerFrame = new CustomerFrame();
+                                    try {
+                                        customerFrame = new CustomerFrame();
+                                    } catch (SQLException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
                                 } else
                                     sayError(CustomerController.loginStatus.getMessager());
                                 break;

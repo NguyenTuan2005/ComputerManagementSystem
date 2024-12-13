@@ -88,7 +88,6 @@ public class TextDisplayPanel extends JPanel {
 
             TextDisplayPanel panel = new TextDisplayPanel();
 
-            // Demo adding some text
             panel.appendText("This is a sample text line 1");
             panel.appendText("This is a sample text line 2");
             panel.appendText("This is a sample text line 3");

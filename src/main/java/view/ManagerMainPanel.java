@@ -942,7 +942,7 @@ public class ManagerMainPanel extends JPanel {
                                             bills = customerController.findCustomerOrderById(customerId);
                                             if (bills.isEmpty())
                                                 JOptionPane.showMessageDialog(null, "No information available");
-                                            System.out.println(toBillsString(bills));
+                                            System.out.println(">>>> size bill "+bills.size());
                                             BillConfig billConfig = new BillConfig(bills);
                                             billTextDisplayPanal.setText(billConfig.getLastBill());
                                             billTextDisplayPanal.setTextEditable(false);

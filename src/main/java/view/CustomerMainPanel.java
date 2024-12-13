@@ -7,10 +7,10 @@ import Verifier.EmailVerifier;
 import Verifier.NotNullVerifier;
 import Verifier.UserNameAccountVerifier;
 import controller.CustomerController;
-import controller.ProductController;
 import controller.OrderController;
 import controller.OrderDetailController;
 import dto.CustomerOrderDTO;
+import dto.KeyOrderDTO;
 import view.OtherComponent.ChangePasswordFrame;
 import view.OverrideComponent.*;
 
@@ -26,11 +26,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CustomerMainPanel extends JPanel {
     JPanel catalogContainer;
@@ -53,10 +49,11 @@ public class CustomerMainPanel extends JPanel {
     static final String STATUS_ORDER = "Received the application";
 
     private Set<ProductOrderConfig> productOrders = new LinkedHashSet<>();
-    private static ArrayList<CustomerOrderDTO> bill = new ArrayList<>();
+    private static ArrayList<CustomerOrderDTO> bills = new ArrayList<>();
     private static OrderController orderController = new OrderController();
     private static OrderDetailController orderDetailController = new OrderDetailController();
     private static CustomerController customerController = new CustomerController();
+
 
     private JTextField emailField, nameField, addressField;
     private GridBagConstraints gbc;
@@ -453,11 +450,20 @@ public class CustomerMainPanel extends JPanel {
                                 String address = addressField.getText();
                                 String status = STATUS_ORDER;
                                 int orderId = orderController.save(customerId, managerId, address, status);
-                                orderDetailController.saves(orderId, productOrders);
-                                bill = customerController.findCustomerOrderById(customerId);
+//                                orderDetailController.saves(orderId, productOrders);
+//                                bill = customerController.findCustomerOrderById(customerId);
+                                System.out.println(">>> set : ");
+
+                                for( var o : productOrders.stream().filter(p -> p.hasProductName(productOrders)).collect(Collectors.toSet()) ){
+                                    System.out.println(o);
+                                }
+                                productOrders.clear();
+
                                 var c = new Customer();
                                 c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
-                                addCustomerNotification(c, new BillConfig(bill).getLastBill());
+//                                 bill bj sai dung lieu
+//                                addCustomerNotification(c, new BillConfig(bills).getLastBill());
+
                                 ToastNotification.showToast("Successful purchase !!!", 2500, 50, -1, -1);
 
                             } else {
@@ -564,9 +570,13 @@ public class CustomerMainPanel extends JPanel {
                 ordersContainer.setLayout(new BoxLayout(ordersContainer, BoxLayout.Y_AXIS));
 
                 ProductController productController = new ProductController();
-                ArrayList<Product> products = productController.getEagerProducts();
-
-//                addOrderToContainer(createOrderPn(products.get(2)));
+//                ArrayList<Product> products = productController.getEagerProducts();
+                bills = customerController.findCustomerOrderById(CurrentUser.CURRENT_CUSTOMER.getId());
+                System.out.println(bills);
+                Map<KeyOrderDTO, ArrayList<CustomerOrderDTO>> mapOrder = new BillConfig(bills).convertDataToBills();
+                for(Map.Entry<KeyOrderDTO, ArrayList<CustomerOrderDTO>> data : mapOrder.entrySet()){
+                    addOrderToContainer(createOrderPn(data.getKey(), data.getValue()));
+                }
 //                addOrderToContainer(createOrderPn(products.get(2)));
 //                addOrderToContainer(createOrderPn(products.get(2)));
 //                addOrderToContainer(createOrderPn(products.get(2)));
@@ -974,11 +984,8 @@ public class CustomerMainPanel extends JPanel {
         for (int i = 0; i < images.length; i++) {
             images[i] = createImageForProduct(urls.get(i).getUrl(), 300, 300);
         }
-        JLabel imageLabel = new JLabel(images[0]);
-        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        JPanel imagePn = new JPanel();
-        imagePn.setBackground(Color.WHITE);
-        imagePn.add(imageLabel);
+        JLabel imageLabel = new JLabel(images[0]);// Hiển thị hình ảnh đầu tiên
+        imageLabel.setHorizontalAlignment(JLabel.CENTER);
         gbc.gridy = 0;
         gbc.gridx = 0;
         mainPanel.add(imagePn, gbc);
@@ -1058,9 +1065,11 @@ public class CustomerMainPanel extends JPanel {
         });
         CustomButton addToCartBt = ButtonConfig.createCustomButton("Add to Cart", Style.FONT_BOLD_16, Color.white, Style.CONFIRM_BUTTON_COLOR_GREEN, Style.LIGHT_GREEN, 10, SwingConstants.CENTER, new Dimension(140, 30));
         addToCartBt.addActionListener(e -> {
-            if (productOrders.add(new ProductOrderConfig(product))) {
+            //add
+            if (productOrders.add(new ProductOrderConfig(product,1))) {
                 addNewPanelToCartContainer(createPanelForCart(product));
                 ToastNotification.showToast("Product added to Cart!", 3000, 50, -1, -1);
+//                                productOrders.remove(new ProductOrderConfig(product));
             }
         });
         detailCartPn.add(detailBt);
@@ -1246,8 +1255,8 @@ public class CustomerMainPanel extends JPanel {
     //-------------------------------------------------------------------------------------------------
     //duy code
     public JPanel createPanelForCart(Product product) {
+
         ProductOrderConfig productOrderConfig = new ProductOrderConfig(product, 1);
-        this.productOrders.add(productOrderConfig);
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
@@ -1290,6 +1299,8 @@ public class CustomerMainPanel extends JPanel {
             Integer selectedNumber = (Integer) quantityComboBox.getSelectedItem();
             System.out.println("Số đã chọn: " + selectedNumber);
             productOrderConfig.setQuatity(selectedNumber);
+            System.out.println(productOrderConfig);
+            this.productOrders.add(productOrderConfig);
 
 
         });
@@ -1300,7 +1311,7 @@ public class CustomerMainPanel extends JPanel {
         remove.setIcon(new ImageIcon("src/main/java/Icon/bin_Icon.png"));
         remove.addActionListener(e -> {
             this.productOrders.remove(productOrderConfig);
-            productOrderConfig.setQuatity(0);
+//            productOrderConfig.setQuatity(0);
             this.productOrders.remove(productOrderConfig);
             removePanelFromCartContainer(panel);
 
@@ -1375,7 +1386,7 @@ public class CustomerMainPanel extends JPanel {
         JTextArea message = new JTextArea(text);
         message.setBackground(Color.WHITE);
         message.setForeground(Color.BLACK);
-        message.setFont(new Font("Arial", Font.PLAIN, 16));
+        message.setFont(new Font("Arial", Font.PLAIN, 10));
         message.setBorder(BorderFactory.createCompoundBorder(
                 new RoundedBorder(20, 2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE),
                 BorderFactory.createEmptyBorder(3, 3, 3, 8)
@@ -1436,7 +1447,7 @@ public class CustomerMainPanel extends JPanel {
         this.ordersContainer.repaint();
     }
 
-    public JPanel createOrderPn(Product product) {
+    public JPanel createOrderPn( KeyOrderDTO key ,ArrayList<CustomerOrderDTO> customerOrderDTOs) {
         JPanel main = new JPanel(new BorderLayout());
 
         JPanel titlePn = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1449,12 +1460,13 @@ public class CustomerMainPanel extends JPanel {
 
         JPanel datePn = new JPanel(new GridLayout(2, 1, 5, 5));
         datePn.setBackground(Color.WHITE);
-        JLabel orderDate = new JLabel("Order Date: " + "12/12/2024");
-        JLabel receiveDate = new JLabel("Received Date: " + "12/12/2024");
+        JLabel orderDate = new JLabel("Order Date: " + customerOrderDTOs.get(0).getOrderDate());
+
+//        JLabel receiveDate = new JLabel("Received Date: " + customerOrderDTO.get(0).get);
         orderDate.setFont(Style.FONT_PLAIN_18);
-        receiveDate.setFont(Style.FONT_PLAIN_18);
+//        receiveDate.setFont(Style.FONT_PLAIN_18);
         datePn.add(orderDate);
-        datePn.add(receiveDate);
+//        datePn.add(receiveDate);
 
         JPanel top = new JPanel(new GridLayout(2, 1));
         top.add(titlePn);
@@ -1465,9 +1477,13 @@ public class CustomerMainPanel extends JPanel {
         JPanel mid = new JPanel();
         mid.setLayout(new BoxLayout(mid, BoxLayout.Y_AXIS)); // Sắp xếp theo chiều dọc
         mid.setBackground(Color.WHITE);
-        mid.add(productOrderPn());
-        mid.add(productOrderPn());
-        mid.add(productOrderPn());
+        ///
+        for( var item :customerOrderDTOs ){
+            mid.add(productOrderPn(item));
+        }
+//        mid.add(productOrderPn());
+//        mid.add(productOrderPn());
+//        mid.add(productOrderPn());
 
         main.add(mid, BorderLayout.CENTER);
 
@@ -1497,7 +1513,7 @@ public class CustomerMainPanel extends JPanel {
         return main;
     }
 
-    public JPanel productOrderPn() {
+    public JPanel productOrderPn(CustomerOrderDTO customerOrderDTO) {
         // Tạo panel chính với BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
@@ -1506,7 +1522,7 @@ public class CustomerMainPanel extends JPanel {
         // Panel chứa ảnh sản phẩm
         JPanel imgPn = new JPanel();
         imgPn.setBackground(Color.WHITE);
-        JLabel proImg = new JLabel(createImageForProduct("src/main/java/img/Acer_Swift_X.jpg", 120, 120));
+        JLabel proImg = new JLabel(createImageForProduct(customerOrderDTO.getProductImage(), 120, 120));
         imgPn.add(proImg);
         mainPanel.add(imgPn, BorderLayout.WEST);
 
@@ -1524,14 +1540,14 @@ public class CustomerMainPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weighty = 0.4;
 //        JLabel proName = new JLabel(product.getName());
-        JLabel proName = new JLabel("Laptop vip pro");
+        JLabel proName = new JLabel(customerOrderDTO.getProductName());
         proDetails.add(proName, gbc);
 
 
         gbc.gridy++;
         gbc.weighty = 0.3;
 //        JLabel proID = new JLabel("Product ID: " + product.getId());
-        JLabel proID = new JLabel("Product ID: 2");
+        JLabel proID = new JLabel(customerOrderDTO.getSalerId()+"");
         proDetails.add(proID, gbc);
 
         gbc.gridy++;
@@ -1539,12 +1555,12 @@ public class CustomerMainPanel extends JPanel {
 
         JPanel pricePn = new JPanel(new FlowLayout(FlowLayout.LEFT));// panel xem giá của 1 sản phẩm
         pricePn.setBackground(Color.WHITE);
-        JLabel proPrice = new JLabel("$6823548624", SwingConstants.LEFT);
+        JLabel proPrice = new JLabel(customerOrderDTO.getUnitPrice()+"", SwingConstants.LEFT);
         pricePn.add(proPrice);
 
         JPanel quantityPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));// panel xem số lượng mua của 1 sản phẩm
         quantityPn.setBackground(Color.WHITE);
-        JLabel proQuantity = new JLabel("x" + 1, SwingConstants.RIGHT);
+        JLabel proQuantity = new JLabel("x" + customerOrderDTO.getQuantity(), SwingConstants.RIGHT);
         quantityPn.add(proQuantity);
 
         priceAndQuantity.add(pricePn);

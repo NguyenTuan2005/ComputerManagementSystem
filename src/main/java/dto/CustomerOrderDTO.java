@@ -4,11 +4,8 @@ import Config.EmailConfig;
 import controller.CustomerController;
 import lombok.*;
 
-
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 @ToString
 @Getter
@@ -17,7 +14,6 @@ import java.util.Locale;
 @NoArgsConstructor
 public class CustomerOrderDTO {
     private int orderId;
-//    private String customerName;
     private int customerId;
     private Date orderDate;
     private String shipAddress;
@@ -39,6 +35,7 @@ public class CustomerOrderDTO {
     private String weight;
     private String monitor;
     private String card;
+    private String productImage;
 
 
     public String toBillString() {
@@ -88,6 +85,14 @@ public class CustomerOrderDTO {
         CustomerController c = new CustomerController();
         orders = c.findCustomerOrderById(3);
 
+    }
+
+    public double totalCost() {
+        return this.quantity * this.quantity;
+    }
+
+    public boolean sameDate(CustomerOrderDTO that) {
+        return this.orderDate == that.orderDate;
     }
 
     public boolean sameOderId(int id) {

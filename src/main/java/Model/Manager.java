@@ -13,7 +13,6 @@ import java.sql.Date;
 @RequiredArgsConstructor
 public class Manager {
 
-
     private int id;
 
     @NonNull

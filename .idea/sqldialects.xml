@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/src/main/java/database/customer_dat.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/database/data_computer.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/database/db_computer_manager.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/database/order.sql" dialect="GenericSQL" />

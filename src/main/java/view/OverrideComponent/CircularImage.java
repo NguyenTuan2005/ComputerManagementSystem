@@ -68,8 +68,8 @@ public class CircularImage extends JLabel {
 		// Chèn dấu tích xanh vào góc dưới bên phải, đè lên đường viền
 		if(isAvatar) {
 			int tickSize = diameter / 3; // Kích thước dấu tích
-			int x = diameter-12 - tickSize / 2; // Tọa độ x
-			int y = diameter-12  - tickSize / 2; // Tọa độ y
+			int x = diameter-18 - tickSize / 2; // Tọa độ x
+			int y = diameter-18  - tickSize / 2; // Tọa độ y
 			g2d.drawImage(tickImage, x, y, tickSize, tickSize, null); // Vẽ dấu tích
 			g2d.dispose();
 			return circularImage;

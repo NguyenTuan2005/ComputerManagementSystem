@@ -53,7 +53,7 @@ public class ButtonConfig {
     }
 
     // set icon cho button duy đã tại conflict tại đây >>>
-    public static  void setIcon(String url, JButton that) {
+    public static void setIcon(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();
@@ -66,23 +66,24 @@ public class ButtonConfig {
         that.setFocusable(false);
         that.setBackground(Style.BACKGROUND_COLOR);
         that.setForeground(Style.WORD_COLOR_WHITE);
-        that.setFont(Style.FONT_SIZE);
+        that.setFont(Style.FONT_PLAIN_15);
         that.setHorizontalAlignment(SwingConstants.LEFT);
         that.setBorderPainted(false);
     }
 
-    public static JSeparator createVerticalSeparator( int w , int h) {
+    public static JSeparator createVerticalSeparator(int w, int h) {
         JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
         separator.setPreferredSize(new Dimension(w, h)); // Điều chỉnh chiều cao của separator
         return separator;
     }
+
     public static JSeparator createVerticalSeparator() {
         JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
         separator.setPreferredSize(new Dimension(2, 70)); // Điều chỉnh chiều cao của separator
         return separator;
     }
 
-    public static void addButtonHoverEffect(JButton button , Color hover , Color def) {
+    public static void addButtonHoverEffect(JButton button, Color hover, Color def) {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -189,6 +190,46 @@ public class ButtonConfig {
 
         return button;
     }
+
+    public static CustomButton createCustomButton(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, int radius, int textPosition, Dimension size) {
+        CustomButton button = new CustomButton(title);
+        button.setFont(font);
+        button.setTextColor(textColor);
+        button.setBackgroundColor(backgroundColor);
+        button.setHoverColor(hoverColor);
+        button.setHorizontalAlignment(textPosition);
+        button.setBorderRadius(radius);
+        button.setDrawBorder(false);
+        button.setPreferredSize(size);
+        return button;
+    }
+
+    public static CustomButton createCustomButton(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, Color borderColor, int thickness, int radius, int textPosition, Dimension size) {
+        CustomButton bt = new CustomButton(title);
+        bt.setFont(font);
+        bt.setTextColor(textColor);
+        bt.setBackgroundColor(backgroundColor);
+        bt.setHoverColor(hoverColor);
+        bt.setBorderColor(borderColor);
+        bt.setBorderThickness(thickness);
+        bt.setBorderRadius(radius);
+        bt.setHorizontalAlignment(textPosition);
+        bt.setPreferredSize(size);
+        return bt;
+    }
+
+    public static CustomButton createCustomButtonGradientBorder(String title, Font font, Color textColor, Color backgroundColor, Color startColor, Color endColor, int thickness, int radius, Dimension size) {
+        CustomButton gradientButton = new CustomButton(title);
+        gradientButton.setFont(font);
+        gradientButton.setForeground(textColor);
+        gradientButton.setGradientColors(startColor, endColor);
+        gradientButton.setBackgroundColor(backgroundColor);
+        gradientButton.setPreferredSize(size);
+        gradientButton.setBorderRadius(radius);
+        gradientButton.setBorderThickness(thickness);
+        return gradientButton;
+    }
+
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Cooldown Button");

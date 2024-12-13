@@ -48,27 +48,27 @@ public class CustomerMenuPanel extends JPanel {
     // panel cac nút trên cùng
     class ComponentTop extends JPanel {
         public ComponentTop() {
-            setLayout(new BorderLayout());
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBackground(Style.BACKGROUND_COLOR);
             setBorder(BorderFactory.createEmptyBorder());
+
             role = new JLabel("Customer");
-            role.setFont(new Font("Arial", Font.PLAIN, 25));
-            role.setHorizontalAlignment(JLabel.CENTER);
+            role.setFont(Style.FONT_PLAIN_25);
             role.setForeground(Color.GREEN);
-            add(role, BorderLayout.NORTH);
+            role.setAlignmentX(Component.CENTER_ALIGNMENT);
+            add(role);
 
-            avatar = new CircularImage(CurrentUser.URL, 75, 75,true);
-            avatar.setHorizontalAlignment(JLabel.CENTER);
+            avatar = new CircularImage(CurrentUser.URL, 100, 100, true);
+            avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(Box.createRigidArea(new Dimension(0, 5)));
-            add(avatar, BorderLayout.CENTER);
+            add(avatar);
 
-
-            name = new JLabel(CurrentUser.USER_NAME);
-            name.setHorizontalAlignment(JLabel.CENTER);
+            name = new JLabel("<html>" + CurrentUser.USER_NAME + "<html>");
+            name.setFont(Style.FONT_PLAIN_25);
             name.setForeground(Color.GREEN);
-            name.setFont(new Font("Arial", Font.PLAIN, 25));
-//            add(Box.createRigidArea(new Dimension(0, 5)));
-            add(name, BorderLayout.SOUTH);
+            name.setAlignmentX(Component.CENTER_ALIGNMENT);
+            add(Box.createRigidArea(new Dimension(0, 5)));
+            add(name);
         }
     }
 
@@ -135,7 +135,7 @@ public class CustomerMenuPanel extends JPanel {
         that.setFocusable(false);
         that.setBackground(Style.BACKGROUND_COLOR);
         that.setForeground(Style.WORD_COLOR_WHITE);
-        that.setFont(Style.FONT_SIZE_MENU_BUTTON);
+        that.setFont(Style.FONT_BOLD_15);
         that.setHorizontalAlignment(SwingConstants.LEFT);
         that.setBorderPainted(false);
     }
@@ -144,15 +144,19 @@ public class CustomerMenuPanel extends JPanel {
     public void setProductCatalogBtListener(ActionListener listener) {
         productCatalogBt.addActionListener(listener);
     }
+
     public void setNotificationBtListener(ActionListener listener) {
         notificationBt.addActionListener(listener);
     }
+
     public void setPurchasedBtListener(ActionListener listener) {
         orderHistoryBt.addActionListener(listener);
     }
+
     public void setChangeInfoBtListener(ActionListener listener) {
         changeInfoBt.addActionListener(listener);
     }
+
     //thiết lập ActionListener cho nút "log out"
     public void setLogoutBtListener(ActionListener listener) {
         logoutBt.addActionListener(listener);

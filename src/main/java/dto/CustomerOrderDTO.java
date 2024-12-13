@@ -8,6 +8,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.Date;
 
+
 @ToString
 @Getter
 @Setter
@@ -86,6 +87,14 @@ public class CustomerOrderDTO {
         CustomerController c = new CustomerController();
         orders = c.findCustomerOrderById(3);
 
+    }
+
+    public double totalCost() {
+        return this.quantity * this.quantity;
+    }
+
+    public boolean sameDate(CustomerOrderDTO that) {
+        return this.orderDate == that.orderDate;
     }
 
     public boolean sameOderId(int id) {

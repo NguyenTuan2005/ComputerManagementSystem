@@ -7,8 +7,6 @@ insert into customer (fullname , email,address,password,avata_img)
 values('Nguyen Thi Ngoc Huyen','23130075@st.hcmuaf.edu.vn','tien giang chau thanh duong diem',
        '$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO','src/main/java/img/cus_huyen.jpg');
 
-
-
 insert into customer (fullname , email,address,password,avata_img)
 values('Nguyen Tran Kim Trang','abc@st.hcmuaf.edu.vn','tphmc-q8-abc...',
        '$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO','src/main/java/img/trang.jpg');
@@ -29,3 +27,8 @@ values('Nguyen Van Hieu','abcewsadw@st.hcmuaf.edu.vn','tpHCM, thu duc nlu duong 
 insert into customer (fullname , email,address,password,avata_img)
 values('Nguyen Thi kim Thanh','abaac@st.hcmuaf.edu.vn','tphmc-q9-abc...',
        '$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO','src/main/java/img/dom.jpg');
+
+
+
+
+

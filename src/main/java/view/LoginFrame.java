@@ -1,15 +1,13 @@
 package view;
 
+import Config.ButtonConfig;
 import Config.EmailConfig;
 import Config.PasswordFieldConfig;
 import Config.TextFieldConfig;
 import Model.Account;
 import Model.Customer;
-import Model.Manager;
-import Verifier.EmailVerifier;
 import controller.AccountController;
 import controller.CustomerController;
-import controller.ManagerController;
 import view.OverrideComponent.CircularImage;
 import view.OverrideComponent.CustomButton;
 import view.OverrideComponent.ToastNotification;
@@ -20,7 +18,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -98,10 +95,10 @@ public class LoginFrame extends JFrame {
 
             subTextLabel = new JLabel(SignUpString);
             subTextLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            subTextLabel.setFont(Style.FONT_TEXT_LOGIN_FRAME);
+            subTextLabel.setFont(Style.FONT_PLAIN_20);
             subTextLabel.setForeground(Color.WHITE);
 
-            switchBt = createCustomButtonWithBorder("Sign Up", Style.FONT_BUTTON_LOGIN_FRAME, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Color.white, 1, 20, new Dimension(150, 38));
+            switchBt = ButtonConfig.createCustomButton("Sign Up", Style.FONT_BOLD_24, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Color.white, 1, 20, SwingConstants.CENTER, new Dimension(150, 38));
             switchBt.setAlignmentX(Component.CENTER_ALIGNMENT);
             switchBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -111,10 +108,9 @@ public class LoginFrame extends JFrame {
                         subTextLabel.setText(SignInString);
                         // reset signup panel
                         inputFormPanel.showPanel("signUp");
-                        TextFieldConfig.resetTextField(inputFormPanel.signUpPanel.signUpFormPanel.nameField,"User Name");
-                        TextFieldConfig.resetTextField(inputFormPanel.signUpPanel.signUpFormPanel.emailField,"User Email");
-                        TextFieldConfig.resetTextField(inputFormPanel.signUpPanel.signUpFormPanel.addressField,"User Address");
-                        PasswordFieldConfig.resetPasswordField(inputFormPanel.signUpPanel.signUpFormPanel.passwdFieldSignup, "Password");
+                        TextFieldConfig.resetTextField(inputFormPanel.signUpPanel.signUpFormPanel.nameField, "User Name");
+                        TextFieldConfig.resetTextField(inputFormPanel.signUpPanel.signUpFormPanel.emailField, "User Email");
+                        TextFieldConfig.resetTextField(inputFormPanel.signUpPanel.signUpFormPanel.addressField, "User Address");
                         inputFormPanel.signUpPanel.showPanelSignUp("signUpForm");
 
                     } else {
@@ -148,6 +144,7 @@ public class LoginFrame extends JFrame {
 
     }
 
+    // contain sign up and sign in panel
     class InputFormPanel extends JPanel {
         SignInPanel signInPanel;
         SignUpPanel signUpPanel;
@@ -179,19 +176,24 @@ public class LoginFrame extends JFrame {
         private CardLayout cardLayoutSignUp;
         private SignUpFormPanel signUpFormPanel;
         private VerifyEmailPanel verifyEmailPanel;
-        RegistrationSuccessPanel registrationSuccessPanel;
+        private SetPasswdPanel setPasswdPanel;
+        private RegistrationSuccessPanel registrationSuccessPanel;
+
         SignUpPanel(LoginFrame loginFrame) {
             this.loginFrame = loginFrame;
             cardLayoutSignUp = new CardLayout();
             setLayout(cardLayoutSignUp);
             signUpFormPanel = new SignUpFormPanel();
             verifyEmailPanel = new VerifyEmailPanel();
+            setPasswdPanel = new SetPasswdPanel();
             registrationSuccessPanel = new RegistrationSuccessPanel();
             add(signUpFormPanel, "signUpForm");
             add(verifyEmailPanel, "verifyEmail");
+            add(setPasswdPanel, "setPasswd");
             add(registrationSuccessPanel, "registrationSuccess");
             cardLayoutSignUp.show(this, "signUpForm");
         }
+
         public void showPanelSignUp(String title) {
             cardLayoutSignUp.show(this, title);
         }
@@ -200,11 +202,9 @@ public class LoginFrame extends JFrame {
     class SignUpFormPanel extends JPanel {
         private JLabel createAccountLabel;
         private JTextField nameField, emailField, addressField;
-        private JPasswordField passwdFieldSignup;
         private CustomButton signUpButton;
-        private JCheckBox showPasswdCB;
 
-        SignUpFormPanel(){
+        SignUpFormPanel() {
 
             setLayout(new GridBagLayout());
             setBackground(Color.WHITE);
@@ -222,7 +222,7 @@ public class LoginFrame extends JFrame {
             add(createAccountLabel, gbc);
 
             //create sign up Button
-            signUpButton = createCustomButtonWithBorder("Sign Up", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 45));
+            signUpButton = ButtonConfig.createCustomButton("Sign Up", Style.FONT_BOLD_24, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 45));
             signUpButton.setBackground(new Color(0, 153, 102));
             signUpButton.setForeground(Style.WORD_COLOR_WHITE);
             signUpButton.addActionListener(new ActionListener() {
@@ -232,6 +232,18 @@ public class LoginFrame extends JFrame {
                     fieldsWithPlaceholders.put(emailField, "User Email");
                     fieldsWithPlaceholders.put(addressField, "User Address");
 
+                    boolean allFieldsValid = isAllFieldsValid(fieldsWithPlaceholders);
+
+                    if (allFieldsValid) {
+                        inputFormPanel.signUpPanel.showPanelSignUp("verifyEmail");
+                    }
+
+                    for (int i = 0; i < inputFormPanel.signUpPanel.verifyEmailPanel.otpFields.length; i++) {
+                        inputFormPanel.signUpPanel.verifyEmailPanel.otpFields[i].setText("");
+                    }
+                }
+
+                private boolean isAllFieldsValid(Map<JTextField, String> fieldsWithPlaceholders) {
                     boolean allFieldsValid = true;
 
                     for (Map.Entry<JTextField, String> entry : fieldsWithPlaceholders.entrySet()) {
@@ -242,20 +254,9 @@ public class LoginFrame extends JFrame {
                             allFieldsValid = false;
                         }
                     }
-                    if (new String(passwdFieldSignup.getPassword()).equals("Password")) {
-                        passwdFieldSignup.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-                        passwdFieldSignup.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-                        allFieldsValid = false;
-                    }
-
-                    if (allFieldsValid) {
-                        inputFormPanel.signUpPanel.showPanelSignUp("verifyEmail");
-                    }
-
-                    for (int i = 0; i < inputFormPanel.signUpPanel.verifyEmailPanel.otpFields.length; i++) {
-                        inputFormPanel.signUpPanel.verifyEmailPanel.otpFields[i].setText("");
-                    }
+                    return allFieldsValid;
                 }
+
                 public void highlightEmptyField(JTextField field) {
                     field.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
                     field.setForeground(Style.DELETE_BUTTON_COLOR_RED);
@@ -271,7 +272,7 @@ public class LoginFrame extends JFrame {
             add(nameIcon, gbc);
 
             gbc.gridx = 1;
-            nameField =  TextFieldConfig.createTextFieldWithPlaceHolder("User Name", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            nameField = TextFieldConfig.createTextFieldWithPlaceHolder("User Name", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
             nameField.addActionListener(e -> signUpButton.doClick());
             add(nameField, gbc);
 
@@ -283,7 +284,7 @@ public class LoginFrame extends JFrame {
             add(emailIcon, gbc);
 
             gbc.gridx = 1;
-            emailField =  TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            emailField = TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
             emailField.addActionListener(e -> signUpButton.doClick());
             add(emailField, gbc);
 
@@ -299,22 +300,23 @@ public class LoginFrame extends JFrame {
             JWindow popup = new JWindow();
 
             JLabel hintLabel = new JLabel("<html>Providing your address helps us deliver your order securely and on time!<br>Rest assured, We take your privacy seriously!!</html>");
-            hintLabel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,2));
+            hintLabel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2));
             hintLabel.setBackground(Color.WHITE);
-            hintLabel.setFont(Style.FONT_SIZE_MIN_PRODUCT);
+            hintLabel.setFont(Style.FONT_PLAIN_13);
             hintLabel.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             hintLabel.setOpaque(true);
             popup.add(hintLabel);
             popup.setSize(300, 70);
 
-            addressField = TextFieldConfig.createTextFieldWithPlaceHolder("User Address", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            addressField = TextFieldConfig.createTextFieldWithPlaceHolder("User Address", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
             addressField.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     Point locationOnScreen = addressField.getLocationOnScreen();
-                    popup.setLocation(locationOnScreen.x, locationOnScreen.y + addressField.getHeight()+1);
+                    popup.setLocation(locationOnScreen.x, locationOnScreen.y + addressField.getHeight() + 1);
                     popup.setVisible(true);
                 }
+
                 @Override
                 public void mouseExited(MouseEvent e) {
                     popup.setVisible(false);
@@ -322,43 +324,6 @@ public class LoginFrame extends JFrame {
             });
             addressField.addActionListener(e -> signUpButton.doClick());
             add(addressField, gbc);
-
-            // Password Field with Icon
-            gbc.gridy++;
-            gbc.gridx = 0;
-            JLabel passwordIcon = new JLabel(new ImageIcon("src/main/java/Icon/lock_icon.png"));
-            passwordIcon.setPreferredSize(new Dimension(30, 30));
-            add(passwordIcon, gbc);
-
-            gbc.gridx = 1;
-            passwdFieldSignup = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
-            passwdFieldSignup.addActionListener(e -> signUpButton.doClick());
-            add(passwdFieldSignup, gbc);
-
-            gbc.gridy++;
-            gbc.gridx = 1;
-            showPasswdCB = new JCheckBox("Show Password");
-            showPasswdCB.setPreferredSize(new Dimension(250, 15));
-            showPasswdCB.setFocusPainted(false);
-            showPasswdCB.setFocusable(false);
-            showPasswdCB.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
-            showPasswdCB.setBackground(Color.WHITE);
-            showPasswdCB.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String passwd = new String(passwdFieldSignup.getPassword());
-                    if (passwd.equals("Password")) {
-                        showPasswdCB.setSelected(false);
-                    } else {
-                        if (showPasswdCB.isSelected()) {
-                            passwdFieldSignup.setEchoChar((char) 0); // Hiện mật khẩu
-                        } else {
-                            passwdFieldSignup.setEchoChar('*'); // Ẩn mật khẩu
-                        }
-                    }
-                }
-            });
-            add(showPasswdCB, gbc);
 
             //add Sign Up button
             gbc.gridy++;
@@ -370,11 +335,11 @@ public class LoginFrame extends JFrame {
         }
     }
 
-    class VerifyEmailPanel extends JPanel{
+    class VerifyEmailPanel extends JPanel {
         JTextField[] otpFields = new JTextField[4];
         CustomButton verifyBt, backBt;
         JButton resendCodeBt;
-        final int RESET_OTP =0;
+        final int RESET_OTP = 0;
 
         VerifyEmailPanel() {
             setBackground(Color.WHITE);
@@ -393,7 +358,7 @@ public class LoginFrame extends JFrame {
             add(verifyEmailLb, gbc);
 
             // create verifyBt
-            verifyBt = createCustomButtonWithBorder("Verify my Email", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 50));
+            verifyBt = ButtonConfig.createCustomButton("Verify my Email", Style.FONT_BOLD_24, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 50));
             verifyBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     boolean isEmpty = false;
@@ -403,14 +368,14 @@ public class LoginFrame extends JFrame {
                             isEmpty = true;
                         }
                     }
-                    if (!isEmpty){
+                    if (!isEmpty) {
 
                         // TODO
 
 
-
-
-                        inputFormPanel.signUpPanel.showPanelSignUp("registrationSuccess");
+                        resetPasswdField(inputFormPanel.signUpPanel.setPasswdPanel.passwdField, "Enter your password");
+                        resetPasswdField(inputFormPanel.signUpPanel.setPasswdPanel.confirmPasswdField, "Confirm your password");
+                        inputFormPanel.signUpPanel.showPanelSignUp("setPasswd");
                     }
                 }
             });
@@ -419,7 +384,7 @@ public class LoginFrame extends JFrame {
             resendCodeBt = new JButton("Re-send Verify Code");
             resendCodeBt.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             resendCodeBt.setBackground(Color.WHITE);
-            resendCodeBt.setFont(Style.FONT_TEXT_TABLE);
+            resendCodeBt.setFont(Style.FONT_PLAIN_16);
             resendCodeBt.setFocusable(false);
             resendCodeBt.setBorderPainted(false);
             resendCodeBt.addMouseListener(new MouseAdapter() {
@@ -434,6 +399,7 @@ public class LoginFrame extends JFrame {
             resendCodeBt.addActionListener(new ActionListener() {
                 private boolean isCooldown = false;
                 private Timer timer = new Timer();
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (!isCooldown) {
@@ -447,6 +413,7 @@ public class LoginFrame extends JFrame {
 //                    boolean sent =  sendOTP(to,name,otp);
                     JOptionPane.showMessageDialog(null, "We have sent a new verification code to your email!");
                 }
+
                 private void startCooldown() {
                     TimerTask task = new TimerTask() {
                         int remainingTime = 25;
@@ -469,9 +436,11 @@ public class LoginFrame extends JFrame {
             });
 
             // create backBt
-            backBt = createCustomButtonWithBorder("Back", Style.FONT_BUTTON_LOGIN_FRAME, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 50));
+            backBt = ButtonConfig.createCustomButton("Back", Style.FONT_BOLD_24, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 50));
             backBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+                    //TODO
+
                     inputFormPanel.signUpPanel.showPanelSignUp("signUpForm");
                 }
             });
@@ -553,22 +522,126 @@ public class LoginFrame extends JFrame {
             gbc.gridy++;
             add(backPn, gbc);
         }
+
+        public void resetPasswdField(JPasswordField passwdField, String placeHolder) {
+            passwdField.setText(placeHolder);
+            passwdField.setForeground(Color.GRAY);
+            passwdField.setEchoChar((char) 0);
+        }
     }
 
-    class RegistrationSuccessPanel extends JPanel{
-        private CustomButton goToSignIn;
+    class SetPasswdPanel extends JPanel {
+        JPasswordField passwdField, confirmPasswdField;
+        CustomButton confirmBt, showPasswdBt1, showPasswd2;
 
-        RegistrationSuccessPanel(){
+        SetPasswdPanel() {
+            setBackground(Color.WHITE);
+            setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(15, 10, 15, 10);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            // set New Password label
+            JLabel setNewPasswdLb = new JLabel("<html><div style='text-align: center;'>Choose a Password<br>for Your Account</div></html>", SwingConstants.CENTER);
+            setNewPasswdLb.setFont(Style.FONT_TITLE_BOLD_45);
+            setNewPasswdLb.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            add(setNewPasswdLb, gbc);
+
+            // create send code button
+            confirmBt = ButtonConfig.createCustomButton("Confirm", Style.FONT_BOLD_24, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 50));
+            confirmBt.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String newPassword = new String(passwdField.getPassword());
+                    String confirmPassword = new String(confirmPasswdField.getPassword());
+                    //TODO
+
+
+                    inputFormPanel.signUpPanel.showPanelSignUp("registrationSuccess");
+                }
+            });
+
+
+            // Password Field with Icon
+            gbc.gridwidth = 1;
+            gbc.gridy++;
+            gbc.gridx = 0;
+            ImageIcon passwordIcon = new ImageIcon("src/main/java/Icon/lock_icon.png");
+            JLabel passwordIconLb1 = new JLabel(passwordIcon);
+            add(passwordIconLb1, gbc);
+
+
+            JPanel passwdPn = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            passwdPn.setBackground(Color.WHITE);
+
+            gbc.gridx = 1;
+            passwdField = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Enter your password", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(350, 45));
+            passwdField.addActionListener(e -> confirmBt.doClick());
+            passwdPn.add(passwdField);
+
+            showPasswdBt1 = createShowPasswdBt(passwdField, "Enter your password");
+            passwdPn.add(showPasswdBt1);
+            add(passwdPn, gbc);
+
+            JLabel passwordIconLb2 = new JLabel(passwordIcon);
+            gbc.gridy++;
+            gbc.gridx = 0;
+            add(passwordIconLb2, gbc);
+
+            JPanel confirmPasswdPn = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            confirmPasswdPn.setBackground(Color.WHITE);
+            gbc.gridx = 1;
+            confirmPasswdField = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Confirm your password", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(350, 45));
+            confirmPasswdField.addActionListener(e -> confirmBt.doClick());
+            confirmPasswdPn.add(confirmPasswdField);
+
+            showPasswd2 = createShowPasswdBt(confirmPasswdField, "Confirm your password");
+            confirmPasswdPn.add(showPasswd2);
+            add(confirmPasswdPn, gbc);
+
+
+            // add 2 button reset passwd and back to panel
+            gbc.insets = new Insets(10, 10, 10, 10);
+            gbc.gridy++;
+            gbc.gridx = 0;
+            gbc.gridwidth = 2;
+            add(confirmBt, gbc);
+
+        }
+
+        public CustomButton createShowPasswdBt(JPasswordField field, String placeHolder) {
+            CustomButton showPasswdBt = ButtonConfig.createCustomButton("", Style.FONT_BOLD_18, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE, 0, SwingConstants.CENTER, new Dimension(45, 45));
+            showPasswdBt.setIcon(new ImageIcon("src/main/java/Icon/showPasswd_Icon.png"));
+            showPasswdBt.setFocusable(false);
+            showPasswdBt.addActionListener(e -> {
+                if (new String(field.getPassword()).equals(placeHolder)) {
+                } else if (field.getEchoChar() == '*') {
+                    field.setEchoChar((char) 0);
+                    showPasswdBt.setIcon(new ImageIcon("src/main/java/Icon/hidePasswd_Icon.png"));
+                } else {
+                    field.setEchoChar('*');
+                    showPasswdBt.setIcon(new ImageIcon("src/main/java/Icon/showPasswd_Icon.png"));
+                }
+            });
+            return showPasswdBt;
+        }
+    }
+
+    class RegistrationSuccessPanel extends JPanel {
+
+        RegistrationSuccessPanel() {
             setBackground(Color.WHITE);
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBorder(BorderFactory.createEmptyBorder(0, 50, 50, 50));
-            JLabel titleLabel = new JLabel("<html>Verification Successful</html>",SwingConstants.CENTER);
+            JLabel titleLabel = new JLabel("<html>Verification Successful</html>", SwingConstants.CENTER);
             titleLabel.setFont(Style.FONT_TITLE_BOLD_45);
             titleLabel.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JLabel greetingLb = new JLabel("<html>You're all set!!!<br>Sign in with your new account and enjoy using the application.</html>");
-            greetingLb.setFont(Style.FONT_TITLE_PRODUCT_30);
+            greetingLb.setFont(Style.FONT_BOLD_30);
             greetingLb.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             greetingLb.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -616,7 +689,7 @@ public class LoginFrame extends JFrame {
             add(signInLabel, gbc);
 
             // create  sign in Button
-            signInButton = createCustomButtonWithBorder("Sign In", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 45));
+            signInButton = ButtonConfig.createCustomButton("Sign In", Style.FONT_BOLD_24, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 45));
             //Role comboBox with Icon
             gbc.gridwidth = 1;
             gbc.gridy++;
@@ -626,8 +699,9 @@ public class LoginFrame extends JFrame {
             add(roleIcon, gbc);
             roleComboBox = new JComboBox<>(new String[]{CUSTOMER_ROLE, MANAGER_ROLE});
             roleComboBox.setPreferredSize(new Dimension(300, 45));
-            roleComboBox.setFont(Style.FONT_TEXT_LOGIN_FRAME);
+            roleComboBox.setFont(Style.FONT_PLAIN_20);
             roleComboBox.setBackground(Color.WHITE);
+//            roleComboBox.setFocusable(false);
             roleComboBox.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
             roleComboBox.addActionListener(new ActionListener() {
                 @Override
@@ -654,7 +728,7 @@ public class LoginFrame extends JFrame {
             gbc.gridx = 1;
             nameField = new JTextField("User Email");
 
-            nameField =  TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            nameField = TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
             nameField.addFocusListener(new FocusListener() {
                 @Override
                 public void focusGained(FocusEvent e) {
@@ -689,7 +763,7 @@ public class LoginFrame extends JFrame {
             add(passwordIcon, gbc);
 
             gbc.gridx = 1;
-            passwdFieldSignin = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+            passwdFieldSignin = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Password", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
             passwdFieldSignin.addActionListener(e -> signInButton.doClick());
             add(passwdFieldSignin, gbc);
 
@@ -698,6 +772,7 @@ public class LoginFrame extends JFrame {
             showPasswdCB = new JCheckBox("Show Password");
             showPasswdCB.setPreferredSize(new Dimension(300, 15));
             showPasswdCB.setFocusPainted(false);
+            showPasswdCB.setFont(Style.FONT_PLAIN_13);
             showPasswdCB.setFocusable(false);
             showPasswdCB.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             showPasswdCB.setBackground(Color.WHITE);
@@ -745,7 +820,7 @@ public class LoginFrame extends JFrame {
                                 System.out.println(accountController.isValidAccount(username, password));
                                 if (accountController.isValidAccount(username, password)) {
                                     loginFrame.setVisible(false);
-                                    managerFrame = new ManagerFrame(loginFrame);
+                                    managerFrame = new ManagerFrame();
                                 } else {
                                     sayError(AccountController.loginStatus.getMessager());
                                 }
@@ -769,6 +844,7 @@ public class LoginFrame extends JFrame {
             add(signInButton, gbc);
 
             forgotPasswdBt = new JButton("You forgot your Password?");
+            forgotPasswdBt.setFont(Style.FONT_PLAIN_13);
             forgotPasswdBt.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
             forgotPasswdBt.setBackground(Color.WHITE);
             forgotPasswdBt.setFocusable(false);
@@ -785,7 +861,7 @@ public class LoginFrame extends JFrame {
             forgotPasswdBt.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     inputFormPanel.showPanel("forgotPasswd");
-                    TextFieldConfig.resetTextField(inputFormPanel.forgotPasswdPanel.inputEmail.emailField,"UserEmail");
+                    TextFieldConfig.resetTextField(inputFormPanel.forgotPasswdPanel.inputEmail.emailField, "User Email");
                 }
             });
             gbc.gridy++;
@@ -808,8 +884,8 @@ public class LoginFrame extends JFrame {
         SetNewPasswdPanel setNewPasswdPanel;
         CardLayout cardLayoutForgotPass;
         private int otp = 0;
-        private String to="";
-        private String name="";
+        private String to = "";
+        private String name = "";
         private ForgotPasswordStatus forgotPasswordStatus;
 
         ForgotPasswdPanel() {
@@ -830,13 +906,13 @@ public class LoginFrame extends JFrame {
             cardLayoutForgotPass.show(this, message);
         }
 
-        private boolean sendOTP(String to, String name, int theOtp){
+        private boolean sendOTP(String to, String name, int theOtp) {
             EmailConfig emailConfig = new EmailConfig();
             return emailConfig.send(
-                        to
-                        , emailConfig.buildHeaderMessage()
-                        , emailConfig.buildBodyMessage(name, theOtp)
-                );
+                    to
+                    , emailConfig.buildHeaderMessage()
+                    , emailConfig.buildBodyMessage(name, theOtp)
+            );
         }
 
         class InputEmail extends JPanel {
@@ -866,8 +942,8 @@ public class LoginFrame extends JFrame {
                 //check customer or manager fix di a Hoang
                 ButtonGroup group = new ButtonGroup();
 
-                managerBt =  createRadioButton("Manager",Style.FONT_SIZE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.WORD_COLOR_WHITE,new Dimension(120,40));
-                customerBt = createRadioButton("Customer",Style.FONT_SIZE,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,Style.WORD_COLOR_WHITE,new Dimension(120,40));
+                managerBt = createRadioButton("Manager", Style.FONT_PLAIN_15, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.WORD_COLOR_WHITE, new Dimension(120, 40));
+                customerBt = createRadioButton("Customer", Style.FONT_PLAIN_15, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.WORD_COLOR_WHITE, new Dimension(120, 40));
                 customerBt.setSelected(true);
                 group.add(customerBt);
                 group.add(managerBt);
@@ -886,7 +962,7 @@ public class LoginFrame extends JFrame {
                 add(checkBoxPanel, gbc);
 
                 // create send code button
-                sendCodeBt = createCustomButtonWithBorder("Send Code", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 50));
+                sendCodeBt = ButtonConfig.createCustomButton("Send Code", Style.FONT_BOLD_24, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 50));
                 sendCodeBt.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
 
@@ -898,36 +974,36 @@ public class LoginFrame extends JFrame {
                             Customer customer = customerController.findByEmail(email);
                             if (customer != null && customer.sameEmail(email)) {
                                 otp = emailConfig.generateOTP();
-                                to =email;
+                                to = email;
                                 name = customer.getFullName();
                                 id = customer.getId();
-                                boolean sent = sendOTP(to,name,otp);
+                                boolean sent = sendOTP(to, name, otp);
                                 forgotPasswordStatus = ForgotPasswordStatus.CUSTOMER;
                                 if (sent) {
                                     showInnerPanel("verificationCode");
                                 }
-                            }else {
+                            } else {
                                 setColorTextField();
                             }
-                        } else if(managerBt.isSelected()) {
+                        } else if (managerBt.isSelected()) {
                             //manager
                             AccountController accountController = new AccountController();
                             String username = emailField.getText().trim();
                             Account account = accountController.findByName(username);
-                            if ( account != null && account.sameUsername(username) ){
+                            if (account != null && account.sameUsername(username)) {
                                 otp = emailConfig.generateOTP();
                                 System.out.println(account);
                                 System.out.println(otp);
-                                to= account.getEmail();
+                                to = account.getEmail();
                                 name = account.getEmail();
                                 id = account.getId();
-                                boolean sent =  sendOTP(to,name,otp);
+                                boolean sent = sendOTP(to, name, otp);
                                 forgotPasswordStatus = ForgotPasswordStatus.MANAGER;
-                                 if(sent){
+                                if (sent) {
                                     showInnerPanel("verificationCode");
-                                 }
+                                }
 
-                            }else {
+                            } else {
                                 setColorTextField();
                             }
                         }
@@ -942,8 +1018,10 @@ public class LoginFrame extends JFrame {
                 emailIcon.setPreferredSize(new Dimension(30, 30));
                 add(emailIcon, gbc);
                 gbc.gridx = 1;
-                emailField =  TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
-                emailField.addActionListener(e -> {sendCodeBt.doClick();});
+                emailField = TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
+                emailField.addActionListener(e -> {
+                    sendCodeBt.doClick();
+                });
                 add(emailField, gbc);
 
                 // add send code button to panel
@@ -952,7 +1030,7 @@ public class LoginFrame extends JFrame {
                 gbc.gridwidth = 2;
                 add(sendCodeBt, gbc);
 
-                backBt = createCustomButtonWithBorder("Back", Style.FONT_BUTTON_LOGIN_FRAME, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 50));
+                backBt = ButtonConfig.createCustomButton("Back", Style.FONT_BOLD_24, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 50));
                 backBt.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         inputFormPanel.showPanel("signIn");
@@ -961,6 +1039,7 @@ public class LoginFrame extends JFrame {
                 gbc.gridy++;
                 add(backBt, gbc);
             }
+
             // fix ow day
             private void setTextForTextField() {
                 if (customerBt.isSelected()) {
@@ -969,10 +1048,12 @@ public class LoginFrame extends JFrame {
                     emailField.setText("User Name");
                 }
             }
-            private void setColorTextField(){
+
+            private void setColorTextField() {
                 emailField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
             }
-            private JRadioButton createRadioButton(String title, Font font,Color textColor, Color backgroudColor,Dimension size){
+
+            private JRadioButton createRadioButton(String title, Font font, Color textColor, Color backgroudColor, Dimension size) {
                 JRadioButton rdoBt = new JRadioButton(title);
                 rdoBt.setBorderPainted(false);
                 rdoBt.setFocusable(false);
@@ -989,7 +1070,7 @@ public class LoginFrame extends JFrame {
             JTextField[] otpFields = new JTextField[4];
             CustomButton verifyBt, backBt;
             JButton resendCodeBt;
-            final int RESET_OTP =0;
+            final int RESET_OTP = 0;
 
             VerificationCodePanel() {
                 setBackground(Color.WHITE);
@@ -1008,7 +1089,7 @@ public class LoginFrame extends JFrame {
                 add(resetPasswdLb, gbc);
 
                 // create verifyBt
-                verifyBt = createCustomButtonWithBorder("Verify", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 50));
+                verifyBt = ButtonConfig.createCustomButton("Verify", Style.FONT_BOLD_24, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 50));
                 verifyBt.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         boolean isEmpty = false;
@@ -1035,7 +1116,7 @@ public class LoginFrame extends JFrame {
                                 if (i < otpFields.length - 1)
                                     otpInput *= 10;
                             }
-                        }catch (NullPointerException exception){
+                        } catch (NullPointerException exception) {
                             System.out.println(exception);
                             setColorTextField();
 
@@ -1051,7 +1132,7 @@ public class LoginFrame extends JFrame {
                         } else {
                             System.out.println("sai roi ");
                             setColorTextField();
-                            ToastNotification.showToast("Wrong OTP",2500,50,-1,-1);
+                            ToastNotification.showToast("Wrong OTP", 2500, 50, -1, -1);
                         }
                     }
 
@@ -1066,7 +1147,7 @@ public class LoginFrame extends JFrame {
                 resendCodeBt = new JButton("Re-send Verify Code");
                 resendCodeBt.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
                 resendCodeBt.setBackground(Color.WHITE);
-                resendCodeBt.setFont(Style.FONT_TEXT_TABLE);
+                resendCodeBt.setFont(Style.FONT_PLAIN_16);
                 resendCodeBt.setFocusable(false);
                 resendCodeBt.setBorderPainted(false);
                 resendCodeBt.addMouseListener(new MouseAdapter() {
@@ -1091,10 +1172,11 @@ public class LoginFrame extends JFrame {
                         }
                         EmailConfig emailConfig = new EmailConfig();
                         otp = emailConfig.generateOTP();
-                        System.out.println(otp +" new ");
-                        boolean sent =  sendOTP(to,name,otp);
+                        System.out.println(otp + " new ");
+                        boolean sent = sendOTP(to, name, otp);
                         JOptionPane.showMessageDialog(null, "We have sent a new verification code to your email!");
                     }
+
                     private void startCooldown() {
                         TimerTask task = new TimerTask() {
                             int remainingTime = 25;
@@ -1117,7 +1199,7 @@ public class LoginFrame extends JFrame {
                 });
 
                 // create backBt
-                backBt = createCustomButtonWithBorder("Back", Style.FONT_BUTTON_LOGIN_FRAME, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 50));
+                backBt = ButtonConfig.createCustomButton("Back", Style.FONT_BOLD_24, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 50));
                 backBt.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         showInnerPanel("inputEmail");
@@ -1201,7 +1283,8 @@ public class LoginFrame extends JFrame {
                 gbc.gridy++;
                 add(backPn, gbc);
             }
-            private  void setColorTextField(){
+
+            private void setColorTextField() {
                 for (int i = 0; i < otpFields.length; i++) {
                     otpFields[i].setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
                 }
@@ -1213,7 +1296,7 @@ public class LoginFrame extends JFrame {
             CustomButton resetPasswdBt, backBt;
             JCheckBox showPasswd;
 
-            private void resetTextPassword(){
+            private void resetTextPassword() {
                 newPasswdField.setText("Enter your new password");
                 confirmPasswdField.setText("Confirm your new password");
             }
@@ -1235,7 +1318,7 @@ public class LoginFrame extends JFrame {
                 add(setNewPasswdLb, gbc);
 
                 // create send code button
-                resetPasswdBt = createCustomButtonWithBorder("Reset Password", Style.FONT_BUTTON_LOGIN_FRAME, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 50));
+                resetPasswdBt = ButtonConfig.createCustomButton("Reset Password", Style.FONT_BOLD_24, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 50));
                 resetPasswdBt.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         String newPassword = new String(newPasswdField.getPassword());
@@ -1245,8 +1328,7 @@ public class LoginFrame extends JFrame {
                             if (newPassword.equals("Enter your new password")) {
                                 newPasswdField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
                                 newPasswdField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
-                            }else
-                            if (confirmPassword.equals("Confirm your new password")) {
+                            } else if (confirmPassword.equals("Confirm your new password")) {
                                 confirmPasswdField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
                                 confirmPasswdField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
                             } else {
@@ -1255,13 +1337,13 @@ public class LoginFrame extends JFrame {
                                 newPasswdField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
                                 newPasswdField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
                             }
-                        } else  {
-                            if(forgotPasswordStatus == ForgotPasswordStatus.CUSTOMER){
+                        } else {
+                            if (forgotPasswordStatus == ForgotPasswordStatus.CUSTOMER) {
                                 CustomerController cusController = new CustomerController();
                                 cusController.updatePassword(newPassword, id);
                                 resetTextPassword();
 
-                            }else if(forgotPasswordStatus == ForgotPasswordStatus.MANAGER){
+                            } else if (forgotPasswordStatus == ForgotPasswordStatus.MANAGER) {
                                 AccountController accController = new AccountController();
                                 accController.updatePassword(newPassword, id);
                                 resetTextPassword();
@@ -1282,7 +1364,7 @@ public class LoginFrame extends JFrame {
 
                 add(passwordIconLb1, gbc);
                 gbc.gridx = 1;
-                newPasswdField = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Enter your new password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+                newPasswdField = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Enter your new password", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
                 newPasswdField.addActionListener(e -> resetPasswdBt.doClick());
                 add(newPasswdField, gbc);
 
@@ -1291,7 +1373,7 @@ public class LoginFrame extends JFrame {
                 gbc.gridx = 0;
                 add(passwordIconLb2, gbc);
                 gbc.gridx = 1;
-                confirmPasswdField = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Confirm your new password", Style.FONT_TEXT_LOGIN_FRAME, Color.GRAY, new Dimension(300, 45));
+                confirmPasswdField = PasswordFieldConfig.createPasswordFieldWithPlaceHolder("Confirm your new password", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
                 confirmPasswdField.addActionListener(e -> resetPasswdBt.doClick());
                 add(confirmPasswdField, gbc);
 
@@ -1325,7 +1407,7 @@ public class LoginFrame extends JFrame {
                 add(showPasswd, gbc);
 
                 // create send code button
-                backBt = createCustomButtonWithBorder("Back", Style.FONT_BUTTON_LOGIN_FRAME, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, new Dimension(350, 50));
+                backBt = ButtonConfig.createCustomButton("Back", Style.FONT_BOLD_24, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, new Color(160, 231, 224), Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 20, SwingConstants.CENTER, new Dimension(350, 50));
                 backBt.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         showInnerPanel("verificationCode");
@@ -1342,42 +1424,6 @@ public class LoginFrame extends JFrame {
                 add(backBt, gbc);
             }
         }
-    }
-
-    public void addFocusListenerForTextField(JTextField field, String originText) {
-        field.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                field.setForeground(Color.BLACK);
-                if (field.getText().equals(originText)) {
-                    field.setText("");
-                }
-                field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ giống originText
-                if (field.getText().isEmpty()) {
-                    field.setForeground(Color.GRAY);
-                    field.setText(originText);
-                }
-                field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
-            }
-        });
-    }
-
-    private static CustomButton createCustomButtonWithBorder(String title, Font font, Color textColor, Color backgroundColor, Color hoverColor, Color borderColor, int thickness, int radius, Dimension size) {
-        CustomButton bt = new CustomButton(title);
-        bt.setFont(font);
-        bt.setTextColor(textColor);
-        bt.setBackgroundColor(backgroundColor);
-        bt.setHoverColor(hoverColor);
-        bt.setBorderColor(borderColor);
-        bt.setBorderThickness(thickness);
-        bt.setBorderRadius(radius);
-        bt.setPreferredSize(size);
-        return bt;
     }
 
     public static void main(String[] args) {

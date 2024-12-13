@@ -42,21 +42,21 @@ public class TextFieldConfig {
         return field;
     }
 
-    public static JPasswordField createStyledJPasswordField(Font font, Color borderColor, Dimension size) {
-        JPasswordField passwdField = new JPasswordField();
-        passwdField.setEchoChar('*');
-        passwdField.setFont(font);
-        passwdField.setPreferredSize(size);
-        passwdField.setBorder(BorderFactory.createCompoundBorder(
+    public static JTextField createTextField(String text, Font font, Color textColor, Color borderColor, Dimension size) {
+        JTextField field = new JTextField(text);
+        field.setFont(font);
+        field.setForeground(textColor);
+        field.setPreferredSize(size);
+        field.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(borderColor),
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-
-        return passwdField;
+        field.setBackground(Color.WHITE);
+        return field;
     }
 
     public static JTextField createUneditableTextField(String label) {
         JTextField textField = TextFieldConfig.createStyledTextField(
-                Style.FONT_TEXT_CUSTOMER,
+                Style.FONT_PLAIN_18,
                 Color.BLACK,
                 Style.MEDIUM_BLUE,
                 new Dimension(350, 40)

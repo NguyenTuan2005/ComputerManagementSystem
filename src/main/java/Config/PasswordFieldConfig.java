@@ -44,7 +44,17 @@ public class PasswordFieldConfig {
         return pwField;
     }
 
+    public static JPasswordField createStyledJPasswordField(Font font, Color borderColor, Dimension size) {
+        JPasswordField passwdField = new JPasswordField();
+        passwdField.setEchoChar('*');
+        passwdField.setFont(font);
+        passwdField.setPreferredSize(size);
+        passwdField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
+        return passwdField;
+    }
 
     public static void addFocusListenerPasswdField(JPasswordField that, String originText) {
         that.addFocusListener(new FocusListener() {

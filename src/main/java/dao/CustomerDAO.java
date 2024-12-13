@@ -190,8 +190,6 @@ public class CustomerDAO implements Repository<Customer> {
     public ArrayList<CustomerOrderDTO> getDataCustomerOrderById(int customerId) {
         ArrayList<CustomerOrderDTO> orders = new ArrayList<>();
         String query = "SELECT DISTINCT  *  FROM customer_order_view  AS c  where c.customer_id = ? order by  c.order_date" ;
-//                ""+"  left join image as im on c.product_id = im.product_id\n" +
-//                " WHERE customer_id = ? order by  c.order_date ";
         try {
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, customerId);

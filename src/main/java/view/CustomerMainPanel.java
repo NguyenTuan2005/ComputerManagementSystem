@@ -9,7 +9,9 @@ import Verifier.UserNameAccountVerifier;
 import controller.CustomerController;
 import controller.OrderController;
 import controller.OrderDetailController;
+import controller.ProductController;
 import dto.CustomerOrderDTO;
+import dto.CustomerOrderDetailDTO;
 import dto.KeyOrderDTO;
 import view.OtherComponent.ChangePasswordFrame;
 import view.OverrideComponent.*;
@@ -23,15 +25,22 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 public class CustomerMainPanel extends JPanel {
+    JPanel containerCatalog;
+    JPanel containerCart = new JPanel(new GridBagLayout());
+    JPanel notificationContainer=  new JPanel();
+    JPanel containerProductDetail = new JPanel(new BorderLayout());
     JPanel catalogContainer;
     JPanel cartContainer = new JPanel();
-    JPanel notificationContainer;
     JPanel productDetailContainer = new JPanel(new BorderLayout());
     JPanel ordersContainer = new JPanel();
 
@@ -59,7 +68,7 @@ public class CustomerMainPanel extends JPanel {
     private GridBagConstraints gbc;
 
     //constructor
-    public CustomerMainPanel() {
+    public CustomerMainPanel() throws SQLException {
         cardLayout = new CardLayout();
         productCatalogPanel = new ProductCatalogMainPanel();
         purchasedPanel = new OrderHistoryPanel();
@@ -450,22 +459,13 @@ public class CustomerMainPanel extends JPanel {
                                 String address = addressField.getText();
                                 String status = STATUS_ORDER;
                                 int orderId = orderController.save(customerId, managerId, address, status);
-//                                orderDetailController.saves(orderId, productOrders);
-//                                bill = customerController.findCustomerOrderById(customerId);
-                                System.out.println(">>> set : ");
-
-                                for( var o : productOrders.stream().filter(p -> p.hasProductName(productOrders)).collect(Collectors.toSet()) ){
-                                    System.out.println(o);
-                                }
+                                orderDetailController.saves(orderId, ProductOrderConfig.getUnqueProductOrder(productOrders));
                                 productOrders.clear();
-
                                 var c = new Customer();
                                 c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
-//                                 bill bj sai dung lieu
-//                                addCustomerNotification(c, new BillConfig(bills).getLastBill());
-
+                                bills = customerController.findCustomerOrderById(customerId);
+                                addCustomerNotification(c, new BillConfig(bills).getBillCurrent());
                                 ToastNotification.showToast("Successful purchase !!!", 2500, 50, -1, -1);
-
                             } else {
                                 ToastNotification.showToast("Cancel order !!!", 2500, 50, -1, -1);
                             }
@@ -475,6 +475,10 @@ public class CustomerMainPanel extends JPanel {
                     add(payBt, gbc);
                 }
             }
+
+
+
+
 
             class ProductsInCartPanel extends JPanel {
 
@@ -509,7 +513,7 @@ public class CustomerMainPanel extends JPanel {
         private JTextField searchField;
         private JComboBox<String> sortComboBox;
 
-        public OrderHistoryPanel() {
+        public OrderHistoryPanel() throws SQLException {
             setLayout(new BorderLayout());
             ordersPanel = new OrdersPanel();
             toolPanel = new ToolPanel();
@@ -564,22 +568,31 @@ public class CustomerMainPanel extends JPanel {
         class OrdersPanel extends JPanel {
             JScrollPane ordersScrollPane;
 
-            OrdersPanel() {
+            OrdersPanel() throws SQLException {
                 setLayout(new BorderLayout());
 
                 ordersContainer.setLayout(new BoxLayout(ordersContainer, BoxLayout.Y_AXIS));
 
                 ProductController productController = new ProductController();
-//                ArrayList<Product> products = productController.getEagerProducts();
-                bills = customerController.findCustomerOrderById(CurrentUser.CURRENT_CUSTOMER.getId());
-                System.out.println(bills);
+
+                var k  = customerController.getCustomerOrderDetail(CurrentUser.CURRENT_CUSTOMER.getId());
+
                 Map<KeyOrderDTO, ArrayList<CustomerOrderDTO>> mapOrder = new BillConfig(bills).convertDataToBills();
-                for(Map.Entry<KeyOrderDTO, ArrayList<CustomerOrderDTO>> data : mapOrder.entrySet()){
-                    addOrderToContainer(createOrderPn(data.getKey(), data.getValue()));
+                OrderHistoryConfig orderHistoryConfig = new OrderHistoryConfig(k);
+                for(Map.Entry<Integer, List<CustomerOrderDetailDTO>> data :orderHistoryConfig.get().entrySet()){
+                    try {
+                        addOrderToContainer(createOrderPn((ArrayList<CustomerOrderDetailDTO>) data.getValue()));
+                    } catch (Exception e){
+
+                    }
                 }
-//                addOrderToContainer(createOrderPn(products.get(2)));
-//                addOrderToContainer(createOrderPn(products.get(2)));
-//                addOrderToContainer(createOrderPn(products.get(2)));
+
+
+//                for(Map.Entry<KeyOrderDTO, ArrayList<CustomerOrderDTO>> data : mapOrder.entrySet()){
+//                    addOrderToContainer(createOrderPn(data.getKey(), data.getValue()));
+//                }
+
+
 
 
                 ordersScrollPane = new JScrollPane(ordersContainer);
@@ -602,6 +615,13 @@ public class CustomerMainPanel extends JPanel {
             setLayout(new BorderLayout());
             JPanel title = new JPanel(new FlowLayout(FlowLayout.CENTER));
             title.setBackground(Color.WHITE);
+            int customerId = CurrentUser.CURRENT_CUSTOMER.getId();
+            int managerId = CurrentUser.CURRENT_MANAGER.getManagerId();
+
+            bills = customerController.findCustomerOrderById(customerId);
+            var c= new Customer();
+            c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
+            showFullBills(new BillConfig(bills).getMetadataMap(),c);
 
             JButton Bt = new JButton("Add");
             Bt.addActionListener(new ActionListener() {
@@ -613,6 +633,7 @@ public class CustomerMainPanel extends JPanel {
                     addCustomerNotification(customer1, "ok good good ehavd hvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadmhvokhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .ok good good khavsd ạ,bsdm h  íadm liw ehavd hvoqjbkhsad i khouqkbohf ubas duhqokhbcoq obcahwoi .");
                 }
             });
+
             title.add(Bt);
 
 
@@ -988,7 +1009,7 @@ public class CustomerMainPanel extends JPanel {
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
         gbc.gridy = 0;
         gbc.gridx = 0;
-        mainPanel.add(imagePn, gbc);
+        mainPanel.add(imageLabel, gbc);
 
 // Nút chuyển ảnh
         CustomButton previousBt = createCustomButton("Previous", Style.FONT_BOLD_16, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 2, 5, new Dimension(140, 30));
@@ -1297,9 +1318,9 @@ public class CustomerMainPanel extends JPanel {
         quantityComboBox.addActionListener(e -> {
 
             Integer selectedNumber = (Integer) quantityComboBox.getSelectedItem();
-            System.out.println("Số đã chọn: " + selectedNumber);
+//            System.out.println("Số đã chọn: " + selectedNumber);
             productOrderConfig.setQuatity(selectedNumber);
-            System.out.println(productOrderConfig);
+//            System.out.println(productOrderConfig);
             this.productOrders.add(productOrderConfig);
 
 
@@ -1324,6 +1345,11 @@ public class CustomerMainPanel extends JPanel {
         panel.add(Main, BorderLayout.CENTER);
 
         return panel;
+    }
+    private void showFullBills(Map<Integer,List<CustomerOrderDTO>> map , Customer customer){
+       for(Map.Entry<Integer,List<CustomerOrderDTO>> data :map.entrySet()){
+           addCustomerNotification(customer, BillConfig.generateBill((ArrayList<CustomerOrderDTO>) data.getValue()));
+       }
     }
 
     private JPanel createEmptyPanel() {
@@ -1447,7 +1473,7 @@ public class CustomerMainPanel extends JPanel {
         this.ordersContainer.repaint();
     }
 
-    public JPanel createOrderPn( KeyOrderDTO key ,ArrayList<CustomerOrderDTO> customerOrderDTOs) {
+    public JPanel createOrderPn(ArrayList<CustomerOrderDetailDTO> customerOrderDTOs) {
         JPanel main = new JPanel(new BorderLayout());
 
         JPanel titlePn = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1460,13 +1486,11 @@ public class CustomerMainPanel extends JPanel {
 
         JPanel datePn = new JPanel(new GridLayout(2, 1, 5, 5));
         datePn.setBackground(Color.WHITE);
-        JLabel orderDate = new JLabel("Order Date: " + customerOrderDTOs.get(0).getOrderDate());
+        JLabel orderDate = new JLabel("Order Date: " + customerOrderDTOs.get(0).customerOrderDTO().getOrderDate());
 
-//        JLabel receiveDate = new JLabel("Received Date: " + customerOrderDTO.get(0).get);
         orderDate.setFont(Style.FONT_PLAIN_18);
-//        receiveDate.setFont(Style.FONT_PLAIN_18);
+
         datePn.add(orderDate);
-//        datePn.add(receiveDate);
 
         JPanel top = new JPanel(new GridLayout(2, 1));
         top.add(titlePn);
@@ -1475,15 +1499,13 @@ public class CustomerMainPanel extends JPanel {
 
 
         JPanel mid = new JPanel();
-        mid.setLayout(new BoxLayout(mid, BoxLayout.Y_AXIS)); // Sắp xếp theo chiều dọc
+        mid.setLayout(new BoxLayout(mid, BoxLayout.Y_AXIS));
         mid.setBackground(Color.WHITE);
-        ///
+        int totalPrice = 0;
         for( var item :customerOrderDTOs ){
+            totalPrice+= item.customerOrderDTO().getQuantity()* item.customerOrderDTO().getUnitPrice();
             mid.add(productOrderPn(item));
         }
-//        mid.add(productOrderPn());
-//        mid.add(productOrderPn());
-//        mid.add(productOrderPn());
 
         main.add(mid, BorderLayout.CENTER);
 
@@ -1497,9 +1519,9 @@ public class CustomerMainPanel extends JPanel {
 
         JPanel bottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottomRight.setBackground(Color.WHITE);
-        JLabel items = new JLabel(10 + " items:  ");
+        JLabel items = new JLabel(customerOrderDTOs.size() + " items:  ");
         items.setFont(Style.FONT_BOLD_20);
-        JLabel price = new JLabel("9999999" + " VND");
+        JLabel price = new JLabel(totalPrice + " VND");
         price.setFont(Style.FONT_BOLD_20);
         bottomRight.add(items);
         bottomRight.add(price);
@@ -1513,7 +1535,7 @@ public class CustomerMainPanel extends JPanel {
         return main;
     }
 
-    public JPanel productOrderPn(CustomerOrderDTO customerOrderDTO) {
+    public JPanel productOrderPn(CustomerOrderDetailDTO customerOrderDTO) {
         // Tạo panel chính với BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
@@ -1522,7 +1544,7 @@ public class CustomerMainPanel extends JPanel {
         // Panel chứa ảnh sản phẩm
         JPanel imgPn = new JPanel();
         imgPn.setBackground(Color.WHITE);
-        JLabel proImg = new JLabel(createImageForProduct(customerOrderDTO.getProductImage(), 120, 120));
+        JLabel proImg = new JLabel(createImageForProduct(customerOrderDTO.images().get(0).getUrl(), 120, 120));
         imgPn.add(proImg);
         mainPanel.add(imgPn, BorderLayout.WEST);
 
@@ -1540,14 +1562,14 @@ public class CustomerMainPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weighty = 0.4;
 //        JLabel proName = new JLabel(product.getName());
-        JLabel proName = new JLabel(customerOrderDTO.getProductName());
+        JLabel proName = new JLabel(customerOrderDTO.customerOrderDTO().getProductName());
         proDetails.add(proName, gbc);
 
 
         gbc.gridy++;
         gbc.weighty = 0.3;
 //        JLabel proID = new JLabel("Product ID: " + product.getId());
-        JLabel proID = new JLabel(customerOrderDTO.getSalerId()+"");
+        JLabel proID = new JLabel(customerOrderDTO.customerOrderDTO().getSalerId()+"");
         proDetails.add(proID, gbc);
 
         gbc.gridy++;
@@ -1555,12 +1577,12 @@ public class CustomerMainPanel extends JPanel {
 
         JPanel pricePn = new JPanel(new FlowLayout(FlowLayout.LEFT));// panel xem giá của 1 sản phẩm
         pricePn.setBackground(Color.WHITE);
-        JLabel proPrice = new JLabel(customerOrderDTO.getUnitPrice()+"", SwingConstants.LEFT);
+        JLabel proPrice = new JLabel(customerOrderDTO.customerOrderDTO().getUnitPrice()+"", SwingConstants.LEFT);
         pricePn.add(proPrice);
 
         JPanel quantityPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));// panel xem số lượng mua của 1 sản phẩm
         quantityPn.setBackground(Color.WHITE);
-        JLabel proQuantity = new JLabel("x" + customerOrderDTO.getQuantity(), SwingConstants.RIGHT);
+        JLabel proQuantity = new JLabel("x" + customerOrderDTO.customerOrderDTO().getQuantity(), SwingConstants.RIGHT);
         quantityPn.add(proQuantity);
 
         priceAndQuantity.add(pricePn);

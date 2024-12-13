@@ -6,13 +6,18 @@ import Config.PasswordFieldConfig;
 import Config.TextFieldConfig;
 import Model.Account;
 import Model.Customer;
+import Verifier.EmailVerifier;
 import controller.AccountController;
 import controller.CustomerController;
+import dao.CustomerDAO;
+import security.PasswordSecurity;
 import view.OverrideComponent.CircularImage;
 import view.OverrideComponent.CustomButton;
 import view.OverrideComponent.ToastNotification;
 import Enum.*;
 
+
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -49,18 +54,11 @@ public class LoginFrame extends JFrame {
         setLocationRelativeTo(null);
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
         try {
-            // Tùy chỉnh giao diện cho JComboBox
-//            UIManager.put("ComboBox.border", BorderFactory.createEmptyBorder()); // Loại bỏ viền
-//            UIManager.put("ComboBox.focus", new Color(0,0,0,0));                 // Loại bỏ hiệu ứng focus
-//            UIManager.put("ComboBox.buttonBackground", Color.PINK);            // Nền nút mũi tên
-//            UIManager.put("ComboBox.buttonForeground", Color.BLUE);            // Màu mũi tên
+
             UIManager.put("ComboBox.focus", UIManager.get("ComboBox.background"));
 
-            // Áp dụng Look and Feel của hệ thống
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 
-            // try FlatLaf
             SwingUtilities.updateComponentTreeUI(this);
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,6 +167,12 @@ public class LoginFrame extends JFrame {
         public void showPanel(String title) {
             cardLayoutMain.show(this, title);
         }
+        public static boolean sendOTPForRegister(String to, int otp) {
+            EmailConfig emailConfig = new EmailConfig();
+            return emailConfig.send(to,
+                    emailConfig.buildHeaderMessage(),
+                    emailConfig.buildBodyMessageForRegister(to, otp));
+        }
     }
 
     class SignUpPanel extends JPanel {
@@ -203,7 +207,10 @@ public class LoginFrame extends JFrame {
         private JLabel createAccountLabel;
         private JTextField nameField, emailField, addressField;
         private CustomButton signUpButton;
-
+        public static int otpRegister =  new EmailConfig().generateOTP();
+        public static String email ;
+        public static String userName ;
+        public static String address ;
         SignUpFormPanel() {
 
             setLayout(new GridBagLayout());
@@ -235,13 +242,22 @@ public class LoginFrame extends JFrame {
                     boolean allFieldsValid = isAllFieldsValid(fieldsWithPlaceholders);
 
                     if (allFieldsValid) {
-                        inputFormPanel.signUpPanel.showPanelSignUp("verifyEmail");
+                        if (InputFormPanel.sendOTPForRegister(emailField.getText(), otpRegister)) {
+                            inputFormPanel.signUpPanel.showPanelSignUp("verifyEmail");
+                            email =emailField.getText();
+                            address = addressField.getText();
+                            userName = nameField.getText();
+                        }
                     }
 
                     for (int i = 0; i < inputFormPanel.signUpPanel.verifyEmailPanel.otpFields.length; i++) {
                         inputFormPanel.signUpPanel.verifyEmailPanel.otpFields[i].setText("");
                     }
+
+
                 }
+
+
 
                 private boolean isAllFieldsValid(Map<JTextField, String> fieldsWithPlaceholders) {
                     boolean allFieldsValid = true;
@@ -286,6 +302,7 @@ public class LoginFrame extends JFrame {
             gbc.gridx = 1;
             emailField = TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
             emailField.addActionListener(e -> signUpButton.doClick());
+            emailField.setInputVerifier(new EmailVerifier());
             add(emailField, gbc);
 
             // Address Field with Icon
@@ -339,7 +356,7 @@ public class LoginFrame extends JFrame {
         JTextField[] otpFields = new JTextField[4];
         CustomButton verifyBt, backBt;
         JButton resendCodeBt;
-        final int RESET_OTP = 0;
+
 
         VerifyEmailPanel() {
             setBackground(Color.WHITE);
@@ -369,13 +386,36 @@ public class LoginFrame extends JFrame {
                         }
                     }
                     if (!isEmpty) {
-
                         // TODO
+                        int otpInput = 0;
+                        try {
+                            for (int i = 0; i < otpFields.length; i++) {
+                                int num = Integer.parseInt(otpFields[i].getText().trim());
+                                otpInput += num;
+                                if (i < otpFields.length - 1)
+                                    otpInput *= 10;
+                            }
+                        } catch (NullPointerException exception) {
+                            System.out.println(exception);
 
+                        }
 
-                        resetPasswdField(inputFormPanel.signUpPanel.setPasswdPanel.passwdField, "Enter your password");
-                        resetPasswdField(inputFormPanel.signUpPanel.setPasswdPanel.confirmPasswdField, "Confirm your password");
-                        inputFormPanel.signUpPanel.showPanelSignUp("setPasswd");
+                        System.out.println(otpInput + "   " + SignUpFormPanel.otpRegister );
+                        if (SignUpFormPanel.otpRegister == otpInput) {
+
+                            resetPasswdField(inputFormPanel.signUpPanel.setPasswdPanel.passwdField, "Enter your password");
+                            resetPasswdField(inputFormPanel.signUpPanel.setPasswdPanel.confirmPasswdField, "Confirm your password");
+                            inputFormPanel.signUpPanel.showPanelSignUp("setPasswd");
+
+                            for (int i = 0; i < otpFields.length; i++) {
+                                otpFields[i].setText("");
+                            }
+
+                        } else {
+                            System.out.println("sai roi ");
+//                                    setColorTextField();
+                            ToastNotification.showToast("Wrong OTP", 2500, 50, -1, -1);
+                        }
                     }
                 }
             });
@@ -402,15 +442,18 @@ public class LoginFrame extends JFrame {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    String email = SignUpFormPanel.email;
+                    SignUpFormPanel.otpRegister = new EmailConfig().generateOTP();
+                    System.out.println("resend OTP "+SignUpFormPanel.otpRegister );
+                    InputFormPanel.sendOTPForRegister(email, SignUpFormPanel.otpRegister);
                     if (!isCooldown) {
                         isCooldown = true;
                         resendCodeBt.setEnabled(false);
                         startCooldown();
                     }
-                    EmailConfig emailConfig = new EmailConfig();
-//                    otp = emailConfig.generateOTP();
-//                    System.out.println(otp +" new ");
-//                    boolean sent =  sendOTP(to,name,otp);
+                    InputFormPanel.sendOTPForRegister("", SignUpFormPanel.otpRegister);
+//                        inputFormPanel.signUpPanel.showPanelSignUp("verifyEmail");
+
                     JOptionPane.showMessageDialog(null, "We have sent a new verification code to your email!");
                 }
 
@@ -533,6 +576,7 @@ public class LoginFrame extends JFrame {
     class SetPasswdPanel extends JPanel {
         JPasswordField passwdField, confirmPasswdField;
         CustomButton confirmBt, showPasswdBt1, showPasswd2;
+        CustomerDAO customerDAO;
 
         SetPasswdPanel() {
             setBackground(Color.WHITE);
@@ -557,9 +601,19 @@ public class LoginFrame extends JFrame {
                     String newPassword = new String(passwdField.getPassword());
                     String confirmPassword = new String(confirmPasswdField.getPassword());
                     //TODO
-
-
-                    inputFormPanel.signUpPanel.showPanelSignUp("registrationSuccess");
+                    if(newPassword.equals(confirmPassword)) {
+                        String name = SignUpFormPanel.userName;
+                        String email = SignUpFormPanel.email;
+                        String address = SignUpFormPanel.address;
+                        inputFormPanel.signUpPanel.showPanelSignUp("registrationSuccess");
+                        customerDAO = new CustomerDAO();
+                        Customer newCustomer = new Customer(name,email,address,new PasswordSecurity(newPassword).generatePassword(),"src/main/java/img/default-avt.png");
+                        customerDAO.save(newCustomer);
+                    }else{
+                        JOptionPane.showConfirmDialog(null,"Wrong Password !!!");
+                        passwdField.setText("");
+                        confirmPasswdField.setText("");
+                    }
                 }
             });
 
@@ -831,7 +885,11 @@ public class LoginFrame extends JFrame {
 
                                 if (customerController.isValidAccount(email, password)) {
                                     loginFrame.setVisible(false);
-                                    customerFrame = new CustomerFrame();
+                                    try {
+                                        customerFrame = new CustomerFrame();
+                                    } catch (SQLException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
                                 } else
                                     sayError(CustomerController.loginStatus.getMessager());
                                 break;

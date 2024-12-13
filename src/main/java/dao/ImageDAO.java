@@ -65,8 +65,8 @@ public class ImageDAO implements Repository<Image> {
     }
 
     @Override
-    public ArrayList<Image> getAll() throws SQLException {
-        String sql = " SELECT *FROM account ";
+    public ArrayList<Image> getAll() {
+        String sql = " SELECT *FROM image ";
         ArrayList<Image> images = new ArrayList<>();
         try{
             statement = connection.createStatement();
@@ -82,9 +82,9 @@ public class ImageDAO implements Repository<Image> {
         return images;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         ImageDAO imageDAO = new ImageDAO();
-        System.out.println(imageDAO.findByProductId(7));
+        System.out.println(imageDAO.getAll());
     }
 
     @Deprecated

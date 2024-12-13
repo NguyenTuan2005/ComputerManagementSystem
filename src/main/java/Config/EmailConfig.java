@@ -74,8 +74,23 @@ public class EmailConfig {
         return message.toString();
     }
 
+    public String buildBodyMessageForRegister(String recipientName,int otp) {
+        StringBuilder message = new StringBuilder();
+        message.append("Dear ").append(recipientName).append(",\n\n");
+        message.append("Welcome to our system! We are excited to have you on board.\n\n");
+        message.append("Here are your account details to get started:\n");
+        message.append("Your OTP Code: ").append(otp).append("\n\n");
+        message.append("If you encounter any issues or have any questions, feel free to contact our support team.\n\n");
+        message.append("Thank you for joining us,\n");
+        message.append("The Support Team Of Computer Management !!!");
+        return message.toString();
+    }
+
+
+
+
     public static void main(String[] args) {
         EmailConfig emailConfig = new EmailConfig();
-//        System.out.println(emailConfig.buildOTPMessage(,894032));
+//        System.out.println(emailConfig.buildBodyMessage("dfsdf",124,"894032"));
     }
 }

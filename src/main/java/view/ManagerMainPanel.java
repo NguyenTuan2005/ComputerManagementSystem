@@ -307,7 +307,7 @@ public class ManagerMainPanel extends JPanel {
                             JOptionPane.showMessageDialog(null, "Read file " + url, "Notify", JOptionPane.WARNING_MESSAGE);
 
                         } else {
-                            System.out.println("Chọn file đã bị hủy.");
+//
                         }
                     }
                 });
@@ -842,7 +842,7 @@ public class ManagerMainPanel extends JPanel {
 
                             int customerId = Integer.parseInt(value.toString());
                             SwingUtilities.invokeLater(() -> {
-                                System.out.println(customerId);
+//
                                 ModifyCustomerFrame modifyCustomerFrame = new ModifyCustomerFrame(customers.get(customerId - 1));
                                 reload();
 
@@ -926,7 +926,7 @@ public class ManagerMainPanel extends JPanel {
                             JOptionPane.showMessageDialog(null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
 
                             CustomerExporter.writeBillToFile(
-                                    new BillConfig(bills).getLastBill()
+                                    new BillConfig(bills).getNewBill()
                                     , fileName);
                             JOptionPane.showMessageDialog(null, "Created !!! ", "Message", JOptionPane.ERROR_MESSAGE);
                             reload();
@@ -968,9 +968,8 @@ public class ManagerMainPanel extends JPanel {
                                             bills = customerController.findCustomerOrderById(customerId);
                                             if (bills.isEmpty())
                                                 JOptionPane.showMessageDialog(null, "No information available");
-                                            System.out.println(">>>> size bill "+bills.size());
                                             BillConfig billConfig = new BillConfig(bills);
-                                            billTextDisplayPanal.setText(billConfig.getLastBill());
+                                            billTextDisplayPanal.setText(billConfig.getNewBill());
                                             billTextDisplayPanal.setTextEditable(false);
 
                                         } catch (Exception ex) {
@@ -1861,10 +1860,8 @@ public class ManagerMainPanel extends JPanel {
             txtBirthday.setText(manager.getBirthDay().toString());
             txtPhoneNumber.setText(manager.getPhoneNumber());
             usernameField.setText(manager.getUsername());
-//             passwordField.setText("");
             emailField.setText(manager.getEmail());
             contextPath = manager.getAvataImg();
-            System.out.println("contextPart " + contextPath);
             try {
                 Path targetPath = Paths.get(contextPath);
                 ImageIcon avatarIcon = new ImageIcon(targetPath.toString());
@@ -1873,10 +1870,8 @@ public class ManagerMainPanel extends JPanel {
                 label.setText("");
 
             } catch (NullPointerException npe) {
-                System.out.println("meo cos hinhf ");
+                npe.printStackTrace();
             }
-//             Files.createDirectories(targetPath.getParent());
-//             Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
 
         }
@@ -1896,9 +1891,7 @@ public class ManagerMainPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         setVisiblePanel(addOrModify);
-//                        switch (getIndexTableSelectedTab()){
-                        System.out.println(" modify btn ");
-//                            case 1 ->{
+
                         tableStatus = TableStatus.ADD;
                         try {
                             if (!verifier()) {
@@ -1917,7 +1910,7 @@ public class ManagerMainPanel extends JPanel {
                                         options, // Nút tùy chỉnh
                                         options[0] // Nút mặc định
                                 );
-                                System.out.println(status);
+
                                 switch (status) {
                                     //YES
                                     case (0) -> {
@@ -1934,16 +1927,13 @@ public class ManagerMainPanel extends JPanel {
 
                                 }
                             }
-                            System.out.println(getAcc());
-                            System.out.println(getManager());
+
                             managerController.createManager(getManager(), getAcc());
                             removeInfor();
                             ToastNotification.showToast("The image has been saved!", 2500, 50, -1, -1);
                         } catch (Exception exception) {
                             ToastNotification.showToast("Please, upload your image again!", 2500, 50, -1, -1);
                         }
-//                            }
-//                        }
                     }
                 });
 
@@ -1957,9 +1947,8 @@ public class ManagerMainPanel extends JPanel {
                 modifyAccBt.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        // nhấn zô chua )
                         int selectedRow = tableAccManager.getSelectedRow();
-                        System.out.println(" modify btn ");
+
                         if (btnModifyStutus == false && selectedRow != -1) {
 
                             tableStatus = TableStatus.MODIFY;
@@ -1968,7 +1957,7 @@ public class ManagerMainPanel extends JPanel {
                             int columnIndex = 0;
 
                             modifyId = (int) tableAccManager.getValueAt(selectedRow, columnIndex) - 1;
-//                            System.out.println(id);
+
                             setDataToModify(managerInfors.get(modifyId));
                             setVisiblePanel(addOrModify);
                             addAccBt.setEnabled(false);
@@ -1984,8 +1973,7 @@ public class ManagerMainPanel extends JPanel {
                             if (manager.birthDayIsNull()) {
                                 manager.setBirthDay((Date) managerInfors.get(modifyId).getBirthDay());
                             }
-                            System.out.println(manager);
-                            System.out.println(account);
+
                             managerController.update(manager);
                             accountController.update(account);
                             btnModifyStutus = false;
@@ -2061,7 +2049,7 @@ public class ManagerMainPanel extends JPanel {
                                         .collect(Collectors.toList());
                                 upDataTable(managerInforDTOS, modelAccManager, tableAccManager);
 
-                                System.out.println(managerInfors);
+
 
                             }
                         }
@@ -2432,7 +2420,7 @@ public class ManagerMainPanel extends JPanel {
                     undoBt.setPreferredSize(new Dimension(100, 40));
                     undoBt.setDrawBorder(false);
                     undoBt.addActionListener(e -> {
-                        System.out.println(btnModifyStutus);
+
                         if (btnModifyStutus == true)
                             setDataToModify(managerInfors.get(modifyId));
                     });
@@ -2470,7 +2458,7 @@ public class ManagerMainPanel extends JPanel {
                                 String fileName = file.getName();
                                 String nameImg = String.valueOf(files.hashCode());
                                 contextPath = "src/main/java/img/" + nameImg + fileName;
-                                System.out.println("contextPart " + contextPath);
+//
                                 Path targetPath = Paths.get(contextPath);
 
                                 Files.createDirectories(targetPath.getParent());

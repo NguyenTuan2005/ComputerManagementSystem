@@ -2,7 +2,7 @@ package view.OtherComponent;
 
 import Config.ButtonConfig;
 import Config.CurrentUser;
-import Config.TextFieldConfig;
+import Config.PasswordFieldConfig;
 import controller.AccountController;
 import controller.CustomerController;
 import view.Style;
@@ -177,8 +177,8 @@ public class ChangePasswordFrame extends JFrame {
                 gbc.gridwidth = 1;
                 add(label, gbc);
 
-                passwordFields[i] = TextFieldConfig.createStyledJPasswordField(
-                        Style.FONT_TEXT_CUSTOMER,
+                passwordFields[i] = PasswordFieldConfig.createStyledJPasswordField(
+                        Style.FONT_PLAIN_18,
                         Style.MEDIUM_BLUE,
                         new Dimension(350, 40)
                 );

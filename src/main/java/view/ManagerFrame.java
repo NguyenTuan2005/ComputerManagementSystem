@@ -9,7 +9,7 @@ public class ManagerFrame extends JFrame {
     ManagerMainPanel managerMainPanel;
     ManagerMenuPanel managerMenuPanel;
 
-    public ManagerFrame(LoginFrame loginFrame) {
+    public ManagerFrame() {
         setTitle("Computer Management");
         setSize(1200, 650);
         setResizable(true);
@@ -19,9 +19,8 @@ public class ManagerFrame extends JFrame {
         setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
 
 
-        managerMenuPanel = new ManagerMenuPanel(loginFrame,this);
+        managerMenuPanel = new ManagerMenuPanel();
         managerMainPanel = new ManagerMainPanel();
-//        managerMainPanel = new ManagerMainPanel(loginFrame);
         add(managerMenuPanel, BorderLayout.WEST);
         add(managerMainPanel, BorderLayout.CENTER);
 
@@ -34,6 +33,7 @@ public class ManagerFrame extends JFrame {
                 setHover(ManagerMainPanel.PRODUCT_CONSTRAINT);
             }
         });
+
         managerMenuPanel.setSupplierButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -42,19 +42,27 @@ public class ManagerFrame extends JFrame {
             }
         });
 
-        managerMenuPanel.setInventoryButtonListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                managerMainPanel.showPanel(ManagerMainPanel.INVENTORY_CONSTRAINT);
-                setHover(ManagerMainPanel.INVENTORY_CONSTRAINT);
-            }
-        });
-
         managerMenuPanel.setCustomerButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 managerMainPanel.showPanel(ManagerMainPanel.CUSTOMER_CONSTRAINT);
                 setHover(ManagerMainPanel.CUSTOMER_CONSTRAINT);
+            }
+        });
+
+        managerMenuPanel.setOrderButtonListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                managerMainPanel.showPanel(ManagerMainPanel.ORDER_CONSTRAINT);
+                setHover(ManagerMainPanel.ORDER_CONSTRAINT);
+            }
+        });
+
+        managerMenuPanel.setInventoryButtonListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                managerMainPanel.showPanel(ManagerMainPanel.INVENTORY_CONSTRAINT);
+                setHover(ManagerMainPanel.INVENTORY_CONSTRAINT);
             }
         });
 
@@ -81,6 +89,7 @@ public class ManagerFrame extends JFrame {
                 setHover(ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT);
             }
         });
+
         managerMenuPanel.setswitchToLoginListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,7 +98,7 @@ public class ManagerFrame extends JFrame {
                         JOptionPane.YES_NO_OPTION);
 
                 if (confirmed == JOptionPane.YES_OPTION) {
-                    loginFrame.setVisible(true);
+                    new LoginFrame();
                 }
             }
         });
@@ -102,8 +111,8 @@ public class ManagerFrame extends JFrame {
                         JOptionPane.YES_NO_OPTION);
 
                 if (confirmed == JOptionPane.YES_OPTION) {
-                    setVisible(false);
-                    loginFrame.setVisible(true);
+                    dispose();
+                    new LoginFrame();
                 }
             }
         });
@@ -115,6 +124,7 @@ public class ManagerFrame extends JFrame {
                 managerMenuPanel.productBt,
                 managerMenuPanel.supplierBt,
                 managerMenuPanel.customerBt,
+                managerMenuPanel.orderBt,
                 managerMenuPanel.inventoryBt,
                 managerMenuPanel.accountManagementBt,
                 managerMenuPanel.notificationBt,
@@ -124,6 +134,7 @@ public class ManagerFrame extends JFrame {
                 ManagerMainPanel.PRODUCT_CONSTRAINT,
                 ManagerMainPanel.SUPPLIER_CONSTRAINT,
                 ManagerMainPanel.CUSTOMER_CONSTRAINT,
+                ManagerMainPanel.ORDER_CONSTRAINT,
                 ManagerMainPanel.INVENTORY_CONSTRAINT,
                 ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT,
                 ManagerMainPanel.NOTIFICATION_CONSTRAINT,

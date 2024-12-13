@@ -9,16 +9,12 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class ManagerMenuPanel extends JPanel {
-    LoginFrame loginFrame;
-    ManagerFrame managerFrame;
     JLabel role, name, credit;
     CircularImage avatar;
-    JButton productBt, supplierBt, customerBt, inventoryBt, accountManagementBt, notificationBt, changeInformBt, logoutBt, switchToLoginBt;
+    JButton productBt, supplierBt, customerBt,orderBt, inventoryBt, accountManagementBt, notificationBt, changeInformBt, logoutBt, switchToLoginBt;
     GridBagConstraints gbc;
 
-    public ManagerMenuPanel(LoginFrame loginFrame, ManagerFrame managerFrame) {
-        this.loginFrame = loginFrame;
-        this.managerFrame = managerFrame;
+    public ManagerMenuPanel() {
 
         setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -47,35 +43,28 @@ public class ManagerMenuPanel extends JPanel {
     }
 
     class ComponentTop extends JPanel {
-
         public ComponentTop() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBackground(Style.BACKGROUND_COLOR);
-            setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Viền tổng thể
+            setBorder(BorderFactory.createEmptyBorder());
 
-            // JLabel role
-            role = new JLabel("Manager", SwingConstants.CENTER);
-            role.setFont(Style.FONT_BUTTON_LOGIN_FRAME);
-            role.setForeground(Color.WHITE);
-            role.setAlignmentX(Component.CENTER_ALIGNMENT); // Căn giữa
+            role = new JLabel("Customer");
+            role.setFont(Style.FONT_PLAIN_25);
+            role.setForeground(Color.GREEN);
+            role.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(role);
 
-            add(Box.createVerticalStrut(10));
-            avatar = new CircularImage(CurrentUser.URL, 60, 60, true);
+            avatar = new CircularImage(CurrentUser.URL, 100, 100, true);
             avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
+            add(Box.createRigidArea(new Dimension(0, 5)));
             add(avatar);
 
-
-            // Thêm khoảng cách giữa role và name
-            add(Box.createVerticalStrut(10));
-
-            // JLabel name
-            name = new JLabel(CurrentUser.USER_NAME + " ");
-            name.setAlignmentX(Component.CENTER_ALIGNMENT); // Căn giữa
-            name.setForeground(Style.WORD_COLOR_WHITE);
-            name.setFont(new Font("Arial", Font.PLAIN, 25));
+            name = new JLabel("<html>" + CurrentUser.USER_NAME + "<html>");
+            name.setFont(Style.FONT_PLAIN_25);
+            name.setForeground(Color.GREEN);
+            name.setAlignmentX(Component.CENTER_ALIGNMENT);
+            add(Box.createRigidArea(new Dimension(0, 5)));
             add(name);
-
         }
     }
 
@@ -84,30 +73,32 @@ public class ManagerMenuPanel extends JPanel {
             setLayout(new GridLayout(0, 1, 0, 20));
             setBackground(Style.BACKGROUND_COLOR);
 
-            productBt = createButton("PRODUCT", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
+            productBt = createButton("PRODUCT", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/productIcon.png", productBt);
             add(productBt);
 
-            supplierBt = createButton("SUPPLIER", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
-
+            supplierBt = createButton("SUPPLIER", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/supplierIcon.png", supplierBt);
             add(supplierBt);
 
-            customerBt = createButton("CUSTOMER", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
-
+            customerBt = createButton("CUSTOMER", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/iconCustomer.png", customerBt);
             add(customerBt);
 
-            inventoryBt = createButton("INVENTORY", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
+            orderBt = createButton("ORDER", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);
+            setIcon("src/main/java/Icon/orderIcon.png", orderBt);
+            add(orderBt);
 
-            setIcon("src/main/java/Icon/inventory_Icon.png", inventoryBt);
+            inventoryBt = createButton("INVENTORY", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);
+
+            setIcon("src/main/java/Icon/inventoryIcon.png", inventoryBt);
             add(inventoryBt);
 
-            accountManagementBt = createButton("ACCOUNT", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
+            accountManagementBt = createButton("ACCOUNT", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/user_15094854.png", accountManagementBt);
             add(accountManagementBt);
 
-            notificationBt = createButton("NOTIFICATION", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
+            notificationBt = createButton("NOTIFICATION", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/iconNotification.png", notificationBt);
             add(notificationBt);
         }
@@ -118,15 +109,15 @@ public class ManagerMenuPanel extends JPanel {
             setLayout(new GridLayout(4, 1, 0, 5));
             setBackground(Style.BACKGROUND_COLOR);
 
-            changeInformBt = createButton("CHANGE INFORMATION", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
+            changeInformBt = createButton("CHANGE INFORMATION", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/iconChangeInform.png", changeInformBt);
             add(changeInformBt);
 
-            switchToLoginBt = createButton("SWITCH TO LOGIN", Style.FONT_SIZE_MENU_BUTTON, Color.white, Style.BACKGROUND_COLOR);
+            switchToLoginBt = createButton("SWITCH TO LOGIN", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/switchRole_Icon.png", switchToLoginBt);
             add(switchToLoginBt);
 
-            logoutBt = createButton("LOGOUT", Style.FONT_SIZE_MENU_BUTTON, Style.CANCEL_BUTTON_COLOR_RED, Style.BACKGROUND_COLOR);
+            logoutBt = createButton("LOGOUT", Style.FONT_BOLD_15, Style.CANCEL_BUTTON_COLOR_RED, Style.BACKGROUND_COLOR);
             setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
             add(logoutBt);
 
@@ -163,6 +154,10 @@ public class ManagerMenuPanel extends JPanel {
     // thiết lập ActionListener cho nút "Nhà cung cấp"
     public void setSupplierButtonListener(ActionListener listener) {
         supplierBt.addActionListener(listener);
+    }
+
+    public void setOrderButtonListener(ActionListener listener) {
+        orderBt.addActionListener(listener);
     }
 
     // thiết lập ActionListener cho nút "inventory"

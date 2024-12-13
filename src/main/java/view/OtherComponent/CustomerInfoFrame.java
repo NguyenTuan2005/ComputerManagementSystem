@@ -214,7 +214,7 @@ public class CustomerInfoFrame extends JFrame {
 
     private JTextField createStyledTextField() {
         JTextField field = new JTextField();
-        field.setFont(Style.FONT_SIZE_MIN_PRODUCT);
+        field.setFont(Style.FONT_PLAIN_13);
         field.setPreferredSize(new Dimension(200, 30));
         field.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(MEDIUM_BLUE),

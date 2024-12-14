@@ -75,7 +75,7 @@ public class CustomerMenuPanel extends JPanel {
     // panel cho cac nút chức năng của người dùng ở giữa
     class ComponentButton extends JPanel {
         public ComponentButton() {
-            setLayout(new GridLayout(0, 1, 0, 20));
+            setLayout(new GridLayout(0, 1, 0, 10));
             setBackground(Style.BACKGROUND_COLOR);
 
             productCatalogBt = new JButton("PRODUCT CATALOG");

@@ -1218,6 +1218,7 @@ public class ManagerMainPanel extends JPanel {
         class TableOrderPanel extends JPanel{
             TableOrderPanel(){
                 setLayout(new BorderLayout());
+                setBackground(Color.WHITE);
                 orderTable = createTable(orderModel, orderColumnNames);
                 orderScrollPane = new JScrollPane(orderTable);
                 orderTabbedPane =  createTabbedPane(orderScrollPane, "Customer's Order", Style.FONT_BOLD_16);

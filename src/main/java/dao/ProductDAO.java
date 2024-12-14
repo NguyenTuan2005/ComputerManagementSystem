@@ -40,7 +40,6 @@ public class ProductDAO implements Repository<Product> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println( product);
         return product;
     }
 

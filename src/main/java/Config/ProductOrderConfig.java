@@ -3,9 +3,9 @@ package Config;
 import Model.Product;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.sql.SQLOutput;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -40,7 +40,7 @@ public class ProductOrderConfig {
     public boolean  hasProductName(Set<ProductOrderConfig> productOrderConfigs){
 
         for( var p : productOrderConfigs){
-            boolean isDQuaity = p.getQuatity() == 1 && this.quatity !=1;
+            boolean isDQuaity = p.getQuatity() != 1 && this.quatity !=1;
             boolean isSameName =  p.getProduct().getName().equals(product.getName());
             if ( isDQuaity && isSameName ){
                 return true;
@@ -49,14 +49,51 @@ public class ProductOrderConfig {
         return false;
     }
 
+    public static Set<ProductOrderConfig> getUnqueProductOrder(Set<ProductOrderConfig> productOrderConfigs){
+        ArrayList<ProductOrderConfig> pocs = new ArrayList<>();
+        pocs.addAll(productOrderConfigs);
+        for (int i = 0; i < pocs.size()-1; i++) {
+            var tamp = pocs.get(i);
+            for (int j = 0; j < pocs.size(); j++) {
+                var find = pocs.get(j);
+                boolean leftQuatity =tamp.getQuatity() == 1 && find.getQuatity() != 1;
+                boolean rigthQuatity =tamp.getQuatity() != 1 && find.getQuatity() == 1;
+                boolean isSameName =tamp.getProduct().getName() .equals(find.getProduct().getName());
+                if (isSameName){
+                    if (leftQuatity){
+                        productOrderConfigs.remove(tamp);
+                    } else if(rigthQuatity){
+                        productOrderConfigs.remove(find);
+                    }
+                }
+            }
+        }
+        return productOrderConfigs;
+    }
+
     public static void main(String[] args) {
         Product product1 = new Product(1,"mmm");
-        Product product2 = new Product(1,"mmm");
+        Product product2 = new Product(1,"mm");
         ProductOrderConfig productOrderConfig1 = new ProductOrderConfig(product1, 1);
-        ProductOrderConfig productOrderConfig2 = new ProductOrderConfig(product2, 1);
+        ProductOrderConfig productOrderConfig2 = new ProductOrderConfig(product1, 1);
+
+        ProductOrderConfig productOrderConfig3 = new ProductOrderConfig(new Product(1,"mmm"),1);
         Set<ProductOrderConfig> productOrderConfigSet = new HashSet<>();
         productOrderConfigSet.add(productOrderConfig1);
         productOrderConfigSet.add(productOrderConfig2);
-        System.out.println(productOrderConfigSet);
+        productOrderConfigSet.add(productOrderConfig3);
+        System.out.println(">>>>>>Set : ");
+        for( var x: productOrderConfigSet) {
+            System.out.println(x);
+            System.out.println();
+        }
+        System.out.println();
+
+//        System.out.println( ">>>>> before set > "+productOrderConfigSet.stream().filter(p->p.hasProductName(productOrderConfigSet)).collect(Collectors.toSet()));
+        System.out.println(">>>>");
+//        for( var x:  getItem(productOrderConfigSet)) {
+//            System.out.println(x);
+//            System.out.println();
+//        }
     }
 }

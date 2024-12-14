@@ -6,12 +6,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class CustomerFrame extends JFrame {
     CustomerMainPanel customerMainPanel;
     CustomerMenuPanel customerMenuPanel;
 
-    public CustomerFrame() {
+    public CustomerFrame() throws SQLException {
 //    public CustomerFrame(LoginFrame loginFrame) {
         setTitle("Computer Management");
         setSize(1250, 650);
@@ -94,7 +95,7 @@ public class CustomerFrame extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         new CustomerFrame();
     }
 }

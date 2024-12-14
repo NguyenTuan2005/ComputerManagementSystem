@@ -1,5 +1,6 @@
 package Config;
 
+import controller.CustomerController;
 import dao.CustomerDAO;
 import dto.CustomerOrderDTO;
 import dto.KeyOrderDTO;
@@ -7,19 +8,27 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import view.OverrideComponent.ToastNotification;
 
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-@Builder
+//@Builder
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 public class BillConfig {
 
     private ArrayList<CustomerOrderDTO> bills;
+
+    private Map<Integer, List<CustomerOrderDTO>> metadataMap;
+
+    public BillConfig(ArrayList<CustomerOrderDTO> bills) {
+        this.bills = bills;
+        this.metadataMap = this.getMapByOrderId();
+    }
 
     private ArrayList<CustomerOrderDTO> getLastItem() {
         try {
@@ -39,9 +48,24 @@ public class BillConfig {
         return null;
     }
 
-    public String getLastBill() {
-        var bill = this.getLastItem();
-        return generateBill(bill);
+    public String getNewBill() {
+        for (Map.Entry<Integer, List<CustomerOrderDTO>> data : this.metadataMap.entrySet()){
+
+            System.out.println(generateBill((ArrayList<CustomerOrderDTO>) data.getValue()));
+            System.out.println("\n");
+            System.out.println("\n");
+            System.out.println("\n");
+            System.out.println("\n");
+
+        }
+        return "co cai nit";
+    }
+
+    public String getBillCurrent(){
+        for (Map.Entry<Integer,List<CustomerOrderDTO>> bill : this.metadataMap.entrySet()){
+           return generateBill((ArrayList<CustomerOrderDTO>) bill.getValue());
+        }
+       return "Not found";
     }
 
     public ArrayList<String> getBills() {
@@ -176,7 +200,7 @@ public class BillConfig {
                 ? text.substring(0, maxLength - 3) + "..."
                 : text;
     }
-    // tac cac order ra
+
     public Map<KeyOrderDTO, ArrayList<CustomerOrderDTO>> convertDataToBills() {
         ListIterator<CustomerOrderDTO> datas = this.bills.listIterator();
         Map<KeyOrderDTO, ArrayList<CustomerOrderDTO>> mapBills = new HashMap<>();
@@ -195,6 +219,7 @@ public class BillConfig {
         return mapBills;
     }
 
+
     private ArrayList<CustomerOrderDTO> addToArrayList(CustomerOrderDTO that) {
         ArrayList<CustomerOrderDTO> unitBills = new ArrayList<>();
         unitBills.add(that);
@@ -202,5 +227,34 @@ public class BillConfig {
     }
 
 
+    public Map<Integer, List<CustomerOrderDTO>> getMapByOrderId(){
+        Comparator<Integer> comparator = new Comparator<>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2-o1;
+            }
+        };
+        TreeMap<Integer,List<CustomerOrderDTO>> map = new TreeMap<>(comparator);
+        var m =  this.bills.stream().collect(
+                Collectors.groupingBy(
+                        p->p.getOrderId(),
+                        Collectors.toList()));
+        map.putAll(m);
+      return map;
+    }
+
+
+
+
+
+
+    public static void main(String[] args) {
+        CustomerController c = new CustomerController();
+        BillConfig b = new BillConfig(c.findCustomerOrderById(10));
+        b.getMapByOrderId().entrySet().forEach(System.out::println);
+
+//        System.out.println(b.getNewBill());
+
+    }
 
 }

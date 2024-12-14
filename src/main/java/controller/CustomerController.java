@@ -2,15 +2,23 @@ package controller;
 
 import Config.CurrentUser;
 import Model.Customer;
+import Model.Image;
 import dao.CustomerDAO;
+import dao.ImageDAO;
 import dto.CustomerOrderDTO;
+import dto.CustomerOrderDetailDTO;
 import security.PasswordSecurity;
 import Enum.*;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CustomerController implements ModelController<Customer> {
     private CustomerDAO customerDAO;
+
+    private ImageDAO imageDAO;
 
     public static LoginStatus loginStatus = LoginStatus.NOT_FOUND;
 
@@ -18,7 +26,8 @@ public class CustomerController implements ModelController<Customer> {
 
     public CustomerController(){
         this.customerDAO = new CustomerDAO();
-        passwordSecurity = new PasswordSecurity();
+        this.passwordSecurity = new PasswordSecurity();
+        this.imageDAO = new ImageDAO();
     }
 
     public boolean isValidAccount(String email , String password ){
@@ -107,6 +116,21 @@ public class CustomerController implements ModelController<Customer> {
 
     public ArrayList<CustomerOrderDTO> findCustomerOrderById(int id){
         return customerDAO.getDataCustomerOrderById(id);
+    }
+
+    public ArrayList<CustomerOrderDetailDTO> getCustomerOrderDetail(int id){
+        ArrayList<CustomerOrderDTO> customerOrderDetailDTOs = this.customerDAO.getDataCustomerOrderById(id);
+        List<Image> images = this.imageDAO.getAll();
+        ArrayList<CustomerOrderDetailDTO> result = new ArrayList<>();
+        for (var data : customerOrderDetailDTOs){
+            result.add(new CustomerOrderDetailDTO(data, images.stream().filter(image -> image.getProductId() == data.getProductId()).collect(Collectors.toList())));
+        }
+        return result;
+    }
+
+    public static void main(String[] args) throws SQLException {
+        CustomerController c= new CustomerController();
+        c.getCustomerOrderDetail(10);
     }
 
     public void block(boolean isBlock, int id){

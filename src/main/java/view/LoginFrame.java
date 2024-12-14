@@ -1123,7 +1123,6 @@ public class LoginFrame extends JFrame {
             }
         }
 
-
         class VerificationCodePanel extends JPanel {
             JTextField[] otpFields = new JTextField[4];
             CustomButton verifyBt, backBt;

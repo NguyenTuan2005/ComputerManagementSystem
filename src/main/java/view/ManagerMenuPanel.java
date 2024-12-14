@@ -70,7 +70,7 @@ public class ManagerMenuPanel extends JPanel {
 
     class ComponentButton extends JPanel {
         public ComponentButton() {
-            setLayout(new GridLayout(0, 1, 0, 20));
+            setLayout(new GridLayout(0, 1, 0, 10));
             setBackground(Style.BACKGROUND_COLOR);
 
             productBt = createButton("PRODUCT", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);

@@ -475,6 +475,8 @@ public class CustomerMainPanel extends JPanel {
                                 bills = customerController.findCustomerOrderById(customerId);
                                 addCustomerNotification(c, new BillConfig(bills).getBillCurrent());
                                 ToastNotification.showToast("Successful purchase !!!", 2500, 50, -1, -1);
+                                //REMOVE CÁI CART
+
                             } else {
                                 ToastNotification.showToast("Cancel order !!!", 2500, 50, -1, -1);
                             }
@@ -1401,7 +1403,7 @@ public class CustomerMainPanel extends JPanel {
         notificationContainer.revalidate();
         notificationContainer.repaint();
     }
-//---------------------------------------------------------------------------------------
+
 
     public void addOrderToContainer(JPanel panel) {
         this.ordersContainer.add(panel);

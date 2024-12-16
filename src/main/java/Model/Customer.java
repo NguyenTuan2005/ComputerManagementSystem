@@ -95,7 +95,6 @@ public class Customer {
     }
 
     public static Object [][] getDataOnTable(ArrayList<Customer> customers){
-//        String [][] datas = new String[customers.size()][];
         Object [][] datass = new Object[customers.size()][];
         for (int i = 0; i < customers.size(); i++) {
             datass[i] = customers.get(i).convertToObjects(i+1);

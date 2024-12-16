@@ -54,6 +54,8 @@ public class TextFieldConfig {
         return field;
     }
 
+
+
     public static JTextField createUneditableTextField(String label) {
         JTextField textField = TextFieldConfig.createStyledTextField(
                 Style.FONT_PLAIN_18,
@@ -68,17 +70,29 @@ public class TextFieldConfig {
         return textField;
     }
 
-    public static JTextField createTextFieldWithPlaceHolder(String text, Font font, Color textColor, Dimension size) {
+    public static JTextField createTextField(String text, Font font, Color textColor, Dimension size) {
         JTextField field = new JTextField(text);
         field.setForeground(textColor);
         field.setPreferredSize(size);
         field.setFont(font);
         field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
-        addFocusListenerForTextField(field, text);
+        addFocusListenerForTextField(field, text,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
         return field;
     }
 
-    public static void addFocusListenerForTextField(JTextField field, String originText) {
+    public static JTextField createTextField(String text, Font font, Color textColor, Color backgroundColor, Color borderColor, Dimension size, boolean editable) {
+        JTextField field = new JTextField(text);
+        field.setForeground(textColor);
+        field.setPreferredSize(size);
+        field.setFont(font);
+        field.setBackground(backgroundColor);
+        field.setEditable(editable);
+        field.setBorder(BorderFactory.createLineBorder(borderColor, 1));
+        addFocusListenerForTextField(field, borderColor);
+        return field;
+    }
+
+    public static void addFocusListenerForTextField(JTextField field, String originText, Color borderColor) {
         field.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -86,20 +100,34 @@ public class TextFieldConfig {
                 if (field.getText().equals(originText)) {
                     field.setText("");
                 }
-                field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
+                field.setBorder(BorderFactory.createLineBorder(borderColor, 4));
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ giống originText
                 if (field.getText().isEmpty()) {
                     field.setForeground(Color.GRAY);
                     field.setText(originText);
                 }
-                field.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
+                field.setBorder(BorderFactory.createLineBorder(borderColor, 1));
             }
         });
     }
+
+    public static void addFocusListenerForTextField(JTextField field, Color borderColor){
+        field.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                field.setBorder(BorderFactory.createLineBorder(borderColor, 4));
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                field.setBorder(BorderFactory.createLineBorder(borderColor, 1));
+            }
+        });
+    }
+
+
 
     public static void resetTextField(JTextField that, String placeHolder) {
         that.setText(placeHolder);

@@ -4,6 +4,8 @@ import java.awt.*;
 
 public class Style {
     //font
+
+
     //13
     public static final Font FONT_BOLD_13 = new Font("Arial", Font.BOLD, 13);
     public static final Font FONT_PLAIN_13 = new Font("Arial", Font.PLAIN, 13);
@@ -20,12 +22,15 @@ public class Style {
     public static final Font FONT_PLAIN_18 = new Font("Arial", Font.PLAIN, 18);
     public static final Font FONT_BOLD_18 = new Font("Arial", Font.BOLD, 18);
 
-    public static final Font FONT_BOLD_24 = new Font("Arial", Font.BOLD, 24);
+
     //20
     public static final Font FONT_PLAIN_20 = new Font("Arial", Font.PLAIN, 20);
     public static final Font FONT_BOLD_20 = new Font("Arial", Font.BOLD, 20);
 
+    public static final Font FONT_BOLD_24 = new Font("Arial", Font.BOLD, 24);
+    //25
     public static final Font FONT_PLAIN_25 = new Font("Arial", Font.PLAIN, 25);
+    public static final Font FONT_BOLD_25 = new Font("Arial", Font.BOLD, 25);
 
     public static final Font FONT_BOLD_30 = new Font("Arial", Font.BOLD, 30);
 
@@ -41,6 +46,8 @@ public class Style {
     public static final Color MEDIUM_BLUE = new Color(51, 153, 255);
     public  static final Color BACKGROUND_COLOR =new Color(48, 176, 199);
     public static final Color MENU_BUTTON_COLOR_GREEN = new Color(122, 222, 122);
+    public static final Color BUTTON_HOVER_COLOR = new Color(52, 152, 219);
+    public static final Color BUTTON_COLOR = new Color(41, 128, 185);
 
     //manager frame
     public static final Color ADD_BUTTON_COLOR_GREEN = new Color(100, 218, 77);// màu xanh cho nút thêm sp

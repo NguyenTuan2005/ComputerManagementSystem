@@ -113,7 +113,7 @@ public class AddSupplierFrame extends JFrame {
 
             clearButton = ButtonConfig.createStyledButton("CLEAR ALL");
             clearButton.setForeground(Style.WORD_COLOR_BLACK);
-            ButtonConfig.addButtonHoverEffect(clearButton, ButtonConfig.BUTTON_HOVER_COLOR, ButtonConfig.BUTTON_COLOR);
+            ButtonConfig.addButtonHoverEffect(clearButton, Style.BUTTON_HOVER_COLOR, Style.BUTTON_COLOR);
             saveButton = ButtonConfig.createStyledButton("SAVE");
             saveButton.setForeground(Style.WORD_COLOR_BLACK);
             ButtonConfig.addButtonHoverEffect(saveButton, ButtonConfig.BUTTON_HOVER_COLOR, ButtonConfig.BUTTON_COLOR);

@@ -15,22 +15,26 @@ public class ButtonConfig {
     public static final Color BUTTON_HOVER_COLOR = new Color(52, 152, 219);
     public static final Color BUTTON_COLOR = new Color(41, 128, 185);
 
-    public static void setIconSmallButton(String url, JButton that) {
+
+    public static void setButtonIcon(String url, JButton that, int gap) {
         ImageIcon iconButton = new ImageIcon(url);
         Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
         Dimension buttonSize = that.getPreferredSize();
-        Image resizedImage = image.getScaledInstance(buttonSize.height - 10, buttonSize.height - 10, java.awt.Image.SCALE_SMOOTH); // Resize
+        Image resizedImage = image.getScaledInstance(buttonSize.height - gap, buttonSize.height - gap, java.awt.Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
     }
+
 
     public static void setStyleButton(JButton that, Font font, Color textColor, Color backgroundColor, int textPosition, Dimension size) {
         that.setBackground(backgroundColor);
         that.setFont(font);
-        that.setHorizontalAlignment(textPosition);
+        that.setVerticalTextPosition(SwingConstants.BOTTOM);
+        that.setHorizontalTextPosition(textPosition);
         that.setBorderPainted(false);
         that.setForeground(textColor);
         that.setFocusable(false);
         that.setPreferredSize(size);
+
     }
 
     public static JButton createStyledButton(String text) {
@@ -44,14 +48,6 @@ public class ButtonConfig {
         return button;
     }
 
-    public static void setIconBigButton(String url, JButton that) {
-        ImageIcon iconButton = new ImageIcon(url);
-        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
-        Dimension buttonSize = that.getPreferredSize();
-        Image resizedImage = image.getScaledInstance(buttonSize.height - 35, buttonSize.height - 35, java.awt.Image.SCALE_SMOOTH); // Resize
-        that.setIcon(new ImageIcon(resizedImage));
-    }
-
     // set icon cho button duy đã tại conflict tại đây >>>
     public static void setIcon(String url, JButton that) {
         ImageIcon iconButton = new ImageIcon(url);
@@ -61,15 +57,6 @@ public class ButtonConfig {
         that.setIcon(new ImageIcon(resizedImage));
     }
 
-    // format lai dinh dang button
-    public static void setFormatButton(JButton that) {
-        that.setFocusable(false);
-        that.setBackground(Style.BACKGROUND_COLOR);
-        that.setForeground(Style.WORD_COLOR_WHITE);
-        that.setFont(Style.FONT_PLAIN_15);
-        that.setHorizontalAlignment(SwingConstants.LEFT);
-        that.setBorderPainted(false);
-    }
 
     public static JSeparator createVerticalSeparator(int w, int h) {
         JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
@@ -83,7 +70,7 @@ public class ButtonConfig {
         return separator;
     }
 
-    public static void addButtonHoverEffect(JButton button, Color hover, Color def) {
+    public static void addButtonHoverEffect(JButton button, Color hover, Color defaultColor) {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -92,10 +79,14 @@ public class ButtonConfig {
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBackground(def);
+                button.setBackground(defaultColor);
             }
         });
     }
+
+
+
+
 
     public static JButton createEditFieldButton(JTextField textField) {
         JButton editBt = new JButton();

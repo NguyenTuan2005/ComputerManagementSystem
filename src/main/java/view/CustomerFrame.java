@@ -15,7 +15,7 @@ public class CustomerFrame extends JFrame {
     public CustomerFrame() throws SQLException {
 //    public CustomerFrame(LoginFrame loginFrame) {
         setTitle("Computer Management");
-        setSize(1250, 650);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setResizable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());

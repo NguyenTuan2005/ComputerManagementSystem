@@ -115,8 +115,6 @@ public class Product {
                 , weight
                 , card
         };
-        System.out.println(this.status);
-//        System.out.println(Double.toString(price));
         return result;
     }
 

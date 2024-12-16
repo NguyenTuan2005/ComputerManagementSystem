@@ -24,8 +24,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -93,7 +91,7 @@ public class CustomerMainPanel extends JPanel {
 
     class ProductCatalogMainPanel extends JPanel {
         ProductCatalogInnerPn productCatalogInnerPn = new ProductCatalogInnerPn();
-        CartPanel cartPanel = new CartPanel();
+        CartPanel1 cartPanel = new CartPanel1();
         ToolPanel toolPanel;
         DisplayProductPanel displayProductPanel;
         JButton searchBt;
@@ -503,6 +501,184 @@ public class CustomerMainPanel extends JPanel {
             }
 
         }
+
+        class CartPanel1 extends JPanel {
+            CustomButton backBt;
+            ProductsInCartPanel productsInCartPanel;
+            SummaryPanel summaryPanel;
+            JScrollPane scrollPane;
+            private int totalItemCount = 0;
+            private int totalPriceCount = 9999;
+
+            CartPanel1() {
+                setLayout(new BorderLayout());
+                productsInCartPanel = new ProductsInCartPanel();
+                summaryPanel = new SummaryPanel();
+
+                add(productsInCartPanel, BorderLayout.CENTER);
+                add(summaryPanel, BorderLayout.EAST);
+            }
+
+            class ProductsInCartPanel extends JPanel{
+
+                ProductsInCartPanel(){
+                    setLayout(new BorderLayout());
+
+                    JPanel titlePnTop = new JPanel(new BorderLayout());
+                    titlePnTop.setBackground(Color.WHITE);
+                    titlePnTop.setPreferredSize(new Dimension(800, 100));
+                    JLabel title = LabelConfig.createLabel("    Shopping Cart", Style.FONT_TITLE_BOLD_40,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.LEFT,SwingConstants.CENTER);
+                    titlePnTop.add(title,BorderLayout.WEST);
+
+                    JLabel items = LabelConfig.createLabel("3 items     ", Style.FONT_BOLD_20,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.RIGHT,SwingConstants.CENTER);
+
+                    titlePnTop.add(items,BorderLayout.EAST);
+
+                    add(titlePnTop, BorderLayout.NORTH);
+
+                    // container contain all the
+                    cartContainer.setLayout(new BoxLayout(cartContainer, BoxLayout.Y_AXIS));
+                    cartContainer.add(emptyCartPn);
+                    scrollPane = new JScrollPane(cartContainer);
+                    scrollPane.setBackground(Color.WHITE);
+                    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+                    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                    setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
+                    add(scrollPane, BorderLayout.CENTER);
+
+                    // panel contain back button
+                    JPanel backPnBottom = new JPanel(new BorderLayout());
+                    backPnBottom.setBackground(Color.WHITE);
+                    backPnBottom.setPreferredSize(new Dimension(800, 100));
+                    backBt = ButtonConfig.createCustomButton("Back", Style.FONT_BOLD_16, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,
+                            Style.MEDIUM_BLUE, 5, SwingConstants.CENTER, new Dimension(110, 30));
+                    ButtonConfig.setButtonIcon("src/main/java/Icon/back_Icon1.png", backBt,5);
+                    backBt.addActionListener(e -> {
+                        ProductCatalogMainPanel.this.show("catalog");
+                    });
+
+                    backPnBottom.add(backBt, BorderLayout.WEST);
+                    add(backPnBottom, BorderLayout.SOUTH);
+                }
+
+            }
+
+            // thông tin người đặt mua và tính tiền
+            class SummaryPanel extends JPanel {
+
+                private JLabel totalItem, totalPrice;
+                private CustomButton orderBt;
+
+                SummaryPanel() {
+                    setLayout(new GridBagLayout());
+                    setPreferredSize(new Dimension(320, 300));
+                    setBackground(Color.WHITE);
+                    GridBagConstraints gbc = new GridBagConstraints();
+                    gbc.insets = new Insets(5, 5, 5, 5);
+                    gbc.weightx = 1.0;
+
+                    JLabel title = new JLabel("Delivery Information");
+                    title.setFont(Style.FONT_BOLD_24);
+                    title.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+                    gbc.gridx = 0;
+                    gbc.gridy = 0;
+                    add(title, gbc);
+
+                    emailField = TextFieldConfig.createTextField("", Style.FONT_PLAIN_18, Color.BLACK, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 45));
+                    emailField.setText(CurrentUser.CURRENT_CUSTOMER.getEmail());
+                    gbc.gridy = 1;
+                    add(emailField, gbc);
+
+                    nameField = TextFieldConfig.createTextField("", Style.FONT_PLAIN_18, Color.BLACK, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 45));
+                    nameField.setText(CurrentUser.CURRENT_CUSTOMER.getFullName());
+                    gbc.gridy = 2;
+                    add(nameField, gbc);
+
+
+                    addressField = TextFieldConfig.createTextField("", Style.FONT_PLAIN_18, Color.BLACK, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 45));
+                    addressField.setText(CurrentUser.CURRENT_CUSTOMER.getAddress());
+                    gbc.gridy = 4;
+                    add(addressField, gbc);
+
+                    JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+                    separator.setOrientation(SwingConstants.HORIZONTAL);
+
+                    separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 2));
+                    gbc.gridy = 5;
+                    add(separator, gbc);
+
+                    JLabel cartTotal = new JLabel("Cart Total");
+                    cartTotal.setFont(Style.FONT_BOLD_24);
+                    cartTotal.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+                    gbc.gridy = 6;
+                    add(cartTotal, gbc);
+
+
+//                    totalItem = new JLabel(totalItemCount + " Items in your Cart");
+                    totalItem = new JLabel("<html> <font color='green'>" + totalItemCount + "</font> Items in your Cart</html>");
+                    totalItem.setFont(Style.FONT_BOLD_20);
+                    gbc.gridy = 7;
+                    add(totalItem, gbc);
+
+
+                    totalPrice = new JLabel("<html> <font color='black'>Total:  </font> <font color='red'>$" + totalPriceCount + "</font></html>");
+                    totalPrice.setFont(Style.FONT_BOLD_20);
+                    gbc.gridy = 8;
+                    add(totalPrice, gbc);
+
+                    orderBt = createCustomButtonGradientBorder("Order", Style.FONT_BOLD_30, new Color(14, 163, 204), Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.GREEN, 3, 15, new Dimension(250, 50));
+                    orderBt.setHorizontalAlignment(SwingConstants.CENTER);
+                    orderBt.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    orderBt.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            if (emailField.getText().isEmpty() || emailField.getText().equals("Enter Your Email")) {
+                                emailField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                                emailField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                            }
+                            if (nameField.getText().isEmpty() || nameField.getText().equals("Enter Your Name")) {
+                                nameField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                                nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                            }
+                            if (addressField.getText().isEmpty() || addressField.getText().equals("Enter Your Address")) {
+                                addressField.setBorder(BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
+                                addressField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                            }
+
+                            int i = JOptionPane.showConfirmDialog(null, "Would you like to confirm your order?", "Order Confirmation", JOptionPane.YES_NO_OPTION);
+                            boolean saved = (i == 0);
+                            if (saved) {
+                                int customerId = CurrentUser.CURRENT_CUSTOMER.getId();
+                                int managerId = CurrentUser.CURRENT_MANAGER.getManagerId();
+                                String address = addressField.getText();
+                                String status = STATUS_ORDER;
+                                int orderId = orderController.save(customerId, managerId, address, status);
+//                                orderDetailController.saves(orderId, productOrders);
+//                                bill = customerController.findCustomerOrderById(customerId);
+                                System.out.println(">>> set : ");
+
+//                                for (var o : productOrders.stream().filter(p -> p.hasProductName(productOrders)).collect(Collectors.toSet())) {
+//                                    System.out.println(o);
+//                                }
+                                productOrders.clear();
+                                var c = new Customer();
+                                c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
+                                bills = customerController.findCustomerOrderById(customerId);
+                                addCustomerNotification(c, new BillConfig(bills).getBillCurrent());
+                                ToastNotification.showToast("Successful purchase !!!", 2500, 50, -1, -1);
+                                //REMOVE CÁI CART
+
+                            } else {
+                                ToastNotification.showToast("Cancel order !!!", 2500, 50, -1, -1);
+                            }
+                        }
+                    });
+                    gbc.gridy = 9;
+                    add(orderBt, gbc);
+                }
+            }
+        }
+
+
     }
 
     class OrderHistoryPanel extends JPanel {
@@ -1513,6 +1689,7 @@ public class CustomerMainPanel extends JPanel {
         JPanel bottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottomRight.setBackground(Color.WHITE);
         JLabel items = LabelConfig.createLabel(customerOrderDTOs.size() + " items:  ", Style.FONT_BOLD_25, Color.BLACK, SwingConstants.RIGHT);
+
         String priceFormated = formatCurrency.format(totalPrice);
         JLabel totalPriceLabel = LabelConfig.createLabel(priceFormated + "₫", Style.FONT_BOLD_25, Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.LEFT);
 

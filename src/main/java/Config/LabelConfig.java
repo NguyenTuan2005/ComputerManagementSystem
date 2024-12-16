@@ -12,6 +12,14 @@ public class LabelConfig {
         return label;
     }
 
+    public static JLabel createLabel(String text, Font font, Color textColor, int horizontal, int vertical ){
+        JLabel label = new JLabel(text);
+        label.setForeground(textColor);
+        label.setFont(font);
+        label.setHorizontalAlignment(horizontal);
+        label.setVerticalAlignment(vertical);
+        return label;
+    }
 
 
 }

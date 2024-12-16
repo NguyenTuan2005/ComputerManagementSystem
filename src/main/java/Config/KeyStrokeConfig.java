@@ -9,6 +9,10 @@ public class KeyStrokeConfig {
     public static final String deleteKey = "DELETE";
     public static final String exportExcelKey = "control E";
     public static final String importExcelKey = "control I";
+    public static final String blockUserKey = "control B";
+    public static final String setSaleKey = "control S";
+    public static final String restockKey = "control Z";
+    public static final String toBillKey = "control T";
     public static final String reloadKey = "F5";
 
 

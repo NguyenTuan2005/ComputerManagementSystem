@@ -77,6 +77,7 @@ public class ManagerFrame extends JFrame {
         managerMenuPanel.setNotificationButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                managerMainPanel.reloadNotification();
                 managerMainPanel.showPanel(ManagerMainPanel.NOTIFICATION_CONSTRAINT);
                 setHover(ManagerMainPanel.NOTIFICATION_CONSTRAINT);
             }

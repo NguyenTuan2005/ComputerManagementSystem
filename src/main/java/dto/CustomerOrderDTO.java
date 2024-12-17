@@ -3,7 +3,7 @@ package dto;
 import Config.EmailConfig;
 import controller.CustomerController;
 import lombok.*;
-
+import Enum.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,7 +37,8 @@ public class CustomerOrderDTO {
     private String weight;
     private String monitor;
     private String card;
-    private String productImage;
+    private OrderType status;
+
 
 
     public String toBillString() {
@@ -99,5 +100,37 @@ public class CustomerOrderDTO {
 
     public boolean sameOderId(int id) {
         return  this.orderId == id;
+    }
+
+    public String[] toOrderArray() {
+        return new String[]{String.valueOf(this.orderId),
+                String.valueOf(this.customerId),
+                String.valueOf(this.orderDate),
+                this.shipAddress,
+                this.statusItem,
+                this.saler,
+                String.valueOf(this.salerId),
+                String.valueOf(this.totalCost()),
+                String.valueOf(this.quantity)};
+    }
+
+    public void update(double unitPrice, int quantity) {
+        this.unitPrice += unitPrice;
+        this.quantity += quantity;
+    }
+
+    public void convertToEnum(String status){
+        switch (status){
+            case OrderType.ACTIVE_MESSAGE :
+                this.status = OrderType.ACTIVE;
+                break;
+            case OrderType.UN_ACTIVE_MESSAGE:
+                this.status = OrderType.UN_ACTIVE;
+                break;
+        }
+    }
+
+    public boolean isDispatched() {
+        return this.status.isDispatched();
     }
 }

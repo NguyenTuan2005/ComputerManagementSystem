@@ -288,7 +288,7 @@ public class LoginFrame extends JFrame {
             add(nameIcon, gbc);
 
             gbc.gridx = 1;
-            nameField = TextFieldConfig.createTextFieldWithPlaceHolder("User Name", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
+            nameField = TextFieldConfig.createTextField("User Name", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
             nameField.addActionListener(e -> signUpButton.doClick());
             add(nameField, gbc);
 
@@ -300,7 +300,7 @@ public class LoginFrame extends JFrame {
             add(emailIcon, gbc);
 
             gbc.gridx = 1;
-            emailField = TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
+            emailField = TextFieldConfig.createTextField("User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
             emailField.addActionListener(e -> signUpButton.doClick());
             emailField.setInputVerifier(new EmailVerifier());
             add(emailField, gbc);
@@ -325,7 +325,7 @@ public class LoginFrame extends JFrame {
             popup.add(hintLabel);
             popup.setSize(300, 70);
 
-            addressField = TextFieldConfig.createTextFieldWithPlaceHolder("User Address", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
+            addressField = TextFieldConfig.createTextField("User Address", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
             addressField.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -782,7 +782,7 @@ public class LoginFrame extends JFrame {
             gbc.gridx = 1;
             nameField = new JTextField("User Email");
 
-            nameField = TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
+            nameField = TextFieldConfig.createTextField("User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
             nameField.addFocusListener(new FocusListener() {
                 @Override
                 public void focusGained(FocusEvent e) {
@@ -1076,7 +1076,7 @@ public class LoginFrame extends JFrame {
                 emailIcon.setPreferredSize(new Dimension(30, 30));
                 add(emailIcon, gbc);
                 gbc.gridx = 1;
-                emailField = TextFieldConfig.createTextFieldWithPlaceHolder("User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
+                emailField = TextFieldConfig.createTextField("User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
                 emailField.addActionListener(e -> {
                     sendCodeBt.doClick();
                 });
@@ -1122,7 +1122,6 @@ public class LoginFrame extends JFrame {
                 return rdoBt;
             }
         }
-
 
         class VerificationCodePanel extends JPanel {
             JTextField[] otpFields = new JTextField[4];

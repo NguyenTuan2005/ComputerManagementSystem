@@ -48,7 +48,7 @@ public class ManagerMenuPanel extends JPanel {
             setBackground(Style.BACKGROUND_COLOR);
             setBorder(BorderFactory.createEmptyBorder());
 
-            role = new JLabel("Customer");
+            role = new JLabel("Manager");
             role.setFont(Style.FONT_PLAIN_25);
             role.setForeground(Color.GREEN);
             role.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -70,7 +70,9 @@ public class ManagerMenuPanel extends JPanel {
 
     class ComponentButton extends JPanel {
         public ComponentButton() {
-            setLayout(new GridLayout(0, 1, 0, 20));
+
+            setLayout(new GridLayout(0, 1, 0, 5));
+
             setBackground(Style.BACKGROUND_COLOR);
 
             productBt = createButton("PRODUCT", Style.FONT_BOLD_15, Color.white, Style.BACKGROUND_COLOR);

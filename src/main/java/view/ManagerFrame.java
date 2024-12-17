@@ -11,7 +11,7 @@ public class ManagerFrame extends JFrame {
 
     public ManagerFrame() {
         setTitle("Computer Management");
-        setSize(1200, 650);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setResizable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

@@ -232,6 +232,10 @@ public class CustomerMainPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         updateSelectedButton(cheapest);
+                        cartContainer.removeAll();
+                        cartContainer.add(emptyCartPn);
+                        cartContainer.revalidate();
+                        cartContainer.repaint();
                         displayProductOnPage(DisplayProductOnPageType.CHEAP);
 
                     }
@@ -1523,9 +1527,12 @@ public class CustomerMainPanel extends JPanel {
                 cancelOrder.setEnabled(false);
             }
         });
+
         buyBackBt.addActionListener(e->{
             // mua lai thi phai reload cho hien len
-            JOptionPane.showConfirmDialog(null,"chua code anh oi ");
+            JOptionPane.showConfirmDialog(null,"chua code anh oi  chua có logic mua hàng");
+            addOrderToContainer(createOrderPn(orderId,customerOrderDTOs));
+
 
         });
 
@@ -1649,6 +1656,8 @@ public class CustomerMainPanel extends JPanel {
     private void displayProductOnPage(DisplayProductOnPageType type) {
         // aa chua remove item dc
         // remove old product
+
+
         ProductController productController = new ProductController();
         ArrayList<Product> products = productController.getEagerProducts();
 

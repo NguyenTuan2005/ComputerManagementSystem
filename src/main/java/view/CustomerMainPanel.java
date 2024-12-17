@@ -1005,7 +1005,8 @@ public class CustomerMainPanel extends JPanel {
         for (int i = 0; i < images.length; i++) {
             images[i] = createImageForProduct(urls.get(i).getUrl(), 300, 300);
         }
-        JLabel imageLabel = new JLabel(images[0]);// Hiển thị hình ảnh đầu tiên
+//        JLabel imageLabel = new JLabel(images[0]);// Hiển thị hình ảnh đầu tiên
+        JLabel imageLabel = new JLabel(CurrentUser.URL);// Hiển thị hình ảnh đầu tiên
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
         gbc.gridy = 0;
         gbc.gridx = 0;

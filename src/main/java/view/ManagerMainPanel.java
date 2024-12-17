@@ -2,7 +2,7 @@ package view;
 
 
 import Config.*;
-import Enum.TableStatus;
+import Enum.*;
 import Model.*;
 import Verifier.*;
 import com.toedter.calendar.JCalendar;
@@ -49,12 +49,10 @@ import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
-import static Model.Account.getCurrentDate;
+import static Config.ButtonConfig.setIconSmallButton;
 import static view.CustomerMainPanel.createImageForProduct;
 
 
@@ -89,6 +87,7 @@ public class ManagerMainPanel extends JPanel {
     static final String[] columnNamesSUPPLIER = {"Serial Number", "Supplier ID:", "Supplier Name:", "Email:", "Phone number:", "Address:", "Contract Start Date:"};
     static final String[] columnNamesCUSTOMER = {"Customer ID:", "Customer Name:", "Phone Number:", "Email:", "Address:", "Date of Birth:"};
 
+    private Map<Customer, List<CustomerOrderDTO>> customerOrders = getAllCustomerOrder();
     static DecimalFormat formatCurrency = new DecimalFormat("#,###");
     //main constructor
     public ManagerMainPanel() {
@@ -739,10 +738,6 @@ public class ManagerMainPanel extends JPanel {
                 modelSupplier.addRow(strings);
             }
         }
-
-        public static ArrayList<Supplier> reloadSuppliers() {
-            return supplierController.reloadData();
-        }
     }
 
     //james
@@ -1116,21 +1111,21 @@ public class ManagerMainPanel extends JPanel {
 
     }
 
-    class OrderPanel extends JPanel {
-        final String[] orderColumnNames = {"Serial number", "Customer ID", "Order Date", "Ship address", "Status Item", "Saler", "Saler ID", "Total Price", "Quantity", "Product ID", "Product Name"};
+    class OrderPanel extends JPanel{
+        final String[] orderColumnNames = {"Serial number", "Customer ID", "Order Date", "Ship address", "Status Item", "Saler", "Saler ID","Total Price", "Total Quantity"};
 
-
-        private CustomButton exportExcelBt, reloadBt, searchBt;
+        private JButton exportExcelBt, reloadBt, searchBt, dispatchOrderBt;
         private JTextField searchOrderField;
 
-        private JTable orderTable;
-        private DefaultTableModel orderModel;
-        private JScrollPane orderScrollPane;
+        private JTable orderTable, dispatchedOrderTable;
+        private DefaultTableModel orderModel, dispatchedOrderModel;
+        private JScrollPane orderScrollPane, dispatchedOrderScroll;
         private JTabbedPane orderTabbedPane;
         private ToolPanel toolPanel = new ToolPanel();
         private TableOrderPanel tableCustomerPanel = new TableOrderPanel();
-        private ExportPanel exportPanel;
-        OrderPanel() {
+        private TreeMap<Integer, List<CustomerOrderDTO>> orders;
+
+        OrderPanel(){
             setLayout(new BorderLayout());
             toolPanel.setBorder(BorderFactory.createTitledBorder("Tool"));
             toolPanel.setPreferredSize(new Dimension(800, 120));
@@ -1144,19 +1139,38 @@ public class ManagerMainPanel extends JPanel {
             ToolPanel() {
                 setLayout(new GridLayout(1, 2));
                 setBackground(Color.WHITE);
-
-                exportExcelBt = ButtonConfig.createCustomButton("Export Excel", Style.FONT_PLAIN_15, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,
-                        Color.white, Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 5, SwingConstants.CENTER, new Dimension(120, 80));
-                exportExcelBt.setIcon(new ImageIcon("src/main/java/Icon/export_Excel_Icon.png"));
-
-                reloadBt = ButtonConfig.createCustomButton("Reload", Style.FONT_PLAIN_15, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,
-                        Color.white, Style.LIGHT_BlUE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 5, SwingConstants.CENTER, new Dimension(110, 80));
-
-                reloadBt.setIcon(new ImageIcon("src/main/java/Icon/reload_Icon.png"));
-                KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.reloadKey, reloadBt);
+                //dispatchOrderBt
+                {
+                    dispatchOrderBt = new JButton("Sale");
+                    ButtonConfig.setStyleButton(dispatchOrderBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.addButtonHoverEffect(dispatchOrderBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/product-selling.png", dispatchOrderBt);
+                    dispatchOrderBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    dispatchOrderBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                }
+                //exportExelBt
+                {
+                    exportExcelBt = new JButton("Export");
+                    ButtonConfig.setStyleButton(exportExcelBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.addButtonHoverEffect(exportExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt);
+                    exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                }
+                //reloadBt
+                {
+                    reloadBt = new JButton("Sale");
+                    ButtonConfig.setStyleButton(reloadBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                    ButtonConfig.setIconBigButton("src/main/java/Icon/product-selling.png", reloadBt);
+                    reloadBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    reloadBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                }
 
                 JPanel toolPn = new JPanel(new FlowLayout(FlowLayout.LEFT));
                 toolPn.setBackground(Color.WHITE);
+                toolPn.add(dispatchOrderBt);
+                toolPn.add(ButtonConfig.createVerticalSeparator());
                 toolPn.add(exportExcelBt);
                 toolPn.add(reloadBt);
 
@@ -1165,11 +1179,10 @@ public class ManagerMainPanel extends JPanel {
                         new Dimension(300, 50));
                 searchOrderField.addActionListener(e -> searchBt.doClick());
                 searchOrderField.setAlignmentY(SwingConstants.CENTER);
-
-                searchBt = ButtonConfig.createCustomButton("", Style.FONT_PLAIN_18, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,
-                        Style.LIGHT_BlUE, 0, SwingConstants.CENTER, new Dimension(50, 50));
-                ButtonConfig.setButtonIcon("src/main/java/Icon/search_Icon.png", searchBt,10);
-                searchBt.setVerticalAlignment(SwingConstants.CENTER);
+                searchBt = new JButton();
+                ButtonConfig.setStyleButton(searchBt, Style.FONT_PLAIN_15, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
+                ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
 
                 JPanel searchPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
                 searchPn.setBackground(Color.WHITE);
@@ -1177,26 +1190,62 @@ public class ManagerMainPanel extends JPanel {
                 searchPn.add(searchOrderField);
                 searchPn.add(searchBt);
 
-
                 add(toolPn);
                 add(searchPn);
-
-
             }
         }
 
-        class TableOrderPanel extends JPanel {
-            TableOrderPanel() {
+        class TableOrderPanel extends JPanel{
+            TableOrderPanel(){
+                orders = reloadOrders();
                 setLayout(new BorderLayout());
                 setBackground(Color.WHITE);
+                // orders table
                 orderTable = createTable(orderModel, orderColumnNames);
+                orderModel = (DefaultTableModel) orderTable.getModel();
+                upDataOrders(orderModel, null);
                 orderScrollPane = new JScrollPane(orderTable);
-                orderTabbedPane = createTabbedPane(orderScrollPane, "Customer's Order", Style.FONT_BOLD_16);
-                exportPanel = new ExportPanel();
-                orderTabbedPane.add("Export by Order",exportPanel);
+                //Dispatched orders table
+                dispatchedOrderTable = createTable(dispatchedOrderModel, orderColumnNames);
+                dispatchedOrderModel = (DefaultTableModel) dispatchedOrderTable.getModel();
+                upDataOrders(dispatchedOrderModel, OrderType.DISPATCHED_MESSAGE);
+                dispatchedOrderScroll = new JScrollPane(dispatchedOrderTable);
+
+                orderTabbedPane =  createTabbedPane(orderScrollPane, "Customer's Order", Style.FONT_BOLD_16);
+                orderTabbedPane.add("Dispatched Orders", dispatchedOrderScroll);
                 add(orderTabbedPane, BorderLayout.CENTER);
             }
         }
+
+        private TreeMap<Integer, List<CustomerOrderDTO>> reloadOrders() {
+            customerOrders = getAllCustomerOrder();
+            return customerOrders.values().stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.groupingBy(CustomerOrderDTO::getOrderId, TreeMap::new, Collectors.toList()));
+        }
+
+        private void upDataOrders(DefaultTableModel tableModel, String status) {
+            TreeMap<Integer, List<CustomerOrderDTO>> filteredOrder =
+                    (status == null)
+                            ? this.orders
+                            : this.orders.entrySet().stream()
+                            .map(entry -> Map.entry(entry.getKey(),
+                                    entry.getValue().stream()
+                                            .filter(CustomerOrderDTO::isDispatched)
+                                            .collect(Collectors.toList())))
+                            .filter(entry -> !entry.getValue().isEmpty())
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getKey,
+                                    Map.Entry::getValue,
+                                    (a, b) -> b,
+                                    TreeMap::new
+                            ));
+            String[][] rowData = Order.getData(filteredOrder);
+            for (String[] strings : rowData) {
+                tableModel.addRow(strings);
+            }
+        }
+    }
         public class ExportPanel extends JPanel {
             private JTextField searchOrderIdTF;
             private JComboBox<Integer> orderIdComboBox;
@@ -1208,7 +1257,6 @@ public class ManagerMainPanel extends JPanel {
                     productBrandTF, operatingSystemTF, cpuTF,
                     storageTF, ramTF, madeInTF, diskTF,
                     weightTF, monitorTF, cardTF;
-
             private JTextField unitPriceTF, quantityTF;
 
             public ExportPanel() {
@@ -2599,13 +2647,7 @@ public class ManagerMainPanel extends JPanel {
     class NotificationPanel extends JPanel {
         private MainPanel notificationMainPanel;
         private JScrollPane scrollPane;
-        private JTextField searchField;
-        private JButton searchButton;
-        private CustomButton allNotify, managerNotify, customerNotify;
         private Timer timer;
-
-        CustomerController controller = new CustomerController();
-        private Map<Customer, ArrayList<CustomerOrderDTO>> customerOrders = getAllCustomerOrder();
 
         public NotificationPanel() {
             setLayout(new BorderLayout());
@@ -2649,9 +2691,11 @@ public class ManagerMainPanel extends JPanel {
         }
 
         private void addAllNotification() {
-            for (Map.Entry<Customer, ArrayList<CustomerOrderDTO>> entry : customerOrders.entrySet()) {
-                ArrayList<CustomerOrderDTO> orders = entry.getValue();
+            customerOrders = getAllCustomerOrder();
+            for (Map.Entry<Customer, List<CustomerOrderDTO>> entry : customerOrders.entrySet()) {
+                List<CustomerOrderDTO> orders = entry.getValue();
                 Map<java.util.Date, List<CustomerOrderDTO>> list = orders.stream()
+                        .filter(order -> !order.getStatusItem().equals(OrderType.UN_ACTIVE.getStatus()))
                         .collect(Collectors.groupingBy(CustomerOrderDTO::getOrderDate, TreeMap::new, Collectors.toList()))
                         .descendingMap();
                 addNotification(entry.getKey(), list);
@@ -2666,25 +2710,39 @@ public class ManagerMainPanel extends JPanel {
             gbc.anchor = GridBagConstraints.WEST;
             int x = 0, y = 0;
 
+
             for (Map.Entry<java.util.Date, List<CustomerOrderDTO>> entry : orders.entrySet()) {
-                for (CustomerOrderDTO order : entry.getValue()) {
-                    CircularImage avatar = new CircularImage(customer.getAvataImg(), 80, 80, true);
+                Map<Integer, List<CustomerOrderDTO>> orderIDs = entry.getValue().stream()
+                        .collect(Collectors.groupingBy(CustomerOrderDTO::getOrderId, TreeMap::new, Collectors.toList()))
+                        .descendingMap();
+                for (Map.Entry<Integer, List<CustomerOrderDTO>> subEntry : orderIDs.entrySet()) {
+                    CircularImage avatar = new CircularImage(customer.getAvataImg(), 80, 80, false);
+                    JLabel nameLabel = new JLabel(String.format("<html>%s</html>", customer.getFullName()));
 
                     String date = entry.getKey().toString();
                     JLabel timeLabel = new JLabel(String.format("<html>%s</html>", date));
 
+                    double totalCost = 0.0;
                     StringBuilder notificationText = new StringBuilder();
                     notificationText.append(String.format("New Orders from %s\n", customer.getFullName()));
                     notificationText.append(String.format(
-                            "\nOrder ID: %d\nOrder Date: %s\nShipping Address: %s\nOrder Status: %s\nProduct Name: %s\nQuantity: %d\n-----------------------------\nTotal: %s VNĐ",
-
-                            order.getOrderId(),
-                            order.getOrderDate().toString(),
-                            order.getShipAddress(),
-                            order.getStatusItem(),
-                            order.getProductName(),
-                            order.getQuantity(),
-                            NumberFormat.getInstance(new Locale("vi", "VN")).format(order.totalCost())
+                            "New Orders from %s\nOrder ID: %d",
+                            customer.getFullName(),
+                            subEntry.getKey()
+                    ));
+                    for (CustomerOrderDTO orderDTO : subEntry.getValue()) {
+                        notificationText.append(String.format(
+                                "\nOrder Date: %s\nShipping Address: %s\nOrder Status: %s\nProduct Name: %s\nQuantity: %d\n-----------------------------\n",
+                                orderDTO.getOrderDate().toString(),
+                                orderDTO.getShipAddress(),
+                                orderDTO.getStatusItem(),
+                                orderDTO.getProductName(),
+                                orderDTO.getQuantity()
+                        ));
+                        totalCost += orderDTO.totalCost();
+                    }
+                    notificationText.append(String.format(
+                       "\nTotal: %s VNĐ", NumberFormat.getInstance(new Locale("vi", "VN")).format(totalCost)
                     ));
 
                     JTextArea message = new JTextArea(notificationText.toString());
@@ -2717,29 +2775,24 @@ public class ManagerMainPanel extends JPanel {
                     gbc.anchor = GridBagConstraints.WEST;
                     main.add(avatar, gbc);
 
+                    gbc.gridx = x + 1;
+                    gbc.anchor = GridBagConstraints.WEST;
+                    main.add(nameLabel, gbc);
+
+                    gbc.gridx = x;
                     gbc.gridy = ++y;
+                    gbc.anchor = GridBagConstraints.EAST;
                     main.add(textAreaPanel, gbc);
 
-                    gbc.gridx = ++x;
-                    gbc.anchor = GridBagConstraints.EAST;
+                    gbc.gridx = x + 1;
                     main.add(timeLabel, gbc);
                     y++;
-                    x = 0;
                 }
             }
 
             notificationContainer.add(main);
             notificationContainer.revalidate();
             notificationContainer.repaint();
-        }
-
-        private Map<Customer, ArrayList<CustomerOrderDTO>> getAllCustomerOrder() {
-            Map<Customer, ArrayList<CustomerOrderDTO>> result = new HashMap<>();
-            ArrayList<Customer> customers = controller.getAll();
-            for (Customer customer : customers) {
-                result.put(customer, controller.findCustomerOrderById(customer.getId()));
-            }
-            return result;
         }
     }
 
@@ -2995,6 +3048,29 @@ public class ManagerMainPanel extends JPanel {
         }
     }
 
+    private Map<Customer, List<CustomerOrderDTO>> getAllCustomerOrder() {
+        CustomerController controller = new CustomerController();
+        Map<Customer, List<CustomerOrderDTO>> result = new HashMap<>();
+        List<Customer> customers = controller.getAll();
+        for (Customer customer : customers) {
+            result.put(customer, controller.findCustomerOrderById(customer.getId()));
+        }
+        return result;
+    }
+
+    public void reloadNotification() {
+        this.notificationPanel.reloadNotification();
+    }
+
+    private static void setStyleButton(JButton that, Font font, Color textColor, Color backgroundColor, int textPosition, Dimension size) {
+        that.setFont(font);
+        that.setForeground(textColor);
+        that.setBackground(backgroundColor);
+        that.setHorizontalAlignment(textPosition);
+        that.setBorderPainted(false);
+        that.setFocusable(false);
+        that.setPreferredSize(size);
+    }
     // chỉnh màu cho scrollbar
     private static void setColorScrollPane(JScrollPane scrollPane, Color thumbColor, Color trackColor) {
         setColorScrollBar(scrollPane.getVerticalScrollBar(), thumbColor, trackColor);
@@ -3091,72 +3167,4 @@ public class ManagerMainPanel extends JPanel {
         tabbedPane.setFocusable(false);
         return tabbedPane;
     }
-
-    //
-    public void addCustomerNotification(Customer customer, String text) {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        JLabel timeLabel = new JLabel("<html>" + now.format(timeFormatter) + "<br>" + now.format(dateFormatter) + "</html>");
-
-        CircularImage avatar = new CircularImage(customer.getAvataImg(), 80, 80, false);
-
-        JLabel customerName = new JLabel(customer.getFullName());
-        customerName.setFont(Style.FONT_PLAIN_25);
-
-        JTextArea message = new JTextArea(text);
-        message.setBackground(Color.WHITE);
-        message.setForeground(Color.BLACK);
-        message.setFont(new Font("Arial", Font.PLAIN, 16));
-        message.setBorder(BorderFactory.createCompoundBorder(
-                new RoundedBorder(20, 2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE),
-                BorderFactory.createEmptyBorder(3, 3, 3, 8)
-        ));
-        message.setLineWrap(true);
-        message.setWrapStyleWord(true);
-        message.setEditable(false);
-        message.setOpaque(true);
-
-        // Cố định chiều rộng và tính toán chiều cao phù hợp
-        int width = 600;
-        message.setSize(new Dimension(width, Short.MAX_VALUE));
-        int preferredHeight = message.getPreferredSize().height;
-        message.setPreferredSize(new Dimension(width, preferredHeight));
-
-        // Bọc JTextArea trong JScrollPane nhưng tắt thanh cuộn ngang
-        JScrollPane scrollPane = new JScrollPane(message);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
-
-        JPanel textAreaPanel = new JPanel();
-        textAreaPanel.setLayout(new BoxLayout(textAreaPanel, BoxLayout.Y_AXIS));
-        textAreaPanel.add(scrollPane);
-        textAreaPanel.setBackground(Color.WHITE);
-
-        JPanel main = new JPanel(new GridBagLayout());
-        main.setBackground(Color.WHITE);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 15, 5, 15);
-        gbc.anchor = GridBagConstraints.WEST;
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        main.add(avatar, gbc);
-
-        gbc.gridx = 1;
-        main.add(customerName, gbc);
-
-        gbc.gridy = 1;
-        main.add(textAreaPanel, gbc);
-
-        gbc.gridx = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        main.add(timeLabel, gbc);
-
-        notificationContainer.add(main);
-        notificationContainer.revalidate();
-        notificationContainer.repaint();
-    }
-
 }

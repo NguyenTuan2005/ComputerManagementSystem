@@ -84,6 +84,7 @@ public class EmailConfig {
     }
 
 
+
     public static void main(String[] args) {
         EmailConfig emailConfig = new EmailConfig();
 

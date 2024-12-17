@@ -24,8 +24,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -324,17 +323,17 @@ public class CustomerMainPanel extends JPanel {
 
         class CartPanel extends JPanel {
             CustomButton backBt;
-            ProductsInCartPanel productsInCartPanel;
-            SummaryPanel summaryPanel;
+            MainPaymentPanel mainPaymentPanel;
             JScrollPane scrollPane;
             private int totalItemCount = 0;
             private int totalPriceCount = 9999;
 
             CartPanel() {
                 setLayout(new BorderLayout());
-                productsInCartPanel = new ProductsInCartPanel();
-                summaryPanel = new SummaryPanel();
-
+                JPanel titlePanel = new JPanel();
+                titlePanel.setBackground(Color.WHITE);
+                titlePanel.setPreferredSize(new Dimension(800, 80));
+                titlePanel.setLayout(new GridBagLayout());
 
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.insets = new Insets(5, 5, 5, 5);
@@ -358,56 +357,31 @@ public class CustomerMainPanel extends JPanel {
                 gbc.anchor = GridBagConstraints.CENTER;
                 titlePanel.add(title, gbc);
 
-            
+                add(titlePanel, BorderLayout.NORTH);
+
+                mainPaymentPanel = new MainPaymentPanel();
+                add(mainPaymentPanel, BorderLayout.CENTER);
+
+
             }
 
+            class MainPaymentPanel extends JPanel {
+                PaymentPanel paymentPanel = new PaymentPanel();
+                ProductsInCartPanel productsInCartPanel = new ProductsInCartPanel();
 
-
-            class ProductsInCartPanel extends JPanel{
-
-                ProductsInCartPanel(){
+                MainPaymentPanel() {
                     setLayout(new BorderLayout());
-
-                    JPanel titlePnTop = new JPanel();
-                    titlePnTop.setBackground(Color.WHITE);
-                    JLabel title = new JLabel("Your Shopping Cart", SwingConstants.LEFT);
-                    title.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
-                    title.setFont(Style.FONT_TITLE_BOLD_40);
-                    titlePnTop.add(title);
-                    add(titlePnTop, BorderLayout.NORTH);
-
-                    // container contain all the
-                    cartContainer.setLayout(new BoxLayout(cartContainer, BoxLayout.Y_AXIS));
-                    cartContainer.add(emptyCartPn);
-                    scrollPane = new JScrollPane(cartContainer);
-                    scrollPane.setBackground(Color.WHITE);
-                    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-                    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                    setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
-                    add(scrollPane, BorderLayout.CENTER);
-
-                    // panel contain back button
-                    JPanel backPnBottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                    backPnBottom.setBackground(Color.WHITE);
-                    backBt = ButtonConfig.createCustomButton("Back", Style.FONT_BOLD_16, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,
-                            Style.MEDIUM_BLUE, 5, SwingConstants.CENTER, new Dimension(110, 30));
-                    setIconSmallButton("src/main/java/Icon/back_Icon1.png", backBt);
-                    backBt.addActionListener(e -> {
-                        ProductCatalogMainPanel.this.show("catalog");
-                    });
-                    backPnBottom.add(backBt);
-                    add(backPnBottom, BorderLayout.SOUTH);
+                    add(paymentPanel, BorderLayout.EAST);
+                    add(productsInCartPanel, BorderLayout.CENTER);
                 }
-
             }
 
-            // thông tin người đặt mua
-            class SummaryPanel extends JPanel {
+            class PaymentPanel extends JPanel {
 
                 private JLabel totalItem, totalPrice;
                 private CustomButton orderBt;
 
-                SummaryPanel() {
+                PaymentPanel() {
                     setLayout(new GridBagLayout());
                     setPreferredSize(new Dimension(320, 300));
                     setBackground(Color.WHITE);
@@ -490,24 +464,18 @@ public class CustomerMainPanel extends JPanel {
                                 String address = addressField.getText();
                                 String status = STATUS_ORDER;
                                 int orderId = orderController.save(customerId, managerId, address, status);
-//                                orderDetailController.saves(orderId, productOrders);
-//                                bill = customerController.findCustomerOrderById(customerId);
-                                System.out.println(">>> set : ");
-
-                                for (var o : productOrders.stream().filter(p -> p.hasProductName(productOrders)).collect(Collectors.toSet())) {
-                                    System.out.println(o);
-                                }
+                                orderDetailController.saves(orderId, ProductOrderConfig.getUnqueProductOrder(productOrders));
                                 productOrders.clear();
                                 var c = new Customer();
                                 c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
                                 bills = customerController.findCustomerOrderById(customerId);
                                 addCustomerNotification(c, new BillConfig(bills).getBillCurrent());
                                 ToastNotification.showToast("Successful purchase !!!", 2500, 50, -1, -1);
+
                                 cartContainer.removeAll();
                                 cartContainer.add(emptyCartPn);
                                 cartContainer.revalidate();
                                 cartContainer.repaint();
-
                             } else {
                                 ToastNotification.showToast("Cancel order !!!", 2500, 50, -1, -1);
                             }
@@ -535,7 +503,6 @@ public class CustomerMainPanel extends JPanel {
 
                 }
             }
-
 
         }
     }
@@ -686,7 +653,10 @@ public class CustomerMainPanel extends JPanel {
 
 
             notificationMainPanel = new NotificationMainPanel();
+            add(title, BorderLayout.NORTH);
             add(notificationMainPanel, BorderLayout.CENTER);
+
+
         }
 
         class NotificationMainPanel extends JPanel {
@@ -1076,9 +1046,7 @@ public class CustomerMainPanel extends JPanel {
         detailsPn.setBackground(Color.WHITE);
 
         for (String[] field : displayFields) {
-
             JLabel label = new JLabel(" " + field[0] + ":");
-
             label.setFont(Style.FONT_BOLD_18);
             detailsPn.add(label);
 
@@ -1092,7 +1060,6 @@ public class CustomerMainPanel extends JPanel {
 // Giá sản phẩm
 
         String price = formatCurrency.format(product.getPrice());
-
         JLabel productPrice = new JLabel("  " + price + "₫");
         productPrice.setFont(new Font("Arial", Font.BOLD, 25));
         productPrice.setForeground(Style.CONFIRM_BUTTON_COLOR_GREEN);
@@ -1142,7 +1109,7 @@ public class CustomerMainPanel extends JPanel {
 
         CustomButton backBt = ButtonConfig.createCustomButton("Back", Style.FONT_BOLD_16, Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,
                 Style.MEDIUM_BLUE, 5, SwingConstants.CENTER, new Dimension(110, 30));
-        ButtonConfig.setButtonIcon("src/main/java/Icon/back_Icon1.png", backBt,5);
+        ButtonConfig.setButtonIcon("src/main/java/Icon/back_Icon1.png", backBt, 5);
         backBt.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1489,7 +1456,7 @@ public class CustomerMainPanel extends JPanel {
         notificationContainer.revalidate();
         notificationContainer.repaint();
     }
-
+//---------------------------------------------------------------------------------------
 
     public void addOrderToContainer(JPanel panel) {
         this.ordersContainer.add(panel);
@@ -1499,7 +1466,7 @@ public class CustomerMainPanel extends JPanel {
         this.ordersContainer.repaint();
     }
 
-    public JPanel createOrderPn(KeyOrderDTO key, ArrayList<CustomerOrderDTO> customerOrderDTOs) {
+    public JPanel createOrderPn(ArrayList<CustomerOrderDetailDTO> customerOrderDTOs) {
         JPanel main = new JPanel(new BorderLayout());
 
         JPanel titlePn = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1523,7 +1490,6 @@ public class CustomerMainPanel extends JPanel {
 
         JPanel mid = new JPanel(new GridLayout(0, 2));
         mid.setBackground(Color.WHITE);
-
         int totalPrice = 0;
         for (var item : customerOrderDTOs) {
             totalPrice += item.customerOrderDTO().getQuantity() * item.customerOrderDTO().getUnitPrice();
@@ -1600,14 +1566,8 @@ public class CustomerMainPanel extends JPanel {
         proDetails.add(proName, gbc);
 
         gbc.gridy++;
-
         gbc.weighty = 0.1;
         JLabel proID = LabelConfig.createLabel("Product ID:  " + customerOrderDTO.customerOrderDTO().getProductId(), Style.FONT_PLAIN_13, Color.BLACK, SwingConstants.LEFT);
-
-        gbc.weighty = 0.3;
-//        JLabel proID = new JLabel("Product ID: " + product.getId());
-        JLabel proID = new JLabel(customerOrderDTO.getSalerId() + "");
-
         proDetails.add(proID, gbc);
 
         gbc.gridy++;
@@ -1626,12 +1586,8 @@ public class CustomerMainPanel extends JPanel {
 
         JPanel pricePn = new JPanel(new FlowLayout(FlowLayout.LEFT));// panel xem giá của 1 sản phẩm
         pricePn.setBackground(Color.WHITE);
-
         String unitPrice = formatCurrency.format(customerOrderDTO.customerOrderDTO().getUnitPrice());
         JLabel proPrice = LabelConfig.createLabel( unitPrice+ "₫",Style.FONT_BOLD_18,Style.CONFIRM_BUTTON_COLOR_GREEN, SwingConstants.LEFT);
-
-        JLabel proPrice = new JLabel(customerOrderDTO.getUnitPrice() + "", SwingConstants.LEFT);
-
         pricePn.add(proPrice);
 
         JPanel quantityPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));// panel xem số lượng mua của 1 sản phẩm

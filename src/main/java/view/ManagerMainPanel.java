@@ -1034,6 +1034,7 @@ public class ManagerMainPanel extends JPanel {
 
 
                 scrollPaneCustomer = new JScrollPane(tableCustomer);
+                setColorScrollPane(scrollPaneCustomer, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
                 tabbedPaneCustomer = createTabbedPane(scrollPaneCustomer, "Customer", Style.FONT_BOLD_16);
                 tabbedPaneCustomer.add("Sales Chart", new Schemas());
 
@@ -1571,11 +1572,8 @@ public class ManagerMainPanel extends JPanel {
                     add(leftPn);
                     add(rightPn);
                 }
-
             }
-
         }
-
     }
 
     // Hoang's Code // Tuan
@@ -3073,7 +3071,6 @@ public class ManagerMainPanel extends JPanel {
         that.setFocusable(false);
         that.setPreferredSize(size);
     }
-
     // chỉnh màu cho scrollbar
     private static void setColorScrollPane(JScrollPane scrollPane, Color thumbColor, Color trackColor) {
         setColorScrollBar(scrollPane.getVerticalScrollBar(), thumbColor, trackColor);

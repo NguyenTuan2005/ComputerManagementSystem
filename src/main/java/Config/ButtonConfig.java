@@ -66,7 +66,7 @@ public class ButtonConfig {
 
     public static JSeparator createVerticalSeparator() {
         JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
-        separator.setPreferredSize(new Dimension(2, 70)); // Điều chỉnh chiều cao của separator
+        separator.setPreferredSize(new Dimension(2, 70));
         return separator;
     }
 

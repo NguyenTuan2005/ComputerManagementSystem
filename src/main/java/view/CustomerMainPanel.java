@@ -14,7 +14,9 @@ import controller.ProductController;
 import dto.CustomerOrderDTO;
 import dto.CustomerOrderDetailDTO;
 import dto.KeyOrderDTO;
+import org.jfree.data.json.JSONUtils;
 import view.OtherComponent.ChangePasswordFrame;
+import view.OtherComponent.NotFoundEntity;
 import view.OverrideComponent.*;
 
 import javax.swing.*;
@@ -36,6 +38,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+import Enum.*;
 import java.util.stream.Collectors;
 
 
@@ -189,6 +192,7 @@ public class CustomerMainPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         updateSelectedButton(allBt);
+                        displayProductOnPage(DisplayProductOnPageType.ALL);
 
                     }
                 });
@@ -197,6 +201,7 @@ public class CustomerMainPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         updateSelectedButton(gaming);
+                        displayProductOnPage(DisplayProductOnPageType.LAPTOP_GAMING);
 
                     }
                 });
@@ -205,7 +210,7 @@ public class CustomerMainPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         updateSelectedButton(office);
-
+                        displayProductOnPage(DisplayProductOnPageType.LAPTOP_OFFICE);
                     }
                 });
                 pcCase = createCustomButton("PC Case", Style.FONT_BOLD_15, Color.BLACK, Color.white, Style.LIGHT_BlUE, Style.BACKGROUND_COLOR, 2, 25, new Dimension(120, 25));
@@ -220,6 +225,7 @@ public class CustomerMainPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         updateSelectedButton(cheapest);
+                        displayProductOnPage(DisplayProductOnPageType.CHEAP);
 
                     }
                 });
@@ -229,7 +235,7 @@ public class CustomerMainPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         updateSelectedButton(luxury);
-
+                        displayProductOnPage(DisplayProductOnPageType.CHEAP);
                     }
                 });
 
@@ -288,17 +294,7 @@ public class CustomerMainPanel extends JPanel {
                     setLayout(new BorderLayout());
                     catalogContainer.setLayout(new GridBagLayout());
                     catalogContainer.setBackground(Color.WHITE);
-                    ProductController productController = new ProductController();
-                    ArrayList<Product> products = productController.getEagerProducts();
-                    for (int i = 0; i < products.size(); i++) {
-                        String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg"};
-//                        String[] filePaths1 = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
-//                        Product product1 = new Product(1, "Asus Ultra Vip Pro", 30, 8888, "Apple M2", "Apple", "Apple", "Apple M2", "512GB SSD", "8GB", "China", "in stock", "demo", "demo", "demo", "demo", 1);
-
-                        JPanel p1 = createPanelForProductInCatalog(products.get(i));
-                        addNewPanelToCatalogContainer(p1);
-                    }
-
+                    displayProductOnPage(DisplayProductOnPageType.ALL);
                     scrollPane = new JScrollPane(catalogContainer);
                     setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Color.WHITE);
                     add(scrollPane, BorderLayout.CENTER);
@@ -997,8 +993,11 @@ public class CustomerMainPanel extends JPanel {
         for (int i = 0; i < images.length; i++) {
             images[i] = createImageForProduct(urls.get(i).getUrl(), 300, 300);
         }
-        JLabel imageLabel = new JLabel(images[0]);
+        ImageIcon defaultImg = null;
+        if(images.length ==0) defaultImg = new ImageIcon("src/main/java/img/i-404.png");else defaultImg = images[0]; // fix lai cai hình
+        JLabel imageLabel = new JLabel(defaultImg);
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
+        imageLabel.setPreferredSize(new Dimension(250,250));
         JPanel imagePn = new JPanel();
         imagePn.setBackground(Color.WHITE);
         imagePn.add(imageLabel);
@@ -1603,6 +1602,59 @@ public class CustomerMainPanel extends JPanel {
         mainPanel.add(proDetails, BorderLayout.CENTER);
 
         return mainPanel;
+    }
+
+//    1234567@abc
+    private void displayProductOnPage(DisplayProductOnPageType type) {
+        // aa chua remove item dc
+        ProductController productController = new ProductController();
+        ArrayList<Product> products = productController.getEagerProducts();
+
+        switch (type){
+            case ALL -> {
+                 products.forEach( p-> {
+                    JPanel create = createPanelForProductInCatalog(p);
+                    addNewPanelToCatalogContainer(create);
+                });
+            }
+            case LUXURY ->{
+                var pro = products.stream()
+                        .sorted((p1,p2)->{
+                           return p2.getPrice() -p1.getPrice();
+                        })
+                        .collect(Collectors.toList());
+                if (pro.isEmpty()) addNewPanelToCatalogContainer( new NotFoundEntity());
+                pro.forEach(p -> {
+                    JPanel create = createPanelForProductInCatalog(p);
+                    addNewPanelToCatalogContainer(create);
+                });
+            }
+            case CHEAP->{
+                var pro = products.stream()
+                        .sorted((p1,p2)->{
+                            return p1.getPrice() -p2.getPrice();
+                        })
+                        .collect(Collectors.toList());
+                if (pro.isEmpty()) addNewPanelToCatalogContainer( new NotFoundEntity());
+                pro.forEach(p -> {
+                    JPanel create = createPanelForProductInCatalog(p);
+                    addNewPanelToCatalogContainer(create);
+                });
+            }
+            default -> {
+                var pro = products.stream()
+                        .filter(p ->p.getGenre().contains(type.getType()))
+                        .collect(Collectors.toList());
+                if (pro.isEmpty()) addNewPanelToCatalogContainer( new NotFoundEntity());
+                pro.forEach(p -> {
+                    JPanel create = createPanelForProductInCatalog(p);
+                    addNewPanelToCatalogContainer(create);
+                });
+
+            }
+
+        }
+
     }
 
 

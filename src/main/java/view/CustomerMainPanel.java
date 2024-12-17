@@ -1453,7 +1453,7 @@ public class CustomerMainPanel extends JPanel {
         this.ordersContainer.repaint();
     }
 
-    public JPanel createOrderPn(ArrayList<CustomerOrderDetailDTO> customerOrderDTOs) {
+    public JPanel createOrderPn(int orderId ,ArrayList<CustomerOrderDetailDTO> customerOrderDTOs) {
         JPanel main = new JPanel(new BorderLayout());
 
         JPanel titlePn = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1500,9 +1500,39 @@ public class CustomerMainPanel extends JPanel {
         ButtonConfig.setButtonIcon("src/main/java/Icon/bill_Icon.png", viewBill, 15);
         bottomLeft.add(viewBill);
 
+
+
+
         CustomButton cancelOrder = createCustomButton("Cancel Order", Style.FONT_BOLD_15, Style.DELETE_BUTTON_COLOR_RED, Color.white, Style.LIGHT_BlUE, Style.DELETE_BUTTON_COLOR_RED, 1, 8, new Dimension(180, 40));
-        ButtonConfig.setButtonIcon("src/main/java/Icon/cancelOrder_Icon.png", cancelOrder, 15);
-        bottomLeft.add(cancelOrder);
+        CustomButton buyBackBt = createCustomButton("Mua lai", Style.FONT_BOLD_15, Style.DELETE_BUTTON_COLOR_RED, Color.white, Style.LIGHT_BlUE, Style.DELETE_BUTTON_COLOR_RED, 1, 8, new Dimension(180, 40));
+        // check order date
+        var date = customerOrderDTOs.get(0).customerOrderDTO().getOrderDate();
+
+        if(DateConfig.cancelOrderLimit(date,3)){
+            ButtonConfig.setButtonIcon("src/main/java/Icon/cancelOrder_Icon.png", cancelOrder, 15);
+            bottomLeft.add(cancelOrder);
+        }
+        ButtonConfig.setButtonIcon("src/main/java/Icon/cancelOrder_Icon.png", buyBackBt, 15);
+        bottomLeft.add(buyBackBt);
+
+
+        cancelOrder.addActionListener(e->{
+            OrderController controller= new OrderController();
+            if ( JOptionPane.showConfirmDialog(null,"Cancel order") == 0 && controller.updateStatusOrder(OrderType.UN_ACTIVE,orderId)){
+                ToastNotification.showToast("Cancel order",3000,30,-1,-1);
+                cancelOrder.setEnabled(false);
+            }
+        });
+        buyBackBt.addActionListener(e->{
+            // mua lai thi phai reload cho hien len
+            JOptionPane.showConfirmDialog(null,"chua code anh oi ");
+
+        });
+
+
+
+
+
 
         JPanel bottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottomRight.setBackground(Color.WHITE);
@@ -1612,7 +1642,7 @@ public class CustomerMainPanel extends JPanel {
         Map<KeyOrderDTO, ArrayList<CustomerOrderDTO>> mapOrder = new BillConfig(bills).convertDataToBills();
         OrderHistoryConfig orderHistoryConfig = new OrderHistoryConfig(k);
         for (Map.Entry<Integer, List<CustomerOrderDetailDTO>> data : orderHistoryConfig.get().entrySet()) {
-                addOrderToContainer(createOrderPn((ArrayList<CustomerOrderDetailDTO>) data.getValue()));
+                addOrderToContainer(createOrderPn(data.getKey(), (ArrayList<CustomerOrderDetailDTO>) data.getValue()));
         }
     }
 

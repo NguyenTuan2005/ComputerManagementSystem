@@ -169,6 +169,7 @@ public class LoginFrame extends JFrame {
         }
         public static boolean sendOTPForRegister(String to, int otp) {
             EmailConfig emailConfig = new EmailConfig();
+            System.out.println(to);
             return emailConfig.send(to,
                     emailConfig.buildHeaderMessage(),
                     emailConfig.buildBodyMessageForRegister(to, otp));
@@ -243,12 +244,16 @@ public class LoginFrame extends JFrame {
 
                     if (allFieldsValid) {
                         if (InputFormPanel.sendOTPForRegister(emailField.getText(), otpRegister)) {
+                            System.out.println("---> 0tp: " + otpRegister);
                             inputFormPanel.signUpPanel.showPanelSignUp("verifyEmail");
                             email =emailField.getText();
                             address = addressField.getText();
                             userName = nameField.getText();
+                        }else{
+                            System.out.println(" refill email");
                         }
-                    }
+                    } else
+                        System.out.println("sai cai j roi");
 
                     for (int i = 0; i < inputFormPanel.signUpPanel.verifyEmailPanel.otpFields.length; i++) {
                         inputFormPanel.signUpPanel.verifyEmailPanel.otpFields[i].setText("");
@@ -451,7 +456,7 @@ public class LoginFrame extends JFrame {
                         resendCodeBt.setEnabled(false);
                         startCooldown();
                     }
-                    InputFormPanel.sendOTPForRegister("", SignUpFormPanel.otpRegister);
+//                    InputFormPanel.sendOTPForRegister("", SignUpFormPanel.otpRegister);
 //                        inputFormPanel.signUpPanel.showPanelSignUp("verifyEmail");
 
                     JOptionPane.showMessageDialog(null, "We have sent a new verification code to your email!");

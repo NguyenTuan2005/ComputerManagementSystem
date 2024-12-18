@@ -45,9 +45,6 @@ public class EmailConfig {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-
-
-
     }
 
     public int generateOTP(){
@@ -88,9 +85,9 @@ public class EmailConfig {
 
 
 
-
     public static void main(String[] args) {
         EmailConfig emailConfig = new EmailConfig();
-//        System.out.println(emailConfig.buildBodyMessage("dfsdf",124,"894032"));
+
+//        sendOTPForRegister("yennhint0808003@gmail.com", emailConfig.generateOTP());
     }
 }

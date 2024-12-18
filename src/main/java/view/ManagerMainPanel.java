@@ -1232,7 +1232,7 @@ public class ManagerMainPanel extends JPanel {
                             : this.orders.entrySet().stream()
                             .map(entry -> Map.entry(entry.getKey(),
                                     entry.getValue().stream()
-                                            .filter(CustomerOrderDTO::isDispatched)
+//                                            .filter(CustomerOrderDTO::isDispatched)
                                             .collect(Collectors.toList())))
                             .filter(entry -> !entry.getValue().isEmpty())
                             .collect(Collectors.toMap(

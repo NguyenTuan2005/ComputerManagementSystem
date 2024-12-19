@@ -14,7 +14,6 @@ import controller.ProductController;
 import dto.CustomerOrderDTO;
 import dto.CustomerOrderDetailDTO;
 import dto.KeyOrderDTO;
-import org.jfree.data.json.JSONUtils;
 import view.OtherComponent.ChangePasswordFrame;
 import view.OtherComponent.NotFoundItemPanel;
 import view.OverrideComponent.*;
@@ -70,6 +69,9 @@ public class CustomerMainPanel extends JPanel {
 
     private JTextField emailField, nameField, addressField;
     private static int totalItems = 0, totalPrice = 0;
+    private static int MANAGER_ID=0;
+    private static int CUSTOMER_ID=0;
+    private static String ADDRESS="";
 
     public static DecimalFormat formatCurrency = new DecimalFormat("#,###");
 
@@ -388,12 +390,6 @@ public class CustomerMainPanel extends JPanel {
             }
 
             class DisplaySingleProductPn extends JPanel {
-                JLabel image, productName, price, status;
-                JButton backBt, previousBt, nextBt;
-                CustomButton addToCart, buyNowBt;
-                Product product;
-                ImageIcon[] images;
-                String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
 
                 DisplaySingleProductPn() {
                     setLayout(new BorderLayout());
@@ -407,7 +403,6 @@ public class CustomerMainPanel extends JPanel {
             JLabel totalItemsLabel, totalItemsTitle, totalPriceLabel;
 
             CustomButton backBt, orderBt;
-            ;
             ProductsInCartPanel productsInCartPanel;
             SummaryPanel summaryPanel;
             JScrollPane scrollPane;
@@ -566,12 +561,11 @@ public class CustomerMainPanel extends JPanel {
                             int i = JOptionPane.showConfirmDialog(null, "Would you like to confirm your order?", "Order Confirmation", JOptionPane.YES_NO_OPTION);
                             boolean saved = (i == 0);
                             if (saved && !productOrders.isEmpty()) {
-                                int customerId = CurrentUser.CURRENT_CUSTOMER.getId();
-                                int managerId = CurrentUser.CURRENT_MANAGER.getManagerId();
-                                String address = addressField.getText();
-                                String status = STATUS_ORDER;
-                                int orderId = orderController.save(customerId, managerId, address, status);
-                                productOrders.forEach(System.out::println);
+                                CUSTOMER_ID = CurrentUser.CURRENT_CUSTOMER.getId();
+                                MANAGER_ID= CurrentUser.CURRENT_MANAGER.getManagerId();
+                                ADDRESS = addressField.getText();
+                                int orderId = orderController.save(CUSTOMER_ID, MANAGER_ID, ADDRESS, STATUS_ORDER);
+//                                productOrders.forEach(System.out::println);
                                 System.out.println("saved");
                                 orderDetailController.saves(orderId, ProductOrderConfig.getUnqueProductOrder(productOrders));
 
@@ -579,7 +573,7 @@ public class CustomerMainPanel extends JPanel {
 
                                 var c = new Customer();
                                 c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
-                                bills = customerController.findCustomerOrderById(customerId);
+                                bills = customerController.findCustomerOrderById(CUSTOMER_ID);
                                 addCustomerNotification(c, new BillConfig(bills).getBillCurrent());
                                 ToastNotification.showToast("Successful purchase!", 2500, 50, -1, -1);
 
@@ -587,6 +581,11 @@ public class CustomerMainPanel extends JPanel {
                                 cartContainer.add(emptyCartPn);
                                 cartContainer.revalidate();
                                 cartContainer.repaint();
+
+                                ordersContainer.removeAll();
+                                ordersContainer.revalidate();
+                                ordersContainer.repaint();
+
                                 upLoadOrderHistory();
 
                             } else {
@@ -606,7 +605,6 @@ public class CustomerMainPanel extends JPanel {
     class OrderHistoryPanel extends JPanel {
         private OrdersPanel ordersPanel;
         private ToolPanel toolPanel;
-        private String[] columnNames = {"Serial Number", "Order ID", "Order Date", "Product Name", "Product ID", "Quantity", "Total Price", "Status", "Shipping Address", "Delivery Date"};
         private CustomButton feedbackBt, searchBt, calendarBt;
         private JTextField searchField;
         private Date selectedDate;
@@ -625,12 +623,7 @@ public class CustomerMainPanel extends JPanel {
                 setBackground(Color.WHITE);
 
 
-                feedbackBt = ButtonConfig.createCustomButton("FeedBack", Style.FONT_BOLD_13, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, Style.LIGHT_BlUE,
-                        Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 8, SwingConstants.CENTER, new Dimension(100, 70));
-                feedbackBt.setIcon(new ImageIcon("src/main/java/Icon/feedback_Icon.png"));
-                feedbackBt.setHorizontalTextPosition(SwingConstants.CENTER);
-                feedbackBt.setVerticalTextPosition(SwingConstants.BOTTOM);
-                feedbackBt.addActionListener(e-> new OpenEmailConfig());
+
 
                 calendarBt = ButtonConfig.createCustomButton("", Style.FONT_PLAIN_20, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE, 0, SwingConstants.CENTER, new Dimension(50, 50));
                 ButtonConfig.setButtonIcon("src/main/java/Icon/calendarIcon.png", calendarBt, 10);
@@ -674,7 +667,7 @@ public class CustomerMainPanel extends JPanel {
                 feedbackBt = ButtonConfig.createCustomButton("FeedBack", Style.FONT_BOLD_16, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, Style.LIGHT_BlUE,
                         Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 8, SwingConstants.CENTER, new Dimension(160, 55));
                 ButtonConfig.setButtonIcon("src/main/java/Icon/feedback_Icon.png", feedbackBt, 12);
-
+                feedbackBt.addActionListener(e-> new OpenEmailConfig());
                 add(calendarBt);
                 add(searchField);
                 add(searchBt);
@@ -1418,6 +1411,9 @@ public class CustomerMainPanel extends JPanel {
                 totalItems--;
                 totalPrice -= product.getPrice();
                 updatePriceQuantityInCart(totalItems, totalPrice);
+
+                productOrderConfig.setQuatity(countItem[0]);// đặt số lượng sản phẩm cho đơn hàng
+                this.productOrders.add(productOrderConfig);
             }
         });
 
@@ -1430,6 +1426,9 @@ public class CustomerMainPanel extends JPanel {
             totalItems += countItem[0];
             totalPrice += product.getPrice();
             updatePriceQuantityInCart(totalItems, totalPrice);
+
+            productOrderConfig.setQuatity(countItem[0]);
+            this.productOrders.add(productOrderConfig);
         });
         quantityPn.add(subBt);
         quantityPn.add(quantityField);
@@ -1586,7 +1585,7 @@ public class CustomerMainPanel extends JPanel {
 //---------------------------------------------------------------------------------------
 
     public void addOrderToContainer(JPanel panel) {
-        this.ordersContainer.add(panel, 0);
+        this.ordersContainer.add(panel);
         this.ordersContainer.add(Box.createRigidArea(new Dimension(0, 10)));
         this.ordersContainer.revalidate();
         this.ordersContainer.repaint();
@@ -1650,6 +1649,7 @@ public class CustomerMainPanel extends JPanel {
         ButtonConfig.setButtonIcon("src/main/java/Icon/repurchase_Icon.png", repurchase, 15);
         bottomLeft.add(repurchase);
 
+
         // check order date
         var date = customerOrderDTOs.get(0).customerOrderDTO().getOrderDate();
 
@@ -1670,8 +1670,28 @@ public class CustomerMainPanel extends JPanel {
 
         repurchase.addActionListener(e->{
             // mua lai thi phai reload cho hien len
-            JOptionPane.showConfirmDialog(null,"chua code anh oi  chua có logic mua hàng");
-            addOrderToContainer(createOrderPn(orderId,customerOrderDTOs));
+         if(JOptionPane.showConfirmDialog(null,"chua code anh oi  chua có logic mua hàng") == 0) {
+//             addOrderToContainer(createOrderPn(orderId, customerOrderDTOs));
+             int reOrderId = orderController.save(CurrentUser.CURRENT_CUSTOMER.getId(), CurrentUser.CURRENT_MANAGER.getManagerId(), ADDRESS, STATUS_ORDER);
+             System.out.println(reOrderId);
+//             productOrders.forEach(System.out::println);
+             System.out.println("saved");
+             orderDetailController.saves(reOrderId, customerOrderDTOs);
+             productOrders.clear();
+             ToastNotification.showToast("Successful purchase!", 2500, 50, -1, -1);
+
+
+             var c = new Customer();
+             c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
+             bills = customerController.findCustomerOrderById(CurrentUser.CURRENT_CUSTOMER.getId());
+
+             addCustomerNotification(c, new BillConfig(bills).getBillCurrent());
+
+             ordersContainer.removeAll();
+             ordersContainer.revalidate();
+             ordersContainer.repaint();
+             upLoadOrderHistory();
+         }
         });
 
 

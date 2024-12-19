@@ -10,4 +10,6 @@ public record CustomerOrderDetailDTO(CustomerOrderDTO customerOrderDTO , List<Im
     public int getOrderId() {
         return customerOrderDTO.getOrderId();
     }
+
+    public int getProductId(){return customerOrderDTO.getProductId();}
 }

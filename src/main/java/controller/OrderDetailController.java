@@ -3,6 +3,7 @@ package controller;
 import Config.ProductOrderConfig;
 import Model.OrderDetail;
 import dao.OrderDetailDAO;
+import dto.CustomerOrderDetailDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,16 +61,27 @@ public class OrderDetailController implements ModelController<OrderDetail> {
         return null;
     }
 
-    public void saves(int orderId, Set<ProductOrderConfig> orderConfig){
+    public void saves(int orderId, Set<ProductOrderConfig> orderConfig) {
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setOrderId(orderId);
-        for (ProductOrderConfig po : orderConfig){
+        for (ProductOrderConfig po : orderConfig) {
             if (po.getQuatity() != 0) {
                 orderDetail.setQuantity(po.getQuatity());
                 orderDetail.setUnitPrice(po.getProduct().getPrice());
                 orderDetail.setProductId(po.getProduct().getId());
                 this.save(orderDetail);
             }
+        }
+    }
+
+    public void saves(int reOrderId, ArrayList<CustomerOrderDetailDTO> customerOrderDTOs) {
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrderId(reOrderId);
+        for (var po : customerOrderDTOs) {
+            orderDetail.setQuantity(po.customerOrderDTO().getQuantity());
+            orderDetail.setUnitPrice((int) po.customerOrderDTO().getUnitPrice());
+            orderDetail.setProductId(po.getProductId());
+            this.save(orderDetail);
         }
     }
 }

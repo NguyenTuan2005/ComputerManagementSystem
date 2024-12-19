@@ -1218,35 +1218,6 @@ public class ManagerMainPanel extends JPanel {
             }
         }
 
-        private TreeMap<Integer, List<CustomerOrderDTO>> reloadOrders() {
-            customerOrders = getAllCustomerOrder();
-            return customerOrders.values().stream()
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.groupingBy(CustomerOrderDTO::getOrderId, TreeMap::new, Collectors.toList()));
-        }
-
-        private void upDataOrders(DefaultTableModel tableModel, String status) {
-            TreeMap<Integer, List<CustomerOrderDTO>> filteredOrder =
-                    (status == null)
-                            ? this.orders
-                            : this.orders.entrySet().stream()
-                            .map(entry -> Map.entry(entry.getKey(),
-                                    entry.getValue().stream()
-//                                            .filter(CustomerOrderDTO::isDispatched)
-                                            .collect(Collectors.toList())))
-                            .filter(entry -> !entry.getValue().isEmpty())
-                            .collect(Collectors.toMap(
-                                    Map.Entry::getKey,
-                                    Map.Entry::getValue,
-                                    (a, b) -> b,
-                                    TreeMap::new
-                            ));
-            String[][] rowData = Order.getData(filteredOrder);
-            for (String[] strings : rowData) {
-                tableModel.addRow(strings);
-            }
-        }
-    }
         public class ExportPanel extends JPanel {
             private JTextField searchOrderIdTF;
             private JComboBox<Integer> orderIdComboBox;
@@ -1372,7 +1343,7 @@ public class ManagerMainPanel extends JPanel {
                         orderContainer = new JPanel();
                         orderContainer.setLayout(new BoxLayout(orderContainer, BoxLayout.Y_AXIS));
                         orderContainer.setBackground(Color.WHITE);
-                //thêm sản phẩm vào danh sách
+                        //thêm sản phẩm vào danh sách
                         addProductToOrders();
                         addProductToOrders();
                         addProductToOrders();
@@ -1383,7 +1354,7 @@ public class ManagerMainPanel extends JPanel {
                     }
 
                 }
-        // //thêm sản phẩm vào danh sách
+                // //thêm sản phẩm vào danh sách
                 //                public JPanel productOrderPn(CustomerOrderDetailDTO customerOrderDTO) {
                 public void addProductToOrders() {
                     // Tạo panel chính với BorderLayout
@@ -1576,6 +1547,35 @@ public class ManagerMainPanel extends JPanel {
             }
         }
 
+        private TreeMap<Integer, List<CustomerOrderDTO>> reloadOrders() {
+            customerOrders = getAllCustomerOrder();
+            return customerOrders.values().stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.groupingBy(CustomerOrderDTO::getOrderId, TreeMap::new, Collectors.toList()));
+        }
+
+        private void upDataOrders(DefaultTableModel tableModel, String status) {
+            TreeMap<Integer, List<CustomerOrderDTO>> filteredOrder =
+                    (status == null)
+                            ? this.orders
+                            : this.orders.entrySet().stream()
+                            .map(entry -> Map.entry(entry.getKey(),
+                                    entry.getValue().stream()
+//                                            .filter(CustomerOrderDTO::isDispatched)
+                                            .collect(Collectors.toList())))
+                            .filter(entry -> !entry.getValue().isEmpty())
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getKey,
+                                    Map.Entry::getValue,
+                                    (a, b) -> b,
+                                    TreeMap::new
+                            ));
+            String[][] rowData = Order.getData(filteredOrder);
+            for (String[] strings : rowData) {
+                tableModel.addRow(strings);
+            }
+        }
+    }
 
     // Hoang's Code // Tuan
     class InventoryPanel extends JPanel {

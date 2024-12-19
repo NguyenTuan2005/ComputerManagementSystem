@@ -269,10 +269,6 @@ public class CustomerDAO implements Repository<Customer> {
     public static void main(String[] args) {
         CustomerDAO customerDAO = new CustomerDAO();
         var u =customerDAO.getDataCustomerOrderById(3);
-//        System.out.println(u);
-
-
-
     }
 
     public void updatePassword(String s, int id) {

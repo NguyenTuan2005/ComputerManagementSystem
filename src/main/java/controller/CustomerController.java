@@ -130,7 +130,9 @@ public class CustomerController implements ModelController<Customer> {
 
     public static void main(String[] args) throws SQLException {
         CustomerController c= new CustomerController();
-        c.getCustomerOrderDetail(10);
+        var  date = c.getCustomerOrderDetail(10);
+
+
     }
 
     public void block(boolean isBlock, int id){

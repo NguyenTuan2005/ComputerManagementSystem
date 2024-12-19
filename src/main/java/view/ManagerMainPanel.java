@@ -52,7 +52,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
-import static Config.ButtonConfig.setIconSmallButton;
+
+import static Model.Account.getCurrentDate;
 import static view.CustomerMainPanel.createImageForProduct;
 
 
@@ -1034,6 +1035,7 @@ public class ManagerMainPanel extends JPanel {
 
 
                 scrollPaneCustomer = new JScrollPane(tableCustomer);
+                setColorScrollPane(scrollPaneCustomer, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
                 tabbedPaneCustomer = createTabbedPane(scrollPaneCustomer, "Customer", Style.FONT_BOLD_16);
                 tabbedPaneCustomer.add("Sales Chart", new Schemas());
 
@@ -1143,7 +1145,7 @@ public class ManagerMainPanel extends JPanel {
                     dispatchOrderBt = new JButton("Sale");
                     ButtonConfig.setStyleButton(dispatchOrderBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.addButtonHoverEffect(dispatchOrderBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                    ButtonConfig.setIconBigButton("src/main/java/Icon/product-selling.png", dispatchOrderBt);
+                    ButtonConfig.setButtonIcon("src/main/java/Icon/product-selling.png", dispatchOrderBt, 35);
                     dispatchOrderBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     dispatchOrderBt.setVerticalTextPosition(SwingConstants.BOTTOM);
                 }
@@ -1152,7 +1154,7 @@ public class ManagerMainPanel extends JPanel {
                     exportExcelBt = new JButton("Export");
                     ButtonConfig.setStyleButton(exportExcelBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.addButtonHoverEffect(exportExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                    ButtonConfig.setIconBigButton("src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt);
+                    ButtonConfig.setButtonIcon("src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt, 35);
                     exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
                 }
@@ -1161,7 +1163,7 @@ public class ManagerMainPanel extends JPanel {
                     reloadBt = new JButton("Sale");
                     ButtonConfig.setStyleButton(reloadBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                    ButtonConfig.setIconBigButton("src/main/java/Icon/product-selling.png", reloadBt);
+                    ButtonConfig.setButtonIcon("src/main/java/Icon/product-selling.png", reloadBt,35);
                     reloadBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     reloadBt.setVerticalTextPosition(SwingConstants.BOTTOM);
                 }
@@ -1181,7 +1183,7 @@ public class ManagerMainPanel extends JPanel {
                 searchBt = new JButton();
                 ButtonConfig.setStyleButton(searchBt, Style.FONT_PLAIN_15, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
                 ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                setIconSmallButton("src/main/java/Icon/106236_search_icon.png", searchBt);
+                ButtonConfig.setButtonIcon("src/main/java/Icon/106236_search_icon.png", searchBt,10);
 
                 JPanel searchPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
                 searchPn.setBackground(Color.WHITE);
@@ -1230,7 +1232,7 @@ public class ManagerMainPanel extends JPanel {
                             : this.orders.entrySet().stream()
                             .map(entry -> Map.entry(entry.getKey(),
                                     entry.getValue().stream()
-                                            .filter(CustomerOrderDTO::isDispatched)
+//                                            .filter(CustomerOrderDTO::isDispatched)
                                             .collect(Collectors.toList())))
                             .filter(entry -> !entry.getValue().isEmpty())
                             .collect(Collectors.toMap(
@@ -1571,12 +1573,9 @@ public class ManagerMainPanel extends JPanel {
                     add(leftPn);
                     add(rightPn);
                 }
-
             }
-
         }
 
-    }
 
     // Hoang's Code // Tuan
     class InventoryPanel extends JPanel {
@@ -3073,7 +3072,6 @@ public class ManagerMainPanel extends JPanel {
         that.setFocusable(false);
         that.setPreferredSize(size);
     }
-
     // chỉnh màu cho scrollbar
     private static void setColorScrollPane(JScrollPane scrollPane, Color thumbColor, Color trackColor) {
         setColorScrollBar(scrollPane.getVerticalScrollBar(), thumbColor, trackColor);

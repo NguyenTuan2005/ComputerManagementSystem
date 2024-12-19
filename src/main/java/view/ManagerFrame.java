@@ -11,7 +11,7 @@ public class ManagerFrame extends JFrame {
 
     public ManagerFrame() {
         setTitle("Computer Management");
-        setSize(1200, 650);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setResizable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -77,6 +77,7 @@ public class ManagerFrame extends JFrame {
         managerMenuPanel.setNotificationButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                managerMainPanel.reloadNotification();
                 managerMainPanel.showPanel(ManagerMainPanel.NOTIFICATION_CONSTRAINT);
                 setHover(ManagerMainPanel.NOTIFICATION_CONSTRAINT);
             }

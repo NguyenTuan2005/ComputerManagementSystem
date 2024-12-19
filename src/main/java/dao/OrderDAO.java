@@ -2,6 +2,7 @@ package dao;
 
 import Config.DatabaseConfig;
 import Model.Order;
+import Enum.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -136,6 +137,20 @@ public class OrderDAO implements Repository<Order> {
             e.printStackTrace();
         }
         return order;
+    }
+
+    public boolean updateOrderStatus(OrderType type, int id ){
+        String query = "UPDATE public.order SET status = ? WHERE id = ?";
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, type.getStatus());
+            preparedStatement.setInt(2,id);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected >0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     // Cập nhật thông tin đơn hàng

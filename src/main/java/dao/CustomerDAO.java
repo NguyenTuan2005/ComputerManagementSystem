@@ -1,6 +1,5 @@
 package dao;
 
-import Config.BillConfig;
 import Config.DatabaseConfig;
 import Model.Customer;
 import dto.CustomerOrderDTO;
@@ -218,7 +217,7 @@ public class CustomerDAO implements Repository<Customer> {
                 order.setWeight(rs.getString("weight"));
                 order.setMonitor(rs.getString("monitor"));
                 order.setCard(rs.getString("card"));
-                order.setProductImage("hkdjfhkd");
+                order.convertToEnum(rs.getString("status_item"));
                 orders.add(order);
             }
 
@@ -270,10 +269,6 @@ public class CustomerDAO implements Repository<Customer> {
     public static void main(String[] args) {
         CustomerDAO customerDAO = new CustomerDAO();
         var u =customerDAO.getDataCustomerOrderById(3);
-//        System.out.println(u);
-
-
-
     }
 
     public void updatePassword(String s, int id) {

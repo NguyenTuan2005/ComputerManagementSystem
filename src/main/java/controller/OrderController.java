@@ -1,5 +1,6 @@
 package controller;
 
+import Enum.*;
 import Model.Order;
 import dao.OrderDAO;
 
@@ -59,6 +60,10 @@ public class OrderController implements ModelController<Order> {
     @Override
     public ArrayList<Order> sortByColumn(String column) {
         return null;
+    }
+
+    public boolean updateStatusOrder(OrderType  type , int orderId){
+        return orderDAO.updateOrderStatus(type, orderId);
     }
 
 

@@ -57,11 +57,11 @@ public class Supplier {
 
     // Convert data to String
     public static String [][] getData(ArrayList<Supplier> suppliers){
-        String [][] datas = new String[suppliers.size()][];
+        String [][] data = new String[suppliers.size()][];
         for (int i = 0; i < suppliers.size() ; i++) {
-            datas[i]= suppliers.get(i).convertToArray(i + 1);
+            data[i]= suppliers.get(i).convertToArray(i + 1);
         }
-        return datas;
+        return data;
     }
 
     private String[] convertToArray(int serial) {

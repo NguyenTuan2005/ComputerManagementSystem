@@ -1197,6 +1197,7 @@ public class ManagerMainPanel extends JPanel {
         }
 
         class TableOrderPanel extends JPanel{
+            ExportPanel exportPanel;
             TableOrderPanel(){
                 orders = reloadOrders();
                 setLayout(new BorderLayout());
@@ -1212,8 +1213,12 @@ public class ManagerMainPanel extends JPanel {
                 upDataOrders(dispatchedOrderModel, OrderType.DISPATCHED_MESSAGE);
                 dispatchedOrderScroll = new JScrollPane(dispatchedOrderTable);
 
+                //panel export products for each order
+                exportPanel = new ExportPanel();
+
                 orderTabbedPane =  createTabbedPane(orderScrollPane, "Customer's Order", Style.FONT_BOLD_16);
                 orderTabbedPane.add("Dispatched Orders", dispatchedOrderScroll);
+                orderTabbedPane.add("Export Product",exportPanel);
                 add(orderTabbedPane, BorderLayout.CENTER);
             }
         }
@@ -1246,10 +1251,8 @@ public class ManagerMainPanel extends JPanel {
                 tableModel.addRow(strings);
             }
         }
-    }
+
         public class ExportPanel extends JPanel {
-            private JTextField searchOrderIdTF;
-            private JComboBox<Integer> orderIdComboBox;
             private JLabel totalPriceLabel;
             private CustomButton exportBt;
 
@@ -1372,7 +1375,7 @@ public class ManagerMainPanel extends JPanel {
                         orderContainer = new JPanel();
                         orderContainer.setLayout(new BoxLayout(orderContainer, BoxLayout.Y_AXIS));
                         orderContainer.setBackground(Color.WHITE);
-                //thêm sản phẩm vào danh sách
+                        //thêm sản phẩm vào danh sách
                         addProductToOrders();
                         addProductToOrders();
                         addProductToOrders();
@@ -1383,7 +1386,7 @@ public class ManagerMainPanel extends JPanel {
                     }
 
                 }
-        // //thêm sản phẩm vào danh sách
+                // //thêm sản phẩm vào danh sách
                 //                public JPanel productOrderPn(CustomerOrderDetailDTO customerOrderDTO) {
                 public void addProductToOrders() {
                     // Tạo panel chính với BorderLayout
@@ -1575,7 +1578,7 @@ public class ManagerMainPanel extends JPanel {
                 }
             }
         }
-
+    }
 
     // Hoang's Code // Tuan
     class InventoryPanel extends JPanel {

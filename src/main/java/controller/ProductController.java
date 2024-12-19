@@ -7,6 +7,7 @@ import security.PasswordSecurity;
 import view.OverrideComponent.ToastNotification;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class ProductController implements ModelController<Product> {
 
@@ -83,13 +84,29 @@ public class ProductController implements ModelController<Product> {
         for(Product product: products){
             int id = product.getId();
             product.setImages(imageDAO.findByProductId(id));
-            System.out.println(product+"\n");
+
         }
         return products;
     }
 
     public static void main(String[] args) {
-        ProductController p = new ProductController();
-        System.out.println(" chao "); p.getEagerProducts();
+        ProductController productController = new ProductController();
+
+        ArrayList<Product> products = (ArrayList<Product>) productController.getEagerProducts()
+                .stream()
+//                .filter(p -> p.getName().toLowerCase().contains("Dell".toLowerCase()))
+                .sorted((p1,p2)-> p2.getPrice() - p1.getPrice())
+//                .limit(5)
+                .collect(Collectors.toList());
+        System.out.println("find -----");
+        for (int i = 0; i < products.size(); i++) {
+            System.out.println(products.get(i));
+            System.out.println("""
+                    
+                    
+                    
+                    
+                    """);
+        }
     }
 }

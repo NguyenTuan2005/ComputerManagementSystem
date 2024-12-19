@@ -7,13 +7,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.awt.event.*;
 
 public class CustomerFrame extends JFrame {
     CustomerMainPanel customerMainPanel;
     CustomerMenuPanel customerMenuPanel;
 
     public CustomerFrame() throws SQLException {
-//    public CustomerFrame(LoginFrame loginFrame) {
         setTitle("Computer Management");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setResizable(true);

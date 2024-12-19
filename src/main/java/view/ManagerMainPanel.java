@@ -1197,6 +1197,7 @@ public class ManagerMainPanel extends JPanel {
         }
 
         class TableOrderPanel extends JPanel{
+            ExportPanel exportPanel;
             TableOrderPanel(){
                 orders = reloadOrders();
                 setLayout(new BorderLayout());
@@ -1212,15 +1213,46 @@ public class ManagerMainPanel extends JPanel {
                 upDataOrders(dispatchedOrderModel, OrderType.DISPATCHED_MESSAGE);
                 dispatchedOrderScroll = new JScrollPane(dispatchedOrderTable);
 
+                //panel export products for each order
+                exportPanel = new ExportPanel();
+
                 orderTabbedPane =  createTabbedPane(orderScrollPane, "Customer's Order", Style.FONT_BOLD_16);
                 orderTabbedPane.add("Dispatched Orders", dispatchedOrderScroll);
+                orderTabbedPane.add("Export Product",exportPanel);
                 add(orderTabbedPane, BorderLayout.CENTER);
             }
         }
 
+        private TreeMap<Integer, List<CustomerOrderDTO>> reloadOrders() {
+            customerOrders = getAllCustomerOrder();
+            return customerOrders.values().stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.groupingBy(CustomerOrderDTO::getOrderId, TreeMap::new, Collectors.toList()));
+        }
+
+        private void upDataOrders(DefaultTableModel tableModel, String status) {
+            TreeMap<Integer, List<CustomerOrderDTO>> filteredOrder =
+                    (status == null)
+                            ? this.orders
+                            : this.orders.entrySet().stream()
+                            .map(entry -> Map.entry(entry.getKey(),
+                                    entry.getValue().stream()
+//                                            .filter(CustomerOrderDTO::isDispatched)
+                                            .collect(Collectors.toList())))
+                            .filter(entry -> !entry.getValue().isEmpty())
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getKey,
+                                    Map.Entry::getValue,
+                                    (a, b) -> b,
+                                    TreeMap::new
+                            ));
+            String[][] rowData = Order.getData(filteredOrder);
+            for (String[] strings : rowData) {
+                tableModel.addRow(strings);
+            }
+        }
+
         public class ExportPanel extends JPanel {
-            private JTextField searchOrderIdTF;
-            private JComboBox<Integer> orderIdComboBox;
             private JLabel totalPriceLabel;
             private CustomButton exportBt;
 
@@ -1544,35 +1576,6 @@ public class ManagerMainPanel extends JPanel {
                     add(leftPn);
                     add(rightPn);
                 }
-            }
-        }
-
-        private TreeMap<Integer, List<CustomerOrderDTO>> reloadOrders() {
-            customerOrders = getAllCustomerOrder();
-            return customerOrders.values().stream()
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.groupingBy(CustomerOrderDTO::getOrderId, TreeMap::new, Collectors.toList()));
-        }
-
-        private void upDataOrders(DefaultTableModel tableModel, String status) {
-            TreeMap<Integer, List<CustomerOrderDTO>> filteredOrder =
-                    (status == null)
-                            ? this.orders
-                            : this.orders.entrySet().stream()
-                            .map(entry -> Map.entry(entry.getKey(),
-                                    entry.getValue().stream()
-//                                            .filter(CustomerOrderDTO::isDispatched)
-                                            .collect(Collectors.toList())))
-                            .filter(entry -> !entry.getValue().isEmpty())
-                            .collect(Collectors.toMap(
-                                    Map.Entry::getKey,
-                                    Map.Entry::getValue,
-                                    (a, b) -> b,
-                                    TreeMap::new
-                            ));
-            String[][] rowData = Order.getData(filteredOrder);
-            for (String[] strings : rowData) {
-                tableModel.addRow(strings);
             }
         }
     }

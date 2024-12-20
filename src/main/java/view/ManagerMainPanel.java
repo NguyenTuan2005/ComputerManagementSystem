@@ -303,10 +303,10 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.setStyleButton(searchBt, Style.FONT_PLAIN_13, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
                 ButtonConfig.setButtonIcon("src/main/java/Icon/106236_search_icon.png", searchBt,10);
 
-                reloadBt = new JButton("reload");
+                reloadBt = new JButton("Reload");
                 ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 ButtonConfig.setStyleButton(reloadBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setButtonIcon("src/main/java/Icon/reload-icon.png", reloadBt,35);
+                ButtonConfig.setButtonIcon("src/main/java/Icon/reload_icon.png", reloadBt,35);
                 KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.reloadKey, reloadBt);
 
                 searchPanel = new JPanel(new FlowLayout());
@@ -505,7 +505,7 @@ public class ManagerMainPanel extends JPanel {
                 // Add Button
                 {
                     addBt = new JButton("Add");
-                    ButtonConfig.setStyleButton(addBt, Style.FONT_BOLD_16, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setStyleButton(addBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.addButtonHoverEffect(addBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                     ButtonConfig.setButtonIcon("src/main/java/Icon/database-add-icon.png", addBt,35);
                     KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.addKey, addBt);
@@ -518,7 +518,7 @@ public class ManagerMainPanel extends JPanel {
                 // Modify Button
                 {
                     modifyBt = new JButton("Modify");
-                    ButtonConfig.setStyleButton(modifyBt, Style.FONT_BOLD_16, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
+                    ButtonConfig.setStyleButton(modifyBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
                     ButtonConfig.setButtonIcon("src/main/java/Icon/modify.png", modifyBt,35);
                     ButtonConfig.addButtonHoverEffect(modifyBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
 
@@ -529,7 +529,7 @@ public class ManagerMainPanel extends JPanel {
                 // Delete Button
                 {
                     deleteBt = new JButton("Delete");
-                    ButtonConfig.setStyleButton(deleteBt, Style.FONT_BOLD_16, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setStyleButton(deleteBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.setButtonIcon("src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt,35);
                     ButtonConfig.addButtonHoverEffect(deleteBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
 
@@ -540,7 +540,7 @@ public class ManagerMainPanel extends JPanel {
                 // Export Excel Button
                 {
                     exportExcelBt = new JButton("Export");
-                    ButtonConfig.setStyleButton(exportExcelBt, Style.FONT_BOLD_16, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
+                    ButtonConfig.setStyleButton(exportExcelBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(90, 80));
                     ButtonConfig.setButtonIcon("src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt,35);
                     ButtonConfig.addButtonHoverEffect(exportExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
 
@@ -560,7 +560,7 @@ public class ManagerMainPanel extends JPanel {
                 // Import Excel Button
                 {
                     importExcelBt = new JButton("Import");
-                    ButtonConfig.setStyleButton(importExcelBt, Style.FONT_BOLD_16, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setStyleButton(importExcelBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.setButtonIcon("src/main/java/Icon/icons8-export-excel-50.png", importExcelBt,35);
                     ButtonConfig.addButtonHoverEffect(importExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
 
@@ -586,9 +586,9 @@ public class ManagerMainPanel extends JPanel {
                 // Reload button
                 {
                     reloadBt = new JButton("Reload");
-                    ButtonConfig.setStyleButton(reloadBt, Style.FONT_BOLD_16, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.setStyleButton(reloadBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                    ButtonConfig.setButtonIcon("src/main/java/Icon/reload-icon.png", reloadBt,35);
+                    ButtonConfig.setButtonIcon("src/main/java/Icon/reload_icon.png", reloadBt,35);
                     KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.reloadKey, reloadBt);
                     reloadBt.addActionListener(e -> updateSuppliers(selectedOption));
                 }
@@ -597,7 +597,7 @@ public class ManagerMainPanel extends JPanel {
 
                 // Search Button
                 searchBt = new JButton();
-                ButtonConfig.setStyleButton(searchBt, Style.FONT_PLAIN_15, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
+                ButtonConfig.setStyleButton(searchBt, Style.FONT_PLAIN_13, Color.BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(40, 45));
                 ButtonConfig.setButtonIcon("src/main/java/Icon/106236_search_icon.png", searchBt,10);
                 ButtonConfig.addButtonHoverEffect(searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 searchBt.addActionListener(e -> {
@@ -825,10 +825,10 @@ public class ManagerMainPanel extends JPanel {
                 });
 
                 // block customer
-                blockCustomer = new JButton("Block customer");
+                blockCustomer = new JButton("Block");
                 ButtonConfig.addButtonHoverEffect(blockCustomer, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 ButtonConfig.setStyleButton(blockCustomer, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setButtonIcon("src/main/java/Icon/modify.png", blockCustomer,35);
+                ButtonConfig.setButtonIcon("src/main/java/Icon/block_User.png", blockCustomer,35);
                 KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.blockUserKey, blockCustomer);
                 blockCustomer.addActionListener(new ActionListener() {
                     @Override
@@ -952,10 +952,10 @@ public class ManagerMainPanel extends JPanel {
                         }
                 );
 
-                reloadCustomerBt = new JButton("reload");
+                reloadCustomerBt = new JButton("Rreoeload");
                 ButtonConfig.addButtonHoverEffect(reloadCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 ButtonConfig.setStyleButton(reloadCustomerBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setButtonIcon("src/main/java/Icon/reload-icon.png", reloadCustomerBt,35);
+                ButtonConfig.setButtonIcon("src/main/java/Icon/reload_icon.png", reloadCustomerBt,35);
                 KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.reloadKey, reloadCustomerBt);
                 reloadCustomerBt.addActionListener(new ActionListener() {
                     @Override
@@ -1115,7 +1115,7 @@ public class ManagerMainPanel extends JPanel {
     class OrderPanel extends JPanel{
         final String[] orderColumnNames = {"Serial number", "Customer ID", "Order Date", "Ship address", "Status Item", "Saler", "Saler ID","Total Price", "Total Quantity"};
 
-        private JButton exportExcelBt, reloadBt, searchBt, dispatchOrderBt;
+        private JButton exportExcelBt, reloadBt, searchBt, deliveryOrderBt;
         private JTextField searchOrderField;
 
         private JTable orderTable, dispatchedOrderTable;
@@ -1142,12 +1142,12 @@ public class ManagerMainPanel extends JPanel {
                 setBackground(Color.WHITE);
                 //dispatchOrderBt
                 {
-                    dispatchOrderBt = new JButton("Sale");
-                    ButtonConfig.setStyleButton(dispatchOrderBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                    ButtonConfig.addButtonHoverEffect(dispatchOrderBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                    ButtonConfig.setButtonIcon("src/main/java/Icon/product-selling.png", dispatchOrderBt, 35);
-                    dispatchOrderBt.setHorizontalTextPosition(SwingConstants.CENTER);
-                    dispatchOrderBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                    deliveryOrderBt = new JButton("Delivery");
+                    ButtonConfig.setStyleButton(deliveryOrderBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
+                    ButtonConfig.addButtonHoverEffect(deliveryOrderBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                    ButtonConfig.setButtonIcon("src/main/java/Icon/deliveryIcon1.png", deliveryOrderBt, 25);
+                    deliveryOrderBt.setHorizontalTextPosition(SwingConstants.CENTER);
+                    deliveryOrderBt.setVerticalTextPosition(SwingConstants.BOTTOM);
                 }
                 //exportExelBt
                 {
@@ -1160,17 +1160,17 @@ public class ManagerMainPanel extends JPanel {
                 }
                 //reloadBt
                 {
-                    reloadBt = new JButton("Sale");
+                    reloadBt = new JButton("Reload");
                     ButtonConfig.setStyleButton(reloadBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                    ButtonConfig.setButtonIcon("src/main/java/Icon/product-selling.png", reloadBt,35);
+                    ButtonConfig.setButtonIcon("src/main/java/Icon/reload_Icon.png", reloadBt,35);
                     reloadBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     reloadBt.setVerticalTextPosition(SwingConstants.BOTTOM);
                 }
 
                 JPanel toolPn = new JPanel(new FlowLayout(FlowLayout.LEFT));
                 toolPn.setBackground(Color.WHITE);
-                toolPn.add(dispatchOrderBt);
+                toolPn.add(deliveryOrderBt);
                 toolPn.add(ButtonConfig.createVerticalSeparator());
                 toolPn.add(exportExcelBt);
                 toolPn.add(reloadBt);
@@ -1237,7 +1237,7 @@ public class ManagerMainPanel extends JPanel {
                             : this.orders.entrySet().stream()
                             .map(entry -> Map.entry(entry.getKey(),
                                     entry.getValue().stream()
-//                                            .filter(CustomerOrderDTO::isDispatched)
+                                            .filter(CustomerOrderDTO::isDispatched)
                                             .collect(Collectors.toList())))
                             .filter(entry -> !entry.getValue().isEmpty())
                             .collect(Collectors.toMap(
@@ -1686,7 +1686,7 @@ public class ManagerMainPanel extends JPanel {
                     reloadBt = new JButton("Reload");
                     ButtonConfig.setStyleButton(reloadBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                    ButtonConfig.setButtonIcon("src/main/java/Icon/reload-icon.png", reloadBt,35);
+                    ButtonConfig.setButtonIcon("src/main/java/Icon/reload_icon.png", reloadBt,35);
 
                     KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.reloadKey, reloadBt);
 
@@ -2119,10 +2119,10 @@ public class ManagerMainPanel extends JPanel {
                 });
 
                 // block customer
-                blockManagerBt = new JButton("Block customer");
+                blockManagerBt = new JButton("Block");
                 ButtonConfig.addButtonHoverEffect(blockManagerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 ButtonConfig.setStyleButton(blockManagerBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setButtonIcon("src/main/java/Icon/modify.png", blockManagerBt,35);
+                ButtonConfig.setButtonIcon("src/main/java/Icon/block_User.png", blockManagerBt,35);
                 KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.blockUserKey, blockManagerBt);
                 blockManagerBt.addActionListener(new ActionListener() {
                     @Override
@@ -2184,10 +2184,10 @@ public class ManagerMainPanel extends JPanel {
                         }
                 );
 
-                reloadAccBt = new JButton("reload");
+                reloadAccBt = new JButton("Reload");
                 ButtonConfig.addButtonHoverEffect(reloadAccBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 ButtonConfig.setStyleButton(reloadAccBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
-                ButtonConfig.setButtonIcon("src/main/java/Icon/reload-icon.png", reloadAccBt,35);
+                ButtonConfig.setButtonIcon("src/main/java/Icon/reload_icon.png", reloadAccBt,35);
                 KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.reloadKey, reloadAccBt);
                 reloadAccBt.addActionListener(new ActionListener() {
                     @Override

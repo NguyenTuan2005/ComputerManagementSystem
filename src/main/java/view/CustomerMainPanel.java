@@ -14,7 +14,6 @@ import controller.ProductController;
 import dto.CustomerOrderDTO;
 import dto.CustomerOrderDetailDTO;
 import dto.KeyOrderDTO;
-import org.jfree.data.json.JSONUtils;
 import view.OtherComponent.ChangePasswordFrame;
 import view.OtherComponent.NotFoundItemPanel;
 import view.OverrideComponent.*;
@@ -38,9 +37,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
-
 import Enum.*;
-
 import java.util.stream.Collectors;
 
 
@@ -164,7 +161,7 @@ public class CustomerMainPanel extends JPanel {
                 searchBar.add(searchTextField, gbc);
 
                 searchBt = ButtonConfig.createCustomButton("", Style.FONT_PLAIN_20, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE, 0, SwingConstants.CENTER, new Dimension(50, 40));
-                ButtonConfig.setButtonIcon("src/main/java/Icon/search_Icon.png", searchBt, 5);
+                ButtonConfig.setButtonIcon("src/main/java/Icon/search_Icon.png", searchBt,5);
                 searchBt.addActionListener(e -> {
                     catalogContainer.removeAll();
                     ProductController productController = new ProductController();
@@ -265,7 +262,7 @@ public class CustomerMainPanel extends JPanel {
                                 .stream()
                                 .filter(p -> p.getGenre().toLowerCase().contains("pc"))
                                 .collect(Collectors.toList());
-                        if (products.isEmpty()) {
+                        if ( products.isEmpty()) {
                             catalogContainer.add(new NotFoundItemPanel(" not found !!! "));
                             return;
                         }
@@ -284,7 +281,7 @@ public class CustomerMainPanel extends JPanel {
                         ProductController productController = new ProductController();
                         ArrayList<Product> products = (ArrayList<Product>) productController.getEagerProducts()
                                 .stream()
-                                .sorted((p1, p2) -> p1.getPrice() - p2.getPrice())
+                                .sorted((p1,p2) -> p1.getPrice() - p2.getPrice())
                                 .collect(Collectors.toList());
                         if (products.isEmpty()) {
                             catalogContainer.add(new NotFoundItemPanel(" not found !!! "));
@@ -307,9 +304,9 @@ public class CustomerMainPanel extends JPanel {
                         ProductController productController = new ProductController();
                         ArrayList<Product> products = (ArrayList<Product>) productController.getEagerProducts()
                                 .stream()
-                                .sorted((p1, p2) -> p2.getPrice() - p1.getPrice())
+                                .sorted((p1,p2) -> p2.getPrice() - p1.getPrice())
                                 .collect(Collectors.toList());
-                        if (products.isEmpty()) {
+                        if ( products.isEmpty()) {
                             catalogContainer.add(new NotFoundItemPanel(" not found !!! "));
                             return;
                         }
@@ -390,12 +387,6 @@ public class CustomerMainPanel extends JPanel {
             }
 
             class DisplaySingleProductPn extends JPanel {
-                JLabel image, productName, price, status;
-                JButton backBt, previousBt, nextBt;
-                CustomButton addToCart, buyNowBt;
-                Product product;
-                ImageIcon[] images;
-                String[] filePaths = {"src/main/java/Icon/laptopAsus1.jpg", "src/main/java/img/MacBook_Air_M2_2023.jpg", "src/main/java/img/Acer_Predator_Helios_300.jpg", "src/main/java/img/Asus_VivoBook_S15.jpg"};
 
                 DisplaySingleProductPn() {
                     setLayout(new BorderLayout());
@@ -407,9 +398,7 @@ public class CustomerMainPanel extends JPanel {
 
         class CartPanel extends JPanel {
             JLabel totalItemsLabel, totalItemsTitle, totalPriceLabel;
-
             CustomButton backBt, orderBt;
-            ;
             ProductsInCartPanel productsInCartPanel;
             SummaryPanel summaryPanel;
             JScrollPane scrollPane;
@@ -568,12 +557,11 @@ public class CustomerMainPanel extends JPanel {
                             int i = JOptionPane.showConfirmDialog(null, "Would you like to confirm your order?", "Order Confirmation", JOptionPane.YES_NO_OPTION);
                             boolean saved = (i == 0);
                             if (saved && !productOrders.isEmpty()) {
-                                int customerId = CurrentUser.CURRENT_CUSTOMER.getId();
-                                int managerId = CurrentUser.CURRENT_MANAGER.getManagerId();
-                                String address = addressField.getText();
-                                String status = STATUS_ORDER;
-                                int orderId = orderController.save(customerId, managerId, address, status);
-                                productOrders.forEach(System.out::println);
+                                CUSTOMER_ID = CurrentUser.CURRENT_CUSTOMER.getId();
+                                MANAGER_ID= CurrentUser.CURRENT_MANAGER.getManagerId();
+                                ADDRESS = addressField.getText();
+                                int orderId = orderController.save(CUSTOMER_ID, MANAGER_ID, ADDRESS, STATUS_ORDER);
+//                                productOrders.forEach(System.out::println);
                                 System.out.println("saved");
                                 orderDetailController.saves(orderId, ProductOrderConfig.getUnqueProductOrder(productOrders));
 
@@ -581,7 +569,7 @@ public class CustomerMainPanel extends JPanel {
 
                                 var c = new Customer();
                                 c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
-                                bills = customerController.findCustomerOrderById(customerId);
+                                bills = customerController.findCustomerOrderById(CUSTOMER_ID);
                                 addCustomerNotification(c, new BillConfig(bills).getBillCurrent());
                                 ToastNotification.showToast("Successful purchase!", 2500, 50, -1, -1);
 
@@ -589,6 +577,11 @@ public class CustomerMainPanel extends JPanel {
                                 cartContainer.add(emptyCartPn);
                                 cartContainer.revalidate();
                                 cartContainer.repaint();
+
+                                ordersContainer.removeAll();
+                                ordersContainer.revalidate();
+                                ordersContainer.repaint();
+
                                 upLoadOrderHistory();
 
                             } else {
@@ -624,6 +617,8 @@ public class CustomerMainPanel extends JPanel {
             ToolPanel() {
                 setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
                 setBackground(Color.WHITE);
+
+
 
 
                 calendarBt = ButtonConfig.createCustomButton("", Style.FONT_PLAIN_20, Style.WORD_COLOR_WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE, 0, SwingConstants.CENTER, new Dimension(50, 50));
@@ -667,7 +662,7 @@ public class CustomerMainPanel extends JPanel {
                 feedbackBt = ButtonConfig.createCustomButton("FeedBack", Style.FONT_BOLD_16, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Color.white, Style.LIGHT_BlUE,
                         Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1, 8, SwingConstants.CENTER, new Dimension(160, 55));
                 ButtonConfig.setButtonIcon("src/main/java/Icon/feedback_Icon.png", feedbackBt, 12);
-                feedbackBt.addActionListener(e -> new OpenEmailConfig());
+                feedbackBt.addActionListener(e-> new OpenEmailConfig());
                 add(calendarBt);
                 add(searchField);
                 add(searchBt);
@@ -1021,8 +1016,7 @@ public class CustomerMainPanel extends JPanel {
             }
         });
     }
-
-    //----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
     // thêm sản phầm vào panel catalog container
     public void addNewPanelToCatalogContainer(JPanel panel) {
         GridBagConstraints gbc = new GridBagConstraints();
@@ -1331,7 +1325,7 @@ public class CustomerMainPanel extends JPanel {
         this.productDetailContainer.repaint();
     }
 
-    //----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
     // add new panel contain product to CART Panel
     public void addNewPanelToCartContainer(JPanel panel) {
         if (cartContainer.getComponent(0).equals(emptyCartPn)) {
@@ -1427,7 +1421,7 @@ public class CustomerMainPanel extends JPanel {
                 totalPrice -= product.getPrice();
                 updatePriceQuantityInCart(totalItems, totalPrice);
 
-                productOrderConfig.setQuatity(countItem[0]);
+                productOrderConfig.setQuatity(countItem[0]);// đặt số lượng sản phẩm cho đơn hàng
                 this.productOrders.add(productOrderConfig);
             }
         });
@@ -1469,6 +1463,9 @@ public class CustomerMainPanel extends JPanel {
             removePanelFromCartContainer(wrapperPanel);
         });
         rightPanel.add(removeBt);
+
+        productOrderConfig.setQuatity(countItem[0]);// đặt số lượng sản phẩm cho đơn hàng
+        this.productOrders.add(productOrderConfig);
 
         mainPanel.add(rightPanel, BorderLayout.EAST);
         return wrapperPanel;
@@ -1601,19 +1598,19 @@ public class CustomerMainPanel extends JPanel {
 //---------------------------------------------------------------------------------------
 
     public void addOrderToContainer(JPanel panel) {
-        this.ordersContainer.add(panel, 0);
+        this.ordersContainer.add(panel);
         this.ordersContainer.add(Box.createRigidArea(new Dimension(0, 10)));
         this.ordersContainer.revalidate();
         this.ordersContainer.repaint();
     }
 
-    public JPanel createOrderPn(int orderId, ArrayList<CustomerOrderDetailDTO> customerOrderDTOs) {
+    public JPanel createOrderPn(int orderId ,ArrayList<CustomerOrderDetailDTO> customerOrderDTOs) {
         JPanel main = new JPanel(new BorderLayout());
 
         JPanel titlePn = new JPanel(new FlowLayout(FlowLayout.LEFT));
         titlePn.setPreferredSize(new Dimension(100, 50));
         titlePn.setBackground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
-        JLabel status = new JLabel("" + customerOrderDTOs.get(0).customerOrderDTO().getStatus());
+        JLabel status = new JLabel("Order awaiting shipment");
         status.setFont(Style.FONT_BOLD_30);
         status.setForeground(Color.WHITE);
         titlePn.add(status);
@@ -1668,7 +1665,7 @@ public class CustomerMainPanel extends JPanel {
         // check order date
         var date = customerOrderDTOs.get(0).customerOrderDTO().getOrderDate();
 
-        if (DateConfig.cancelOrderLimit(date, 3)) {
+        if(DateConfig.cancelOrderLimit(date,3)){
             ButtonConfig.setButtonIcon("src/main/java/Icon/cancelOrder_Icon.png", cancelOrder, 15);
             bottomLeft.add(cancelOrder);
         }
@@ -1683,10 +1680,30 @@ public class CustomerMainPanel extends JPanel {
             }
         });
 
-        repurchase.addActionListener(e -> {
+        repurchase.addActionListener(e->{
             // mua lai thi phai reload cho hien len
-            JOptionPane.showConfirmDialog(null, "chua code anh oi  chua có logic mua hàng");
-            addOrderToContainer(createOrderPn(orderId, customerOrderDTOs));
+         if(JOptionPane.showConfirmDialog(null,"chua code anh oi  chua có logic mua hàng") == 0) {
+//             addOrderToContainer(createOrderPn(orderId, customerOrderDTOs));
+             int reOrderId = orderController.save(CurrentUser.CURRENT_CUSTOMER.getId(), CurrentUser.CURRENT_MANAGER.getManagerId(), ADDRESS, STATUS_ORDER);
+             System.out.println(reOrderId);
+//             productOrders.forEach(System.out::println);
+             System.out.println("saved");
+             orderDetailController.saves(reOrderId, customerOrderDTOs);
+             productOrders.clear();
+             ToastNotification.showToast("Successful purchase!", 2500, 50, -1, -1);
+
+
+             var c = new Customer();
+             c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
+             bills = customerController.findCustomerOrderById(CurrentUser.CURRENT_CUSTOMER.getId());
+
+             addCustomerNotification(c, new BillConfig(bills).getBillCurrent());
+
+             ordersContainer.removeAll();
+             ordersContainer.revalidate();
+             ordersContainer.repaint();
+             upLoadOrderHistory();
+         }
         });
 
 
@@ -1704,11 +1721,8 @@ public class CustomerMainPanel extends JPanel {
         bottomPn.add(bottomRight, BorderLayout.EAST);
         main.add(bottomPn, BorderLayout.SOUTH);
 
-        JPanel wrapperPanel = new JPanel();
-        wrapperPanel.setLayout(new BoxLayout(wrapperPanel, BoxLayout.Y_AXIS));
-        wrapperPanel.setBackground(Color.WHITE);
-        wrapperPanel.add(main);
-        return wrapperPanel;
+
+        return main;
     }
 
     public JPanel productOrderPn(CustomerOrderDetailDTO customerOrderDTO) {
@@ -1779,15 +1793,14 @@ public class CustomerMainPanel extends JPanel {
 
         return mainPanel;
     }
-
-    private void upLoadOrderHistory() {
+    private void upLoadOrderHistory(){
         ProductController productController = new ProductController();
         var k = customerController.getCustomerOrderDetail(CurrentUser.CURRENT_CUSTOMER.getId());
         Map<KeyOrderDTO, ArrayList<CustomerOrderDTO>> mapOrder = new BillConfig(bills).convertDataToBills();
         OrderHistoryConfig orderHistoryConfig = new OrderHistoryConfig(k);
         for (Map.Entry<Integer, List<CustomerOrderDetailDTO>> data : orderHistoryConfig.get().entrySet()) {
             try {
-                addOrderToContainer(createOrderPn(data.getKey(), (ArrayList<CustomerOrderDetailDTO>) data.getValue()));
+                addOrderToContainer(createOrderPn(data.getKey(),(ArrayList < CustomerOrderDetailDTO >)data.getValue()));
             } catch (Exception ee) {
 
             }

@@ -1,8 +1,7 @@
 package Model;
 
-import lombok.*;
-
 import java.sql.Date;
+import lombok.*;
 
 @ToString
 @EqualsAndHashCode
@@ -13,22 +12,17 @@ import java.sql.Date;
 @RequiredArgsConstructor
 public class Manager {
 
-    private int id;
+  private int id;
 
-    @NonNull
-    private String fullName;
+  @NonNull private String fullName;
 
-    @NonNull
-    private String address;
+  @NonNull private String address;
 
-    @NonNull
-    private Date birthDay;
+  @NonNull private Date birthDay;
 
-    @NonNull
-    private String phoneNumber;
+  @NonNull private String phoneNumber;
 
-
-    public boolean birthDayIsNull() {
-        return this.birthDay == null;
-    }
+  public boolean birthDayIsNull() {
+    return this.birthDay == null;
+  }
 }

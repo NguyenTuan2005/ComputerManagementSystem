@@ -21,7 +21,7 @@ public class Product {
 
     private int quantity;
 
-    private int price;
+    private double price;
 
     private String genre;
 
@@ -60,7 +60,7 @@ public class Product {
         this.name = name;
     }
 
-    public Product(int suppliersId, String name, int quantity, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status,int deleteRow) {
+    public Product(int suppliersId, String name, int quantity, double price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status,int deleteRow) {
         this.suppliersId = suppliersId;
         this.name = name;
         this.quantity = quantity;
@@ -76,7 +76,7 @@ public class Product {
         this.deleteRow= deleteRow;
     }
 
-    public Product(int suppliersId, String name, int quantity, int price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status, String disk, String monitor, String weight, String card, int deleteRow) {
+    public Product(int suppliersId, String name, int quantity, double price, String genre, String brand, String operatingSystem, String cpu, String memory, String ram, String madeIn, String status, String disk, String monitor, String weight, String card, int deleteRow) {
         this.suppliersId = suppliersId;
         this.name = name;
         this.quantity = quantity;
@@ -101,7 +101,7 @@ public class Product {
                 ,String.valueOf(id)
                 , name
                 , String.valueOf(quantity)
-                , Integer.toString(price)
+                , Double.toString(price)
                 , genre
                 , brand
                 , operatingSystem

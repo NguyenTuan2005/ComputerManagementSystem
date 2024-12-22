@@ -4,7 +4,6 @@ import Model.Product;
 import dao.ImageDAO;
 import dao.ProductDAO;
 import security.PasswordSecurity;
-import view.OverrideComponent.ToastNotification;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -95,7 +94,7 @@ public class ProductController implements ModelController<Product> {
         ArrayList<Product> products = (ArrayList<Product>) productController.getEagerProducts()
                 .stream()
 //                .filter(p -> p.getName().toLowerCase().contains("Dell".toLowerCase()))
-                .sorted((p1,p2)-> p2.getPrice() - p1.getPrice())
+                .sorted((p1,p2)-> (int) (p2.getPrice() - p1.getPrice()))
 //                .limit(5)
                 .collect(Collectors.toList());
         System.out.println("find -----");

@@ -88,7 +88,6 @@ public class ManagerMainPanel extends JPanel {
     static final String[] columnNamesSUPPLIER = {"Serial Number", "Supplier ID:", "Supplier Name:", "Email:", "Phone number:", "Address:", "Contract Start Date:"};
     static final String[] columnNamesCUSTOMER = {"Customer ID:", "Customer Name:", "Phone Number:", "Email:", "Address:", "Date of Birth:"};
 
-    private Map<Customer, List<CustomerOrderDTO>> customerOrders = getAllCustomerOrder();
     static DecimalFormat formatCurrency = new DecimalFormat("#,###");
     //main constructor
     public ManagerMainPanel() {
@@ -346,7 +345,7 @@ public class ManagerMainPanel extends JPanel {
                         switch (item) {
                             case ("PIRCE"): {
                                 productsAll = (ArrayList<Product>) productsAll.stream()
-                                        .sorted((p1, p2) -> Integer.compare(p2.getPrice(), p1.getPrice()))
+                                        .sorted((p1, p2) -> Double.compare(p2.getPrice(), p1.getPrice()))
                                         .collect(Collectors.toList());
                                 break;
                             }
@@ -545,16 +544,7 @@ public class ManagerMainPanel extends JPanel {
                     ButtonConfig.addButtonHoverEffect(exportExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
 
                     KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.exportExcelKey, exportExcelBt);
-                    exportExcelBt.addActionListener(e -> {
-                        String fileName = JOptionPane.showInputDialog("Enter the name of the Excel file:");
-                        if (fileName != null && !fileName.trim().isEmpty()) {
-                            fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
-                            ExcelConfig.exportToExcel(suppliers, fileName, columnNamesSUPPLIER);
-                            JOptionPane.showMessageDialog(null, "Exported to " + fileName);
-                        } else {
-                            JOptionPane.showMessageDialog(null, "File name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    });
+                    exportExcelBt.addActionListener(e -> exportExcel(suppliers, columnNamesSUPPLIER));
                 }
 
                 // Import Excel Button
@@ -1124,6 +1114,10 @@ public class ManagerMainPanel extends JPanel {
         private JTabbedPane orderTabbedPane;
         private ToolPanel toolPanel = new ToolPanel();
         private TableOrderPanel tableCustomerPanel = new TableOrderPanel();
+
+        private ExportPanel exportPanel;
+
+        private CustomerController controller = new CustomerController();
         private TreeMap<Integer, List<CustomerOrderDTO>> orders;
 
         OrderPanel(){
@@ -1142,12 +1136,13 @@ public class ManagerMainPanel extends JPanel {
                 setBackground(Color.WHITE);
                 //dispatchOrderBt
                 {
-                    dispatchOrderBt = new JButton("Sale");
+                    dispatchOrderBt = new JButton("Deliery");
                     ButtonConfig.setStyleButton(dispatchOrderBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.addButtonHoverEffect(dispatchOrderBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                    ButtonConfig.setButtonIcon("src/main/java/Icon/product-selling.png", dispatchOrderBt, 35);
+                    ButtonConfig.setButtonIcon("src/main/java/Icon/delivery-box.png", dispatchOrderBt, 35);
                     dispatchOrderBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     dispatchOrderBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                    dispatchOrderBt.addActionListener(e -> dispatchOrder());
                 }
                 //exportExelBt
                 {
@@ -1157,15 +1152,25 @@ public class ManagerMainPanel extends JPanel {
                     ButtonConfig.setButtonIcon("src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt, 35);
                     exportExcelBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     exportExcelBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                    exportExcelBt.addActionListener(e -> {
+                        JTable table = getSelectedTable();
+                        if (table != null) {
+                            ArrayList<CustomerOrderDTO> list = orders.values().stream()
+                                            .flatMap(Collection::stream)
+                                            .collect(Collectors.toCollection(ArrayList::new));
+                            exportExcel(list, orderColumnNames);
+                        }
+                    });
                 }
                 //reloadBt
                 {
-                    reloadBt = new JButton("Sale");
+                    reloadBt = new JButton("Reload");
                     ButtonConfig.setStyleButton(reloadBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                     ButtonConfig.addButtonHoverEffect(reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-                    ButtonConfig.setButtonIcon("src/main/java/Icon/product-selling.png", reloadBt,35);
+                    ButtonConfig.setButtonIcon("src/main/java/Icon/reload-icon.png", reloadBt,35);
                     reloadBt.setHorizontalTextPosition(SwingConstants.CENTER);
                     reloadBt.setVerticalTextPosition(SwingConstants.BOTTOM);
+                    reloadBt.addActionListener(e -> updateOrders());
                 }
 
                 JPanel toolPn = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1194,24 +1199,51 @@ public class ManagerMainPanel extends JPanel {
                 add(toolPn);
                 add(searchPn);
             }
+
+            private JTable getSelectedTable() {
+                int index = orderTabbedPane.getSelectedIndex();
+
+                return switch (index) {
+                    case 0 -> {
+                        reloadOrders(null);
+                        yield orderTable;
+                    }
+                    case 1 -> {
+                        reloadOrders(OrderType.DISPATCHED_MESSAGE);
+                        yield dispatchedOrderTable;
+                    }
+                    default -> null;
+                };
+            }
+
+            private void dispatchOrder() {
+                JTable table = getSelectedTable();
+
+                int selectRow = (table != null) ? table.getSelectedRow() : -1;
+                if (selectRow != -1) {
+                    int orderID = Integer.parseInt(table.getValueAt(selectRow, 0).toString());
+                    orderTabbedPane.setSelectedIndex(2);
+                    exportPanel.loadOrders(orders.get(orderID));
+                } else
+                    ToastNotification.showToast("Please select an order to dispatch!", 3000, 50, -1, -1);
+            }
         }
 
         class TableOrderPanel extends JPanel{
-            ExportPanel exportPanel;
             TableOrderPanel(){
-                orders = reloadOrders();
+                controller = new CustomerController();
                 setLayout(new BorderLayout());
                 setBackground(Color.WHITE);
                 // orders table
                 orderTable = createTable(orderModel, orderColumnNames);
                 orderModel = (DefaultTableModel) orderTable.getModel();
-                upDataOrders(orderModel, null);
                 orderScrollPane = new JScrollPane(orderTable);
                 //Dispatched orders table
                 dispatchedOrderTable = createTable(dispatchedOrderModel, orderColumnNames);
                 dispatchedOrderModel = (DefaultTableModel) dispatchedOrderTable.getModel();
-                upDataOrders(dispatchedOrderModel, OrderType.DISPATCHED_MESSAGE);
                 dispatchedOrderScroll = new JScrollPane(dispatchedOrderTable);
+
+                updateOrders();
 
                 //panel export products for each order
                 exportPanel = new ExportPanel();
@@ -1223,50 +1255,21 @@ public class ManagerMainPanel extends JPanel {
             }
         }
 
-        private TreeMap<Integer, List<CustomerOrderDTO>> reloadOrders() {
-            customerOrders = getAllCustomerOrder();
-            return customerOrders.values().stream()
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.groupingBy(CustomerOrderDTO::getOrderId, TreeMap::new, Collectors.toList()));
-        }
-
-        private void upDataOrders(DefaultTableModel tableModel, String status) {
-            TreeMap<Integer, List<CustomerOrderDTO>> filteredOrder =
-                    (status == null)
-                            ? this.orders
-                            : this.orders.entrySet().stream()
-                            .map(entry -> Map.entry(entry.getKey(),
-                                    entry.getValue().stream()
-//                                            .filter(CustomerOrderDTO::isDispatched)
-                                            .collect(Collectors.toList())))
-                            .filter(entry -> !entry.getValue().isEmpty())
-                            .collect(Collectors.toMap(
-                                    Map.Entry::getKey,
-                                    Map.Entry::getValue,
-                                    (a, b) -> b,
-                                    TreeMap::new
-                            ));
-            String[][] rowData = Order.getData(filteredOrder);
-            for (String[] strings : rowData) {
-                tableModel.addRow(strings);
-            }
-        }
-
-        public class ExportPanel extends JPanel {
-            private JLabel totalPriceLabel;
+        class ExportPanel extends JPanel {
+            private JLabel totalPriceLabel, quantityLabel;
             private CustomButton exportBt;
+            private OrderDetailsPanel detailsPanel;
 
             private JTextField customerIdTF, orderDateTF, shipAddressTF, statusItemTF, salerTF, salerIdTF,
                     productIdTF, productNameTF, productTypeTF,
                     productBrandTF, operatingSystemTF, cpuTF,
-                    storageTF, ramTF, madeInTF, diskTF,
+                    ramTF, madeInTF, diskTF,
                     weightTF, monitorTF, cardTF;
-            private JTextField unitPriceTF, quantityTF;
 
             public ExportPanel() {
                 setLayout(new BorderLayout());
 
-                OrderDetailsPanel detailsPanel = new OrderDetailsPanel();
+                detailsPanel = new OrderDetailsPanel();
                 add(detailsPanel, BorderLayout.CENTER);
 
                 PaymentPanel paymentPanel = new PaymentPanel();
@@ -1274,14 +1277,20 @@ public class ManagerMainPanel extends JPanel {
             }
 
             class OrderDetailsPanel extends JPanel {
-
+                private ProductsMainPanel productDetailsPanel;
                 OrderDetailsPanel() {
                     setLayout(new BorderLayout());
 
                     JPanel customerDetailsPanel = new CustomerDetailsPanel();
-                    JPanel productDetailsPanel = new ProductsMainPanel();
+                    productDetailsPanel = new ProductsMainPanel();
                     add(customerDetailsPanel, BorderLayout.WEST);
                     add(productDetailsPanel, BorderLayout.CENTER);
+                }
+                private void addProductPanel(List<Product> list) {
+                    for (Product product : list) {
+                        this.productDetailsPanel.addProductToOrders(product);
+                    }
+
                 }
             }
             // customer information and details about order
@@ -1359,7 +1368,6 @@ public class ManagerMainPanel extends JPanel {
                     add(productDetailsPn, "details");
 
                     cardLayoutOrder.show(this, "products");
-
                 }
 
                 public void showPanelOrder(String panel) {
@@ -1375,11 +1383,6 @@ public class ManagerMainPanel extends JPanel {
                         orderContainer = new JPanel();
                         orderContainer.setLayout(new BoxLayout(orderContainer, BoxLayout.Y_AXIS));
                         orderContainer.setBackground(Color.WHITE);
-                        //thêm sản phẩm vào danh sách
-                        addProductToOrders();
-                        addProductToOrders();
-                        addProductToOrders();
-                        addProductToOrders();
                         scrollpane = new JScrollPane(orderContainer);
                         setColorScrollPane(scrollpane, Style.BACKGROUND_COLOR, Color.WHITE);
                         add(scrollpane, BorderLayout.CENTER);
@@ -1388,7 +1391,7 @@ public class ManagerMainPanel extends JPanel {
                 }
                 // //thêm sản phẩm vào danh sách
                 //                public JPanel productOrderPn(CustomerOrderDetailDTO customerOrderDTO) {
-                public void addProductToOrders() {
+                public void addProductToOrders(Product product) {
                     // Tạo panel chính với BorderLayout
                     JPanel mainPanel = new JPanel(new BorderLayout());
                     mainPanel.setBackground(Color.WHITE);
@@ -1402,7 +1405,6 @@ public class ManagerMainPanel extends JPanel {
                     imgPn.setBackground(Color.WHITE);
 
                     // ảnh của sản phẩm
-//                    JLabel proImg = new JLabel(createImageForProduct(customerOrderDTO.images().get(0).getUrl(), 120, 120));
                     JLabel proImg = new JLabel(createImageForProduct("src/main/java/img/Acer_Aspire_7.jpg", 100, 100));
                     imgPn.add(proImg);
                     mainPanel.add(imgPn, BorderLayout.WEST);
@@ -1422,7 +1424,7 @@ public class ManagerMainPanel extends JPanel {
                     gbc.weighty = 0.4;
 
                     // tên của 1 sản phẩm
-                    JLabel proName = LabelConfig.createLabel("Product Name",Style.FONT_BOLD_18,Color.BLACK,SwingConstants.LEFT);
+                    JLabel proName = LabelConfig.createLabel("Product Name: " + product.getName(),Style.FONT_BOLD_18,Color.BLACK,SwingConstants.LEFT);
                     proDetails.add(proName, gbc);
 
 
@@ -1430,7 +1432,7 @@ public class ManagerMainPanel extends JPanel {
                     gbc.weighty = 0.3;
 
                     // id của 1 sản phẩm
-                    JLabel proID = LabelConfig.createLabel("Product ID: " + "12",Style.FONT_PLAIN_13,Color.BLACK,SwingConstants.LEFT);
+                    JLabel proID = LabelConfig.createLabel("Product ID: " + product.getId(),Style.FONT_PLAIN_13,Color.BLACK,SwingConstants.LEFT);
                     proDetails.add(proID, gbc);
 
 
@@ -1441,7 +1443,7 @@ public class ManagerMainPanel extends JPanel {
                     pricePn.setBackground(Color.WHITE);
 
                     // giá tiền của 1 sản phẩm
-                    String price = formatCurrency.format(1000000000); // bỏ giá tiền vào để định dạng
+                    String price = formatCurrency.format(product.getPrice()); // bỏ giá tiền vào để định dạng
                     JLabel proPrice = LabelConfig.createLabel(price+"₫",Style.FONT_BOLD_15,Color.RED,SwingConstants.LEFT);
                     pricePn.add(proPrice);
 
@@ -1449,15 +1451,15 @@ public class ManagerMainPanel extends JPanel {
                     quantityPn.setBackground(Color.WHITE);
 
                     // số lượng của 1 sản phẩm được đặt
-                    JLabel proQuantity = LabelConfig.createLabel("x"+"3",Style.FONT_BOLD_15,Color.BLACK,SwingConstants.RIGHT);
+                    JLabel proQuantity = LabelConfig.createLabel("x"+ product.getQuantity(),Style.FONT_BOLD_15,Color.BLACK,SwingConstants.RIGHT);
                     quantityPn.add(proQuantity);
 
                     JPanel btPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
                     btPn.setBackground(Color.WHITE);
-                    CustomButton viewDetail = ButtonConfig.createCustomButton("more Details", Style.FONT_BOLD_13,
+                    CustomButton viewDetail = ButtonConfig.createCustomButton("More Details", Style.FONT_BOLD_13,
                             Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE, 2, SwingConstants.CENTER, new Dimension(120, 25));
                     viewDetail.addActionListener(e -> {
-                        addDetailsProduct();
+                        addDetailsProduct(product);
                         showPanelOrder("details");
                     });
                     btPn.add(viewDetail);
@@ -1498,7 +1500,7 @@ public class ManagerMainPanel extends JPanel {
                     }
                 }
 
-                public void addDetailsProduct() {
+                public void addDetailsProduct(Product product) {
                     JPanel detailPn = new JPanel(new GridBagLayout());
                     detailPn.setBackground(Color.WHITE);
                     GridBagConstraints gbc = new GridBagConstraints();
@@ -1506,24 +1508,23 @@ public class ManagerMainPanel extends JPanel {
 
                     String[] productFields = {
                             "Product ID", "Product Name", "Type", "Brand",
-                            "OS", "CPU", "Storage", "RAM", "Made In",
+                            "OS", "CPU", "RAM", "Made In",
                             "Disk", "Weight", "Monitor", "Card"
                     };
 
                     JTextField[] productTFs = {
-                            productIdTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            productNameTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            productTypeTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            productBrandTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            operatingSystemTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            cpuTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            storageTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            ramTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            madeInTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            diskTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            weightTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            monitorTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
-                            cardTF = TextFieldConfig.createTextField("", Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false)
+                            productIdTF = TextFieldConfig.createTextField(String.valueOf(product.getId()), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            productNameTF = TextFieldConfig.createTextField(product.getName(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            productTypeTF = TextFieldConfig.createTextField(product.getGenre(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            productBrandTF = TextFieldConfig.createTextField(product.getBrand(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            operatingSystemTF = TextFieldConfig.createTextField(product.getOperatingSystem(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            cpuTF = TextFieldConfig.createTextField(product.getCpu(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            ramTF = TextFieldConfig.createTextField(product.getRam(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            madeInTF = TextFieldConfig.createTextField(product.getMadeIn(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            diskTF = TextFieldConfig.createTextField(product.getDisk(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            weightTF = TextFieldConfig.createTextField(product.getWeight(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            monitorTF = TextFieldConfig.createTextField(product.getMonitor(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false),
+                            cardTF = TextFieldConfig.createTextField(product.getCard(), Style.FONT_PLAIN_15, Color.BLACK, Color.WHITE, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(300, 40), false)
                     };
 
                     for (int i = 0; i < productFields.length; i++) {
@@ -1542,9 +1543,7 @@ public class ManagerMainPanel extends JPanel {
                     detailsContainer.add(scrollPane);
                     detailsContainer.revalidate();
                     detailsContainer.repaint();
-
                 }
-
             }
 
             // bottom
@@ -1554,15 +1553,12 @@ public class ManagerMainPanel extends JPanel {
 
                     JPanel leftPn = new JPanel(new GridLayout(2,1));
                     leftPn.setBackground(Color.WHITE);
-                    JLabel quantityLabel = new JLabel("<html><span style='color: black;'>Quantity:     </span> " +
-                            "<span style='color: green;'>" + 999 + "</span> " +
-                            "<span style='color: black;'> items</span></html>");
+                    quantityLabel = new JLabel("<html><span style='color: black;'>Quantity:</span></html>");
                     quantityLabel.setFont(Style.FONT_BOLD_24);
                     leftPn.add(quantityLabel);
 
                     String price = formatCurrency.format(1000000);// bỏ tổng giá của order vào đây
-                    JLabel totalPriceLabel = new JLabel("<html><span style='color: black;'>Total Price:   </span> " +
-                            "<span style='color: red;'>" + price + "₫</span></html>");
+                    totalPriceLabel = new JLabel("<html><span style='color: black;'>Total Price:</span></html>");
                     totalPriceLabel.setFont(Style.FONT_BOLD_24);
 
                     leftPn.add(totalPriceLabel);
@@ -1577,6 +1573,65 @@ public class ManagerMainPanel extends JPanel {
                     add(rightPn);
                 }
             }
+
+            private void loadOrders(List<CustomerOrderDTO> list) {
+                CustomerOrderDTO orderDTO = list.get(0);
+                this.customerIdTF.setText(String.valueOf(orderDTO.getOrderId()));
+                this.orderDateTF.setText(String.valueOf(orderDTO.getOrderDate()));
+                this.shipAddressTF.setText(orderDTO.getShipAddress());
+                this.statusItemTF.setText(orderDTO.getStatusItem());
+                this.salerTF.setText(orderDTO.getSaler());
+                this.salerIdTF.setText(String.valueOf(orderDTO.getSalerId()));
+                List<Product> productList = list.stream()
+                        .map(CustomerOrderDTO::getProduct)
+                        .collect(Collectors.toList());
+                double totalCost = list.stream()
+                        .mapToDouble(CustomerOrderDTO::totalCost)
+                        .sum();
+                int quantity = productList.stream()
+                        .mapToInt(Product::getQuantity)
+                        .sum();
+
+                this.detailsPanel.addProductPanel(productList);
+                this.totalPriceLabel.setText("<html><span style='color: black;'>Total Price:   </span> " +
+                        "<span style='color: red;'>" + totalCost + "₫</span></html>");
+                this.quantityLabel.setText("<html><span style='color: black;'>Quantity:     </span> " +
+                        "<span style='color: green;'>" + quantity + "</span> " +
+                        "<span style='color: black;'> items</span></html>");
+            }
+        }
+
+        private void reloadOrders(String status) {
+            List<CustomerOrderDTO> list = this.controller.getAllCustomerOrder();
+            this.orders = list.stream()
+                    .collect(Collectors.groupingBy(CustomerOrderDTO::getOrderId, TreeMap::new, Collectors.toList()));
+            if (status != null) {
+                this.orders = orders.entrySet().stream()
+                        .map(entry -> Map.entry(entry.getKey(),
+                                entry.getValue().stream()
+                                        .filter(CustomerOrderDTO::isDispatched)
+                                        .collect(Collectors.toList())))
+                        .filter(entry -> !entry.getValue().isEmpty())
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey,
+                                Map.Entry::getValue,
+                                (a, b) -> b,
+                                TreeMap::new
+                        ));
+            }
+        }
+
+        private void upDataOrders(DefaultTableModel tableModel, String status) {
+            reloadOrders(status);
+            String[][] rowData = Order.getData(orders);
+            for (String[] strings : rowData) {
+                tableModel.addRow(strings);
+            }
+        }
+
+        private void updateOrders() {
+            upDataOrders(orderModel, null);
+            upDataOrders(dispatchedOrderModel, OrderType.DISPATCHED_MESSAGE);
         }
     }
 
@@ -1668,15 +1723,8 @@ public class ManagerMainPanel extends JPanel {
 
                     KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.exportExcelKey, exportExcelBt);
                     exportExcelBt.addActionListener(e -> {
-                        String fileName = JOptionPane.showInputDialog("Enter the name of the Excel file:");
-                        if (fileName != null && !fileName.trim().isEmpty()) {
-                            fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
-                            getSelectedTable();
-                            ExcelConfig.exportToExcel(products, fileName, columnNamesPRODUCT);
-                            JOptionPane.showMessageDialog(null, "Exported to " + fileName);
-                        } else {
-                            JOptionPane.showMessageDialog(null, "File name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
+                        getSelectedTable();
+                        exportExcel(products, columnNamesPRODUCT);
                     });
                     buttonPanel.add(exportExcelBt);
                 }
@@ -2651,6 +2699,7 @@ public class ManagerMainPanel extends JPanel {
     class NotificationPanel extends JPanel {
         private MainPanel notificationMainPanel;
         private JScrollPane scrollPane;
+        private Map<Customer, List<CustomerOrderDTO>> customerOrders = getAllCustomerOrder();
         private Timer timer;
 
         public NotificationPanel() {
@@ -3060,6 +3109,17 @@ public class ManagerMainPanel extends JPanel {
             result.put(customer, controller.findCustomerOrderById(customer.getId()));
         }
         return result;
+    }
+
+    private <M> void exportExcel(ArrayList<M> dataList, String[] headers) {
+        String fileName = JOptionPane.showInputDialog("Enter the name of the Excel file:");
+        if (fileName != null && !fileName.trim().isEmpty()) {
+            fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
+            ExcelConfig.exportToExcel(dataList, fileName, headers);
+            JOptionPane.showMessageDialog(null, "Exported to " + fileName);
+        } else {
+            JOptionPane.showMessageDialog(null, "File name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void reloadNotification() {

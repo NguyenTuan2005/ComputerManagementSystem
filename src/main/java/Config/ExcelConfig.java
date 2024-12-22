@@ -3,6 +3,7 @@ package Config;
 import Model.Customer;
 import Model.Product;
 import Model.Supplier;
+import dto.CustomerOrderDTO;
 import dto.ManagerInforDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -188,6 +189,17 @@ public class ExcelConfig {
                 row.createCell(4).setCellValue(customer.getPassword());
                 row.createCell(5).setCellValue(customer.getAvataImg());
                 row.createCell(6).setCellValue(customer.getNumberOfPurchased());
+            } else if (data.getClass().equals(CustomerOrderDTO.class)) {
+                CustomerOrderDTO orderDTO = (CustomerOrderDTO) data;
+                row.createCell(0).setCellValue(orderDTO.getOrderId());
+                row.createCell(1).setCellValue(orderDTO.getCustomerId());
+                row.createCell(2).setCellValue(orderDTO.getOrderDate());
+                row.createCell(3).setCellValue(orderDTO.getShipAddress());
+                row.createCell(4).setCellValue(orderDTO.getStatusItem());
+                row.createCell(5).setCellValue(orderDTO.getSaler());
+                row.createCell(6).setCellValue(orderDTO.getSalerId());
+                row.createCell(7).setCellValue(orderDTO.totalCost());
+                row.createCell(8).setCellValue(orderDTO.getQuantity());
             }
             else {
                 throw new IllegalArgumentException("Unsupported class type: " + data.getClass().getName());

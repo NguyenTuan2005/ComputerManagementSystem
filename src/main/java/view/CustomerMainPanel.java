@@ -1,6 +1,7 @@
 package view;
 
 import Config.*;
+import Enum.OrderType;
 import Model.Customer;
 import Model.Product;
 import Verifier.EmailVerifier;
@@ -14,10 +15,12 @@ import controller.ProductController;
 import dto.CustomerOrderDTO;
 import dto.CustomerOrderDetailDTO;
 import dto.KeyOrderDTO;
-import org.jfree.data.json.JSONUtils;
 import view.OtherComponent.ChangePasswordFrame;
 import view.OtherComponent.NotFoundItemPanel;
-import view.OverrideComponent.*;
+import view.OverrideComponent.CircularImage;
+import view.OverrideComponent.CustomButton;
+import view.OverrideComponent.RoundedBorder;
+import view.OverrideComponent.ToastNotification;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -36,9 +39,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.util.List;
-import Enum.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -282,7 +284,7 @@ public class CustomerMainPanel extends JPanel {
                         ProductController productController = new ProductController();
                         ArrayList<Product> products = (ArrayList<Product>) productController.getEagerProducts()
                                 .stream()
-                                .sorted((p1,p2) -> p1.getPrice() - p2.getPrice())
+                                .sorted((p1,p2) -> (int) (p1.getPrice() - p2.getPrice()))
                               .collect(Collectors.toList());
                         if ( products.isEmpty()) {
                             catalogContainer.add(new NotFoundItemPanel(" not found !!! "));
@@ -305,7 +307,7 @@ public class CustomerMainPanel extends JPanel {
                         ProductController productController = new ProductController();
                         ArrayList<Product> products = (ArrayList<Product>) productController.getEagerProducts()
                                 .stream()
-                                .sorted((p1,p2) -> p2.getPrice() - p1.getPrice())
+                                .sorted((p1,p2) -> (int) (p2.getPrice() - p1.getPrice()))
                                 .collect(Collectors.toList());
                         if ( products.isEmpty()) {
                             catalogContainer.add(new NotFoundItemPanel(" not found !!! "));

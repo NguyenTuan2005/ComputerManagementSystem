@@ -1,6 +1,7 @@
 package dto;
 
 import Config.EmailConfig;
+import Model.Product;
 import controller.CustomerController;
 import lombok.*;
 import Enum.*;
@@ -90,8 +91,12 @@ public class CustomerOrderDTO {
 
     }
 
+    public Product getProduct() {
+        return new Product(1, this.productName, this.quantity, this.unitPrice, this.productGenre, this.productBrand, this.operatingSystem, this.cpu, this.memory, this.ram, this.madeIn, this.statusItem, this.disk, this.monitor, this.weight, this.card, 1);
+    }
+
     public double totalCost() {
-        return this.quantity * this.quantity;
+        return this.unitPrice * this.quantity;
     }
 
     public boolean sameDate(CustomerOrderDTO that) {

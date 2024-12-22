@@ -118,6 +118,10 @@ public class CustomerController implements ModelController<Customer> {
         return customerDAO.getDataCustomerOrderById(id);
     }
 
+    public List<CustomerOrderDTO> getAllCustomerOrder() {
+        return customerDAO.getAllCustomerOrder();
+    }
+
     public ArrayList<CustomerOrderDetailDTO> getCustomerOrderDetail(int id){
         ArrayList<CustomerOrderDTO> customerOrderDetailDTOs = this.customerDAO.getDataCustomerOrderById(id);
         List<Image> images = this.imageDAO.getAll();

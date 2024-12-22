@@ -3,9 +3,11 @@ package dao;
 import Config.DatabaseConfig;
 import Model.Customer;
 import dto.CustomerOrderDTO;
+import lombok.SneakyThrows;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CustomerDAO implements Repository<Customer> {
     private DatabaseConfig databaseConfig;
@@ -185,6 +187,18 @@ public class CustomerDAO implements Repository<Customer> {
         }
     }
 
+    @SneakyThrows
+    public List<CustomerOrderDTO> getAllCustomerOrder() {
+        List<CustomerOrderDTO> orders = new ArrayList<>();
+        String query = "SELECT * FROM customer_order_view";
+        statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery(query);
+        while (rs.next()) {
+            CustomerOrderDTO orderDTO = resultCustomerOrder(rs);
+            orders.add(orderDTO);
+        }
+        return orders;
+    }
 
     public ArrayList<CustomerOrderDTO> getDataCustomerOrderById(int customerId) {
         ArrayList<CustomerOrderDTO> orders = new ArrayList<>();
@@ -194,30 +208,7 @@ public class CustomerDAO implements Repository<Customer> {
             preparedStatement.setInt(1, customerId);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                CustomerOrderDTO order = new CustomerOrderDTO();
-                order.setOrderId(rs.getInt("order_id"));
-                order.setCustomerId(rs.getInt("customer_id"));
-                order.setOrderDate(rs.getDate("order_date"));
-                order.setShipAddress(rs.getString("ship_address"));
-                order.setStatusItem(rs.getString("status_item"));
-                order.setSaler(rs.getString("saler"));
-                order.setSalerId(rs.getInt("saler_id"));
-                order.setUnitPrice(rs.getDouble("unit_price"));
-                order.setQuantity(rs.getInt("quantity"));
-                order.setProductId(rs.getInt("product_id"));
-                order.setProductName(rs.getString("product_name"));
-                order.setProductGenre(rs.getString("product_genre"));
-                order.setProductBrand(rs.getString("product_brand"));
-                order.setOperatingSystem(rs.getString("operating_system"));
-                order.setCpu(rs.getString("cpu"));
-                order.setMemory(rs.getString("memory"));
-                order.setRam(rs.getString("ram"));
-                order.setMadeIn(rs.getString("made_in"));
-                order.setDisk(rs.getString("disk"));
-                order.setWeight(rs.getString("weight"));
-                order.setMonitor(rs.getString("monitor"));
-                order.setCard(rs.getString("card"));
-                order.convertToEnum(rs.getString("status_item"));
+                CustomerOrderDTO order = resultCustomerOrder(rs);
                 orders.add(order);
             }
 
@@ -226,6 +217,34 @@ public class CustomerDAO implements Repository<Customer> {
         }
 
         return orders;
+    }
+
+    private CustomerOrderDTO resultCustomerOrder(ResultSet rs) throws SQLException {
+        CustomerOrderDTO order = new CustomerOrderDTO();
+        order.setOrderId(rs.getInt("order_id"));
+        order.setCustomerId(rs.getInt("customer_id"));
+        order.setOrderDate(rs.getDate("order_date"));
+        order.setShipAddress(rs.getString("ship_address"));
+        order.setStatusItem(rs.getString("status_item"));
+        order.setSaler(rs.getString("saler"));
+        order.setSalerId(rs.getInt("saler_id"));
+        order.setUnitPrice(rs.getDouble("unit_price"));
+        order.setQuantity(rs.getInt("quantity"));
+        order.setProductId(rs.getInt("product_id"));
+        order.setProductName(rs.getString("product_name"));
+        order.setProductGenre(rs.getString("product_genre"));
+        order.setProductBrand(rs.getString("product_brand"));
+        order.setOperatingSystem(rs.getString("operating_system"));
+        order.setCpu(rs.getString("cpu"));
+        order.setMemory(rs.getString("memory"));
+        order.setRam(rs.getString("ram"));
+        order.setMadeIn(rs.getString("made_in"));
+        order.setDisk(rs.getString("disk"));
+        order.setWeight(rs.getString("weight"));
+        order.setMonitor(rs.getString("monitor"));
+        order.setCard(rs.getString("card"));
+        order.convertToEnum(rs.getString("status_item"));
+        return order;
     }
 
     /***
@@ -264,11 +283,6 @@ public class CustomerDAO implements Repository<Customer> {
     @Override
     public ArrayList<Customer> sortByColumn(String column) {
         return null;
-    }
-
-    public static void main(String[] args) {
-        CustomerDAO customerDAO = new CustomerDAO();
-        var u =customerDAO.getDataCustomerOrderById(3);
     }
 
     public void updatePassword(String s, int id) {

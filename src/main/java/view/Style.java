@@ -33,6 +33,9 @@ public class Style {
     //25
     public static final Font FONT_PLAIN_25 = new Font("Arial", Font.PLAIN, 25);
     public static final Font FONT_BOLD_25 = new Font("Arial", Font.BOLD, 25);
+    public static final Font FONT_BOLD_25_MONO = new Font("Monospaced", Font.BOLD, 25);
+
+    public static final Font FONT_BOLD_28 = new Font("Arial", Font.BOLD, 28);
 
     public static final Font FONT_BOLD_30 = new Font("Arial", Font.BOLD, 30);
 
@@ -60,8 +63,10 @@ public class Style {
     public static final Color CONFIRM_BUTTON_COLOR_GREEN = new Color(20, 133, 20);
     public static final Color BUTTON_COLOR_HOVER = new Color(224, 255, 224, 255);
     public static final Color WHITE_BLUE_COLOR = new Color(240, 245, 244);
+    public static final Color ORANGE_COLOR = new Color(208, 93, 17);
+    public static final Color LIGHT_ORANGE_COLOR = new Color(224, 198, 181);
 
-    public static final Color BUTTON_COLOR_GREEN = new Color(53, 225, 53);  //old green
+    //old green
     public static final Color WORD_COLOR_WHITE = new Color(255,255,255);
     public static final Color WORD_COLOR_BLACK = new Color(0,0,0);
     //Model frame color

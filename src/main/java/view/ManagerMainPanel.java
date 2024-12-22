@@ -871,15 +871,13 @@ public class ManagerMainPanel extends JPanel {
                             fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
                             ExcelConfig.exportToExcel(customers, fileName, customerColumnNames);
 
-                            JOptionPane.showMessageDialog(null, "Created !!! ", "Message", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Created! ", "Message", JOptionPane.ERROR_MESSAGE);
                             reload();
                         }
-
-
                     }
                 });
 
-                writeToFileTXT = new JButton("to file.txt");
+                writeToFileTXT = new JButton("View Bill");
                 ButtonConfig.addButtonHoverEffect(writeToFileTXT, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 ButtonConfig.setStyleButton(writeToFileTXT, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setButtonIcon("src/main/java/Icon/bill.png", writeToFileTXT,35);
@@ -952,7 +950,7 @@ public class ManagerMainPanel extends JPanel {
                         }
                 );
 
-                reloadCustomerBt = new JButton("Rreoeload");
+                reloadCustomerBt = new JButton("Reload");
                 ButtonConfig.addButtonHoverEffect(reloadCustomerBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
                 ButtonConfig.setStyleButton(reloadCustomerBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setButtonIcon("src/main/java/Icon/reload_icon.png", reloadCustomerBt,35);
@@ -1215,7 +1213,6 @@ public class ManagerMainPanel extends JPanel {
 
                 //panel export products for each order
                 exportPanel = new ExportPanel();
-
                 orderTabbedPane =  createTabbedPane(orderScrollPane, "Customer's Order", Style.FONT_BOLD_16);
                 orderTabbedPane.add("Dispatched Orders", dispatchedOrderScroll);
                 orderTabbedPane.add("Export Product",exportPanel);
@@ -1274,7 +1271,6 @@ public class ManagerMainPanel extends JPanel {
             }
 
             class OrderDetailsPanel extends JPanel {
-
                 OrderDetailsPanel() {
                     setLayout(new BorderLayout());
 
@@ -2659,7 +2655,6 @@ public class ManagerMainPanel extends JPanel {
             add(notificationMainPanel, BorderLayout.CENTER);
             startTimer();
         }
-
 
         class MainPanel extends JPanel {
 

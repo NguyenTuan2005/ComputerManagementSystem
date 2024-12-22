@@ -35,4 +35,5 @@ public class OpenEmailConfig {
     private static String encode(String text) {
         return text.replace(" ", "%20").replace("\n", "%0A");
     }
+
 }

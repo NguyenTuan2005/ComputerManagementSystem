@@ -18,12 +18,35 @@ public class ButtonConfig {
 
     public static void setButtonIcon(String url, JButton that, int gap) {
         ImageIcon iconButton = new ImageIcon(url);
-        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
+        Image image = iconButton.getImage();
         Dimension buttonSize = that.getPreferredSize();
         Image resizedImage = image.getScaledInstance(buttonSize.height - gap, buttonSize.height - gap, java.awt.Image.SCALE_SMOOTH); // Resize
         that.setIcon(new ImageIcon(resizedImage));
     }
 
+    public static void setButtonIcon(ImageIcon icon, JButton that, int gap) {
+        Image image = icon.getImage();
+        Dimension buttonSize = that.getPreferredSize();
+
+        // Lấy chiều rộng và chiều cao gốc của ảnh
+        int imageWidth = image.getWidth(null);
+        int imageHeight = image.getHeight(null);
+
+        // Kích thước có sẵn của button (trừ gap)
+        int btWidth = buttonSize.width - gap;
+        int btHeight = buttonSize.height - gap;
+
+        // Tính toán kích thước mới theo tỷ lệ khung hình
+        double widthRatio = (double) btWidth / imageWidth;
+        double heightRatio = (double) btHeight / imageHeight;
+        double scale = Math.min(widthRatio, heightRatio);
+
+        int newWidth = (int) (imageWidth * scale);
+        int newHeight = (int) (imageHeight * scale);
+
+        Image resizedImage = image.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
+        that.setIcon(new ImageIcon(resizedImage));
+    }
 
     public static void setStyleButton(JButton that, Font font, Color textColor, Color backgroundColor, int textPosition, Dimension size) {
         that.setBackground(backgroundColor);

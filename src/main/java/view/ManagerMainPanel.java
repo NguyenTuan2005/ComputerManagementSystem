@@ -850,24 +850,7 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.setStyleButton(exportCustomerExcelBt, Style.FONT_PLAIN_13, Style.WORD_COLOR_BLACK, Style.WORD_COLOR_WHITE, SwingConstants.CENTER, new Dimension(80, 80));
                 ButtonConfig.setButtonIcon("src/main/java/Icon/icons8-file-excel-32.png", exportCustomerExcelBt,35);
                 KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.exportExcelKey, exportCustomerExcelBt);
-                exportCustomerExcelBt.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        String fileName = JOptionPane.showInputDialog(null, "Enter file name excel:", "Input file", JOptionPane.QUESTION_MESSAGE);
-                        if (customers.isEmpty())
-                            JOptionPane.showMessageDialog(null, "Not found data", "Notify", JOptionPane.WARNING_MESSAGE);
-                        else {
-                            JOptionPane.showMessageDialog(null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
-                            fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
-                            ExcelConfig.exportToExcel(customers, fileName, customerColumnNames);
-
-                            JOptionPane.showMessageDialog(null, "Created !!! ", "Message", JOptionPane.ERROR_MESSAGE);
-                            reload();
-                        }
-
-
-                    }
-                });
+                exportCustomerExcelBt.addActionListener(e -> exportExcel(customers, customerColumnNames));
 
                 writeToFileTXT = new JButton("to file.txt");
                 ButtonConfig.addButtonHoverEffect(writeToFileTXT, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
@@ -2699,7 +2682,7 @@ public class ManagerMainPanel extends JPanel {
     class NotificationPanel extends JPanel {
         private MainPanel notificationMainPanel;
         private JScrollPane scrollPane;
-        private Map<Customer, List<CustomerOrderDTO>> customerOrders = getAllCustomerOrder();
+        private Map<Customer, List<CustomerOrderDTO>> customerOrders;
         private Timer timer;
 
         public NotificationPanel() {
@@ -2708,7 +2691,6 @@ public class ManagerMainPanel extends JPanel {
             add(notificationMainPanel, BorderLayout.CENTER);
             startTimer();
         }
-
 
         class MainPanel extends JPanel {
 
@@ -2846,6 +2828,16 @@ public class ManagerMainPanel extends JPanel {
             notificationContainer.add(main);
             notificationContainer.revalidate();
             notificationContainer.repaint();
+        }
+
+        private Map<Customer, List<CustomerOrderDTO>> getAllCustomerOrder() {
+            CustomerController controller = new CustomerController();
+            Map<Customer, List<CustomerOrderDTO>> result = new HashMap<>();
+            List<Customer> customers = controller.getAll();
+            for (Customer customer : customers) {
+                result.put(customer, controller.findCustomerOrderById(customer.getId()));
+            }
+            return result;
         }
     }
 
@@ -3099,16 +3091,6 @@ public class ManagerMainPanel extends JPanel {
 
             ToastNotification.showToast("Your information has been successfully updated.", 2500, 50, -1, -1);
         }
-    }
-
-    private Map<Customer, List<CustomerOrderDTO>> getAllCustomerOrder() {
-        CustomerController controller = new CustomerController();
-        Map<Customer, List<CustomerOrderDTO>> result = new HashMap<>();
-        List<Customer> customers = controller.getAll();
-        for (Customer customer : customers) {
-            result.put(customer, controller.findCustomerOrderById(customer.getId()));
-        }
-        return result;
     }
 
     private <M> void exportExcel(ArrayList<M> dataList, String[] headers) {

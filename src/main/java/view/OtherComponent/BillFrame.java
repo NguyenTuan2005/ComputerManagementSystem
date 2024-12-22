@@ -1,14 +1,25 @@
 package view.OtherComponent;
 
+import Config.BillConfig;
 import Config.LabelConfig;
+import dto.CustomerOrderDTO;
+import dto.CustomerOrderDetailDTO;
+import view.OverrideComponent.RoundedBorder;
 import view.Style;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class BillFrame extends JFrame {
+
     private JTextArea billTextArea;
-    BillFrame(){
+    private ArrayList<CustomerOrderDTO> customerOrderDTOS;
+    public BillFrame(ArrayList<CustomerOrderDetailDTO> customerOrderDTOs){
+        this.customerOrderDTOS = (ArrayList<CustomerOrderDTO>) customerOrderDTOs.stream().map(c ->c.customerOrderDTO()).collect(Collectors.toList());
+
         setTitle("Bill Viewer");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 600);
@@ -21,27 +32,36 @@ public class BillFrame extends JFrame {
         panel.add(billLabel, BorderLayout.NORTH);
 
         billTextArea = new JTextArea();
-        billTextArea.setFont(new Font("Monospaced", Font.PLAIN, 18));
+        billTextArea.setFont(new Font("Monospaced", Font.PLAIN, 10));
         billTextArea.setEditable(false);
 
         JScrollPane scrollPane = new JScrollPane(billTextArea);
         panel.add(scrollPane, BorderLayout.CENTER);
         add(panel);
 
+
+        billTextArea.setBorder(BorderFactory.createCompoundBorder(
+                new RoundedBorder(20, 2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE),
+                BorderFactory.createEmptyBorder(3, 3, 3, 8)
+        ));
+        billTextArea.setLineWrap(true);
+//        billTextArea.setWrapStyleWord(true);
+        billTextArea.setEditable(false);
+        billTextArea.setOpaque(true);
+
+        int width = 800;
+        billTextArea.setSize(new Dimension(width, Short.MAX_VALUE));
+        int preferredHeight =  billTextArea.getPreferredSize().height;
+        billTextArea.setPreferredSize(new Dimension(width, preferredHeight));
+
+
         setVisible(true);
 
-
-        billTextArea.setText("========== Bill ==========\n"
-                + "Product 1: $10\n"
-                + "Product 2: $20\n"
-                + "Product 3: $30\n"
-                + "--------------------------\n"
-                + "Total: $60\n"
-                + "==========================");
+        billTextArea.setText(BillConfig.generateBill(this.customerOrderDTOS));
 
     }
 
     public static void main(String[] args) {
-        new BillFrame();
+        new BillFrame(null);
     }
 }

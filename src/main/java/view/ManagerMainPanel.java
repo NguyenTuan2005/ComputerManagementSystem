@@ -9,7 +9,9 @@ import com.toedter.calendar.JCalendar;
 import controller.*;
 import dao.SupplierDAO;
 import dto.CustomerOrderDTO;
+import dto.CustomerOrderDetailDTO;
 import dto.ManagerInforDTO;
+import lombok.SneakyThrows;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -371,6 +373,7 @@ public class ManagerMainPanel extends JPanel {
                             }
 
                         }
+
                         upDataProducts(productsAll, modelProductTable);
 
                     }
@@ -421,13 +424,13 @@ public class ManagerMainPanel extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         if (findText.getText().trim().isEmpty())
                             return;
-                        ArrayList<Product> products = productController.find(findText.getText().trim());
+                        productsAll = productController.find(findText.getText().trim());
 
-                        if (products.isEmpty()) {
+                        if (productsAll.isEmpty()) {
                             JOptionPane.showMessageDialog(tablePanel, "Product not found in the List!");
                             return;
                         }
-                        upDataProducts(products, modelProductTable);
+                        upDataProducts(productsAll, modelProductTable);
 
                     }
                 });
@@ -755,6 +758,7 @@ public class ManagerMainPanel extends JPanel {
         private JButton addCustomerBt, modifyCustomerBt, exportCustomerExcelBt, searchCustomerBt, reloadCustomerBt, blockCustomer, writeToFileTXT;
         private JTextField findCustomerField;
 
+        private JPanel showOrderContainer;
         private TextDisplayPanel billTextDisplayPanal;
         private int index = 0;
         private final int TAB_DATA_CUSTOMER = 0;
@@ -787,12 +791,9 @@ public class ManagerMainPanel extends JPanel {
                 KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.addKey, addCustomerBt);
                 addCustomerBt.addActionListener(new ActionListener() {
                     @Override
+                    @SneakyThrows
                     public void actionPerformed(ActionEvent e) {
-                        try {
-                            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                         SwingUtilities.invokeLater(CustomerInfoFrame::new);
                         reload();
                     }
@@ -814,7 +815,6 @@ public class ManagerMainPanel extends JPanel {
 
                             int customerId = Integer.parseInt(value.toString());
                             SwingUtilities.invokeLater(() -> {
-//
                                 ModifyCustomerFrame modifyCustomerFrame = new ModifyCustomerFrame(customers.get(customerId - 1));
                                 reload();
 
@@ -932,12 +932,14 @@ public class ManagerMainPanel extends JPanel {
                                             return;
                                         try {
                                             int customerId = Integer.parseInt(findCustomerField.getText());
-                                            bills = customerController.findCustomerOrderById(customerId);
-                                            if (bills.isEmpty())
-                                                JOptionPane.showMessageDialog(null, "No information available");
-                                            BillConfig billConfig = new BillConfig(bills);
-                                            billTextDisplayPanal.setText(billConfig.getNewBill());
-                                            billTextDisplayPanal.setTextEditable(false);
+
+                                            showOrderContainer.removeAll();
+
+                                            var orderDetailDTOS = customerController.getCustomerOrderDetail(customerId);
+                                            OrderHistoryConfig orderHistoryConfig = new OrderHistoryConfig(orderDetailDTOS);
+                                            showOrderContainer.add(new ShowOrder(orderHistoryConfig.get()));
+                                            showOrderContainer.revalidate();
+                                            showOrderContainer.repaint();
 
                                         } catch (Exception ex) {
                                             JOptionPane.showMessageDialog(null, "You must enter the ID Customer");
@@ -1015,14 +1017,8 @@ public class ManagerMainPanel extends JPanel {
             public TableCustomerPanel() {
                 setLayout(new BorderLayout());
                 setBackground(Style.WORD_COLOR_WHITE);
-                /**
-                 *   private DefaultTableModel modelCustomer;
-                 *         private JTableHeader headerCustomer;
-                 *         private JScrollPane scrollPaneCustomer;
-                 *         private JTabbedPane tabbedPaneCustomer;
-                 */
+
                 tableCustomer = createTable(modelCustomer, customerColumnNames);
-                // Thiết lập renderer cho cột ảnh
                 tableCustomer.getColumnModel().getColumn(customerColumnNames.length - 1).setCellRenderer(new ImageInJTable.ImageRenderer());
                 tableCustomer.setRowHeight(100);
                 resizeColumnWidth(tableCustomer, 219);
@@ -1037,8 +1033,9 @@ public class ManagerMainPanel extends JPanel {
                 tabbedPaneCustomer = createTabbedPane(scrollPaneCustomer, "Customer", Style.FONT_BOLD_16);
                 tabbedPaneCustomer.add("Sales Chart", new Schemas());
 
-                billTextDisplayPanal = new TextDisplayPanel();
-                tabbedPaneCustomer.add("Customer Bill", billTextDisplayPanal);
+                showOrderContainer = new JPanel();
+                JScrollPane scrollShowOrderContainer = new JScrollPane(showOrderContainer);
+                tabbedPaneCustomer.add("Customer Bill", scrollShowOrderContainer);
                 add(tabbedPaneCustomer, BorderLayout.CENTER);
 
 
@@ -1234,7 +1231,7 @@ public class ManagerMainPanel extends JPanel {
                             : this.orders.entrySet().stream()
                             .map(entry -> Map.entry(entry.getKey(),
                                     entry.getValue().stream()
-                                            .filter(CustomerOrderDTO::isDispatched)
+//                                            .filter(CustomerOrderDTO::isDispatched)
                                             .collect(Collectors.toList())))
                             .filter(entry -> !entry.getValue().isEmpty())
                             .collect(Collectors.toMap(
@@ -2378,7 +2375,7 @@ public class ManagerMainPanel extends JPanel {
                         txtPhoneNumber.setInputVerifier(new PhoneNumberVerifier());
                         addFocusListenerForTextField(txtPhoneNumber);
 
-                        // Cài đặt GridBagConstraints cho các thành phần
+
                         gbc.gridx = 0;
                         gbc.gridy = 0;
                         gbc.anchor = GridBagConstraints.WEST;
@@ -2398,7 +2395,7 @@ public class ManagerMainPanel extends JPanel {
                         gbc.gridy = 2;
                         add(lblBirthday, gbc);
 
-                        // Sử dụng một JPanel để chứa cả TextField và Button
+
                         JPanel birthdayPanel = new JPanel(new BorderLayout());
                         birthdayPanel.setBackground(Color.WHITE);
                         birthdayPanel.add(txtBirthday, BorderLayout.CENTER);
@@ -2423,12 +2420,12 @@ public class ManagerMainPanel extends JPanel {
                         setBackground(Color.WHITE);
                         setPreferredSize(new Dimension(400, 150));
                         Border border = BorderFactory.createTitledBorder(
-                                BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3), // Đường viền
-                                "Account Information", // Tiêu đề
-                                TitledBorder.LEFT, // Canh trái
-                                TitledBorder.TOP, // Canh trên
-                                Style.FONT_BOLD_18, // Phông chữ và kiểu chữ
-                                Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE // Màu chữ
+                                BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 3),
+                                "Account Information",
+                                TitledBorder.LEFT,
+                                TitledBorder.TOP,
+                                Style.FONT_BOLD_18,
+                                Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE
                         );
                         setBorder(border);
                         GridBagConstraints gbc = new GridBagConstraints();
@@ -2436,7 +2433,6 @@ public class ManagerMainPanel extends JPanel {
 
                         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-                        // Cột 1 (JLabel)
                         gbc.gridx = 0;
                         gbc.gridy = 0;
                         add(new JLabel("User name:"), gbc);
@@ -2447,7 +2443,6 @@ public class ManagerMainPanel extends JPanel {
                         gbc.gridy = 2;
                         add(new JLabel("Email:"), gbc);
 
-                        // Cột 2 (JTextField, JPasswordField, JTextField)
                         gbc.gridx = 1;
                         gbc.gridy = 0;
                         usernameField = TextFieldConfig.createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
@@ -2476,12 +2471,11 @@ public class ManagerMainPanel extends JPanel {
                         passwdPanel.setBackground(Color.WHITE);
                         passwdPanel.add(passwordField, BorderLayout.CENTER);
                         passwdPanel.add(togglePasswordButton, BorderLayout.EAST);
-
                         add(passwdPanel, gbc);
 
                         gbc.gridy = 2;
                         emailField = TextFieldConfig.createStyledTextField(Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
-                        emailField.setInputVerifier(new EmailVerifier());
+                        emailField.setInputVerifier(new EmailDistinstVerifer());
                         addFocusListenerForTextField(emailField);
                         add(emailField, gbc);
 

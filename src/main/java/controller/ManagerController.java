@@ -83,12 +83,7 @@ public class ManagerController implements ModelController<Manager>{
         return  false;
     }
 
-    public static void main(String[] args) {
-//        Manager manager = new Manager("demo method","nlu",new Date(9,9,2005),"09090");
-//        Account account = new Account("123","demo methhod","aaayenavg@gmail.com",new Date(9,9,2005),"cai nit");
-//        ManagerController managerController = new ManagerController();
-//        System.out.println(managerController.createManager(manager,account));
-    }
+
 
 
 }

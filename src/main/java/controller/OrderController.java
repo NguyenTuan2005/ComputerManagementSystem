@@ -70,8 +70,6 @@ public class OrderController implements ModelController<Order> {
     public int save(int customerId , int managerId, String address , String status){
         LocalDate localDate = LocalDate.now();
         java.sql.Date orderDate = java.sql.Date.valueOf(localDate);
-//        LocalDate updatedLocalDate = localDate.plusDays(5);
-//        java.sql.Date shipDate = java.sql.Date.valueOf(updatedLocalDate);
         Order order = new Order();
         order.setOrderDate(orderDate);
         order.setShipAddress(address);

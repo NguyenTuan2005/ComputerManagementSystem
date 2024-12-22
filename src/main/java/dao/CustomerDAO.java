@@ -3,6 +3,7 @@ package dao;
 import Config.DatabaseConfig;
 import Model.Customer;
 import dto.CustomerOrderDTO;
+import lombok.SneakyThrows;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,13 +17,11 @@ public class CustomerDAO implements Repository<Customer> {
 
     private PreparedStatement preparedStatement;
 
+    @SneakyThrows
     public CustomerDAO() {
-        try {
-            this.databaseConfig = new DatabaseConfig();
-            this.connection = databaseConfig.getConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        this.databaseConfig = new DatabaseConfig();
+        this.connection = databaseConfig.getConnection();
     }
 
     private void setAccountParameter(PreparedStatement preparedStatement, Customer customer) throws SQLException {
@@ -48,181 +47,164 @@ public class CustomerDAO implements Repository<Customer> {
     }
 
     @Override
+    @SneakyThrows
     public Customer save(Customer customer) {
-        try {
-            String sql = "INSERT INTO customer (fullname, email, address, password,avata_img,number_of_purchased) VALUES (?, ?, ?, ?,?,?)";
-            preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            setAccountParameter(preparedStatement, customer);
-            preparedStatement.executeUpdate();
-            ResultSet rs = preparedStatement.getGeneratedKeys();
-            if (rs.next()) {
-                customer.setId(rs.getInt(1));
-            }
-            return customer;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+
+        String sql = "INSERT INTO customer (fullname, email, address, password,avata_img,number_of_purchased) VALUES (?, ?, ?, ?,?,?)";
+        preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        setAccountParameter(preparedStatement, customer);
+        preparedStatement.executeUpdate();
+        ResultSet rs = preparedStatement.getGeneratedKeys();
+        if (rs.next()) {
+            customer.setId(rs.getInt(1));
         }
+        return customer;
+
     }
 
     @Override
+    @SneakyThrows
     public Customer findById(int id) {
-        try {
-            String sql = "SELECT * FROM customer WHERE id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
-            ResultSet rs = preparedStatement.executeQuery();
-            if (rs.next()) {
-                return resultCustomer(rs);
-            }
-            return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+
+        String sql = "SELECT * FROM customer WHERE id = ?";
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, id);
+        ResultSet rs = preparedStatement.executeQuery();
+        if (rs.next()) {
+            return resultCustomer(rs);
         }
+        return null;
+
     }
 
     @Override
+    @SneakyThrows
     public ArrayList<Customer> getAll() {
-        try {
-            String sql = "SELECT * FROM customer";
-            statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sql);
-            ArrayList<Customer> customers = new ArrayList<>();
-            while (rs.next()) {
-                Customer customer = resultCustomer(rs);
-                customers.add(customer);
-            }
-            return customers;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+
+        String sql = "SELECT * FROM customer";
+        statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery(sql);
+        ArrayList<Customer> customers = new ArrayList<>();
+        while (rs.next()) {
+            Customer customer = resultCustomer(rs);
+            customers.add(customer);
         }
+        return customers;
+
     }
 
     @Override
+    @SneakyThrows
     public ArrayList<Customer> findByName(String name) {
-        try {
-            String sql = "SELECT * FROM customer WHERE LOWER(fullname) LIKE lower(?)";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, "%" + name + "%");
-            ResultSet rs = preparedStatement.executeQuery();
-            ArrayList<Customer> customers = new ArrayList<>();
-            while (rs.next()) {
-                customers.add(resultCustomer(rs));
-            }
-            return customers;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+
+        String sql = "SELECT * FROM customer WHERE LOWER(fullname) LIKE lower(?)";
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, "%" + name + "%");
+        ResultSet rs = preparedStatement.executeQuery();
+        ArrayList<Customer> customers = new ArrayList<>();
+        while (rs.next()) {
+            customers.add(resultCustomer(rs));
         }
+        return customers;
+
     }
 
     @Override
+    @SneakyThrows
     public Customer findOneByName(String name) {
-        try {
-            String sql = "SELECT * FROM customer WHERE fullname LIKE ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, "%" + name + "%");
-            ResultSet rs = preparedStatement.executeQuery();
 
-            if (rs.next()) {
-                return resultCustomer(rs);
-            }
+        String sql = "SELECT * FROM customer WHERE fullname LIKE ?";
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, "%" + name + "%");
+        ResultSet rs = preparedStatement.executeQuery();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (rs.next()) {
+            return resultCustomer(rs);
         }
+
+
         return null;
     }
 
+    @SneakyThrows
     public Customer findByEmail(String email) {
-        try {
-            String sql = "SELECT * FROM customer WHERE email LIKE ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, "%" + email + "%");
-            ResultSet rs = preparedStatement.executeQuery();
 
-            if (rs.next()) {
-                return resultCustomer(rs);
-            }
+        String sql = "SELECT * FROM customer WHERE email LIKE ?";
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, "%" + email + "%");
+        ResultSet rs = preparedStatement.executeQuery();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (rs.next()) {
+            return resultCustomer(rs);
         }
+
+
         return null;
     }
 
     @Override
+    @SneakyThrows
     public Customer update(Customer customer) {
-        try {
-            String sql = "UPDATE customer SET fullname = ?, email = ?, address = ?, password = ?,avata_img=? ,number_of_purchased =? WHERE id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            setAccountParameter(preparedStatement, customer);
-            preparedStatement.setInt(7, customer.getId());
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
-                return customer;
-            }
-            return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+
+        String sql = "UPDATE customer SET fullname = ?, email = ?, address = ?, password = ?,avata_img=? ,number_of_purchased =? WHERE id = ?";
+        preparedStatement = connection.prepareStatement(sql);
+        setAccountParameter(preparedStatement, customer);
+        preparedStatement.setInt(7, customer.getId());
+        int rowsAffected = preparedStatement.executeUpdate();
+        if (rowsAffected > 0) {
+            return customer;
         }
+        return null;
+
     }
 
     @Override
+    @SneakyThrows
     public boolean remove(int id) {
-        try {
-            String sql = "DELETE FROM customer WHERE id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
-            int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+
+        String sql = "DELETE FROM customer WHERE id = ?";
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, id);
+        int rowsAffected = preparedStatement.executeUpdate();
+        return rowsAffected > 0;
+
     }
 
 
+    @SneakyThrows
     public ArrayList<CustomerOrderDTO> getDataCustomerOrderById(int customerId) {
         ArrayList<CustomerOrderDTO> orders = new ArrayList<>();
-        String query = "SELECT DISTINCT  *  FROM customer_order_view  AS c  where c.customer_id = ? order by  c.order_date" ;
-        try {
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, customerId);
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                CustomerOrderDTO order = new CustomerOrderDTO();
-                order.setOrderId(rs.getInt("order_id"));
-                order.setCustomerId(rs.getInt("customer_id"));
-                order.setOrderDate(rs.getDate("order_date"));
-                order.setShipAddress(rs.getString("ship_address"));
-                order.setStatusItem(rs.getString("status_item"));
-                order.setSaler(rs.getString("saler"));
-                order.setSalerId(rs.getInt("saler_id"));
-                order.setUnitPrice(rs.getDouble("unit_price"));
-                order.setQuantity(rs.getInt("quantity"));
-                order.setProductId(rs.getInt("product_id"));
-                order.setProductName(rs.getString("product_name"));
-                order.setProductGenre(rs.getString("product_genre"));
-                order.setProductBrand(rs.getString("product_brand"));
-                order.setOperatingSystem(rs.getString("operating_system"));
-                order.setCpu(rs.getString("cpu"));
-                order.setMemory(rs.getString("memory"));
-                order.setRam(rs.getString("ram"));
-                order.setMadeIn(rs.getString("made_in"));
-                order.setDisk(rs.getString("disk"));
-                order.setWeight(rs.getString("weight"));
-                order.setMonitor(rs.getString("monitor"));
-                order.setCard(rs.getString("card"));
-                order.convertToEnum(rs.getString("status_item"));
-                orders.add(order);
-            }
+        String query = "SELECT DISTINCT  *  FROM customer_order_view  AS c  where c.customer_id = ? order by  c.order_date";
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, customerId);
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            CustomerOrderDTO order = new CustomerOrderDTO();
+            order.setOrderId(rs.getInt("order_id"));
+            order.setCustomerId(rs.getInt("customer_id"));
+            order.setOrderDate(rs.getDate("order_date"));
+            order.setShipAddress(rs.getString("ship_address"));
+            order.setStatusItem(rs.getString("status_item"));
+            order.setSaler(rs.getString("saler"));
+            order.setSalerId(rs.getInt("saler_id"));
+            order.setUnitPrice(rs.getDouble("unit_price"));
+            order.setQuantity(rs.getInt("quantity"));
+            order.setProductId(rs.getInt("product_id"));
+            order.setProductName(rs.getString("product_name"));
+            order.setProductGenre(rs.getString("product_genre"));
+            order.setProductBrand(rs.getString("product_brand"));
+            order.setOperatingSystem(rs.getString("operating_system"));
+            order.setCpu(rs.getString("cpu"));
+            order.setMemory(rs.getString("memory"));
+            order.setRam(rs.getString("ram"));
+            order.setMadeIn(rs.getString("made_in"));
+            order.setDisk(rs.getString("disk"));
+            order.setWeight(rs.getString("weight"));
+            order.setMonitor(rs.getString("monitor"));
+            order.setCard(rs.getString("card"));
+            order.convertToEnum(rs.getString("status_item"));
+            orders.add(order);
         }
 
         return orders;
@@ -234,31 +216,26 @@ public class CustomerDAO implements Repository<Customer> {
      * @param isBlock
      * @param id
      */
-    public void updateBlock(boolean isBlock , int id){
-        try {
-            String sql = "UPDATE customer SET block = ? WHERE id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, isBlock?1:0 );
-            preparedStatement.setInt(2, id);
-            preparedStatement.executeUpdate();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+    @SneakyThrows
+    public void updateBlock(boolean isBlock, int id) {
+
+        String sql = "UPDATE customer SET block = ? WHERE id = ?";
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, isBlock ? 1 : 0);
+        preparedStatement.setInt(2, id);
+        preparedStatement.executeUpdate();
+
     }
 
-    public void updateNumberOfPurchased( int id){
-        try {
-            String sql = "UPDATE customer SET number_of_purchased = number_of_purchased+1  WHERE id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+    @SneakyThrows
+    public void updateNumberOfPurchased(int id) {
+
+        String sql = "UPDATE customer SET number_of_purchased = number_of_purchased+1  WHERE id = ?";
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, id);
+        preparedStatement.executeUpdate();
+
     }
-
-
-
 
 
     @Override
@@ -266,20 +243,15 @@ public class CustomerDAO implements Repository<Customer> {
         return null;
     }
 
-    public static void main(String[] args) {
-        CustomerDAO customerDAO = new CustomerDAO();
-        var u =customerDAO.getDataCustomerOrderById(3);
-    }
 
+    @SneakyThrows
     public void updatePassword(String s, int id) {
-        try {
-            String sql = "UPDATE customer SET password = ? WHERE id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, s);
-            preparedStatement.setInt(2, id);
-            preparedStatement.executeUpdate();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+
+        String sql = "UPDATE customer SET password = ? WHERE id = ?";
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, s);
+        preparedStatement.setInt(2, id);
+        preparedStatement.executeUpdate();
+
     }
 }

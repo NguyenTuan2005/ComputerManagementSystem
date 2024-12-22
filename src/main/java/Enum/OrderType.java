@@ -1,5 +1,8 @@
 package Enum;
 
+import lombok.Getter;
+
+
 public enum OrderType {
     ACTIVE("Received the application"),
     UN_ACTIVE("Cancel"),
@@ -23,4 +26,8 @@ public enum OrderType {
         return this == UN_ACTIVE;
     }
     public boolean isDispatched() {return this == DISPATCHED; }
+
+    public static void main(String[] args) {
+
+    }
 }

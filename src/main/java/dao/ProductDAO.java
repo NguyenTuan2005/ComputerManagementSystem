@@ -2,6 +2,7 @@ package dao;
 
 import Config.DatabaseConfig;
 import Model.Product;
+import lombok.SneakyThrows;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,154 +17,147 @@ public class ProductDAO implements Repository<Product> {
 
     private PreparedStatement preparedStatement;
 
+    @SneakyThrows
     public ProductDAO() {
-        try {
-            this.databaseConfig = new DatabaseConfig();
-            this.connection = databaseConfig.getConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        this.databaseConfig = new DatabaseConfig();
+        this.connection = databaseConfig.getConnection();
+
     }
 
     @Override
+    @SneakyThrows
     public Product save(Product product) {
-        try {
-            String sql = "INSERT INTO product (suppliers_id, name, quantity, price, genre, brand, operating_system, cpu, memory, ram, made_in, status, delete_row, disk ,weight ,monitor,card) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            setProductParameters(preparedStatement, product);
 
-            preparedStatement.executeUpdate();
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                product.setId(generatedKeys.getInt(1));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        String sql = "INSERT INTO product (suppliers_id, name, quantity, price, genre, brand, operating_system, cpu, memory, ram, made_in, status, delete_row, disk ,weight ,monitor,card) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        setProductParameters(preparedStatement, product);
+
+        preparedStatement.executeUpdate();
+        ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            product.setId(generatedKeys.getInt(1));
         }
+
         return product;
     }
 
 
     @Override
+    @SneakyThrows
     public Product findById(int id) {
         String sql = "SELECT * FROM product WHERE id = ? AND delete_row = 1";
         Product product = new Product();
         ArrayList<Product> products = new ArrayList<>();
-        try {
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                product = mapResultSetToProduct(rs);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, id);
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            product = mapResultSetToProduct(rs);
         }
+
         return product;
     }
 
     @Override
+    @SneakyThrows
     public ArrayList<Product> getAll() {
         ArrayList<Product> products = new ArrayList<>();
         String sql = "SELECT * FROM product WHERE delete_row = 1";
 
-        try {
-            statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sql);
-            while (rs.next()) {
-                Product product = mapResultSetToProduct(rs);
-                products.add(product);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery(sql);
+        while (rs.next()) {
+            Product product = mapResultSetToProduct(rs);
+            products.add(product);
         }
+
         return products;
     }
 
+    @SneakyThrows
     public ArrayList<Product> getEager() {
         ArrayList<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM product WHERE delete_row = 1 and status = '"+Product.AVAILABLE+"'";
+        String sql = "SELECT * FROM product WHERE delete_row = 1 and status = '" + Product.AVAILABLE + "'";
 
-        try {
-            statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sql);
-            while (rs.next()) {
-                Product product = mapResultSetToProduct(rs);
-                products.add(product);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery(sql);
+        while (rs.next()) {
+            Product product = mapResultSetToProduct(rs);
+            products.add(product);
         }
+
         return products;
     }
 
     @Override
+    @SneakyThrows
     public ArrayList<Product> findByName(String name) {
-//        LOWER(product_name) LIKE LOWER('%từ_khóa_tìm_kiếm%')
+
         String sql = "SELECT * FROM  product WHERE LOWER(name) LIKE LOWER(?) AND delete_row = 1";
         ArrayList<Product> products = new ArrayList<>();
-        try {
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, "%" + name + "%");
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                Product product = mapResultSetToProduct(rs);
-                products.add(product);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, "%" + name + "%");
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            Product product = mapResultSetToProduct(rs);
+            products.add(product);
         }
+
         return products;
     }
 
     @Override
+    @SneakyThrows
     public Product findOneByName(String name) {
-        try {
-            String sql = "SELECT * FROM product WHERE LOWER(name) LIKE LOWER(?) AND delete_row = 1";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, "%" + name + "%");
-            ResultSet rs = preparedStatement.executeQuery();
 
-            if (rs.next()) {
-                return mapResultSetToProduct(rs);
-            }
+        String sql = "SELECT * FROM product WHERE LOWER(name) LIKE LOWER(?) AND delete_row = 1";
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, "%" + name + "%");
+        ResultSet rs = preparedStatement.executeQuery();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (rs.next()) {
+            return mapResultSetToProduct(rs);
         }
+
+
         return null;
     }
 
     /**
-     *  note Id
+     * note Id
+     *
      * @param product
      * @return product
      */
     @Override
+    @SneakyThrows
     public Product update(Product product) {
-        try {
-            String sql = "UPDATE product SET suppliers_id = ?, name = ?, quantity = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? , delete_row=?,disk = ? ,weight = ? ,monitor = ? ,card =? WHERE id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            setProductParameters(preparedStatement, product);
-            preparedStatement.setInt(18,product.getId());
-            preparedStatement.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        String sql = "UPDATE product SET suppliers_id = ?, name = ?, quantity = ?, price = ?, genre = ?, brand = ?, operating_system = ?, cpu = ?, memory = ?, ram = ?, made_in = ?, status = ? , delete_row=?,disk = ? ,weight = ? ,monitor = ? ,card =? WHERE id = ?";
+        preparedStatement = connection.prepareStatement(sql);
+        setProductParameters(preparedStatement, product);
+        preparedStatement.setInt(18, product.getId());
+        preparedStatement.executeUpdate();
+
         return product;
     }
 
-    public void setDeleteRow(int id , boolean status){
+
+    @SneakyThrows
+    public void setDeleteRow(int id, boolean status) {
         //UPDATE product SET delete_row = 0 WHERE id = 3
         String sql = "UPDATE product SET delete_row = ? WHERE id = ?";
-        try {
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, status?1:0);
-            preparedStatement.setInt(2,id);
-            preparedStatement.executeUpdate();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, status ? 1 : 0);
+        preparedStatement.setInt(2, id);
+        preparedStatement.executeUpdate();
+
     }
 
     @Deprecated
@@ -174,6 +168,7 @@ public class ProductDAO implements Repository<Product> {
 
     // Phương thức để lấy tất cả Products theo cột
     @Override
+    @SneakyThrows
     public ArrayList<Product> sortByColumn(String column) {
         ArrayList<Product> products = new ArrayList<>();
         String query = "SELECT * FROM public.product where delete_row = 1";
@@ -200,17 +195,15 @@ public class ProductDAO implements Repository<Product> {
             }
         }
 
-        try {
-            preparedStatement = connection.prepareStatement(query);
-            ResultSet rs = preparedStatement.executeQuery();
 
-            while (rs.next()) {
-                Product product = mapResultSetToProduct(rs);
-                products.add(product);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        preparedStatement = connection.prepareStatement(query);
+        ResultSet rs = preparedStatement.executeQuery();
+
+        while (rs.next()) {
+            Product product = mapResultSetToProduct(rs);
+            products.add(product);
         }
+
         return products;
     }
 
@@ -252,16 +245,11 @@ public class ProductDAO implements Repository<Product> {
         preparedStatement.setString(11, product.getMadeIn());
         preparedStatement.setString(12, product.getStatus());
         preparedStatement.setInt(13, product.getDeleteRow());
-        preparedStatement.setString(14,product.getDisk());
-        preparedStatement.setString(15,product.getWeight());
-        preparedStatement.setString(16,product.getMonitor());
-        preparedStatement.setString(17,product.getCard());
+        preparedStatement.setString(14, product.getDisk());
+        preparedStatement.setString(15, product.getWeight());
+        preparedStatement.setString(16, product.getMonitor());
+        preparedStatement.setString(17, product.getCard());
     }
 
-    public static void main(String[] args) {
-        ProductDAO p = new ProductDAO();
-        System.out.println(p.getAll());
-//        ProductConfig.exportToExcel(p.getAll(),"demo");
-    }
 
 }

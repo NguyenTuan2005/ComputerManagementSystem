@@ -6,7 +6,6 @@ import dao.OrderDetailDAO;
 import dto.CustomerOrderDetailDTO;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class OrderDetailController implements ModelController<OrderDetail> {

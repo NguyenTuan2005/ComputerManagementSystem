@@ -1,8 +1,9 @@
 package dto;
 
 import Model.Image;
-import lombok.Getter;
 
+
+import java.util.Date;
 import java.util.List;
 
 public record CustomerOrderDetailDTO(CustomerOrderDTO customerOrderDTO , List<Image> images) {
@@ -12,4 +13,8 @@ public record CustomerOrderDetailDTO(CustomerOrderDTO customerOrderDTO , List<Im
     }
 
     public int getProductId(){return customerOrderDTO.getProductId();}
+
+    public Date getOrderDate(){
+        return customerOrderDTO.getOrderDate();
+    }
 }

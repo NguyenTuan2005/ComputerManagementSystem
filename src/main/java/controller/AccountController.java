@@ -48,7 +48,6 @@ public class AccountController implements ModelController<Account> {
                 return  true;
             }else {
                 loginStatus = LoginStatus.WORNG_PASSWORD;
-//                System.out.println("sai pw");
                 return false;
             }
         } else {
@@ -56,6 +55,7 @@ public class AccountController implements ModelController<Account> {
             return false;
         }
     }
+
     public Account create(Account theAcount){
         passwordSecurity = new PasswordSecurity(theAcount.getPassword());
         theAcount.setPassword(passwordSecurity.generatePassword());
@@ -66,10 +66,7 @@ public class AccountController implements ModelController<Account> {
       accountDAO.updateBlock(isBlock, id);
     }
 
-    public static void main(String[] args) {
-        AccountController acc = new AccountController();
-        acc.updateBlock(true,7);
-    }
+
 
     @Override
     public ArrayList<Account> find(String name) {

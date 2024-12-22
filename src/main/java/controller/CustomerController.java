@@ -128,12 +128,7 @@ public class CustomerController implements ModelController<Customer> {
         return result;
     }
 
-    public static void main(String[] args) throws SQLException {
-        CustomerController c= new CustomerController();
-        var  date = c.getCustomerOrderDetail(10);
 
-
-    }
 
     public void block(boolean isBlock, int id){
         customerDAO.updateBlock(isBlock, id);

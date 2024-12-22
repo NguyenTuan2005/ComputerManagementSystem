@@ -2395,7 +2395,6 @@ public class ManagerMainPanel extends JPanel {
                         gbc.gridy = 2;
                         add(lblBirthday, gbc);
 
-
                         JPanel birthdayPanel = new JPanel(new BorderLayout());
                         birthdayPanel.setBackground(Color.WHITE);
                         birthdayPanel.add(txtBirthday, BorderLayout.CENTER);

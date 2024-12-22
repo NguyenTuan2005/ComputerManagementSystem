@@ -4,6 +4,7 @@ import Config.DatabaseConfig;
 import Model.Account;
 import Model.Image;
 import Model.Product;
+import lombok.SneakyThrows;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,22 +19,21 @@ public class ImageDAO implements Repository<Image> {
 
     private PreparedStatement preparedStatement;
 
+    @SneakyThrows
     public ImageDAO() {
-        try {
-            this.databaseConfig = new DatabaseConfig();
-            this.connection = databaseConfig.getConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        this.databaseConfig = new DatabaseConfig();
+        this.connection = databaseConfig.getConnection();
+
     }
 
-    private void setImageParameter(PreparedStatement preparedStatement ,Image image) throws SQLException {
-            preparedStatement.setInt(1,image.getProductId());
-            preparedStatement.setString(2,image.getAlt());
-            preparedStatement.setString(3,image.getUrl());
+    private void setImageParameter(PreparedStatement preparedStatement, Image image) throws SQLException {
+        preparedStatement.setInt(1, image.getProductId());
+        preparedStatement.setString(2, image.getAlt());
+        preparedStatement.setString(3, image.getUrl());
     }
 
-    private void setImageParameter(ResultSet rs,Image img) throws SQLException {
+    private void setImageParameter(ResultSet rs, Image img) throws SQLException {
         img.setId(rs.getInt("id"));
         img.setUrl(rs.getString("url"));
         img.setAlt(rs.getString("alt"));
@@ -41,51 +41,45 @@ public class ImageDAO implements Repository<Image> {
     }
 
     @Override
+    @SneakyThrows
     public Image save(Image image) {
         String sql = "INSERT INTO image ( product_id, alt, url) VALUES (?,?,?)";
-        try{
-            preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            setImageParameter(preparedStatement,image);
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows > 0) {
-                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    image.setId(generatedKeys.getInt(1));
-                }
+
+        preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        setImageParameter(preparedStatement, image);
+        int affectedRows = preparedStatement.executeUpdate();
+        if (affectedRows > 0) {
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                image.setId(generatedKeys.getInt(1));
             }
-        } catch (Exception e){
-            e.printStackTrace();
         }
+
         return image;
     }
 
     @Override
     public Image findById(int id) {
-      return null;
+        return null;
     }
 
     @Override
+    @SneakyThrows
     public ArrayList<Image> getAll() {
         String sql = " SELECT *FROM image ";
         ArrayList<Image> images = new ArrayList<>();
-        try{
-            statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sql);
-            while (rs.next()){
-                Image img = new Image();
-                setImageParameter(rs,img);
-                images.add(img);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
+
+        statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery(sql);
+        while (rs.next()) {
+            Image img = new Image();
+            setImageParameter(rs, img);
+            images.add(img);
         }
+
         return images;
     }
 
-    public static void main(String[] args) throws SQLException {
-        ImageDAO imageDAO = new ImageDAO();
-        System.out.println(imageDAO.getAll());
-    }
 
     @Deprecated
     @Override
@@ -106,28 +100,25 @@ public class ImageDAO implements Repository<Image> {
         return null;
     }
 
-    public ArrayList<Image> findByProductId(int productId){
-//select * from image;
+    @SneakyThrows
+    public ArrayList<Image> findByProductId(int productId) {
+
         String sql = " SELECT *FROM image where product_id =?";
         ArrayList<Image> images = new ArrayList<>();
-        try{
-//            state = connection.createStatement();
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1,productId);
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()){
-                Image img = new Image();
-                setImageParameter(rs,img);
-                images.add(img);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
+
+
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, productId);
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            Image img = new Image();
+            setImageParameter(rs, img);
+            images.add(img);
         }
 
 
         return images;
     }
-
 
 
     @Deprecated

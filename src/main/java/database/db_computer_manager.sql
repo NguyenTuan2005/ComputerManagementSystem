@@ -101,3 +101,6 @@ ALTER TABLE account ADD CONSTRAINT username_unique UNIQUE(username);
 
 -- update
 ALTER TABLE product RENAME COLUMN quality to quantity;
+
+ALTER TABLE product
+    ADD CONSTRAINT check_quantity CHECK (quantity >= 0);

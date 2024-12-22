@@ -3,6 +3,7 @@ package dao;
 import Config.DatabaseConfig;
 import Model.Order;
 import Enum.*;
+import view.OverrideComponent.ToastNotification;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -148,7 +149,7 @@ public class OrderDAO implements Repository<Order> {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected >0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            ToastNotification.showToast("The quantity of goods in stock is sufficient",3000,30,-1,-1);
         }
         return false;
     }

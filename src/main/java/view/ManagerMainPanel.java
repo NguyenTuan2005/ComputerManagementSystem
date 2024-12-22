@@ -58,7 +58,6 @@ import static view.CustomerMainPanel.createImageForProduct;
 
 
 public class ManagerMainPanel extends JPanel {
-    LoginFrame loginFrame;
     CardLayout cardLayout = new CardLayout();
     WelcomePanel welcomePanel;
     ProductPanel productPanel = new ProductPanel();
@@ -89,6 +88,9 @@ public class ManagerMainPanel extends JPanel {
     static final String[] columnNamesCUSTOMER = {"Customer ID:", "Customer Name:", "Phone Number:", "Email:", "Address:", "Date of Birth:"};
 
     static DecimalFormat formatCurrency = new DecimalFormat("#,###");
+
+    private JPanel detailsContainer;
+    private JPanel orderContainer;
     //main constructor
     public ManagerMainPanel() {
         //tao giao dien
@@ -1221,7 +1223,7 @@ public class ManagerMainPanel extends JPanel {
 
                 int selectRow = (table != null) ? table.getSelectedRow() : -1;
                 if (selectRow != -1) {
-                    int orderID = Integer.parseInt(table.getValueAt(selectRow, 0).toString());
+                    int orderID = Integer.parseInt(table.getValueAt(selectRow, 1).toString());
                     orderTabbedPane.setSelectedIndex(2);
                     exportPanel.loadOrders(orders.get(orderID));
                 } else
@@ -1257,8 +1259,9 @@ public class ManagerMainPanel extends JPanel {
 
         class ExportPanel extends JPanel {
             private JLabel totalPriceLabel, quantityLabel;
-            private CustomButton exportBt;
+            private CustomButton exportBt, cancelBt;
             private OrderDetailsPanel detailsPanel;
+            private PaymentPanel paymentPanel;
 
             private JTextField customerIdTF, orderDateTF, shipAddressTF, statusItemTF, salerTF, salerIdTF,
                     productIdTF, productNameTF, productTypeTF,
@@ -1272,25 +1275,27 @@ public class ManagerMainPanel extends JPanel {
                 detailsPanel = new OrderDetailsPanel();
                 add(detailsPanel, BorderLayout.CENTER);
 
-                PaymentPanel paymentPanel = new PaymentPanel();
+                paymentPanel = new PaymentPanel();
                 add(paymentPanel, BorderLayout.SOUTH);
             }
 
             class OrderDetailsPanel extends JPanel {
                 private ProductsMainPanel productDetailsPanel;
+                private CustomerDetailsPanel customerDetailsPanel;
                 OrderDetailsPanel() {
                     setLayout(new BorderLayout());
 
-                    JPanel customerDetailsPanel = new CustomerDetailsPanel();
+                    customerDetailsPanel = new CustomerDetailsPanel();
                     productDetailsPanel = new ProductsMainPanel();
                     add(customerDetailsPanel, BorderLayout.WEST);
                     add(productDetailsPanel, BorderLayout.CENTER);
                 }
+
                 private void addProductPanel(List<Product> list) {
                     for (Product product : list) {
-                        this.productDetailsPanel.addProductToOrders(product);
+                        productDetailsPanel.addProductToOrders(productDetailsPanel.createProduct(product));
                     }
-
+//                    System.out.println(list);
                 }
             }
             // customer information and details about order
@@ -1337,9 +1342,7 @@ public class ManagerMainPanel extends JPanel {
                         gbc.fill = GridBagConstraints.HORIZONTAL;
                         add(orderTFs[i], gbc);
                     }
-
                 }
-
             }
 
             // the list of product ordered by customer
@@ -1347,8 +1350,7 @@ public class ManagerMainPanel extends JPanel {
                 ProductsPanel productsPn = new ProductsPanel();
                 ProductDetailsPanel productDetailsPn = new ProductDetailsPanel();
                 CardLayout cardLayoutOrder = new CardLayout();
-                JPanel orderContainer = new JPanel();
-                public JPanel detailsContainer;
+
 
                 ProductsMainPanel() {
                     setLayout(cardLayoutOrder);
@@ -1382,16 +1384,40 @@ public class ManagerMainPanel extends JPanel {
                         setLayout(new BorderLayout());
                         orderContainer = new JPanel();
                         orderContainer.setLayout(new BoxLayout(orderContainer, BoxLayout.Y_AXIS));
-                        orderContainer.setBackground(Color.WHITE);
+//                        orderContainer.setBackground(Color.WHITE);// 🗿🗿🗿 naughty bug
+
                         scrollpane = new JScrollPane(orderContainer);
                         setColorScrollPane(scrollpane, Style.BACKGROUND_COLOR, Color.WHITE);
                         add(scrollpane, BorderLayout.CENTER);
                     }
-
                 }
-                // //thêm sản phẩm vào danh sách
-                //                public JPanel productOrderPn(CustomerOrderDetailDTO customerOrderDTO) {
-                public void addProductToOrders(Product product) {
+
+                class ProductDetailsPanel extends JPanel {
+
+                    ProductDetailsPanel() {
+                        setLayout(new BorderLayout());
+                        setBackground(Color.WHITE);
+
+                        JPanel topPn = new JPanel(new BorderLayout());
+                        topPn.setBackground(Color.WHITE);
+                        CustomButton back = ButtonConfig.createCustomButton("Back", Style.FONT_BOLD_16,
+                                Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE, 5, SwingConstants.CENTER, new Dimension(70, 25));
+                        back.addActionListener(e -> showPanelOrder("products"));
+                        topPn.add(back, BorderLayout.EAST);
+
+                        JLabel title = LabelConfig.createLabel("Product details", Style.FONT_BOLD_18, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER);
+                        topPn.add(title, BorderLayout.CENTER);
+
+                        add(topPn, BorderLayout.NORTH);
+
+                        detailsContainer = new JPanel();
+                        detailsContainer.setLayout(new BorderLayout());
+                        add(detailsContainer, BorderLayout.CENTER);
+                    }
+                }
+                // //thêm 1 sản phẩm vào danh sách
+                public JPanel createProduct(Product product) {
+                    JPanel wrapperPn = new JPanel(new FlowLayout());
                     // Tạo panel chính với BorderLayout
                     JPanel mainPanel = new JPanel(new BorderLayout());
                     mainPanel.setBackground(Color.WHITE);
@@ -1470,34 +1496,16 @@ public class ManagerMainPanel extends JPanel {
                     proDetails.add(priceAndQuantity, gbc);
 
                     mainPanel.add(proDetails, BorderLayout.CENTER);
+                    wrapperPn.add(mainPanel);
 
-                    orderContainer.add(mainPanel);
-                    orderContainer.revalidate();
-                    orderContainer.repaint();
+                    return wrapperPn;
                 }
 
-                class ProductDetailsPanel extends JPanel {
-
-                    ProductDetailsPanel() {
-                        setLayout(new BorderLayout());
-                        setBackground(Color.WHITE);
-
-                        JPanel topPn = new JPanel(new BorderLayout());
-                        topPn.setBackground(Color.WHITE);
-                        CustomButton back = ButtonConfig.createCustomButton("Back", Style.FONT_BOLD_16,
-                                Color.white, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE, 5, SwingConstants.CENTER, new Dimension(70, 25));
-                        back.addActionListener(e -> showPanelOrder("products"));
-                        topPn.add(back, BorderLayout.EAST);
-
-                        JLabel title = LabelConfig.createLabel("Product details", Style.FONT_BOLD_18, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, SwingConstants.CENTER);
-                        topPn.add(title, BorderLayout.CENTER);
-
-                        add(topPn, BorderLayout.NORTH);
-
-                        detailsContainer = new JPanel();
-                        detailsContainer.setLayout(new BorderLayout());
-                        add(detailsContainer, BorderLayout.CENTER);
-                    }
+                public void addProductToOrders(JPanel panel){
+                    orderContainer.removeAll();
+                    orderContainer.add(panel);
+                    orderContainer.revalidate();
+                    orderContainer.repaint();
                 }
 
                 public void addDetailsProduct(Product product) {
@@ -1565,9 +1573,17 @@ public class ManagerMainPanel extends JPanel {
 
                     JPanel rightPn = new JPanel();
                     rightPn.setBackground(Color.WHITE);
+
+                    cancelBt = ButtonConfig.createCustomButton("Cancel", Style.FONT_BOLD_24, Color.white,
+                            Style.DELETE_BUTTON_COLOR_RED, Style.LIGHT_RED, 8, SwingConstants.CENTER, new Dimension(200, 40));
+                    rightPn.add(cancelBt);
+
+
                     exportBt = ButtonConfig.createCustomButton("Export", Style.FONT_BOLD_24, Color.white,
                             Style.CONFIRM_BUTTON_COLOR_GREEN, Style.LIGHT_GREEN, 8, SwingConstants.CENTER, new Dimension(200, 40));
                     rightPn.add(exportBt);
+
+
 
                     add(leftPn);
                     add(rightPn);
@@ -1584,7 +1600,8 @@ public class ManagerMainPanel extends JPanel {
                 this.salerIdTF.setText(String.valueOf(orderDTO.getSalerId()));
                 List<Product> productList = list.stream()
                         .map(CustomerOrderDTO::getProduct)
-                        .collect(Collectors.toList());
+                        .collect(Collectors.toList()); //(❁´◡`❁) nice
+
                 double totalCost = list.stream()
                         .mapToDouble(CustomerOrderDTO::totalCost)
                         .sum();
@@ -1594,7 +1611,7 @@ public class ManagerMainPanel extends JPanel {
 
                 this.detailsPanel.addProductPanel(productList);
                 this.totalPriceLabel.setText("<html><span style='color: black;'>Total Price:   </span> " +
-                        "<span style='color: red;'>" + totalCost + "₫</span></html>");
+                        "<span style='color: red;'>" + formatCurrency.format(totalCost) + "₫</span></html>");
                 this.quantityLabel.setText("<html><span style='color: black;'>Quantity:     </span> " +
                         "<span style='color: green;'>" + quantity + "</span> " +
                         "<span style='color: black;'> items</span></html>");
@@ -1634,6 +1651,7 @@ public class ManagerMainPanel extends JPanel {
             upDataOrders(dispatchedOrderModel, OrderType.DISPATCHED_MESSAGE);
         }
     }
+
 
     // Hoang's Code // Tuan
     class InventoryPanel extends JPanel {

@@ -1062,7 +1062,6 @@ public class CustomerMainPanel extends JPanel {
 
 
         defaultImage = images.length != 0 ? images[0] : createImageForProduct("src/main/java/img/not-found-image.png", 300, 300);
-        ;
 
 
         JLabel imageLabel = new JLabel(defaultImage);// Hiển thị hình ảnh đầu tiên
@@ -1137,7 +1136,6 @@ public class CustomerMainPanel extends JPanel {
             detailsPn.add(valueLabel);
         }
         mainPanel.add(detailsPn);
-
 
 // Giá sản phẩm
         String price = formatCurrency.format(product.getPrice());

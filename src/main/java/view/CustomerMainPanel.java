@@ -1,7 +1,7 @@
 package view;
 
 import Config.*;
-import Enum.*;
+import Enum.OrderType;
 import Model.Customer;
 import Model.Product;
 import Verifier.EmailVerifier;
@@ -39,7 +39,10 @@ import lombok.SneakyThrows;
 import view.OtherComponent.BillFrame;
 import view.OtherComponent.ChangePasswordFrame;
 import view.OtherComponent.NotFoundItemPanel;
-import view.OverrideComponent.*;
+import view.OverrideComponent.CircularImage;
+import view.OverrideComponent.CustomButton;
+import view.OverrideComponent.RoundedBorder;
+import view.OverrideComponent.ToastNotification;
 
 public class CustomerMainPanel extends JPanel {
   JPanel notificationContainer = new JPanel();
@@ -74,7 +77,6 @@ public class CustomerMainPanel extends JPanel {
   private static String ADDRESS = "";
 
   public static DecimalFormat formatCurrency = new DecimalFormat("#,###");
-
 
   public CustomerMainPanel() throws SQLException {
     cardLayout = new CardLayout();
@@ -364,7 +366,7 @@ public class CustomerMainPanel extends JPanel {
                 ArrayList<Product> products =
                     (ArrayList<Product>)
                         productController.getEagerProducts().stream()
-                            .sorted((p1, p2) -> p1.getPrice() - p2.getPrice())
+                            .sorted(Comparator.comparingDouble(Product::getPrice))
                             .collect(Collectors.toList());
                 if (products.isEmpty()) {
                   catalogContainer.add(new NotFoundItemPanel(" not found !!! "));
@@ -396,7 +398,7 @@ public class CustomerMainPanel extends JPanel {
                 ArrayList<Product> products =
                     (ArrayList<Product>)
                         productController.getEagerProducts().stream()
-                            .sorted((p1, p2) -> p2.getPrice() - p1.getPrice())
+                            .sorted(Comparator.comparingDouble(Product::getPrice))
                             .collect(Collectors.toList());
                 if (products.isEmpty()) {
                   catalogContainer.add(new NotFoundItemPanel(" not found !!! "));
@@ -428,7 +430,6 @@ public class CustomerMainPanel extends JPanel {
       private void updateSelectedButton(CustomButton button) {
         Color defaultColor = Color.WHITE;
         Color selectedColor = Style.BACKGROUND_COLOR;
-
 
         if (selectedButton != null) {
           selectedButton.setBackgroundColor(defaultColor);
@@ -1513,7 +1514,6 @@ public class CustomerMainPanel extends JPanel {
     productDetailsPn.setLayout(new BorderLayout());
     productDetailsPn.setPreferredSize(new Dimension(180, 200));
 
-
     JPanel productInfoPn = new JPanel(new BorderLayout());
     productInfoPn.setBorder(new MatteBorder(0, 1, 0, 0, Style.LIGHT_BlUE));
 
@@ -1524,7 +1524,6 @@ public class CustomerMainPanel extends JPanel {
     gbcDetails.anchor = GridBagConstraints.WEST;
     gbcDetails.gridx = 0;
     gbcDetails.gridy = 0;
-
 
     JPanel productNamePn = new JPanel(new FlowLayout(FlowLayout.LEFT));
     productNamePn.setBackground(Color.WHITE);
@@ -1566,7 +1565,6 @@ public class CustomerMainPanel extends JPanel {
     detailsPn.add(priceLb, gbcDetails);
     gbcDetails.gridx = 1;
     detailsPn.add(price, gbcDetails);
-
 
     gbcDetails.gridy++;
     gbcDetails.gridx = 0;
@@ -1660,7 +1658,6 @@ public class CustomerMainPanel extends JPanel {
     gbcDetails.gridwidth = 2;
     detailsPn.add(buttonPn, gbcDetails);
 
-
     JScrollPane detailScrollPane = new JScrollPane(detailsPn);
     scrollPane.getViewport().setBackground(Color.WHITE);
     detailScrollPane.setBorder(null);
@@ -1689,7 +1686,6 @@ public class CustomerMainPanel extends JPanel {
 
     int distance = targetX - startX;
 
-
     Timer timer = new Timer(5, null);
     timer.addActionListener(
         new ActionListener() {
@@ -1710,8 +1706,6 @@ public class CustomerMainPanel extends JPanel {
         });
     timer.start();
   }
-
-
 
   public void addNewPanelToCartContainer(JPanel panel) {
     if (cartContainer.getComponent(0).equals(emptyCartPn)) {
@@ -2235,7 +2229,6 @@ public class CustomerMainPanel extends JPanel {
     mainPanel.setBackground(Color.WHITE);
     mainPanel.setPreferredSize(new Dimension(400, 160));
     mainPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-
 
     JPanel imgPn = new JPanel();
     imgPn.setBackground(Color.WHITE);

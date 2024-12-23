@@ -1,11 +1,12 @@
 package dto;
 
 import Config.EmailConfig;
-import Enum.*;
-import controller.CustomerController;
-import java.util.ArrayList;
+import Enum.OrderType;
+import Model.Product;
+import dao.ImageDAO;
 import java.util.Date;
 import lombok.*;
+import view.ManagerMainPanel;
 
 @ToString
 @Getter
@@ -118,23 +119,34 @@ public class CustomerOrderDTO {
     return bill.toString();
   }
 
-  public static void main(String[] args) {
-    // Tạo danh sách sản phẩm
-    ArrayList<CustomerOrderDTO> orders = new ArrayList<>();
-    CustomerController c = new CustomerController();
-    orders = c.findCustomerOrderById(3);
+  public Product getProduct() {
+    Product product =
+        new Product(
+            this.productId,
+            1,
+            this.productName,
+            this.quantity,
+            this.unitPrice,
+            this.productGenre,
+            this.productBrand,
+            this.operatingSystem,
+            this.cpu,
+            this.memory,
+            this.ram,
+            this.madeIn,
+            this.statusItem,
+            this.disk,
+            this.monitor,
+            this.weight,
+            this.card,
+            1,
+            null);
+    product.setImages(new ImageDAO().findByProductId(this.productId));
+    return product;
   }
 
   public double totalCost() {
-    return this.quantity * this.quantity;
-  }
-
-  public boolean sameDate(CustomerOrderDTO that) {
-    return this.orderDate == that.orderDate;
-  }
-
-  public boolean sameOderId(int id) {
-    return this.orderId == id;
+    return this.unitPrice * this.quantity;
   }
 
   public String[] toOrderArray() {
@@ -146,14 +158,14 @@ public class CustomerOrderDTO {
       this.statusItem,
       this.saler,
       String.valueOf(this.salerId),
-      String.valueOf(this.totalCost()),
+      String.valueOf(ManagerMainPanel.formatCurrency.format(this.unitPrice)),
       String.valueOf(this.quantity)
     };
   }
 
-  public void update(double unitPrice, int quantity) {
-    this.unitPrice += unitPrice;
-    this.quantity += quantity;
+  public void update(double totalCost, int quantity) {
+    this.unitPrice = totalCost;
+    this.quantity = quantity;
   }
 
   public void convertToEnum(String status) {
@@ -164,10 +176,25 @@ public class CustomerOrderDTO {
       case OrderType.UN_ACTIVE_MESSAGE:
         this.status = OrderType.UN_ACTIVE;
         break;
+      case OrderType.DISPATCHED_MESSAGE:
+        this.status = OrderType.DISPATCHED;
+        break;
     }
   }
 
+  public boolean containText(String searchText) {
+    return String.valueOf(orderId).contains(searchText)
+        || String.valueOf(customerId).contains(searchText)
+        || (orderDate != null && orderDate.toString().toLowerCase().contains(searchText))
+        || (shipAddress != null && shipAddress.toLowerCase().contains(searchText))
+        || (statusItem != null && statusItem.toLowerCase().contains(searchText))
+        || (saler != null && saler.toLowerCase().contains(searchText))
+        || String.valueOf(salerId).contains(searchText)
+        || String.valueOf(unitPrice).contains(searchText)
+        || String.valueOf(quantity).contains(searchText);
+  }
+
   public boolean isDispatched() {
-    return this.status != null && this.status.isDispatched();
+    return this.status.isDispatched();
   }
 }

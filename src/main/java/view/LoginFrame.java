@@ -40,7 +40,6 @@ public class LoginFrame extends JFrame {
   static final String CUSTOMER_ROLE = "Customer";
   static final String MANAGER_ROLE = "Manager";
 
-
   private int id = 0;
 
   LoginFrame() {
@@ -149,7 +148,6 @@ public class LoginFrame extends JFrame {
     }
   }
 
-
   class InputFormPanel extends JPanel {
     SignInPanel signInPanel;
     SignUpPanel signUpPanel;
@@ -236,7 +234,6 @@ public class LoginFrame extends JFrame {
       gbc.gridwidth = 2;
       gbc.anchor = GridBagConstraints.CENTER;
       add(createAccountLabel, gbc);
-
 
       signUpButton =
           ButtonConfig.createCustomButton(
@@ -459,7 +456,6 @@ public class LoginFrame extends JFrame {
             }
           });
 
-
       resendCodeBt = new JButton("Re-send Verify Code");
       resendCodeBt.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
       resendCodeBt.setBackground(Color.WHITE);
@@ -492,7 +488,6 @@ public class LoginFrame extends JFrame {
                 resendCodeBt.setEnabled(false);
                 startCooldown();
               }
-
 
               JOptionPane.showMessageDialog(
                   null, "We have sent a new verification code to your email!");
@@ -539,7 +534,6 @@ public class LoginFrame extends JFrame {
               inputFormPanel.signUpPanel.showPanelSignUp("signUpForm");
             }
           });
-
 
       gbc.gridy++;
       JPanel otpPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -600,13 +594,11 @@ public class LoginFrame extends JFrame {
 
       add(otpPanel, gbc);
 
-
       gbc.gridy++;
       JPanel resendCodePn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       resendCodePn.setBackground(Color.WHITE);
       resendCodePn.add(resendCodeBt);
       add(resendCodePn, gbc);
-
 
       gbc.insets = new Insets(5, 10, 5, 10);
       gbc.gridy++;
@@ -653,7 +645,6 @@ public class LoginFrame extends JFrame {
       gbc.anchor = GridBagConstraints.CENTER;
       add(setNewPasswdLb, gbc);
 
-
       confirmBt =
           ButtonConfig.createCustomButton(
               "Confirm",
@@ -694,7 +685,6 @@ public class LoginFrame extends JFrame {
             }
           });
 
-
       gbc.gridwidth = 1;
       gbc.gridy++;
       gbc.gridx = 0;
@@ -733,7 +723,6 @@ public class LoginFrame extends JFrame {
       showPasswd2 = createShowPasswdBt(confirmPasswdField, "Confirm your password");
       confirmPasswdPn.add(showPasswd2);
       add(confirmPasswdPn, gbc);
-
 
       gbc.insets = new Insets(10, 10, 10, 10);
       gbc.gridy++;
@@ -820,7 +809,6 @@ public class LoginFrame extends JFrame {
       gbc.insets = new Insets(10, 10, 10, 10);
       gbc.fill = GridBagConstraints.HORIZONTAL;
 
-
       signInLabel = new JLabel("Sign In", SwingConstants.CENTER);
       signInLabel.setFont(Style.FONT_TITLE_BOLD_45);
       signInLabel.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
@@ -829,7 +817,6 @@ public class LoginFrame extends JFrame {
       gbc.gridwidth = 2;
       gbc.anchor = GridBagConstraints.CENTER;
       add(signInLabel, gbc);
-
 
       signInButton =
           ButtonConfig.createCustomButton(
@@ -871,7 +858,6 @@ public class LoginFrame extends JFrame {
           });
       gbc.gridx = 1;
       add(roleComboBox, gbc);
-
 
       gbc.gridwidth = 1;
       gbc.gridy++;
@@ -916,7 +902,6 @@ public class LoginFrame extends JFrame {
       nameField.addActionListener(e -> signInButton.doClick());
       add(nameField, gbc);
 
-
       gbc.gridy++;
       gbc.gridx = 0;
       JLabel passwordIcon = new JLabel(new ImageIcon("src/main/java/Icon/lock_icon.png"));
@@ -956,7 +941,6 @@ public class LoginFrame extends JFrame {
             }
           });
       add(showPasswdCB, gbc);
-
 
       gbc.gridy++;
       gbc.gridx = 0;
@@ -1057,9 +1041,6 @@ public class LoginFrame extends JFrame {
     }
   }
 
-
-
-
   class ForgotPasswdPanel extends JPanel {
     InputEmail inputEmail;
     VerificationCodePanel verificationCodePanel;
@@ -1106,7 +1087,6 @@ public class LoginFrame extends JFrame {
         gbc.insets = new Insets(20, 10, 20, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-
         JLabel resetPasswdLb = new JLabel("Reset Password", SwingConstants.CENTER);
         resetPasswdLb.setFont(Style.FONT_TITLE_BOLD_45);
         resetPasswdLb.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
@@ -1115,7 +1095,6 @@ public class LoginFrame extends JFrame {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(resetPasswdLb, gbc);
-
 
         ButtonGroup group = new ButtonGroup();
 
@@ -1148,7 +1127,6 @@ public class LoginFrame extends JFrame {
         gbc.gridy = 1;
         gbc.gridwidth = 2;
         add(checkBoxPanel, gbc);
-
 
         sendCodeBt =
             ButtonConfig.createCustomButton(
@@ -1209,7 +1187,6 @@ public class LoginFrame extends JFrame {
               }
             });
 
-
         gbc.gridwidth = 1;
         gbc.gridy++;
         gbc.gridx = 0;
@@ -1225,7 +1202,6 @@ public class LoginFrame extends JFrame {
               sendCodeBt.doClick();
             });
         add(emailField, gbc);
-
 
         gbc.gridy++;
         gbc.gridx = 0;
@@ -1253,7 +1229,6 @@ public class LoginFrame extends JFrame {
         gbc.gridy++;
         add(backBt, gbc);
       }
-
 
       private void setTextForTextField() {
         if (customerBt.isSelected()) {
@@ -1292,7 +1267,6 @@ public class LoginFrame extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-
 
         JLabel resetPasswdLb = new JLabel("Enter Verification Code", SwingConstants.CENTER);
         resetPasswdLb.setFont(Style.FONT_TITLE_BOLD_45);
@@ -1366,7 +1340,6 @@ public class LoginFrame extends JFrame {
               }
             });
 
-
         resendCodeBt = new JButton("Re-send Verify Code");
         resendCodeBt.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
         resendCodeBt.setBackground(Color.WHITE);
@@ -1424,7 +1397,6 @@ public class LoginFrame extends JFrame {
                 timer.scheduleAtFixedRate(task, 0, 1000);
               }
             });
-
 
         backBt =
             ButtonConfig.createCustomButton(
@@ -1505,7 +1477,6 @@ public class LoginFrame extends JFrame {
 
         add(otpPanel, gbc);
 
-
         gbc.gridy++;
         JPanel resendCodePn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         resendCodePn.setBackground(Color.WHITE);
@@ -1558,7 +1529,6 @@ public class LoginFrame extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         add(setNewPasswdLb, gbc);
 
-
         resetPasswdBt =
             ButtonConfig.createCustomButton(
                 "Reset Password",
@@ -1610,7 +1580,6 @@ public class LoginFrame extends JFrame {
                     AccountController accController = new AccountController();
                     accController.updatePassword(newPassword, id);
                     resetTextPassword();
-
                   }
                   JOptionPane.showMessageDialog(null, "Password reset successfully!");
                   showInnerPanel("inputEmail");
@@ -1618,7 +1587,6 @@ public class LoginFrame extends JFrame {
                 }
               }
             });
-
 
         gbc.gridwidth = 1;
         gbc.gridy++;
@@ -1679,7 +1647,6 @@ public class LoginFrame extends JFrame {
             });
         add(showPasswd, gbc);
 
-
         backBt =
             ButtonConfig.createCustomButton(
                 "Back",
@@ -1698,7 +1665,6 @@ public class LoginFrame extends JFrame {
                 showInnerPanel("verificationCode");
               }
             });
-
 
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.gridy++;

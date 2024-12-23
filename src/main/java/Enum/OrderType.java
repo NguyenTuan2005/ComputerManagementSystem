@@ -1,6 +1,5 @@
 package Enum;
 
-
 public enum OrderType {
   ACTIVE("Received the application"),
   UN_ACTIVE("Cancel"),

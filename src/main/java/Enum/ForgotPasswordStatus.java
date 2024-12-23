@@ -1,12 +1,12 @@
 package Enum;
 
 public enum ForgotPasswordStatus {
-    MANAGER(1),
-    CUSTOMER(2);
+  MANAGER(1),
+  CUSTOMER(2);
 
-    private final int status ;
+  private final int status;
 
-    ForgotPasswordStatus(int status) {
-        this.status = status;
-    }
+  ForgotPasswordStatus(int status) {
+    this.status = status;
+  }
 }

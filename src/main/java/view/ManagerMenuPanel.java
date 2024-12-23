@@ -145,7 +145,6 @@ public class ManagerMenuPanel extends JPanel {
     }
   }
 
-
   public static void setIcon(String url, JButton that) {
     ImageIcon iconButton = new ImageIcon(url);
     Image image = iconButton.getImage();
@@ -167,11 +166,9 @@ public class ManagerMenuPanel extends JPanel {
     return bt;
   }
 
-
   public void setProductButtonListener(ActionListener listener) {
     productBt.addActionListener(listener);
   }
-
 
   public void setSupplierButtonListener(ActionListener listener) {
     supplierBt.addActionListener(listener);
@@ -181,26 +178,21 @@ public class ManagerMenuPanel extends JPanel {
     orderBt.addActionListener(listener);
   }
 
-
   public void setInventoryButtonListener(ActionListener listener) {
     inventoryBt.addActionListener(listener);
   }
-
 
   public void setCustomerButtonListener(ActionListener listener) {
     customerBt.addActionListener(listener);
   }
 
-
   public void setAccountManagementButtonListener(ActionListener listener) {
     accountManagementBt.addActionListener(listener);
   }
 
-
   public void setNotificationButtonListener(ActionListener listener) {
     notificationBt.addActionListener(listener);
   }
-
 
   public void setChangeInformButtonListener(ActionListener listener) {
     changeInformBt.addActionListener(listener);

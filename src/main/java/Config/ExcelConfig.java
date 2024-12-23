@@ -3,6 +3,7 @@ package Config;
 import Model.Customer;
 import Model.Product;
 import Model.Supplier;
+import dto.CustomerOrderDTO;
 import dto.ManagerInforDTO;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,11 +14,11 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelConfig {
-
   public static <M> ArrayList<M> importFromExcel(File file, Class<M> clazz) {
     ArrayList<M> importedItems = new ArrayList<>();
 
@@ -150,49 +151,57 @@ public class ExcelConfig {
    * @param data the instance to map to the row
    * @param <M> the type of the data instance
    */
+  @SneakyThrows
   private static <M> void mapInstanceToRow(Row row, M data) {
-    try {
-      if (data.getClass().equals(Product.class)) {
-        Product product = (Product) data;
-        row.createCell(0).setCellValue(product.getId());
-        row.createCell(1).setCellValue(product.getSuppliersId());
-        row.createCell(2).setCellValue(product.getName());
-        row.createCell(3).setCellValue(product.getQuantity());
-        row.createCell(4).setCellValue(product.getPrice());
-        row.createCell(5).setCellValue(product.getGenre());
-        row.createCell(6).setCellValue(product.getBrand());
-        row.createCell(7).setCellValue(product.getOperatingSystem());
-        row.createCell(8).setCellValue(product.getCpu());
-        row.createCell(9).setCellValue(product.getMemory());
-        row.createCell(10).setCellValue(product.getRam());
-        row.createCell(11).setCellValue(product.getMadeIn());
-        row.createCell(12).setCellValue(product.getStatus());
-        row.createCell(13).setCellValue(product.getDisk());
-        row.createCell(14).setCellValue(product.getMonitor());
-        row.createCell(15).setCellValue(product.getWeight());
-        row.createCell(16).setCellValue(product.getCard());
-      } else if (data.getClass().equals(Supplier.class)) {
-        Supplier supplier = (Supplier) data;
-        row.createCell(0).setCellValue(supplier.getId());
-        row.createCell(1).setCellValue(supplier.getCompanyName());
-        row.createCell(2).setCellValue(supplier.getEmail());
-        row.createCell(3).setCellValue(supplier.getPhoneNumber());
-        row.createCell(4).setCellValue(supplier.getAddress());
-        row.createCell(5).setCellValue(supplier.getContractDate().toString());
-      } else if (data.getClass().equals(Customer.class)) {
-        Customer customer = (Customer) data;
-        row.createCell(0).setCellValue(customer.getId());
-        row.createCell(1).setCellValue(customer.getFullName());
-        row.createCell(2).setCellValue(customer.getEmail());
-        row.createCell(3).setCellValue(customer.getAddress());
-        row.createCell(4).setCellValue(customer.getPassword());
-        row.createCell(5).setCellValue(customer.getAvataImg());
-        row.createCell(6).setCellValue(customer.getNumberOfPurchased());
-      } else {
-        throw new IllegalArgumentException("Unsupported class type: " + data.getClass().getName());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (data.getClass().equals(Product.class)) {
+      Product product = (Product) data;
+      row.createCell(0).setCellValue(product.getId());
+      row.createCell(1).setCellValue(product.getSuppliersId());
+      row.createCell(2).setCellValue(product.getName());
+      row.createCell(3).setCellValue(product.getQuantity());
+      row.createCell(4).setCellValue(product.getPrice());
+      row.createCell(5).setCellValue(product.getGenre());
+      row.createCell(6).setCellValue(product.getBrand());
+      row.createCell(7).setCellValue(product.getOperatingSystem());
+      row.createCell(8).setCellValue(product.getCpu());
+      row.createCell(9).setCellValue(product.getMemory());
+      row.createCell(10).setCellValue(product.getRam());
+      row.createCell(11).setCellValue(product.getMadeIn());
+      row.createCell(12).setCellValue(product.getStatus());
+      row.createCell(13).setCellValue(product.getDisk());
+      row.createCell(14).setCellValue(product.getMonitor());
+      row.createCell(15).setCellValue(product.getWeight());
+      row.createCell(16).setCellValue(product.getCard());
+    } else if (data.getClass().equals(Supplier.class)) {
+      Supplier supplier = (Supplier) data;
+      row.createCell(0).setCellValue(supplier.getId());
+      row.createCell(1).setCellValue(supplier.getCompanyName());
+      row.createCell(2).setCellValue(supplier.getEmail());
+      row.createCell(3).setCellValue(supplier.getPhoneNumber());
+      row.createCell(4).setCellValue(supplier.getAddress());
+      row.createCell(5).setCellValue(supplier.getContractDate().toString());
+    } else if (data.getClass().equals(Customer.class)) {
+      Customer customer = (Customer) data;
+      row.createCell(0).setCellValue(customer.getId());
+      row.createCell(1).setCellValue(customer.getFullName());
+      row.createCell(2).setCellValue(customer.getEmail());
+      row.createCell(3).setCellValue(customer.getAddress());
+      row.createCell(4).setCellValue(customer.getPassword());
+      row.createCell(5).setCellValue(customer.getAvataImg());
+      row.createCell(6).setCellValue(customer.getNumberOfPurchased());
+    } else if (data.getClass().equals(CustomerOrderDTO.class)) {
+      CustomerOrderDTO orderDTO = (CustomerOrderDTO) data;
+      row.createCell(0).setCellValue(orderDTO.getOrderId());
+      row.createCell(1).setCellValue(orderDTO.getCustomerId());
+      row.createCell(2).setCellValue(orderDTO.getOrderDate());
+      row.createCell(3).setCellValue(orderDTO.getShipAddress());
+      row.createCell(4).setCellValue(orderDTO.getStatusItem());
+      row.createCell(5).setCellValue(orderDTO.getSaler());
+      row.createCell(6).setCellValue(orderDTO.getSalerId());
+      row.createCell(7).setCellValue(orderDTO.totalCost());
+      row.createCell(8).setCellValue(orderDTO.getQuantity());
+    } else {
+      throw new IllegalArgumentException("Unsupported class type: " + data.getClass().getName());
     }
   }
 
@@ -256,7 +265,6 @@ public class ExcelConfig {
     // Ghi dữ liệu ra file
     try (FileOutputStream fos = new FileOutputStream(filePath)) {
       workbook.write(fos);
-      System.out.println("File Excel đã được tạo tại: " + filePath);
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
@@ -266,12 +274,5 @@ public class ExcelConfig {
         e.printStackTrace();
       }
     }
-  }
-
-  public static void main(String[] args) {
-    // Ví dụ danh sách ManagerInforDTO
-
-    // Ghi danh sách vào file Excel
-
   }
 }

@@ -59,7 +59,7 @@ public class OrderDetailController implements ModelController<OrderDetail> {
     for (ProductOrderConfig po : orderConfig) {
       if (po.getQuatity() != 0) {
         orderDetail.setQuantity(po.getQuatity());
-        orderDetail.setUnitPrice(po.getProduct().getPrice());
+        orderDetail.setUnitPrice((int) po.getProduct().getPrice());
         orderDetail.setProductId(po.getProduct().getId());
         this.save(orderDetail);
       }

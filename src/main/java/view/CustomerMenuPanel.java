@@ -43,7 +43,6 @@ public class CustomerMenuPanel extends JPanel {
     add(componentBottom, gbc);
   }
 
-
   class ComponentTop extends JPanel {
     public ComponentTop() {
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -70,7 +69,6 @@ public class CustomerMenuPanel extends JPanel {
     }
   }
 
-
   class ComponentButton extends JPanel {
     public ComponentButton() {
       setLayout(new GridLayout(0, 1, 0, 10));
@@ -93,7 +91,6 @@ public class CustomerMenuPanel extends JPanel {
       add(notificationBt);
     }
   }
-
 
   class ComponentBottom extends JPanel {
     public ComponentBottom() {
@@ -118,17 +115,14 @@ public class CustomerMenuPanel extends JPanel {
     }
   }
 
-
   private void setIcon(String filePath, JButton that) {
     ImageIcon iconButton = new ImageIcon(filePath);
     Image image = iconButton.getImage();
     Dimension buttonSize = that.getPreferredSize();
     Image resizedImage =
-        image.getScaledInstance(
-            buttonSize.height, buttonSize.height, java.awt.Image.SCALE_SMOOTH);
+        image.getScaledInstance(buttonSize.height, buttonSize.height, java.awt.Image.SCALE_SMOOTH);
     that.setIcon(new ImageIcon(resizedImage));
   }
-
 
   private void setFormatButton(JButton that) {
     that.setFocusable(false);
@@ -138,7 +132,6 @@ public class CustomerMenuPanel extends JPanel {
     that.setHorizontalAlignment(SwingConstants.LEFT);
     that.setBorderPainted(false);
   }
-
 
   public void setProductCatalogBtListener(ActionListener listener) {
     productCatalogBt.addActionListener(listener);

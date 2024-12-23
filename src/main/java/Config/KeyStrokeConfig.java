@@ -14,6 +14,7 @@ public class KeyStrokeConfig {
   public static final String restockKey = "control Z";
   public static final String toBillKey = "control T";
   public static final String reloadKey = "F5";
+  public static final String ENTER = "ENTER";
 
   public static void addKeyBindingButton(JPanel panel, String keyStroke, JButton button) {
     InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);

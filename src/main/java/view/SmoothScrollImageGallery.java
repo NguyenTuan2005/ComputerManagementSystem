@@ -7,12 +7,10 @@ import javax.swing.*;
 
 public class SmoothScrollImageGallery {
 
-
   private static void smoothScrollToCenter(JScrollPane scrollPane, Rectangle targetBounds) {
     JViewport viewport = scrollPane.getViewport();
     Rectangle viewRect = viewport.getViewRect();
     int viewWidth = viewRect.width;
-
 
     int targetX = targetBounds.x - (viewWidth / 2) + (targetBounds.width / 2);
 

@@ -1,24 +1,23 @@
 package controller;
 
-import Model.Product;
-
 import java.util.ArrayList;
 
 public interface ModelController<M> {
-    ArrayList<M> find(String name);
+  ArrayList<M> find(String name);
 
-    M findById(int id);
+  M findById(int id);
 
-    ArrayList<M> getAll();
+  ArrayList<M> getAll();
 
-    ArrayList<M> reloadData();
+  ArrayList<M> reloadData();
 
-    void setDeleteRow(int id , boolean status);
+  void setDeleteRow(int id, boolean status);
 
-    void saves(ArrayList<M> m);
+  void saves(ArrayList<M> m);
 
-    void save(M m);
-    void update(M m);
+  void save(M m);
 
-    ArrayList<M> sortByColumn(String column);
+  void update(M m);
+
+  ArrayList<M> sortByColumn(String column);
 }

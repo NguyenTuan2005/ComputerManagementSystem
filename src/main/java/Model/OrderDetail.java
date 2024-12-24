@@ -2,8 +2,6 @@ package Model;
 
 import lombok.*;
 
-import java.util.Date;
-
 @ToString
 @EqualsAndHashCode
 @Getter
@@ -12,12 +10,11 @@ import java.util.Date;
 @AllArgsConstructor
 public class OrderDetail {
 
-    private int orderId;
+  private int orderId;
 
-    private int productId;
+  private int productId;
 
-    private int unitPrice;
+  private int unitPrice;
 
-    private int quantity;
-
+  private int quantity;
 }

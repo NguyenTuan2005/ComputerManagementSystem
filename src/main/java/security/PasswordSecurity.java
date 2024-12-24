@@ -8,21 +8,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @NoArgsConstructor
 public class PasswordSecurity {
 
-    private String plainPassword;
+  private String plainPassword;
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public PasswordSecurity(String plainPassword) {
-        this.plainPassword= plainPassword;
-    }
+  public PasswordSecurity(String plainPassword) {
+    this.plainPassword = plainPassword;
+  }
 
-    public String generatePassword(){
-        return passwordEncoder.encode(plainPassword);
-    }
+  public String generatePassword() {
+    return passwordEncoder.encode(plainPassword);
+  }
 
-    public  boolean isVariablePassword(  String  encryptedPassword){
-        return passwordEncoder.matches(this.plainPassword, encryptedPassword);
-    }
+  public boolean isVariablePassword(String encryptedPassword) {
+    return passwordEncoder.matches(this.plainPassword, encryptedPassword);
+  }
 }

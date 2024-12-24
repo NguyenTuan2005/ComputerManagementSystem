@@ -66,7 +66,6 @@ public class ExcelConfig {
       cell.setCellValue(headers[i]);
       cell.setCellStyle(createHeaderCellStyle(workbook));
     }
-
     int rowNum = 1;
     for (M data : dataList) {
       Row row = sheet.createRow(rowNum++);

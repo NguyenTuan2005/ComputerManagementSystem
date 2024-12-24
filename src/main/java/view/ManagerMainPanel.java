@@ -58,7 +58,6 @@ import view.OverrideComponent.RoundedBorder;
 import view.OverrideComponent.ToastNotification;
 
 public class ManagerMainPanel extends JPanel {
-
   CardLayout cardLayout = new CardLayout();
   WelcomePanel welcomePanel;
   ProductPanel productPanel = new ProductPanel();
@@ -2064,7 +2063,6 @@ public class ManagerMainPanel extends JPanel {
                 LabelConfig.createLabel(
                     productFields[i], Style.FONT_BOLD_15, Color.BLACK, SwingConstants.LEFT),
                 gbc);
-
             gbc.gridx = 1;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             productTFs[i].setEditable(false);
@@ -2859,12 +2857,10 @@ public class ManagerMainPanel extends JPanel {
                   int columnIndex = 0;
 
                   modifyId = (int) tableAccManager.getValueAt(selectedRow, columnIndex) - 1;
-
                   setDataToModify(managerInfors.get(modifyId));
                   setVisiblePanel(addOrModify);
                   addAccBt.setEnabled(false);
                   btnModifyStutus = true;
-
                 } else {
                   Account account = getAcc();
                   Manager manager = getManager();
@@ -3134,7 +3130,6 @@ public class ManagerMainPanel extends JPanel {
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
-
             JLabel lblFullName = new JLabel("Full Name:");
             txtFullName =
                 TextFieldConfig.createStyledTextField(

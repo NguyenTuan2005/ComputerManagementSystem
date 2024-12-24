@@ -24,7 +24,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.*;
@@ -201,7 +200,6 @@ public class CustomerMainPanel extends JPanel {
                 addNewPanelToCatalogContainer(p1);
               }
             });
-
         gbc.gridx = 2;
         gbc.anchor = GridBagConstraints.EAST;
         searchBar.add(searchBt, gbc);

@@ -11,7 +11,6 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 public class Product {
-
   private int id;
 
   private int suppliersId;

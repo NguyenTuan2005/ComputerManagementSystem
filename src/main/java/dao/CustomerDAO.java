@@ -133,7 +133,6 @@ public class CustomerDAO implements Repository<Customer> {
     if (rs.next()) {
       return resultCustomer(rs);
     }
-
     return null;
   }
 

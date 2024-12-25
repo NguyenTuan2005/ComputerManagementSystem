@@ -5,19 +5,19 @@ import java.util.ArrayList;
 
 public interface Repository<T> {
 
-    T save(T t);
+  T save(T t);
 
-    T findById(int id);
+  T findById(int id);
 
-    ArrayList<T> getAll() throws SQLException;
+  ArrayList<T> getAll() throws SQLException;
 
-    ArrayList<T> findByName(String name);
+  ArrayList<T> findByName(String name);
 
-    T findOneByName(String name);
+  T findOneByName(String name);
 
-    T update(T t);
+  T update(T t);
 
-    boolean remove(int id);
+  boolean remove(int id);
 
-    ArrayList<T> sortByColumn(String column);
+  ArrayList<T> sortByColumn(String column);
 }

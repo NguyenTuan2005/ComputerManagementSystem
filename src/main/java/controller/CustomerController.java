@@ -1,7 +1,7 @@
 package controller;
 
 import Config.CurrentUser;
-import Enum.*;
+import Enum.LoginStatus;
 import Model.Customer;
 import Model.Image;
 import dao.CustomerDAO;
@@ -109,6 +109,10 @@ public class CustomerController implements ModelController<Customer> {
 
   public ArrayList<CustomerOrderDTO> findCustomerOrderById(int id) {
     return customerDAO.getDataCustomerOrderById(id);
+  }
+
+  public List<CustomerOrderDTO> getAllCustomerOrder() {
+    return customerDAO.getAllCustomerOrder();
   }
 
   public ArrayList<CustomerOrderDetailDTO> getCustomerOrderDetail(int id) {

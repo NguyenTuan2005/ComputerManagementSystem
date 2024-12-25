@@ -11,7 +11,6 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 public class Product {
-
   private int id;
 
   private int suppliersId;
@@ -20,7 +19,7 @@ public class Product {
 
   private int quantity;
 
-  private int price;
+  private double price;
 
   private String genre;
 
@@ -63,7 +62,7 @@ public class Product {
       int suppliersId,
       String name,
       int quantity,
-      int price,
+      double price,
       String genre,
       String brand,
       String operatingSystem,
@@ -92,7 +91,7 @@ public class Product {
       int suppliersId,
       String name,
       int quantity,
-      int price,
+      double price,
       String genre,
       String brand,
       String operatingSystem,
@@ -131,7 +130,7 @@ public class Product {
       String.valueOf(id),
       name,
       String.valueOf(quantity),
-      Integer.toString(price),
+      Double.toString(price),
       genre,
       brand,
       operatingSystem,

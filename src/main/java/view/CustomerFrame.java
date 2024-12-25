@@ -1,8 +1,6 @@
 package view;
 
-
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -101,9 +99,5 @@ public class CustomerFrame extends JFrame {
               ? Style.MENU_BUTTON_COLOR_GREEN
               : Style.BACKGROUND_COLOR);
     }
-  }
-
-  public static void main(String[] args) throws SQLException {
-    new CustomerFrame();
   }
 }

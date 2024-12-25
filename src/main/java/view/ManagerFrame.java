@@ -23,7 +23,6 @@ public class ManagerFrame extends JFrame {
     add(managerMenuPanel, BorderLayout.WEST);
     add(managerMainPanel, BorderLayout.CENTER);
 
-
     managerMenuPanel.setProductButtonListener(
         new ActionListener() {
           @Override

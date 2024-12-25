@@ -238,11 +238,12 @@ public class CustomerDAO implements Repository<Customer> {
   }
 
   @SneakyThrows
-  public void updateNumberOfPurchased(int id) {
+  public void updateNumberOfPurchased(int id, int quantity) {
 
-    String sql = "UPDATE customer SET number_of_purchased = number_of_purchased+1  WHERE id = ?";
+    String sql = "UPDATE customer SET number_of_purchased = number_of_purchased+ ?  WHERE id = ?";
     preparedStatement = connection.prepareStatement(sql);
-    preparedStatement.setInt(1, id);
+    preparedStatement.setInt(1, quantity);
+    preparedStatement.setInt(2, id);
     preparedStatement.executeUpdate();
   }
 

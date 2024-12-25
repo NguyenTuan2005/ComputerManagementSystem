@@ -8,7 +8,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import javax.swing.*;
-import view.OverrideComponent.RoundedBorder;
 import view.Style;
 
 public class BillFrame extends JFrame {
@@ -18,50 +17,35 @@ public class BillFrame extends JFrame {
 
   public BillFrame(ArrayList<CustomerOrderDetailDTO> customerOrderDTOs) {
     this.customerOrderDTOS =
-        (ArrayList<CustomerOrderDTO>)
-            customerOrderDTOs.stream().map(c -> c.customerOrderDTO()).collect(Collectors.toList());
+            (ArrayList<CustomerOrderDTO>)
+                    customerOrderDTOs.stream().map(c -> c.customerOrderDTO()).collect(Collectors.toList());
 
-    setTitle("Bill Viewer");
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setSize(500, 600);
+    setTitle("Computer Management System");
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    setSize(550, 600);
     setLocationRelativeTo(null);
+    setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
 
     JPanel panel = new JPanel(new BorderLayout());
     panel.setBackground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
 
     JLabel billLabel =
-        LabelConfig.createLabel(
-            "Bill", Style.FONT_BOLD_25_MONO, Color.white, SwingConstants.CENTER);
+            LabelConfig.createLabel(
+                    "Bill", Style.FONT_BOLD_25_MONO, Color.white, SwingConstants.CENTER);
     panel.add(billLabel, BorderLayout.NORTH);
 
     billTextArea = new JTextArea();
     billTextArea.setFont(new Font("Monospaced", Font.PLAIN, 10));
     billTextArea.setEditable(false);
 
-    JScrollPane scrollPane = new JScrollPane(billTextArea);
-    panel.add(scrollPane, BorderLayout.CENTER);
-    add(panel);
-
-    billTextArea.setBorder(
-        BorderFactory.createCompoundBorder(
-            new RoundedBorder(20, 2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE),
-            BorderFactory.createEmptyBorder(3, 3, 3, 8)));
-    billTextArea.setLineWrap(true);
-    //        billTextArea.setWrapStyleWord(true);
-    billTextArea.setEditable(false);
-    billTextArea.setOpaque(true);
-
-    int width = 800;
-    billTextArea.setSize(new Dimension(width, Short.MAX_VALUE));
-    int preferredHeight = billTextArea.getPreferredSize().height;
-    billTextArea.setPreferredSize(new Dimension(width, preferredHeight));
-
-    setVisible(true);
-
     billTextArea.setText(BillConfig.generateBill(this.customerOrderDTOS));
-  }
 
-  public static void main(String[] args) {
-    new BillFrame(null);
+    JScrollPane scrollPane = new JScrollPane(billTextArea);
+    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+    panel.add(scrollPane, BorderLayout.CENTER);
+
+    add(panel);
+    setVisible(true);
   }
 }

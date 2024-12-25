@@ -1335,7 +1335,7 @@ public class ManagerMainPanel extends JPanel {
 
   class OrderPanel extends JPanel {
     final String[] orderColumnNames = {
-      "Serial number",
+      "Order ID",
       "Customer ID",
       "Order Date",
       "Ship address",
@@ -2178,7 +2178,7 @@ public class ManagerMainPanel extends JPanel {
 
         double totalCost = list.stream().mapToDouble(CustomerOrderDTO::totalCost).sum();
         int quantity = productList.stream().mapToInt(Product::getQuantity).sum();
-        customerID = orderDTO.getOrderId();
+        customerID = orderDTO.getCustomerId();
 
         setText(
             String.valueOf(customerID),

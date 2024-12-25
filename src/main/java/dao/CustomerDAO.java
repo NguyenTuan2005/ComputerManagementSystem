@@ -187,6 +187,7 @@ public class CustomerDAO implements Repository<Customer> {
     ResultSet rs = preparedStatement.executeQuery();
     while (rs.next()) {
       CustomerOrderDTO order = resultCustomerOrder(rs);
+      orders.add(order);
     }
 
     return orders;

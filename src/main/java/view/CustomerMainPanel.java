@@ -49,6 +49,7 @@ public class CustomerMainPanel extends JPanel {
   JPanel ordersContainer = new JPanel();
 
   JPanel emptyCartPn = createEmptyPanel();
+  JPanel emptyNotificationPn = createEmptyNotificationPanel();
   CardLayout cardLayout;
   ProductCatalogMainPanel productCatalogPanel;
   NotificationPanel notificationPanel;
@@ -749,8 +750,8 @@ public class CustomerMainPanel extends JPanel {
                         cartContainer.add(emptyCartPn);
                         cartContainer.revalidate();
                         cartContainer.repaint();
-                        upLoadOrderHistory();
 
+                        upLoadOrderHistory();
                         updatePriceQuantityInCart(0,0);
 
                       } else {
@@ -920,16 +921,11 @@ public class CustomerMainPanel extends JPanel {
   }
 
   class NotificationPanel extends JPanel {
-    private NotificationMainPanel notificationMainPanel;
     private JScrollPane scrollPane;
-    private JTextField searchField;
-    private JButton searchButton;
 
     public NotificationPanel() {
       setLayout(new BorderLayout());
 
-      JPanel title = new JPanel(new FlowLayout(FlowLayout.CENTER));
-      title.setBackground(Color.WHITE);
       int customerId = CurrentUser.CURRENT_CUSTOMER.getId();
       int managerId = CurrentUser.CURRENT_MANAGER.getManagerId();
 
@@ -938,45 +934,16 @@ public class CustomerMainPanel extends JPanel {
       c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
       showFullBills(new BillConfig(bills).getMetadataMap(), c);
 
-      searchField =
-              TextFieldConfig.createTextField(
-                      "Search Notification", Style.FONT_PLAIN_18, Color.GRAY, new Dimension(320, 40));
+      notificationContainer = new JPanel();
+      notificationContainer.setBackground(Color.WHITE);
+      notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
+      notificationContainer.add(emptyNotificationPn);
 
-      searchButton =
-              ButtonConfig.createCustomButton(
-                      "",
-                      Style.FONT_PLAIN_20,
-                      Style.WORD_COLOR_WHITE,
-                      Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,
-                      Style.LIGHT_BlUE,
-                      0,
-                      SwingConstants.CENTER,
-                      new Dimension(50, 40));
-      ButtonConfig.setButtonIcon("src/main/java/Icon/search_Icon.png", searchButton, 5);
+      scrollPane = new JScrollPane(notificationContainer);
+      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
 
-      title.add(searchField);
-      title.add(searchButton);
-
-      notificationMainPanel = new NotificationMainPanel();
-      add(title, BorderLayout.NORTH);
-      add(notificationMainPanel, BorderLayout.CENTER);
-    }
-
-    class NotificationMainPanel extends JPanel {
-
-      NotificationMainPanel() {
-        setLayout(new BorderLayout());
-
-        notificationContainer = new JPanel();
-        notificationContainer.setBackground(Color.WHITE);
-        notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
-
-        scrollPane = new JScrollPane(notificationContainer);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
-
-        add(scrollPane, BorderLayout.CENTER);
-      }
+      add(scrollPane, BorderLayout.CENTER);
     }
   }
 
@@ -1721,7 +1688,7 @@ public class CustomerMainPanel extends JPanel {
 
     JPanel wrapperPanel = new JPanel(new FlowLayout());
     wrapperPanel.setBackground(Color.WHITE);
-    wrapperPanel.setPreferredSize(new Dimension(940, 180));
+    wrapperPanel.setPreferredSize(new Dimension(900, 180));
 
     JPanel mainPanel = new JPanel(new BorderLayout());
     mainPanel.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
@@ -1971,6 +1938,13 @@ public class CustomerMainPanel extends JPanel {
     return emptyPn;
   }
 
+  private JPanel createEmptyNotificationPanel(){
+    JPanel emptyNotificationPn = new JPanel(new BorderLayout());
+    JLabel noNotificationImg = new JLabel(createImageForProduct("src/main/java/img/no_Notification_Img.png",500,500));
+    emptyNotificationPn.add(noNotificationImg, BorderLayout.CENTER);
+    return emptyNotificationPn;
+  }
+
   public void removePanelFromCartContainer(JPanel panel) {
     this.cartContainer.remove(panel);
 
@@ -1983,6 +1957,7 @@ public class CustomerMainPanel extends JPanel {
   }
 
   public void addCustomerNotification(Customer customer, String text) {
+    notificationContainer.remove(emptyNotificationPn);
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");

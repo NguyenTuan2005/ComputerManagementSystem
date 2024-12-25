@@ -451,7 +451,7 @@ public class ManagerMainPanel extends JPanel {
               public void actionPerformed(ActionEvent e) {
                 String item = (String) sortComboBox.getSelectedItem();
                 switch (item) {
-                  case ("PIRCE"):
+                  case ("PRICE"):
                     {
                       productsAll =
                           (ArrayList<Product>)

@@ -752,11 +752,12 @@ public class CustomerMainPanel extends JPanel {
                     cartContainer.revalidate();
                     cartContainer.repaint();
 
+
                     ordersContainer.removeAll();
                     ordersContainer.revalidate();
                     ordersContainer.repaint();
-
                     upLoadOrderHistory();
+
 
                   } else {
                     ToastNotification.showToast("Cancel order!", 2500, 50, -1, -1);
@@ -2158,9 +2159,10 @@ public class CustomerMainPanel extends JPanel {
     ButtonConfig.setButtonIcon("src/main/java/Icon/repurchase_Icon.png", repurchase, 15);
     bottomLeft.add(repurchase);
 
-    var date = customerOrderDTOs.get(0).customerOrderDTO().getOrderDate();
+    var customerOrder = customerOrderDTOs.get(0).customerOrderDTO();
+    var isValidCancel = customerOrder.getStatus() != null && customerOrder.getStatus().isActive();
 
-    if (DateConfig.cancelOrderLimit(date, 3)) {
+    if (DateConfig.cancelOrderLimit(customerOrder.getOrderDate(), 3) && isValidCancel) {
       ButtonConfig.setButtonIcon("src/main/java/Icon/cancelOrder_Icon.png", cancelOrder, 15);
       bottomLeft.add(cancelOrder);
     }
@@ -2336,9 +2338,9 @@ public class CustomerMainPanel extends JPanel {
 
   @SneakyThrows
   private void upLoadOrderHistory() {
-    ordersContainer.removeAll();
-    ordersContainer.revalidate();
-    ordersContainer.repaint();
+//    ordersContainer.removeAll();
+//    ordersContainer.revalidate();
+//    ordersContainer.repaint();
     var orderDetailDTOS =
         customerController.getCustomerOrderDetail(CurrentUser.CURRENT_CUSTOMER.getId());
     OrderHistoryConfig orderHistoryConfig = new OrderHistoryConfig(orderDetailDTOS);

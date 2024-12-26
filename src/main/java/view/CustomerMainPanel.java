@@ -701,7 +701,7 @@ public class CustomerMainPanel extends JPanel {
                           15,
                           new Dimension(260, 50));
           orderBt.addActionListener(
- 
+
                   new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                       if (emailField.getText().isEmpty()
@@ -760,7 +760,7 @@ public class CustomerMainPanel extends JPanel {
                       }
                     }
                   });
- 
+
           gbc.gridy++;
           gbc.anchor = GridBagConstraints.CENTER;
           summaryDetailsPn.add(orderBt, gbc);

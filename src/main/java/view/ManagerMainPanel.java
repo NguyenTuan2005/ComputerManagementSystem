@@ -1,8 +1,5 @@
 package view;
 
-import static Model.Account.getCurrentDate;
-import static view.CustomerMainPanel.createImageForProduct;
-
 import Config.*;
 import Enum.OrderType;
 import Enum.TableStatus;
@@ -14,8 +11,31 @@ import dao.OrderDAO;
 import dao.SupplierDAO;
 import dto.CustomerOrderDTO;
 import dto.ManagerInforDTO;
-import java.awt.*;
+import lombok.SneakyThrows;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import view.OtherComponent.*;
+import view.OverrideComponent.CircularImage;
+import view.OverrideComponent.CustomButton;
+import view.OverrideComponent.RoundedBorder;
+import view.OverrideComponent.ToastNotification;
+
+import javax.swing.Timer;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import java.awt.Image;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -31,31 +51,12 @@ import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import javax.swing.*;
-import javax.swing.Timer;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import lombok.SneakyThrows;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.category.DefaultCategoryDataset;
-import view.OtherComponent.*;
-import view.OverrideComponent.CircularImage;
-import view.OverrideComponent.CustomButton;
-import view.OverrideComponent.RoundedBorder;
-import view.OverrideComponent.ToastNotification;
+
+import static Model.Account.getCurrentDate;
+import static view.CustomerMainPanel.createImageForProduct;
 
 public class ManagerMainPanel extends JPanel {
   CardLayout cardLayout = new CardLayout();
@@ -2278,6 +2279,7 @@ public class ManagerMainPanel extends JPanel {
     private JTextField searchTextField;
     private JButton setForSaleBt, restockBt, deleteBt, modifyBt, exportExcelBt, reloadBt, searchBt;
     private DefaultTableModel modelInventory, modelImport, modelExport;
+    private String searchText;
     private ArrayList<Product> products;
 
     InventoryPanel() {
@@ -2435,15 +2437,15 @@ public class ManagerMainPanel extends JPanel {
 
         return switch (index) {
           case 0 -> {
-            reloadProducts();
+            reloadProducts(null, searchText);
             yield tableInventory;
           }
           case 1 -> {
-            reloadProducts(Product.IN_STOCK);
+            reloadProducts(Product.IN_STOCK, searchText);
             yield tableImport;
           }
           case 2 -> {
-            reloadProducts(Product.AVAILABLE);
+            reloadProducts(Product.AVAILABLE, searchText);
             yield tableExport;
           }
           default -> throw new IllegalStateException("Unexpected value: " + index);
@@ -2531,11 +2533,11 @@ public class ManagerMainPanel extends JPanel {
         tableExport = createTable(modelExport, columnNamesPRODUCT);
 
         modelInventory = (DefaultTableModel) tableInventory.getModel();
-        upDataProducts(modelInventory, null);
+        upDataProducts(modelInventory, null, null);
         modelImport = (DefaultTableModel) tableImport.getModel();
-        upDataProducts(modelImport, Product.IN_STOCK);
+        upDataProducts(modelImport, Product.IN_STOCK, null);
         modelExport = (DefaultTableModel) tableExport.getModel();
-        upDataProducts(modelExport, Product.AVAILABLE);
+        upDataProducts(modelExport, Product.AVAILABLE, null);
 
         tabbedPaneMain =
             createTabbedPane(new JScrollPane(tableInventory), "Inventory", Style.FONT_BOLD_16);
@@ -2597,43 +2599,35 @@ public class ManagerMainPanel extends JPanel {
 
     private void searchHandle() {
       if (!searchTextField.getText().isBlank()) {
-        String searchText = searchTextField.getText().toLowerCase().trim();
-        searchProduct(searchText);
+        searchText = searchTextField.getText().toLowerCase().trim();
+        searchProduct();
       } else updateProduct();
     }
 
-    private void reloadProducts() {
+    private void reloadProducts(String status, String searchText) {
       products = ProductPanel.reloadProducts();
-    }
-
-    private void reloadProducts(String status) {
-      reloadProducts();
-      products.removeIf(product -> !(status.equals(product.getStatus())));
-    }
-
-    private void upDataProducts(DefaultTableModel tableModel, String status) {
-      if (status == null || status.isEmpty()) reloadProducts();
-      else reloadProducts(status);
-      ProductPanel.upDataProducts(products, tableModel);
+      if (!(status == null || status.isEmpty()))
+        products.removeIf(product -> !(status.equals(product.getStatus())));
+      if (searchText != null && !searchText.isEmpty()) {
+        products.removeIf(
+                product -> !product.getName().toLowerCase().contains(searchText.toLowerCase()));
+      }
     }
 
     private void upDataProducts(DefaultTableModel tableModel, String status, String searchText) {
-      if (status == null || status.isEmpty()) reloadProducts();
-      else reloadProducts(status);
-      if (searchText != null && !searchText.isEmpty()) {
-        products.removeIf(
-            product -> !product.getName().toLowerCase().contains(searchText.toLowerCase()));
-      }
+      reloadProducts(status, searchText);
       ProductPanel.upDataProducts(products, tableModel);
     }
 
     private void updateProduct() {
-      upDataProducts(modelInventory, null);
-      upDataProducts(modelImport, Product.IN_STOCK);
-      upDataProducts(modelExport, Product.AVAILABLE);
+      searchText = null;
+      searchTextField.setText("");
+      upDataProducts(modelInventory, null, searchText);
+      upDataProducts(modelImport, Product.IN_STOCK, searchText);
+      upDataProducts(modelExport, Product.AVAILABLE, searchText);
     }
 
-    private void searchProduct(String searchText) {
+    private void searchProduct() {
       upDataProducts(modelInventory, null, searchText);
       upDataProducts(modelImport, Product.IN_STOCK, searchText);
       upDataProducts(modelExport, Product.AVAILABLE, searchText);

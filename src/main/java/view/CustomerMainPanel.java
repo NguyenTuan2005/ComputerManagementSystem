@@ -701,6 +701,7 @@ public class CustomerMainPanel extends JPanel {
                           15,
                           new Dimension(260, 50));
           orderBt.addActionListener(
+
                   new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                       if (emailField.getText().isEmpty()
@@ -759,6 +760,7 @@ public class CustomerMainPanel extends JPanel {
                       }
                     }
                   });
+
           gbc.gridy++;
           gbc.anchor = GridBagConstraints.CENTER;
           summaryDetailsPn.add(orderBt, gbc);
@@ -2302,9 +2304,9 @@ public class CustomerMainPanel extends JPanel {
 
   @SneakyThrows
   private void upLoadOrderHistory() {
-    ordersContainer.removeAll();
-    ordersContainer.revalidate();
-    ordersContainer.repaint();
+//    ordersContainer.removeAll();
+//    ordersContainer.revalidate();
+//    ordersContainer.repaint();
     var orderDetailDTOS =
             customerController.getCustomerOrderDetail(CurrentUser.CURRENT_CUSTOMER.getId());
     OrderHistoryConfig orderHistoryConfig = new OrderHistoryConfig(orderDetailDTOS);

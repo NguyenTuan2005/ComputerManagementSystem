@@ -1,10 +1,11 @@
 package Model;
 
-import static view.OtherComponent.ImageInJTable.resizeImageIcon;
-
-import java.util.ArrayList;
-import javax.swing.*;
 import lombok.*;
+
+import javax.swing.*;
+import java.util.ArrayList;
+
+import static view.OtherComponent.ImageInJTable.resizeImageIcon;
 
 @ToString
 @EqualsAndHashCode

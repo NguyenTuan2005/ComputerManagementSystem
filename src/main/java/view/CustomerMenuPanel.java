@@ -7,16 +7,12 @@ import javax.swing.*;
 import view.OverrideComponent.CircularImage;
 
 public class CustomerMenuPanel extends JPanel {
-  LoginFrame loginFrame;
-  CustomerFrame userFrame;
   JLabel role, name, credit;
   CircularImage avatar;
   JButton productCatalogBt, orderHistoryBt, notificationBt, changeInfoBt, logoutBt;
   GridBagConstraints gbc;
 
   public CustomerMenuPanel() {
-    this.loginFrame = loginFrame;
-    this.userFrame = userFrame;
     setLayout(new GridBagLayout());
     gbc = new GridBagConstraints();
     setBackground(Style.BACKGROUND_COLOR);
@@ -51,7 +47,7 @@ public class CustomerMenuPanel extends JPanel {
 
       role = new JLabel("Customer");
       role.setFont(Style.FONT_PLAIN_25);
-      role.setForeground(Color.GREEN);
+      role.setForeground(Color.WHITE);
       role.setAlignmentX(Component.CENTER_ALIGNMENT);
       add(role);
 
@@ -62,7 +58,7 @@ public class CustomerMenuPanel extends JPanel {
 
       name = new JLabel("<html>" + CurrentUser.USER_NAME + "<html>");
       name.setFont(Style.FONT_PLAIN_25);
-      name.setForeground(Color.GREEN);
+      name.setForeground(Color.WHITE);
       name.setAlignmentX(Component.CENTER_ALIGNMENT);
       add(Box.createRigidArea(new Dimension(0, 5)));
       add(name);

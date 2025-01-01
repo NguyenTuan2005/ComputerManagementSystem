@@ -3124,21 +3124,21 @@ public class ManagerMainPanel extends JPanel {
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
-            JLabel lblFullName = new JLabel("Full Name:");
+            JLabel lblFullName = LabelConfig.createLabel("Full Name",Style.FONT_BOLD_15,Color.BLACK,SwingConstants.LEFT);
             txtFullName =
                 TextFieldConfig.createStyledTextField(
                     Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
             txtFullName.setInputVerifier(new NotNullVerifier());
             addFocusListenerForTextField(txtFullName);
 
-            JLabel lblAddress = new JLabel("Address:");
+            JLabel lblAddress = LabelConfig.createLabel("Address",Style.FONT_BOLD_15,Color.BLACK,SwingConstants.LEFT);
             txtAddress =
                 TextFieldConfig.createStyledTextField(
                     Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
             txtAddress.setInputVerifier(new NotNullVerifier());
             addFocusListenerForTextField(txtAddress);
 
-            JLabel lblBirthday = new JLabel("Birthday:");
+            JLabel lblBirthday = LabelConfig.createLabel("Birthday",Style.FONT_BOLD_15,Color.BLACK,SwingConstants.LEFT);
             txtBirthday =
                 TextFieldConfig.createStyledTextField(
                     Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(250, 35));
@@ -3189,7 +3189,7 @@ public class ManagerMainPanel extends JPanel {
                   }
                 });
 
-            JLabel lblPhoneNumber = new JLabel("Phone Number:");
+            JLabel lblPhoneNumber = LabelConfig.createLabel("Phone Number",Style.FONT_BOLD_15,Color.BLACK,SwingConstants.LEFT);
             txtPhoneNumber =
                 TextFieldConfig.createStyledTextField(
                     Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
@@ -3254,13 +3254,13 @@ public class ManagerMainPanel extends JPanel {
 
             gbc.gridx = 0;
             gbc.gridy = 0;
-            add(new JLabel("User name:"), gbc);
+            add(LabelConfig.createLabel("User Name",Style.FONT_BOLD_15,Color.BLACK,SwingConstants.LEFT), gbc);
 
             gbc.gridy = 1;
-            add(new JLabel("Password:"), gbc);
+            add(LabelConfig.createLabel("Password",Style.FONT_BOLD_15,Color.BLACK,SwingConstants.LEFT), gbc);
 
             gbc.gridy = 2;
-            add(new JLabel("Email:"), gbc);
+            add(LabelConfig.createLabel("Email",Style.FONT_BOLD_15,Color.BLACK,SwingConstants.LEFT), gbc);
 
             gbc.gridx = 1;
             gbc.gridy = 0;
@@ -3556,6 +3556,7 @@ public class ManagerMainPanel extends JPanel {
         }
       } else{
         JPanel emptyNotificationPn = new JPanel(new BorderLayout());
+        emptyNotificationPn.setBackground(Color.WHITE);
         emptyNotificationPn.add(new JLabel(createImageForProduct("src/main/java/img/no_Notification_Img.png",500,500)));
         main.add(emptyNotificationPn,gbc);
       }

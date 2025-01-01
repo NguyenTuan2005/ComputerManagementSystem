@@ -1867,12 +1867,12 @@ public class CustomerMainPanel extends JPanel {
               totalPrice -= countItem[0] * product.getPrice();
               updatePriceQuantityInCart(totalItems, totalPrice);
 
+              productOrderConfig.setQuatity(1);
               this.productOrders.remove(productOrderConfig);
               removePanelFromCartContainer(wrapperPanel);
             });
     rightPanel.add(removeBt);
 
-    productOrderConfig.setQuatity(countItem[0]);
     this.productOrders.add(productOrderConfig);
 
     mainPanel.add(rightPanel, BorderLayout.EAST);
@@ -2044,11 +2044,13 @@ public class CustomerMainPanel extends JPanel {
     JPanel datePn = new JPanel(new BorderLayout());
     datePn.setBackground(Color.WHITE);
     JLabel orderDate =
-            LabelConfig.createLabel(
-                    "    Order Date: " + customerOrderDTOs.get(0).customerOrderDTO().getOrderDate(),
+            LabelConfig.createLabel("<html>"+
+                    "Order ID: " + customerOrderDTOs.get(0).customerOrderDTO().getOrderId() + "<br>" +
+                    "Order Date: " + customerOrderDTOs.get(0).customerOrderDTO().getOrderDate()+"</html>",
                     Style.FONT_BOLD_18,
                     Color.BLACK,
-                    SwingConstants.LEFT);
+                    SwingConstants.CENTER);
+    orderDate.setBorder(new EmptyBorder(0, 10, 0, 0));
     datePn.add(orderDate, BorderLayout.WEST);
 
     JPanel top = new JPanel(new GridLayout(2, 1));
@@ -2169,7 +2171,6 @@ public class CustomerMainPanel extends JPanel {
                 ordersContainer.revalidate();
                 ordersContainer.repaint();
                 upLoadOrderHistory();
-
 
               }
             });

@@ -10,7 +10,7 @@ import view.Style;
 public class TextFieldConfig {
 
   public static JTextField createStyledTextField() {
-    JTextField textField = new JTextField(20);
+    JTextField textField = new JTextField(15);
     textField.setFont(new Font("Arial", Font.PLAIN, 14));
     textField.setBorder(
         BorderFactory.createCompoundBorder(
@@ -18,6 +18,7 @@ public class TextFieldConfig {
             BorderFactory.createEmptyBorder(5, 5, 5, 5)));
     return textField;
   }
+
 
   public static JTextField createStyledTextField(String text) {
     JTextField textField = new JTextField(text, 20);

@@ -22,7 +22,7 @@ public class ProductOrderConfig {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     ProductOrderConfig that = (ProductOrderConfig) o;
-    System.out.println(" chay xem cop dungs ko" + this.product.equals(that.product));
+    System.out.println(" is added to cart?  " + this.product.equals(that.product));
     return this.product.equals(that.product);
   }
 

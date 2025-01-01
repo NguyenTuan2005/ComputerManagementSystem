@@ -13,6 +13,7 @@ public class KeyStrokeConfig {
   public static final String setSaleKey = "control S";
   public static final String restockKey = "control Z";
   public static final String toBillKey = "control T";
+  public static final String deliveryKey = "control D";
   public static final String reloadKey = "F5";
   public static final String ENTER = "ENTER";
 

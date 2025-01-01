@@ -49,6 +49,7 @@ public class CustomerMainPanel extends JPanel {
   JPanel ordersContainer = new JPanel();
 
   JPanel emptyCartPn = createEmptyPanel();
+  JPanel emptyNotificationPn = createEmptyNotificationPanel();
   CardLayout cardLayout;
   ProductCatalogMainPanel productCatalogPanel;
   NotificationPanel notificationPanel;
@@ -922,16 +923,11 @@ public class CustomerMainPanel extends JPanel {
   }
 
   class NotificationPanel extends JPanel {
-    private NotificationMainPanel notificationMainPanel;
     private JScrollPane scrollPane;
-    private JTextField searchField;
-    private JButton searchButton;
 
     public NotificationPanel() {
       setLayout(new BorderLayout());
 
-      JPanel title = new JPanel(new FlowLayout(FlowLayout.CENTER));
-      title.setBackground(Color.WHITE);
       int customerId = CurrentUser.CURRENT_CUSTOMER.getId();
       int managerId = CurrentUser.CURRENT_MANAGER.getManagerId();
 
@@ -940,45 +936,16 @@ public class CustomerMainPanel extends JPanel {
       c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
       showFullBills(new BillConfig(bills).getMetadataMap(), c);
 
-      searchField =
-          TextFieldConfig.createTextField(
-              "Search Notification", Style.FONT_PLAIN_18, Color.GRAY, new Dimension(320, 40));
+      notificationContainer = new JPanel();
+      notificationContainer.setBackground(Color.WHITE);
+      notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
+      notificationContainer.add(emptyNotificationPn);
 
-      searchButton =
-          ButtonConfig.createCustomButton(
-              "",
-              Style.FONT_PLAIN_20,
-              Style.WORD_COLOR_WHITE,
-              Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE,
-              Style.LIGHT_BlUE,
-              0,
-              SwingConstants.CENTER,
-              new Dimension(50, 40));
-      ButtonConfig.setButtonIcon("src/main/java/Icon/search_Icon.png", searchButton, 5);
+      scrollPane = new JScrollPane(notificationContainer);
+      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
 
-      title.add(searchField);
-      title.add(searchButton);
-
-      notificationMainPanel = new NotificationMainPanel();
-      add(title, BorderLayout.NORTH);
-      add(notificationMainPanel, BorderLayout.CENTER);
-    }
-
-    class NotificationMainPanel extends JPanel {
-
-      NotificationMainPanel() {
-        setLayout(new BorderLayout());
-
-        notificationContainer = new JPanel();
-        notificationContainer.setBackground(Color.WHITE);
-        notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
-
-        scrollPane = new JScrollPane(notificationContainer);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
-
-        add(scrollPane, BorderLayout.CENTER);
-      }
+      add(scrollPane, BorderLayout.CENTER);
     }
   }
 
@@ -1894,17 +1861,17 @@ public class CustomerMainPanel extends JPanel {
             new Dimension(60, 50));
     ButtonConfig.setButtonIcon("src/main/java/Icon/remove_Icon.png", removeBt, 10);
     removeBt.addActionListener(
-        e -> {
-          totalItems -= countItem[0];
-          totalPrice -= countItem[0] * product.getPrice();
-          updatePriceQuantityInCart(totalItems, totalPrice);
+            e -> {
+              totalItems -= countItem[0];
+              totalPrice -= countItem[0] * product.getPrice();
+              updatePriceQuantityInCart(totalItems, totalPrice);
 
-          this.productOrders.remove(productOrderConfig);
-          removePanelFromCartContainer(wrapperPanel);
-        });
+              productOrderConfig.setQuatity(1);
+              this.productOrders.remove(productOrderConfig);
+              removePanelFromCartContainer(wrapperPanel);
+            });
     rightPanel.add(removeBt);
 
-    productOrderConfig.setQuatity(countItem[0]);
     this.productOrders.add(productOrderConfig);
 
     mainPanel.add(rightPanel, BorderLayout.EAST);
@@ -1972,6 +1939,13 @@ public class CustomerMainPanel extends JPanel {
     return emptyPn;
   }
 
+  private JPanel createEmptyNotificationPanel(){
+    JPanel emptyNotificationPn = new JPanel(new BorderLayout());
+    JLabel noNotificationImg = new JLabel(createImageForProduct("src/main/java/img/no_Notification_Img.png",500,500));
+    emptyNotificationPn.add(noNotificationImg, BorderLayout.CENTER);
+    return emptyNotificationPn;
+  }
+
   public void removePanelFromCartContainer(JPanel panel) {
     this.cartContainer.remove(panel);
 
@@ -1984,6 +1958,7 @@ public class CustomerMainPanel extends JPanel {
   }
 
   public void addCustomerNotification(Customer customer, String text) {
+    notificationContainer.remove(emptyNotificationPn);
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -2068,11 +2043,13 @@ public class CustomerMainPanel extends JPanel {
     JPanel datePn = new JPanel(new BorderLayout());
     datePn.setBackground(Color.WHITE);
     JLabel orderDate =
-        LabelConfig.createLabel(
-            "    Order Date: " + customerOrderDTOs.get(0).customerOrderDTO().getOrderDate(),
-            Style.FONT_BOLD_18,
-            Color.BLACK,
-            SwingConstants.LEFT);
+            LabelConfig.createLabel("<html>"+
+                    "Order ID: " + customerOrderDTOs.get(0).customerOrderDTO().getOrderId() + "<br>" +
+                    "Order Date: " + customerOrderDTOs.get(0).customerOrderDTO().getOrderDate()+"</html>",
+                    Style.FONT_BOLD_18,
+                    Color.BLACK,
+                    SwingConstants.CENTER);
+    orderDate.setBorder(new EmptyBorder(0, 10, 0, 0));
     datePn.add(orderDate, BorderLayout.WEST);
 
     JPanel top = new JPanel(new GridLayout(2, 1));
@@ -2175,32 +2152,32 @@ public class CustomerMainPanel extends JPanel {
         });
 
     repurchase.addActionListener(
-        e -> {
-          if (JOptionPane.showConfirmDialog(
-                  null, "Would you like to repurchase this order?", "", JOptionPane.YES_NO_OPTION)
-              == 0) {
-            int reOrderId =
-                orderController.save(
-                    CurrentUser.CURRENT_CUSTOMER.getId(),
-                    CurrentUser.CURRENT_MANAGER.getManagerId(),
-                    ADDRESS,
-                    STATUS_ORDER);
-            orderDetailController.saves(reOrderId, customerOrderDTOs);
-            productOrders.clear();
-            ToastNotification.showToast("Successful purchase!", 2500, 50, -1, -1);
+            e -> {
+              if (JOptionPane.showConfirmDialog(null, "Would you like to repurchase this order?", "", JOptionPane.YES_NO_OPTION)
+                      == 0) {
+                int reOrderId =
+                        orderController.save(
+                                CurrentUser.CURRENT_CUSTOMER.getId(),
+                                CurrentUser.CURRENT_MANAGER.getManagerId(),
+                                ADDRESS,
+                                STATUS_ORDER);
+                orderDetailController.saves(reOrderId, customerOrderDTOs);
+                productOrders.clear();
+                ToastNotification.showToast("Successful purchase!", 2500, 50, -1, -1);
 
-            var c = new Customer();
-            c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
-            bills = customerController.findCustomerOrderById(CurrentUser.CURRENT_CUSTOMER.getId());
+                var c = new Customer();
+                c.setAvataImg("src/main/java/img/837020177Screenshot 2024-10-20 134127.png");
+                bills = customerController.findCustomerOrderById(CurrentUser.CURRENT_CUSTOMER.getId());
 
-            addCustomerNotification(c, new BillConfig(bills).getBillCurrent());
+                addCustomerNotification(c, new BillConfig(bills).getBillCurrent());
 
-            ordersContainer.removeAll();
-            ordersContainer.revalidate();
-            ordersContainer.repaint();
-            upLoadOrderHistory();
-          }
-        });
+                ordersContainer.removeAll();
+                ordersContainer.revalidate();
+                ordersContainer.repaint();
+                upLoadOrderHistory();
+
+              }
+            });
 
     JPanel bottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     bottomRight.setBackground(Color.WHITE);

@@ -3,10 +3,11 @@ package dao;
 import Config.DatabaseConfig;
 import Model.Customer;
 import dto.CustomerOrderDTO;
+import lombok.SneakyThrows;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.SneakyThrows;
 
 public class CustomerDAO implements Repository<Customer> {
   private DatabaseConfig databaseConfig;

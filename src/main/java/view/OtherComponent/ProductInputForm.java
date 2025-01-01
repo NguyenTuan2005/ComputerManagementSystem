@@ -115,7 +115,7 @@ public class ProductInputForm extends JFrame {
 
     JPanel buttonPanel = createButtonPanel();
 
-     dropImagePanel = createDropImagePanel();
+    dropImagePanel = createDropImagePanel();
 
     this.mainPanel.add(contentPanel, BorderLayout.CENTER);
     this.mainPanel.add(dropImagePanel,BorderLayout.SOUTH);
@@ -414,9 +414,9 @@ public class ProductInputForm extends JFrame {
       product.setStatus(cmbStatus.getSelectedItem().toString());
       var newProduct = productDAO.save(product);
       imageDAO= new ImageDAO();
+
       for (var img : this.imagePaths){
         imageDAO.save( new Model.Image(newProduct.getId(), img,"Hình demo cho san pham" ));
-        System.out.println("save : "+ img);
       }
 
 

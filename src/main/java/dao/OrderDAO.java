@@ -157,11 +157,6 @@ public class OrderDAO implements Repository<Order> {
     return false;
   }
 
-  public static void main(String[] args) {
-    OrderDAO o = new OrderDAO();
-    o.updateOrderStatus(OrderType.DISPATCHED, 100);
-  }
-
   // Cập nhật thông tin đơn hàng
   @Override
   public Order update(Order order) {

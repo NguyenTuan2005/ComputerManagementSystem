@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 import lombok.*;
 
+import static view.ManagerMainPanel.formatCurrency;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -130,7 +132,7 @@ public class Product {
       String.valueOf(id),
       name,
       String.valueOf(quantity),
-      Double.toString(price),
+      formatCurrency.format(price),
       genre,
       brand,
       operatingSystem,

@@ -19,8 +19,8 @@ public class BillFrame extends JFrame {
 
   public BillFrame(ArrayList<CustomerOrderDetailDTO> customerOrderDTOs) {
     this.customerOrderDTOS =
-            (ArrayList<CustomerOrderDTO>)
-                    customerOrderDTOs.stream().map(c -> c.customerOrderDTO()).collect(Collectors.toList());
+        (ArrayList<CustomerOrderDTO>)
+            customerOrderDTOs.stream().map(c -> c.customerOrderDTO()).collect(Collectors.toList());
 
     setTitle("Computer Management System");
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -32,8 +32,8 @@ public class BillFrame extends JFrame {
     panel.setBackground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
 
     JLabel billLabel =
-            LabelConfig.createLabel(
-                    "Bill", Style.FONT_BOLD_25_MONO, Color.white, SwingConstants.CENTER);
+        LabelConfig.createLabel(
+            "Bill", Style.FONT_BOLD_25_MONO, Color.white, SwingConstants.CENTER);
     panel.add(billLabel, BorderLayout.NORTH);
 
     billTextArea = new JTextArea();
@@ -50,5 +50,4 @@ public class BillFrame extends JFrame {
     add(panel);
     setVisible(true);
   }
-
 }

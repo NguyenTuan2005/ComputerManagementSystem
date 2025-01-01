@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
+import static view.ManagerMainPanel.formatCurrency;
+
 public class ProductModifyForm extends JFrame {
 
   private JComboBox<String> cmbSupplierId;
@@ -77,7 +79,7 @@ public class ProductModifyForm extends JFrame {
 
     getContentPane().setBackground(BACKGROUND_COLOR);
     setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
-    // Thêm sự kiện mouse listener để di chuyển JFrame
+
     this.addMouseListener(
         new MouseAdapter() {
           public void mousePressed(MouseEvent e) {
@@ -98,7 +100,7 @@ public class ProductModifyForm extends JFrame {
         new WindowAdapter() {
           @Override
           public void windowClosing(WindowEvent e) {
-            // Custom behavior when trying to close the window
+
             JOptionPane.showMessageDialog(
                 null, "Use the Save or Reload button to manage the window.");
           }
@@ -118,7 +120,7 @@ public class ProductModifyForm extends JFrame {
 
     mainPanel.add(titlePanel);
     mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-    //        mainPanel
+
     scrollPane.add(contentPanel);
     mainPanel.add(scrollPane);
     scrollPane.setPreferredSize(new Dimension(700, 90000));
@@ -184,7 +186,7 @@ public class ProductModifyForm extends JFrame {
     supplierDAO = new SupplierDAO();
     productDAO = new ProductDAO();
 
-    // Khởi tạo JComboBox cho Supplier ID với các lựa chọn
+
     ArrayList<Supplier> suppliers = supplierDAO.getAll();
     suppliersMap = new HashMap<>();
     setMapCompany(suppliers, suppliersMap);
@@ -206,13 +208,13 @@ public class ProductModifyForm extends JFrame {
           }
         });
 
-    // Khởi tạo ComboBox trạng thái
+
     String[] statusOptions = {"In Stock", "Available"};
     cmbStatus = new JComboBox<>(statusOptions);
     cmbStatus.setFont(new Font("Arial", Font.PLAIN, 14));
     cmbStatus.setSelectedItem(firstDataOfStatus);
 
-    // Khởi tạo buttons
+
     btnSave = createStyledButton("UPDATE");
     btnSave.setForeground(Color.BLACK);
     btnClear = createStyledButton("UNDO");
@@ -220,15 +222,15 @@ public class ProductModifyForm extends JFrame {
     btnExit = createStyledButton("CANCEL");
     btnExit.setForeground(Color.BLACK);
 
-    // Thêm hiệu ứng hover cho buttons
+
     ButtonConfig.addButtonHoverEffect(btnSave, BUTTON_HOVER_COLOR, BUTTON_COLOR);
     ButtonConfig.addButtonHoverEffect(btnClear, BUTTON_HOVER_COLOR, BUTTON_COLOR);
     ButtonConfig.addButtonHoverEffect(btnExit, BUTTON_HOVER_COLOR, BUTTON_COLOR);
 
-    // set data
+
     txtName.setText(product.getName());
     txtQuantity.setText("" + product.getQuantity());
-    txtPrice.setText("" + product.getPrice());
+    txtPrice.setText("" +  formatCurrency.format(product.getPrice()));
     txtGenre.setText(product.getGenre());
     txtBrand.setText(product.getBrand());
     txtOS.setText(product.getOperatingSystem());
@@ -276,8 +278,8 @@ public class ProductModifyForm extends JFrame {
 
   private void addStyledComponents(JPanel panel, GridBagConstraints gbc) {
     Object[][] components = {
-      //                {"Mã sản phẩm:", txtId},
-      {"Suppler name:", cmbSupplierId}, // Sử dụng JComboBox
+
+      {"Suppler name:", cmbSupplierId},
       {"Product name:", txtName},
       {"Quantity:", txtQuantity},
       {"Unit price:", txtPrice},
@@ -333,7 +335,8 @@ public class ProductModifyForm extends JFrame {
     try {
       product.setName(txtName.getText());
       product.setQuantity(Integer.parseInt(txtQuantity.getText()));
-      product.setPrice(Integer.parseInt(txtPrice.getText()));
+      System.out.println(">>>>>   "+txtPrice.getText());
+      product.setPrice(Integer.parseInt(txtPrice.getText().replaceAll(",","")));
       product.setGenre(txtGenre.getText());
       product.setBrand(txtBrand.getText());
       product.setOperatingSystem(txtOS.getText());
@@ -363,7 +366,7 @@ public class ProductModifyForm extends JFrame {
   private void clearForm() {
     txtName.setText(product.getName());
     txtQuantity.setText("" + product.getQuantity());
-    txtPrice.setText("" + product.getPrice());
+    txtPrice.setText("" + formatCurrency.format( product.getPrice()));
     txtGenre.setText(product.getGenre());
     txtBrand.setText(product.getBrand());
     txtOS.setText(product.getOperatingSystem());

@@ -1369,7 +1369,6 @@ public class ManagerMainPanel extends JPanel {
     }
 
     class ToolPanel extends JPanel {
-      private JPanel searchPanel, applicationPanel, mainPanel;
 
       ToolPanel() {
         setLayout(new GridLayout(1, 2));

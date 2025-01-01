@@ -1,7 +1,9 @@
 package controller;
 
+import Config.CurrentUser;
 import Config.ProductOrderConfig;
 import Model.OrderDetail;
+import dao.CustomerDAO;
 import dao.OrderDetailDAO;
 import dto.CustomerOrderDetailDTO;
 import java.util.ArrayList;
@@ -9,9 +11,11 @@ import java.util.Set;
 
 public class OrderDetailController implements ModelController<OrderDetail> {
   private OrderDetailDAO orderDetailDAO;
+  private CustomerDAO customerDAO;
 
   public OrderDetailController() {
     this.orderDetailDAO = new OrderDetailDAO();
+    this.customerDAO = new CustomerDAO();
   }
 
   @Override
@@ -61,6 +65,7 @@ public class OrderDetailController implements ModelController<OrderDetail> {
         orderDetail.setQuantity(po.getQuatity());
         orderDetail.setUnitPrice((int) po.getProduct().getPrice());
         orderDetail.setProductId(po.getProduct().getId());
+        customerDAO.updateNumberOfPurchased(CurrentUser.CURRENT_CUSTOMER.getId(), po.getQuatity());
         this.save(orderDetail);
       }
     }
@@ -73,6 +78,8 @@ public class OrderDetailController implements ModelController<OrderDetail> {
       orderDetail.setQuantity(po.customerOrderDTO().getQuantity());
       orderDetail.setUnitPrice((int) po.customerOrderDTO().getUnitPrice());
       orderDetail.setProductId(po.getProductId());
+      customerDAO.updateNumberOfPurchased(
+          CurrentUser.CURRENT_CUSTOMER.getId(), po.customerOrderDTO().getQuantity());
       this.save(orderDetail);
     }
   }

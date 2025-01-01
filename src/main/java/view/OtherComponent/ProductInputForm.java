@@ -55,7 +55,7 @@ public class ProductInputForm extends JFrame {
   private JPanel mainPanel;
   private List<String> imagePaths;
   private final String destinationFolder = "src/main/java/img/";
-
+  private JPanel dropImagePanel;
   private ScrollPane scrollPane;
 
   private Map<String, Integer> suppliersMap;
@@ -115,13 +115,13 @@ public class ProductInputForm extends JFrame {
 
     JPanel buttonPanel = createButtonPanel();
 
-    JPanel dropImagePanel = createDropImagePanel();
+    dropImagePanel = createDropImagePanel();
 
     this.mainPanel.add(contentPanel, BorderLayout.CENTER);
     this.mainPanel.add(dropImagePanel,BorderLayout.SOUTH);
 
     scrollPane =  new ScrollPane();
-    scrollPane.setPreferredSize(new Dimension(600, 90000));
+    scrollPane.setPreferredSize(new Dimension(700, 90000));
     mainPanel.add(titlePanel);
     mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -413,10 +413,10 @@ public class ProductInputForm extends JFrame {
       product.setCard(txtCard.getText());
       product.setStatus(cmbStatus.getSelectedItem().toString());
       var newProduct = productDAO.save(product);
+      imageDAO= new ImageDAO();
 
       for (var img : this.imagePaths){
         imageDAO.save( new Model.Image(newProduct.getId(), img,"Hình demo cho san pham" ));
-        System.out.println("save : "+ img);
       }
 
 
@@ -444,6 +444,11 @@ public class ProductInputForm extends JFrame {
     txtWeight.setText("");
     txtDisk.setText("");
     txtMonitor.setText("");
+    dropImagePanel.removeAll();
+    dropImagePanel.revalidate();
+    dropImagePanel.repaint();
+
+
   }
 
   private void showSuccessDialog(String message) {

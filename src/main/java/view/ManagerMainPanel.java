@@ -1370,7 +1370,6 @@ public class ManagerMainPanel extends JPanel {
     }
 
     class ToolPanel extends JPanel {
-      private JPanel searchPanel, applicationPanel, mainPanel;
 
       ToolPanel() {
         setLayout(new GridLayout(1, 2));
@@ -2623,6 +2622,10 @@ public class ManagerMainPanel extends JPanel {
       if (searchText != null && !searchText.isEmpty()) {
         products.removeIf(
             product -> !product.getName().toLowerCase().contains(searchText.toLowerCase()));
+      }
+      for (int i = 0; i < products.size(); i++) {
+        System.out.println("Index "+i+" "+products.get(i));
+        System.out.println();
       }
       ProductPanel.upDataProducts(products, tableModel);
     }

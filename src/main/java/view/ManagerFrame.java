@@ -1,5 +1,7 @@
 package view;
 
+import view.OverrideComponent.CustomButton;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -134,7 +136,7 @@ public class ManagerFrame extends JFrame {
   }
 
   private void setHover(String panelName) {
-    JButton[] buttons = {
+    CustomButton[] buttons = {
       managerMenuPanel.productBt,
       managerMenuPanel.supplierBt,
       managerMenuPanel.customerBt,
@@ -155,10 +157,10 @@ public class ManagerFrame extends JFrame {
       ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT
     };
     for (int i = 0; i < buttons.length; i++) {
-      buttons[i].setBackground(
+      buttons[i].setBackgroundColor(
           panelName.equals(constraints[i])
-              ? Style.MENU_BUTTON_COLOR_GREEN
-              : Style.BACKGROUND_COLOR);
+                  ? Style.MENU_BUTTON_COLOR
+                  : Style.MENU_BACKGROUND_COLOR);
     }
   }
 }

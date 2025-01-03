@@ -21,7 +21,7 @@ public class Order {
 
   private int customerId;
 
-  private String ShipAddress;
+  private String shipAddress;
 
   private Date orderDate;
 
@@ -30,7 +30,7 @@ public class Order {
   public Order(int managerId, int customerId, String shipAddress, Date orderDate, String status) {
     this.managerId = managerId;
     this.customerId = customerId;
-    ShipAddress = shipAddress;
+    this.shipAddress = shipAddress;
     this.orderDate = orderDate;
     this.status = status;
   }

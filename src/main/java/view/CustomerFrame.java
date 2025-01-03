@@ -1,5 +1,7 @@
 package view;
 
+import view.OverrideComponent.CustomButton;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -81,7 +83,7 @@ public class CustomerFrame extends JFrame {
   }
   // setHover tạo hiệu ứng đổi màu cho nút khi nhấn chuột vào
   private void setHover(String panelName) {
-    JButton[] buttons = {
+    CustomButton[] buttons = {
       customerMenuPanel.productCatalogBt,
       customerMenuPanel.orderHistoryBt,
       customerMenuPanel.notificationBt,
@@ -94,10 +96,10 @@ public class CustomerFrame extends JFrame {
       CustomerMainPanel.CHANGE_INFORMATION_CONSTRAINT
     };
     for (int i = 0; i < buttons.length; i++) {
-      buttons[i].setBackground(
+      buttons[i].setBackgroundColor(
           panelName.equals(constraints[i])
-              ? Style.MENU_BUTTON_COLOR_GREEN
-              : Style.BACKGROUND_COLOR);
+              ? Style.MENU_BUTTON_COLOR
+              : Style.MENU_BACKGROUND_COLOR);
     }
   }
 }

@@ -31,10 +31,10 @@ public class BillConfig {
       var newBills = new ArrayList<CustomerOrderDTO>();
 
       var m =
-              this.bills.stream()
-                      .filter(
-                              item -> item.getOrderId() == id) // Kiểm tra phần tử có giống `targetItem` không
-                      .collect(Collectors.toList());
+          this.bills.stream()
+              .filter(
+                  item -> item.getOrderId() == id) // Kiểm tra phần tử có giống `targetItem` không
+              .collect(Collectors.toList());
       return (ArrayList<CustomerOrderDTO>) m;
     } catch (Exception e) {
 
@@ -98,15 +98,15 @@ public class BillConfig {
 
     CustomerOrderDTO firstOrder = orderList.get(0);
     bill.append(
-            String.format("Mã khách hàng      : %-" + columnWidth + "d\n", firstOrder.getCustomerId()));
+        String.format("Mã khách hàng      : %-" + columnWidth + "d\n", firstOrder.getCustomerId()));
     bill.append(
-            String.format(
-                    "Địa chỉ giao hàng  : %-" + columnWidth + "s\n\n",
-                    truncateText(firstOrder.getShipAddress(), columnWidth)));
+        String.format(
+            "Địa chỉ giao hàng  : %-" + columnWidth + "s\n\n",
+            truncateText(firstOrder.getShipAddress(), columnWidth)));
 
     String productHeader =
-            String.format(
-                    "%-35s %-18s %-17s %-18s%n", "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền");
+        String.format(
+            "%-35s %-18s %-17s %-18s%n", "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền");
     bill.append(productHeader).append("\n");
     bill.append(createDynamicLine(columnWidth, '=')).append("\n");
 
@@ -114,21 +114,21 @@ public class BillConfig {
     for (CustomerOrderDTO order : orderList) {
       double productTotal = order.getUnitPrice() * order.getQuantity();
       bill.append(
-              String.format(
-                      "%-38s %-13d %-18s %-18s%n",
-                      truncateText(order.getProductName(), 40),
-                      order.getQuantity(),
-                      currencyFormatter.format(order.getUnitPrice()),
-                      currencyFormatter.format(productTotal)));
+          String.format(
+              "%-38s %-13d %-18s %-18s%n",
+              truncateText(order.getProductName(), 40),
+              order.getQuantity(),
+              currencyFormatter.format(order.getUnitPrice()),
+              currencyFormatter.format(productTotal)));
       totalAmount += productTotal;
     }
 
     bill.append("\n").append(createDynamicLine(columnWidth, '=')).append("\n");
     bill.append(
-            String.format(
-                    "%-" + (columnWidth - 15) + "s %s\n",
-                    "TỔNG CỘNG:",
-                    currencyFormatter.format(totalAmount)));
+        String.format(
+            "%-" + (columnWidth - 15) + "s %s\n",
+            "TỔNG CỘNG:",
+            currencyFormatter.format(totalAmount)));
 
     bill.append("\nCHI TIẾT SẢN PHẨM:\n");
     bill.append(createDynamicLine(columnWidth, '='));
@@ -137,23 +137,23 @@ public class BillConfig {
     for (CustomerOrderDTO order : orderList) {
 
       bill.append(
-              String.format(
-                      "Sản phẩm     : %-" + columnWidth + "s\n",
-                      truncateText(order.getProductName(), columnWidth)));
+          String.format(
+              "Sản phẩm     : %-" + columnWidth + "s\n",
+              truncateText(order.getProductName(), columnWidth)));
       bill.append(
-              String.format(
-                      "Hãng         : %-" + columnWidth + "s\n",
-                      truncateText(order.getProductBrand(), columnWidth)));
+          String.format(
+              "Hãng         : %-" + columnWidth + "s\n",
+              truncateText(order.getProductBrand(), columnWidth)));
       bill.append(
-              String.format(
-                      "Xuất xứ      : %-" + columnWidth + "s\n",
-                      truncateText(order.getMadeIn(), columnWidth)));
+          String.format(
+              "Xuất xứ      : %-" + columnWidth + "s\n",
+              truncateText(order.getMadeIn(), columnWidth)));
       bill.append(
-              String.format(
-                      "Cấu hình     : CPU %s, RAM %s, Ổ cứng %s\n",
-                      truncateText(order.getCpu(), 40),
-                      truncateText(order.getRam(), 40),
-                      truncateText(order.getDisk(), 40)));
+          String.format(
+              "Cấu hình     : CPU %s, RAM %s, Ổ cứng %s\n",
+              truncateText(order.getCpu(), 40),
+              truncateText(order.getRam(), 40),
+              truncateText(order.getDisk(), 40)));
       bill.append(createDynamicLine(columnWidth, '-')).append("\n");
     }
 
@@ -161,15 +161,15 @@ public class BillConfig {
 
     bill.append("\n");
     bill.append(
-            String.format(
-                    "Nhân viên bán hàng: %-" + columnWidth + "s\n",
-                    truncateText(firstOrder.getSaler(), columnWidth)));
+        String.format(
+            "Nhân viên bán hàng: %-" + columnWidth + "s\n",
+            truncateText(firstOrder.getSaler(), columnWidth)));
     bill.append(
-            String.format("Mã nhân viên      : %-" + columnWidth + "d\n", firstOrder.getSalerId()));
+        String.format("Mã nhân viên      : %-" + columnWidth + "d\n", firstOrder.getSalerId()));
     bill.append("\n").append(createDynamicLine(columnWidth, '='));
     bill.append("\n");
     bill.append(
-            String.format("%" + (columnWidth / 2 + 15) + "s\n", "CẢM ƠN QUÝ KHÁCH VÀ HẸN GẶP LẠI"));
+        String.format("%" + (columnWidth / 2 + 15) + "s\n", "CẢM ƠN QUÝ KHÁCH VÀ HẸN GẶP LẠI"));
     bill.append(createDynamicLine(columnWidth, '='));
 
     return bill.toString();
@@ -225,16 +225,16 @@ public class BillConfig {
 
   public Map<Integer, List<CustomerOrderDTO>> getMapByOrderId() {
     Comparator<Integer> comparator =
-            new Comparator<>() {
-              @Override
-              public int compare(Integer o1, Integer o2) {
-                return o2 - o1;
-              }
-            };
+        new Comparator<>() {
+          @Override
+          public int compare(Integer o1, Integer o2) {
+            return o2 - o1;
+          }
+        };
     TreeMap<Integer, List<CustomerOrderDTO>> map = new TreeMap<>(comparator);
     var m =
-            this.bills.stream()
-                    .collect(Collectors.groupingBy(p -> p.getOrderId(), Collectors.toList()));
+        this.bills.stream()
+            .collect(Collectors.groupingBy(p -> p.getOrderId(), Collectors.toList()));
     map.putAll(m);
     return map;
   }
@@ -243,9 +243,8 @@ public class BillConfig {
     CustomerController c = new CustomerController();
     BillConfig b = new BillConfig(c.findCustomerOrderById(10));
     b.getMapByOrderId().entrySet().forEach(System.out::println);
-//    b.getBills();
+    //    b.getBills();
 
-            System.out.println(b.getBillCurrent());
-
+    System.out.println(b.getBillCurrent());
   }
 }

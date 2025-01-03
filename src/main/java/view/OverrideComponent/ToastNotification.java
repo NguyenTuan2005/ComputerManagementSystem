@@ -20,31 +20,30 @@ public class ToastNotification {
     label.setForeground(new Color(173, 99, 34));
     label.setFont(new Font("Arial", Font.PLAIN, 20));
 
-    // Thêm icon nếu có
+
     ImageIcon iconButton = new ImageIcon("src/main/java/Icon/iconNotification.png");
     Image image = iconButton.getImage();
     Image resizedImage = image.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
     label.setIcon(new ImageIcon(resizedImage));
     label.setBorder(BorderFactory.createLineBorder(new Color(34, 139, 34)));
-    //        label.setBorder(BorderFactory.createLineBorder(Style.BACKGROUND_COLOR,3));
+
 
     window.add(label, BorderLayout.CENTER);
 
-    // Tính toán kích thước dựa trên nội dung
     label.setSize(label.getPreferredSize());
-    int width = label.getPreferredSize().width + 20; // Thêm khoảng cách padding
+    int width = label.getPreferredSize().width + 20;
     window.setSize(width, height);
 
-    // Nếu x và y được truyền là -1, tự căn góc xuống dưới cùng bên phải
+
     if (x == -1 && y == -1) {
       Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
       int screenWidth = screenSize.width;
       int screenHeight = screenSize.height;
 
-      x = screenWidth - width - 10; // Đặt cách mép phải
-      y = screenHeight - height - 50; // Đặt cách mép dưới
+      x = screenWidth - width - 10;
+      y = screenHeight - height - 50;
     }
-    // nếu chỉ có x là -1 thì căn góc theo x
+
     if (x == -1) {
       Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
       int screenWidth = screenSize.width;

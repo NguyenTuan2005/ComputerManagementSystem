@@ -25,4 +25,8 @@ public class PasswordSecurity {
     public  boolean isVariablePassword(  String  encryptedPassword){
         return passwordEncoder.matches(this.plainPassword, encryptedPassword);
     }
+
+    public boolean isValidPassword(String password, String pass) {
+        return passwordEncoder.matches(pass,password);
+    }
 }

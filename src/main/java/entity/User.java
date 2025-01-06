@@ -16,7 +16,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED)
-public abstract class User {
+public abstract class User implements Comparable<User>{
     int id;
 
     String fullName;
@@ -102,6 +102,23 @@ public abstract class User {
     }
 
     public void changeAvatarImg(String url){ this.avatarImg = url;}
+
+    @Override
+    public int compareTo(User o) {
+        int num = this.id - o.id;
+        if (num == 0) {
+            num = this.fullName.compareTo(o.fullName);
+            if (num == 0) {
+                num = this.email.compareTo(o.email);
+                if (num == 0) return this.address.compareTo(o.address);
+            }
+        }
+        return num;
+    }
+
+    public boolean sameID(int id) {
+        return this.id == id;
+    }
 }
 
 

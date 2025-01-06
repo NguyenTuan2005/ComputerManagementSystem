@@ -7,11 +7,10 @@ import enums.LoginStatus;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
-
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -108,8 +107,14 @@ public class ComputerShop implements MController {
 
     @Override
     public Map<Manager, List<Order>> managerOrderStatistics() {
-        return null;
+        return this.managers.stream().collect(Collectors.toMap(
+                manager -> manager,
+                Manager::getOrders,
+                (exit, replace) -> exit,
+                TreeMap::new
+        ));
     }
+
 
     @Override
     public Manager findManagerByEmail(String email) {

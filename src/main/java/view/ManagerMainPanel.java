@@ -1,16 +1,30 @@
 package view;
 
-import static org.apache.commons.collections4.CollectionUtils.collect;
-import static view.CustomerMainPanel.createImageForProduct;
-
 import com.toedter.calendar.JCalendar;
 import config.*;
-
+import entity.Manager;
+import entity.Order;
+import entity.Product;
 import entity.Supplier;
 import enums.OrderType;
 import enums.TableStatus;
+import lombok.SneakyThrows;
+import verifier.*;
+import view.otherComponent.*;
+import view.overrideComponent.CircularImage;
+import view.overrideComponent.CustomButton;
+import view.overrideComponent.ToastNotification;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -28,22 +42,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import lombok.SneakyThrows;
-import entity.*;
-import verifier.*;
-import view.otherComponent.*;
-import view.overrideComponent.CircularImage;
-import view.overrideComponent.CustomButton;
-import view.overrideComponent.ToastNotification;
+
+import static view.CustomerMainPanel.createImageForProduct;
 
 public class ManagerMainPanel extends JPanel {
   private CardLayout cardLayout = new CardLayout();
@@ -1306,7 +1306,7 @@ public class ManagerMainPanel extends JPanel {
 
     final String[] orderColumnNames = {
       "Order ID",
-      "Customer ID",
+      "Customer Name",
       "Order Date",
       "Ship address",
       "Status Item",
@@ -1328,7 +1328,9 @@ public class ManagerMainPanel extends JPanel {
 
     private ExportPanel exportPanel;
 
-    private List<Order> orders;
+    private String[][] rowData;
+    private Map<Manager, List<Order>> filteredMap;
+    private Map<Manager, List<Order>> managerListMap;
 
     public OrderPanel() {
       setLayout(new BorderLayout());
@@ -1472,17 +1474,20 @@ public class ManagerMainPanel extends JPanel {
 
         int selectRow = (table != null) ? table.getSelectedRow() : -1;
         if (selectRow != -1) {
-          int orderID = Integer.parseInt(table.getValueAt(selectRow, 0).toString());
           String statusMessage = table.getValueAt(selectRow, 4).toString();
 
           switch (statusMessage) {
             case OrderType.ACTIVE_MESSAGE -> {
+//              rowData[selectRow][0], rowData[selectRow][6]
+              Manager manager = managerListMap.keySet().stream()
+                              .filter(manager1 -> manager1.sameID(Integer.parseInt(rowData[selectRow][6])))
+                              .findAny()
+                              .orElse(null);
+              Order order = managerListMap.get(manager).stream().filter(order1 -> order1.sameID(Integer.parseInt(rowData[selectRow][0])))
+                              .findAny()
+                              .orElse(null);
               orderTabbedPane.setSelectedIndex(2);
-//              exportPanel.loadOrders(orders.get(orderID));
-              JOptionPane.showMessageDialog(
-                      null, " switch (statusMessage) {\n" +
-                              "            case OrderType.ACTIVE_MESSAGE -> {\n" +
-                              "              orderTabbedPane.setSelectedIndex(2);", "", JOptionPane.WARNING_MESSAGE);
+//              exportPanel.loadOrders(manager, order);
             }
             case OrderType.UN_ACTIVE_MESSAGE -> ToastNotification.showToast(
                 "This order has been canceled and cannot be dispatched.", 3000, 50, -1, -1);
@@ -2143,25 +2148,18 @@ public class ManagerMainPanel extends JPanel {
         }
       }
 
-//      private void loadOrders(List<Order> list) {
-//        Order order = list.get(0);
-//        List<OrderDetail> orderDetails = list.stream().map(Order::getOrderDetails).collect(Collectors.toList());
-//
-//        double totalCost = list.stream().mapToDouble(CustomerOrderDTO::totalCost).sum();
-//        int quantity = orderDetails.stream().mapToInt(Product::getQuantity).sum();
-//        orderID = order.getOrderId();
-//
+      private void loadOrders(Manager manager, Order order) {
 //        setText(
-//            String.valueOf(order.getCustomerId()),
-//            String.valueOf(order.getOrderDate()),
+//            String.valueOf(order.getCustomer().getId()),
+//            String.valueOf(order.getOrderedAt()),
 //            order.getShipAddress(),
-//            order.getStatusItem(),
-//            order.getSaler(),
-//            String.valueOf(order.getSalerId()),
+//            order.getStatus(),
+//            manager.getFullName(),
+//            String.valueOf(manager.getId()),
 //            formatCurrency.format(totalCost),
 //            String.valueOf(quantity));
 //        this.detailsPanel.addProductPanel(orderDetails);
-//      }
+      }
 
       private void setText(
           String orderId,
@@ -2195,17 +2193,23 @@ public class ManagerMainPanel extends JPanel {
     }
 
     private void reloadOrders(String status, String searchText) {
-      this.orders = LoginFrame.COMPUTER_SHOP.getAllOrders();
-//      if (searchText != null && !searchText.isEmpty()) {
-//        orders = orders.stream().filter(order -> order.containText(searchText)).toList();
-//      }
-//      orders = orders.stream().filter(order -> (status != null) ? order.containText(status) : !order.containText(status)).toList();
+      managerListMap = LoginFrame.COMPUTER_SHOP.managerOrderStatistics();
+      filteredMap = managerListMap.entrySet().stream()
+              .collect(Collectors.toMap(
+                      Map.Entry::getKey,
+                      entry -> entry.getValue().stream()
+                              .filter(order ->
+                                      (searchText == null || searchText.isEmpty() || order.containText(searchText)) &&
+                                      ((status != null && order.isDispatched()) || (status == null && !order.isDispatched()))
+                              )
+                              .toList()
+              ));
+      rowData = Order.getData(filteredMap);
     }
 
     private void upDataOrders(DefaultTableModel tableModel, String status, String searchText) {
       reloadOrders(status, searchText);
       tableModel.setRowCount(0);
-      String[][] rowData = Order.getData(orders);
       for (String[] strings : rowData) {
         tableModel.addRow(strings);
       }

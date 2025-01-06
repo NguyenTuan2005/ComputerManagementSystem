@@ -1,11 +1,14 @@
 package  entity;
 
+import enums.OrderType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import view.ManagerMainPanel;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @ToString
 @Getter
@@ -21,26 +24,36 @@ public class Order {
     String status;
     List<OrderDetail> orderDetails;
 
-    public static String[][] getData(List<Order> orders) {
-        return orders.stream()
-                .map(order -> new String[] {
-                        String.valueOf(order.orderId),
-                        order.getCustomer().getFullName(),
-                        order.shipAddress,
-                        String.valueOf(order.orderedAt),
-                        order.status
-//                        String.valueOf(order.totalPrice()),
-//                        order.totalQuantity()
-                })
+    public static String[][] getData(Map<Manager, List<Order>> orders) {
+        return orders.entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream().map(
+                        order -> new String[] {
+                                String.valueOf(order.orderId),
+                                order.getCustomer().getFullName(),
+                                order.shipAddress,
+                                String.valueOf(order.orderedAt),
+                                order.status,
+                                entry.getKey().getFullName(),
+                                String.valueOf(entry.getKey().getId()),
+                                ManagerMainPanel.formatCurrency.format(order.totalPrice()),
+                                String.valueOf(order.totalQuantity())
+                        }
+                ))
                 .toArray(String[][]::new);
     }
 
-//    private int totalPrice() {
-//        return this.orderDetails.stream()
-//                .map(OrderDetail::getProduct)
-//                .mapToInt(Product::getPrice)
-//                .sum();
-//    }
+    private int totalQuantity() {
+        return this.orderDetails.stream()
+                .mapToInt(OrderDetail::getQuantity)
+                .sum();
+    }
+
+    private double totalPrice() {
+        return this.orderDetails.stream()
+                .map(OrderDetail::getProduct)
+                .mapToDouble(Product::getPrice)
+                .sum();
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -66,4 +79,11 @@ public class Order {
                 || this.orderDetails.stream().anyMatch(o -> o.contains(searchText));
     }
 
+    public boolean isDispatched() {
+        return this.status.equals(OrderType.DISPATCHED_MESSAGE);
+    }
+
+    public boolean sameID(int id) {
+        return this.orderId == id;
+    }
 }

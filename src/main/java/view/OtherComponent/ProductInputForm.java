@@ -1,336 +1,469 @@
-package view.OtherComponent;
-import Config.ButtonConfig;
-import Config.TextFieldConfig;
-import Model.Product;
-import Model.Supplier;
-import dao.ProductDAO;
-import dao.SupplierDAO;
-import view.Style;
+package view.otherComponent;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import config.ButtonConfig;
+import config.TextFieldConfig;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.*;
 import java.awt.event.*;
-
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.swing.*;
+import javax.swing.border.*;
+import entity.Product;
+import entity.Supplier;
+import view.LoginFrame;
+import view.Style;
 
-public class ProductInputForm extends JFrame{
+public class ProductInputForm extends JFrame {
 
-    private JComboBox<String> cmbSupplierId;
-    private JTextField txtName;
-    private JTextField txtQuantity;
-    private JTextField txtPrice;
-    private JTextField txtGenre;
-    private JTextField txtBrand;
-    private JTextField txtOS;
-    private JTextField txtCPU;
-    private JTextField txtMemory;
-    private JTextField txtRAM;
-    private JTextField txtMadeIn;
-    private JTextField txtDisk;
-    private JTextField txtMonitor;
-    private JTextField txtWeight;
-    private JTextField txtCard;
+  private JComboBox<String> cmbSupplierId;
+  private JTextField txtName;
+  private JTextField txtQuantity;
+  private JTextField txtPrice;
+  private JTextField txtGenre;
+  private JTextField txtBrand;
+  private JTextField txtOS;
+  private JTextField txtCPU;
+  private JTextField txtMemory;
+  private JTextField txtRAM;
+  private JTextField txtMadeIn;
+  private JTextField txtDisk;
+  private JTextField txtMonitor;
+  private JTextField txtWeight;
+  private JTextField txtCard;
 
-    private JComboBox<String> cmbStatus;
-    private JButton btnSave;
-    private JButton btnClear;
-    private JButton btnExit;
-    private SupplierDAO supplierDAO;
-    private ProductDAO productDAO;
-    private int supplierId  = 1;
-    private int mouseX, mouseY;
+  private JComboBox<String> cmbStatus;
+  private JButton btnSave;
+  private JButton btnClear;
+  private JButton btnExit;
+  private int supplierId = 1;
+  private int mouseX, mouseY;
 
-    private ScrollPane scrollPane;
+  private JPanel mainPanel;
+  private List<String> imagePaths;
+  private final String destinationFolder = "src/main/java/img/";
+  private JPanel dropImagePanel;
+  private ScrollPane scrollPane;
 
-    private Map<String,Integer> suppliersMap;
+  //data
+  private Map<String, Integer> suppliersMap;
+  private List<entity.Supplier> suppliers = LoginFrame.COMPUTER_SHOP.getAllSupplier();
 
-    private final Color SECONDARY_COLOR = new Color(52, 152, 219);
-    private final Color BACKGROUND_COLOR = new Color(236, 240, 241);
-    private final Color PANEL_BACKGROUND = Color.WHITE;
-    private final Color BUTTON_COLOR = new Color(41, 128, 185);
-    private final Color BUTTON_HOVER_COLOR = new Color(52, 152, 219);
 
-    public ProductInputForm() {
-        setUndecorated(true);
-        setTitle("Add product");
-        setSize(900, 750);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setVisible(true);
+  private final Color SECONDARY_COLOR = new Color(52, 152, 219);
+  private final Color BACKGROUND_COLOR = new Color(236, 240, 241);
+  private final Color PANEL_BACKGROUND = Color.WHITE;
+  private final Color BUTTON_COLOR = new Color(41, 128, 185);
+  private final Color BUTTON_HOVER_COLOR = new Color(52, 152, 219);
 
-        getContentPane().setBackground(BACKGROUND_COLOR);
-        setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
+  public ProductInputForm() {
+    setUndecorated(true);
+    setTitle("Add product");
+    setSize(900, 750);
+    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+    setLocationRelativeTo(null);
+    setVisible(true);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                JOptionPane.showMessageDialog(null, "Use the Save or Reload button to manage the window.");
-            }
+    getContentPane().setBackground(BACKGROUND_COLOR);
+    setIconImage(new ImageIcon("src/main/java/Icon/logo.png").getImage());
+
+    addWindowListener(
+        new WindowAdapter() {
+          @Override
+          public void windowClosing(WindowEvent e) {
+            JOptionPane.showMessageDialog(
+                null, "Use the Save or Reload button to manage the window.");
+          }
         });
 
-        this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                mouseX = e.getX();
-                mouseY = e.getY();
-            }
+    this.addMouseListener(
+        new MouseAdapter() {
+          public void mousePressed(MouseEvent e) {
+            mouseX = e.getX();
+            mouseY = e.getY();
+          }
         });
-        this.addMouseMotionListener(new MouseAdapter() {
-            public void mouseDragged(MouseEvent e) {
-                int x = e.getXOnScreen();
-                int y = e.getYOnScreen();
-                setLocation(x - mouseX, y - mouseY);
-            }
+    this.addMouseMotionListener(
+        new MouseAdapter() {
+          public void mouseDragged(MouseEvent e) {
+            int x = e.getXOnScreen();
+            int y = e.getYOnScreen();
+            setLocation(x - mouseX, y - mouseY);
+          }
         });
-//        setUndecorated(true);
+    //        setUndecorated(true);
+    this.mainPanel = new JPanel(new BorderLayout());
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBackground(BACKGROUND_COLOR);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    JPanel mainPanel = new JPanel();
+    mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+    mainPanel.setBackground(BACKGROUND_COLOR);
+    mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+    JPanel titlePanel = createTitlePanel();
 
-        JPanel titlePanel = createTitlePanel();
+    JPanel contentPanel = createContentPanel();
 
+    JPanel buttonPanel = createButtonPanel();
 
-        JPanel contentPanel = createContentPanel();
+    dropImagePanel = createDropImagePanel();
 
+    this.mainPanel.add(contentPanel, BorderLayout.CENTER);
+    this.mainPanel.add(dropImagePanel, BorderLayout.SOUTH);
 
-        JPanel buttonPanel = createButtonPanel();
-        scrollPane = new ScrollPane();
+    scrollPane = new ScrollPane();
+    scrollPane.setPreferredSize(new Dimension(700, 90000));
+    mainPanel.add(titlePanel);
+    mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
+    scrollPane.add(this.mainPanel);
 
-        mainPanel.add(titlePanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        scrollPane.add(contentPanel);
-        scrollPane.setPreferredSize(new Dimension(700,90000));
-        mainPanel.add(scrollPane);
+    mainPanel.add(scrollPane);
 
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        mainPanel.add(buttonPanel);
+    mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        add(mainPanel);
+    mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+    mainPanel.add(buttonPanel);
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            SwingUtilities.updateComponentTreeUI(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    add(mainPanel);
+
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      SwingUtilities.updateComponentTreeUI(this);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 
+  private JPanel createTitlePanel() {
+    JPanel panel = new JPanel();
+    panel.setBackground(BACKGROUND_COLOR);
 
-    private JPanel createTitlePanel() {
-        JPanel panel = new JPanel();
-        panel.setBackground(BACKGROUND_COLOR);
+    JLabel titleLabel = new JLabel("PRODUCT INFORMATION");
+    titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+    titleLabel.setForeground(Style.MODEL_PRIMARY_COLOR);
+    panel.add(titleLabel);
 
-        JLabel titleLabel = new JLabel("PRODUCT INFORMATION");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setForeground(Style.MODEL_PRIMARY_COLOR);
-        panel.add(titleLabel);
+    return panel;
+  }
 
-        return panel;
-    }
+  private JPanel createContentPanel() {
+    JPanel panel = new JPanel(new GridBagLayout());
+    panel.setBackground(PANEL_BACKGROUND);
+    panel.setBorder(
+        BorderFactory.createCompoundBorder(
+            new LineBorder(Style.MODEL_PRIMARY_COLOR, 1),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
-    private JPanel createContentPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(PANEL_BACKGROUND);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(Style.MODEL_PRIMARY_COLOR, 1),
-                BorderFactory.createEmptyBorder(20, 20, 20, 20)
-        ));
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(8, 8, 8, 8);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+    initializeStyledComponents();
 
-        initializeStyledComponents();
+    addStyledComponents(panel, gbc);
 
-        addStyledComponents(panel, gbc);
+    return panel;
+  }
 
-        return panel;
-    }
+  private void initializeStyledComponents() {
 
-    private void initializeStyledComponents() {
+    txtName = TextFieldConfig.createStyledTextField();
+    txtQuantity = TextFieldConfig.createStyledTextField();
+    txtPrice = TextFieldConfig.createStyledTextField();
+    txtGenre = TextFieldConfig.createStyledTextField();
+    txtBrand = TextFieldConfig.createStyledTextField();
+    txtOS = TextFieldConfig.createStyledTextField();
+    txtCPU = TextFieldConfig.createStyledTextField();
+    txtMemory = TextFieldConfig.createStyledTextField();
+    txtRAM = TextFieldConfig.createStyledTextField();
+    txtMadeIn = TextFieldConfig.createStyledTextField();
+    txtDisk = TextFieldConfig.createStyledTextField();
+    txtMonitor = TextFieldConfig.createStyledTextField();
+    txtWeight = TextFieldConfig.createStyledTextField();
+    txtCard = TextFieldConfig.createStyledTextField();
 
-        txtName = TextFieldConfig.createStyledTextField();
-        txtQuantity = TextFieldConfig.createStyledTextField();
-        txtPrice = TextFieldConfig.createStyledTextField();
-        txtGenre = TextFieldConfig.createStyledTextField();
-        txtBrand = TextFieldConfig.createStyledTextField();
-        txtOS = TextFieldConfig.createStyledTextField();
-        txtCPU = TextFieldConfig.createStyledTextField();
-        txtMemory = TextFieldConfig.createStyledTextField();
-        txtRAM = TextFieldConfig.createStyledTextField();
-        txtMadeIn = TextFieldConfig.createStyledTextField();
-        txtDisk = TextFieldConfig.createStyledTextField();
-        txtMonitor = TextFieldConfig.createStyledTextField();
-        txtWeight = TextFieldConfig.createStyledTextField();
-        txtCard = TextFieldConfig.createStyledTextField();
-        supplierDAO = new SupplierDAO();
-        productDAO = new ProductDAO();
+    // Khởi tạo JComboBox cho Supplier ID với các lựa chọn
+    suppliersMap = new HashMap<>();
+    setMapCompany((ArrayList<Supplier>) suppliers, suppliersMap);
+    String[] companyNames = new String[suppliers.size()];
+    setCompany((ArrayList<Supplier>) suppliers, companyNames);
 
-        // Khởi tạo JComboBox cho Supplier ID với các lựa chọn
-        ArrayList<Supplier> suppliers = supplierDAO.getAll();
-        suppliersMap= new HashMap<>();
-        setMapCompany(suppliers, suppliersMap);
-        String [] companyNames = new String[suppliers.size()];
-        setCompany(suppliers, companyNames);
-
-        cmbSupplierId = new JComboBox<>(companyNames);
-        cmbSupplierId.setSelectedItem(companyNames[2]);
-        cmbSupplierId.setFont(new Font("Arial", Font.PLAIN, 14));
-        cmbSupplierId.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                supplierId  = suppliersMap.get(cmbSupplierId.getSelectedItem());
-                System.out.println( supplierId );
-            }
+    cmbSupplierId = new JComboBox<>(companyNames);
+    cmbSupplierId.setSelectedItem(companyNames[2]);
+    cmbSupplierId.setFont(new Font("Arial", Font.PLAIN, 14));
+    cmbSupplierId.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            supplierId = suppliersMap.get(cmbSupplierId.getSelectedItem());
+            System.out.println(supplierId);
+          }
         });
 
-        // Khởi tạo ComboBox trạng thái
-        String[] statusOptions = {"In Stock", "Out Stock"};
-        cmbStatus = new JComboBox<>(statusOptions);
-        cmbStatus.setFont(new Font("Arial", Font.PLAIN, 14));
+    // Khởi tạo ComboBox trạng thái
+    String[] statusOptions = {"In Stock", "Out Stock"};
+    cmbStatus = new JComboBox<>(statusOptions);
+    cmbStatus.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        // Khởi tạo buttons
-        btnSave = ButtonConfig.createStyledButton("SAVE");
-        btnSave.setForeground(Color.BLACK);
-        btnClear = ButtonConfig.createStyledButton("CLEAN ALL");
-        btnClear.setForeground(Color.BLACK);
-        btnExit = ButtonConfig.createStyledButton("CANCEL");
-        btnExit.setForeground(Color.BLACK);
+    // Khởi tạo buttons
+    btnSave = ButtonConfig.createStyledButton("SAVE");
+    btnSave.setForeground(Color.BLACK);
+    btnClear = ButtonConfig.createStyledButton("CLEAN ALL");
+    btnClear.setForeground(Color.BLACK);
+    btnExit = ButtonConfig.createStyledButton("CANCEL");
+    btnExit.setForeground(Color.BLACK);
 
-        // Thêm hiệu ứng hover cho buttons
-        ButtonConfig.addButtonHoverEffect(btnSave ,BUTTON_HOVER_COLOR,BUTTON_COLOR);
-        ButtonConfig.addButtonHoverEffect(btnClear ,BUTTON_HOVER_COLOR,BUTTON_COLOR);
-        ButtonConfig.addButtonHoverEffect(btnExit ,BUTTON_HOVER_COLOR,BUTTON_COLOR);
+    // Thêm hiệu ứng hover cho buttons
+    ButtonConfig.addButtonHoverEffect(btnSave, BUTTON_HOVER_COLOR, BUTTON_COLOR);
+    ButtonConfig.addButtonHoverEffect(btnClear, BUTTON_HOVER_COLOR, BUTTON_COLOR);
+    ButtonConfig.addButtonHoverEffect(btnExit, BUTTON_HOVER_COLOR, BUTTON_COLOR);
+  }
 
+  private static void setCompany(ArrayList<entity.Supplier> suppliers, String[] companyNames) {
+    for (int i = 0; i < suppliers.size(); i++) {
+      companyNames[i] = suppliers.get(i).getCompanyName();
+    }
+  }
+
+  private static void setMapCompany(ArrayList<entity.Supplier> suppliers, Map<String, Integer> map) {
+    for (int i = 0; i < suppliers.size(); i++) {
+      map.put(suppliers.get(i).getCompanyName(), suppliers.get(i).getId());
+    }
+  }
+
+  private void addStyledComponents(JPanel panel, GridBagConstraints gbc) {
+    Object[][] components = {
+      {"Supplier name:", cmbSupplierId},
+      {"Product name:", txtName},
+      {"Quantity:", txtQuantity},
+      {"Unit price:", txtPrice},
+      {"Genre:", txtGenre},
+      {"Brand:", txtBrand},
+      {"Operating system :", txtOS},
+      {"CPU:", txtCPU},
+      {"Memory:", txtMemory},
+      {"RAM:", txtRAM},
+      {"Made in:", txtMadeIn},
+      {"Disk :", txtDisk},
+      {"Minotor :", txtMonitor},
+      {"Weight :", txtWeight},
+      {"Card :", txtCard},
+      {"Status:", cmbStatus}
+    };
+
+    int gridy = 0;
+    for (Object[] comp : components) {
+      gbc.gridx = 0;
+      gbc.gridy = gridy;
+      gbc.weightx = 0.2;
+      JLabel label = new JLabel(comp[0].toString());
+      label.setFont(new Font("Arial", Font.BOLD, 14));
+      label.setForeground(Style.MODEL_PRIMARY_COLOR);
+      panel.add(label, gbc);
+
+      gbc.gridx = 1;
+      gbc.weightx = 0.8;
+      panel.add((Component) comp[1], gbc);
+
+      gridy++;
+    }
+  }
+
+  private JPanel createButtonPanel() {
+    JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+    panel.setPreferredSize(new Dimension(800, 800));
+    panel.setBackground(BACKGROUND_COLOR);
+
+    btnSave.addActionListener(e -> saveProduct());
+    btnClear.addActionListener(e -> clearForm());
+    btnExit.addActionListener(e -> this.setVisible(false));
+
+    panel.add(btnSave);
+    panel.add(btnClear);
+    panel.add(btnExit);
+
+    return panel;
+  }
+
+  private JPanel createDropImagePanel() {
+
+    JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+    imagePanel.setPreferredSize(new Dimension(900, 300));
+    imagePanel.setBackground(Color.WHITE);
+
+    JLabel guideLabel = new JLabel("Drop product images here!", SwingConstants.CENTER);
+    guideLabel.setBackground(Color.WHITE);
+    Border dashedBorder =
+        BorderFactory.createDashedBorder(Style.CONFIRM_BUTTON_COLOR_GREEN, 2, 10, 20, true);
+    Border margin = BorderFactory.createEmptyBorder(5, 10, 8, 10);
+    Border compoundBorder = BorderFactory.createCompoundBorder(margin, dashedBorder);
+    guideLabel.setBorder(compoundBorder);
+    guideLabel.setPreferredSize(new Dimension(700, 300));
+
+    imagePanel.add(guideLabel);
+
+    File folder = new File(destinationFolder);
+    if (!folder.exists()) {
+      folder.mkdirs();
     }
 
-    private static void setCompany(ArrayList<Supplier> suppliers, String [] companyNames  ){
-        for (int i = 0; i < suppliers.size(); i++) {
-            companyNames[i] = suppliers.get( i).getCompanyName();
-        }
+    imagePaths = new ArrayList<>();
+
+    JScrollPane scrollPane = new JScrollPane(imagePanel);
+    add(scrollPane);
+
+    // Kích hoạt kéo thả
+    //    JPanel finalImagePanel = imagePanel;
+    new DropTarget(
+        imagePanel,
+        new DropTargetListener() {
+          @Override
+          public void dragEnter(DropTargetDragEvent dtde) {}
+
+          @Override
+          public void dragOver(DropTargetDragEvent dtde) {}
+
+          @Override
+          public void dropActionChanged(DropTargetDragEvent dtde) {}
+
+          @Override
+          public void dragExit(DropTargetEvent dte) {}
+
+          @Override
+          public void drop(DropTargetDropEvent dtde) {
+            try {
+              imagePanel.remove(guideLabel);
+              if (dtde.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                dtde.acceptDrop(DnDConstants.ACTION_COPY);
+                java.util.List<File> files =
+                    (java.util.List<File>)
+                        dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+
+                for (File file : files) {
+                  saveAndDisplayImage(imagePanel, file);
+                }
+
+                dtde.dropComplete(true);
+              } else {
+                dtde.rejectDrop();
+              }
+            } catch (Exception ex) {
+              ex.printStackTrace();
+            }
+          }
+        });
+    return imagePanel;
+  }
+
+  // luu hinh
+  private void saveAndDisplayImage(JPanel imagePanel, File file) {
+    try {
+      // Xác định tệp đích trong thư mục chỉ định
+      File destinationFile = new File(destinationFolder, file.getName());
+
+      // Sao chép tệp vào thư mục đích
+      Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+      // Lưu đường dẫn của hình ảnh vào danh sách
+      var contextPath = "src/main/java/img/" + file.getName();
+      imagePaths.add(contextPath);
+
+      // Tạo ImageIcon từ tệp đích
+      ImageIcon imageIcon = new ImageIcon(destinationFile.getAbsolutePath());
+      // Resize ảnh nếu quá lớn
+      Image scaledImage = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+      JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+
+      // Thêm JLabel vào panel
+      imagePanel.add(imageLabel);
+      imagePanel.revalidate(); // Cập nhật giao diện
+      imagePanel.repaint();
+    } catch (IOException ex) {
+      JOptionPane.showMessageDialog(this, "Error saving file: " + file.getName());
     }
-    private static  void setMapCompany(ArrayList<Supplier> suppliers ,Map<String ,Integer> map){
-        for (int i = 0; i < suppliers.size(); i++) {
-            map.put(suppliers.get(i).getCompanyName(), suppliers.get(i).getId());
-        }
+  }
+
+  private void saveProduct() {
+    try {
+
+      List<entity.Image> images = new ArrayList<>();
+      for (var img : this.imagePaths) {
+        images.add(new entity.Image(1,img));
+      }
+
+      Product product = Product.builder()
+              .id(LoginFrame.COMPUTER_SHOP.getTotalProduct()+1)
+              .supplier(LoginFrame.COMPUTER_SHOP.findSupplier((String) cmbSupplierId.getSelectedItem()))
+              .name(txtName.getText())
+              .quantity(Integer.parseInt(txtQuantity.getText()))
+              .price(Integer.parseInt(txtPrice.getText()))
+              .type(txtGenre.getText())
+              .brand(txtBrand.getText())
+              .monitor(txtMonitor.getText())
+              .operatingSystem(txtOS.getText())
+              .cpu(txtCPU.getText())
+              .memory(txtMemory.getText())
+              .ram(txtRAM.getText())
+              .madeIn(txtMadeIn.getText())
+              .weight(Float.parseFloat(txtWeight.getText()))
+              .card(txtCard.getText())
+              .status(cmbStatus.getSelectedItem().toString())
+              .isActive(true)
+              .images(images)
+              .build();
+
+
+      LoginFrame.COMPUTER_SHOP.addProduct(product);
+//      var newProduct = productDAO.save(product);
+//      imageDAO = new ImageDAO();
+//      for (var img : this.imagePaths) {
+//        imageDAO.save(new model.Image(newProduct.getId(), img, "Hình demo cho san pham"));
+//      }
+
+      showSuccessDialog("saved successfully!");
+      clearForm();
+
+    } catch (NumberFormatException ex) {
+      showErrorDialog("Please enter the correct format!");
     }
+  }
 
+  private void clearForm() {
+    txtName.setText("");
+    txtQuantity.setText("");
+    txtPrice.setText("");
+    txtGenre.setText("");
+    txtBrand.setText("");
+    txtOS.setText("");
+    txtCPU.setText("");
+    txtMemory.setText("");
+    txtRAM.setText("");
+    txtMadeIn.setText("");
+    txtCard.setText("");
+    txtWeight.setText("");
+    txtDisk.setText("");
+    txtMonitor.setText("");
+    dropImagePanel.removeAll();
+    dropImagePanel.revalidate();
+    dropImagePanel.repaint();
+  }
 
+  private void showSuccessDialog(String message) {
+    JOptionPane.showMessageDialog(this, message, "Successfully", JOptionPane.INFORMATION_MESSAGE);
+  }
 
-    private void addStyledComponents(JPanel panel, GridBagConstraints gbc) {
-        Object[][] components = {
+  private void showErrorDialog(String message) {
+    JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+  }
 
-                {"Suppler name:", cmbSupplierId},
-                {"Product name:", txtName},
-                {"Quantity:", txtQuantity},
-                {"Unit price:", txtPrice},
-                {"Genre:", txtGenre},
-                {"Brand:", txtBrand},
-                {"Operating system :", txtOS},
-                {"CPU:", txtCPU},
-                {"Memory:", txtMemory},
-                {"RAM:", txtRAM},
-                {"Made in:", txtMadeIn},
-                {"Disk :", txtDisk},
-                {"Minotor :", txtMonitor},
-                {"Weight :", txtWeight},
-                {"Card :", txtCard},
-                {"Status:", cmbStatus}
-        };
-
-        int gridy = 0;
-        for (Object[] comp : components) {
-            gbc.gridx = 0;
-            gbc.gridy = gridy;
-            gbc.weightx = 0.3;
-            JLabel label = new JLabel(comp[0].toString());
-            label.setFont(new Font("Arial", Font.BOLD, 14));
-            label.setForeground(Style.MODEL_PRIMARY_COLOR);
-            panel.add(label, gbc);
-
-            gbc.gridx = 1;
-            gbc.weightx = 0.7;
-            panel.add((Component) comp[1], gbc);
-
-            gridy++;
-        }
-    }
-
-    private JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
-        panel.setPreferredSize(new Dimension(800,800));
-        panel.setBackground(BACKGROUND_COLOR);
-
-        btnSave.addActionListener(e -> saveProduct());
-        btnClear.addActionListener(e -> clearForm());
-        btnExit.addActionListener(e ->  this.setVisible(false));
-
-        panel.add(btnSave);
-        panel.add(btnClear);
-        panel.add(btnExit);
-
-        return panel;
-    }
-
-    private void saveProduct() {
-        try {
-            Product product = new Product();
-
-//            product.setId(Integer.parseInt(txtId.getText()));
-            product.setSuppliersId(supplierId );
-            product.setName(txtName.getText());
-            product.setQuantity(Integer.parseInt(txtQuantity.getText()));
-            product.setPrice(Integer.parseInt(txtPrice.getText()));
-            product.setGenre(txtGenre.getText());
-            product.setBrand(txtBrand.getText());
-            product.setOperatingSystem(txtOS.getText());
-            product.setCpu(txtCPU.getText());
-            product.setMemory(txtMemory.getText());
-            product.setRam(txtRAM.getText());
-            product.setMadeIn(txtMadeIn.getText());
-            product.setDisk(txtDisk.getText());
-            product.setMonitor(txtMonitor.getText());
-            product.setWeight(txtWeight.getText());
-            product.setCard(txtCard.getText());
-            product.setStatus(cmbStatus.getSelectedItem().toString());
-            productDAO.save(product);
-
-            showSuccessDialog("saved successfully!");
-            clearForm();
-
-        } catch (NumberFormatException ex) {
-            showErrorDialog("Please enter the correct format!");
-        }
-    }
-
-    private void clearForm() {
-        txtName.setText("");
-        txtQuantity.setText("");
-        txtPrice.setText("");
-        txtGenre.setText("");
-        txtBrand.setText("");
-        txtOS.setText("");
-        txtCPU.setText("");
-        txtMemory.setText("");
-        txtRAM.setText("");
-        txtMadeIn.setText("");
-        txtCard.setText("");
-        txtWeight.setText("");
-        txtDisk.setText("");
-        txtMonitor.setText("");
-    }
-
-    private void showSuccessDialog(String message) {
-        JOptionPane.showMessageDialog(this, message, "Successfully", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    private void showErrorDialog(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
+  public static void main(String[] args) {
+    new ProductInputForm();
+  }
 }

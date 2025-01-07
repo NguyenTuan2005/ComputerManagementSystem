@@ -116,4 +116,7 @@ public class Product {
         this.supplier = sup;
     }
 
+    public boolean sameSupplier(Supplier supplier) {
+        return this.supplier.equals(supplier);
+    }
 }

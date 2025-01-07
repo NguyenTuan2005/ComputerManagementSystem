@@ -35,7 +35,7 @@ public class Supplier {
      private String[] convertToArray(int serial) {
           String[] result = {
                   String.valueOf(serial),
-                  String.valueOf(id),
+
                   companyName,
                   email,
                   phoneNumber,

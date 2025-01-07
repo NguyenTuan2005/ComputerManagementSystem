@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 
 import java.sql.SQLOutput;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class ComputerShop implements MController {
     public static void main(String[] args) {
         ComputerShop c = new ComputerShop();
 //        c.findProductByName("dell");
-        System.out.println(c.managers.get(0).getOrders());
+        System.out.println(c.quantitativeAnalysis());
     }
 
     @Override
@@ -134,6 +135,19 @@ public class ComputerShop implements MController {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Map<String, Long> quantitativeAnalysis() {
+        Map<String, Long> map = new HashMap<>();
+        for ( var  s : this.suppliers){
+            long sumQuantity =0;
+            for(var m : this.managers)
+                sumQuantity= m.getQuantityInOrders(s);
+
+            map.put(s.getCompanyName(),sumQuantity);
+        }
+        return  map;
+    }
+
     public Supplier findSupplier(String name){
         return this.suppliers.stream()
                 .filter(s->s.exactlySameCompanyName(name))
@@ -192,6 +206,16 @@ public class ComputerShop implements MController {
             }
         }
         this.suppliers.add(supplier);
+    }
+
+    @Override
+    public void addSupplier(Supplier newSupplier) {
+        this.suppliers.add(newSupplier);
+    }
+
+    @Override
+    public void removeSupplierByIndex(int index) {
+        this.suppliers.remove(index);
     }
 
     //Customer

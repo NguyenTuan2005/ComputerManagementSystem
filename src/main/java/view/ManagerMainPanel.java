@@ -1,6 +1,5 @@
 package view;
 
-import static org.apache.commons.collections4.CollectionUtils.collect;
 import static view.CustomerMainPanel.createImageForProduct;
 
 import com.toedter.calendar.JCalendar;
@@ -90,13 +89,13 @@ public class ManagerMainPanel extends JPanel {
   };
   private static final String[] columnNamesSUPPLIER = {
     "Serial Number",
-    "Supplier ID:",
     "Supplier Name:",
     "Email:",
     "Phone number:",
     "Address:",
     "Contract Start Date:"
   };
+  private static final String[] columnNamesQuanTityOfSupplier ={"Serial Number","Company name :", "Quantity :"};
   static final String[] columnNamesCUSTOMER = {
     "Customer ID:", "Customer Name:", "Phone Number:", "Email:", "Address:", "Date of Birth:"
   };
@@ -548,23 +547,21 @@ public class ManagerMainPanel extends JPanel {
   }
 
   private class SupplierPanel extends JPanel {
-    private JButton addBt, modifyBt, deleteBt, exportExcelBt, importExcelBt, reloadBt, searchBt;
+    private JButton addBt, modifyBt, deleteBt, exportExcelBt, reloadBt, searchBt, analysisBt;
     private JTextField findText;
-    private JTable tableSupplier;
-    private DefaultTableModel modelSupplier;
+    private JTable tableSupplier,tableQuantity;
+    private DefaultTableModel modelSupplier ,modelQuantity;
 
     private ToolPanel toolPanel = new ToolPanel();
     private TablePanel tablePanel = new TablePanel();
     //data
 
     private static List<entity.Supplier> suppliers = reloadData();
+    private static  Map<String,Long> analyzeSalesVolume= LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
 
     private static List<entity.Supplier> reloadData() {
       return LoginFrame.COMPUTER_SHOP.getAllSupplier();
     }
-
-
-
 
     private String selectedOption = "ALL";
 
@@ -654,20 +651,26 @@ public class ManagerMainPanel extends JPanel {
         }
 
         {
-          importExcelBt = new JButton("Import");
+          analysisBt = new JButton("Quantitative analysis");
           ButtonConfig.setStyleButton(
-              importExcelBt,
+              analysisBt,
               Style.FONT_PLAIN_13,
               Style.WORD_COLOR_BLACK,
               Style.WORD_COLOR_WHITE,
               SwingConstants.CENTER,
               new Dimension(80, 80));
           ButtonConfig.setButtonIcon(
-              "src/main/java/Icon/icons8-export-excel-50.png", importExcelBt, 35);
+              "src/main/java/Icon/icons8-export-excel-50.png", analysisBt, 35);
           ButtonConfig.addButtonHoverEffect(
-              importExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+              analysisBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
 
-          KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.importExcelKey, importExcelBt);
+          KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.importExcelKey, analysisBt);
+          analysisBt.addActionListener( e ->{
+             LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
+             modelQuantity.setRowCount(0);
+             analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
+            upDataTable(modelQuantity);
+          });
 
         }
 
@@ -686,8 +689,13 @@ public class ManagerMainPanel extends JPanel {
           KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.reloadKey, reloadBt);
           reloadBt.addActionListener(
               e -> {
+                suppliers = reloadData();
                 updateSuppliers(selectedOption);
                 findText.setText("");
+
+                analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
+                modelQuantity.setRowCount(0);
+                upDataTable(modelQuantity);
               });
         }
         findText =
@@ -713,7 +721,7 @@ public class ManagerMainPanel extends JPanel {
             e -> {
               if (!findText.getText().isBlank()) {
                 String text = findText.getText().toLowerCase().trim();
-                System.out.println(LoginFrame.COMPUTER_SHOP.findSupplierByName(text));
+
 
                 searchSuppliers(selectedOption, text);
               } else {
@@ -746,7 +754,7 @@ public class ManagerMainPanel extends JPanel {
         applicationPanel.add(sortComboBox);
         applicationPanel.add(ButtonConfig.createVerticalSeparator());
         applicationPanel.add(exportExcelBt);
-        applicationPanel.add(importExcelBt);
+        applicationPanel.add(analysisBt);
         applicationPanel.add(reloadBt);
         applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
 
@@ -792,10 +800,11 @@ public class ManagerMainPanel extends JPanel {
         int selectedRow = tableSupplier.getSelectedRow();
 
         if (selectedRow != -1) {
-          int supplierId = Integer.parseInt((String) modelSupplier.getValueAt(selectedRow, 1));
+          int index = Integer.parseInt((String) modelSupplier.getValueAt(selectedRow, 0)) - 1;
 
-
-          modelSupplier.removeRow(selectedRow);
+          LoginFrame.COMPUTER_SHOP.removeSupplierByIndex(index);
+          suppliers = reloadData();
+          updateSuppliers(selectedOption);
 
           ToastNotification.showToast("Supplier marked as deleted successfully.", 3000, 50, -1, -1);
         } else {
@@ -810,21 +819,43 @@ public class ManagerMainPanel extends JPanel {
         setBackground(Style.WORD_COLOR_WHITE);
 
         tableSupplier = createTable(modelSupplier, columnNamesSUPPLIER);
-        tableSupplier.setRowHeight(40);
+        tableQuantity = createTable(modelQuantity,columnNamesQuanTityOfSupplier);
+
+        tableSupplier.setRowHeight(30);
+        tableQuantity.setRowHeight(30);
+
         resizeColumnWidth(tableSupplier, 300);
+        resizeColumnWidth(tableQuantity, 300);
+
+
         tableSupplier
             .getColumnModel()
             .getColumn(tableSupplier.getColumnCount() - 1)
             .setPreferredWidth(400);
+
+
+        tableQuantity
+                .getColumnModel()
+                .getColumn(tableQuantity.getColumnCount() - 1)
+                .setPreferredWidth(400);
+
         JScrollPane scrollPaneSupplier = new JScrollPane(tableSupplier);
+        JScrollPane scrollPaneSupplierQuantity = new JScrollPane(tableQuantity);
+
         modelSupplier = (DefaultTableModel) tableSupplier.getModel();
+        modelQuantity = (DefaultTableModel) tableQuantity.getModel();
+
         suppliers = LoginFrame.COMPUTER_SHOP.getAllSupplier();
 
         upDataTable(suppliers, modelSupplier);
 
+
         JTabbedPane tabbedPaneSupplier =
             createTabbedPane(scrollPaneSupplier, "Supplier List", Style.FONT_BOLD_16);
+        tabbedPaneSupplier.add("Analyze sales volume",scrollPaneSupplierQuantity);
+
         add(tabbedPaneSupplier, BorderLayout.CENTER);
+
       }
     }
 
@@ -838,14 +869,31 @@ public class ManagerMainPanel extends JPanel {
       modelSupplier.setRowCount(0);
       suppliers = LoginFrame.COMPUTER_SHOP.findSuppliersByName(text);
       LoginFrame.COMPUTER_SHOP.sortSupplierByColumn(column, suppliers);
-
       upDataTable(suppliers, modelSupplier);
+
+      modelQuantity.setRowCount(0);
+
+      Iterator<String> iterator =analyzeSalesVolume.keySet().iterator();
+      while (iterator.hasNext()) {
+        String key = iterator.next();
+        if(!key.toLowerCase().contains(text.toLowerCase())) {
+          iterator.remove();
+        }
+      }
+      upDataTable(modelQuantity);
     }
 
     public static void upDataTable(List<entity.Supplier> suppliers, DefaultTableModel modelSupplier) {
       String[][] rowData = Supplier.getData(suppliers);
       for (String[] strings : rowData) {
+        System.out.println(strings);
         modelSupplier.addRow(strings);
+      }
+    }
+    public static void upDataTable( DefaultTableModel modelQuantity) {
+      int index =0;
+      for(Map.Entry<String, Long> data: analyzeSalesVolume.entrySet()) {
+        modelQuantity.addRow(new Object[]{index++,data.getKey(),data.getValue()});
       }
     }
   }

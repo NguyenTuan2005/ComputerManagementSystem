@@ -23,7 +23,7 @@ public interface MController {
     Map<Customer, List<Order>> userOrderStatistics();
     void addOrder(Customer customer , Order newOrder);
 
-    Map<Manager , List<Order>>  managerOrderStatistics();
+    List<Manager> getAllManager();
     Manager findManagerByEmail(String email);
 
 

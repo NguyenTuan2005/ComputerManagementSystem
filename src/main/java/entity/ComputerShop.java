@@ -10,7 +10,6 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -106,15 +105,9 @@ public class ComputerShop implements MController {
     }
 
     @Override
-    public Map<Manager, List<Order>> managerOrderStatistics() {
-        return this.managers.stream().collect(Collectors.toMap(
-                manager -> manager,
-                Manager::getOrders,
-                (exit, replace) -> exit,
-                TreeMap::new
-        ));
+    public List<Manager> getAllManager() {
+        return this.managers;
     }
-
 
     @Override
     public Manager findManagerByEmail(String email) {

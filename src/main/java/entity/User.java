@@ -98,7 +98,12 @@ public abstract class User implements Comparable<User>{
     }
 
     public boolean contains(String searchText) {
-        return this.email.toLowerCase().contains(searchText);
+        return this.email.toLowerCase().contains(searchText) ||
+                String.valueOf(this.id).contains(searchText) ||
+                this.fullName.toLowerCase().contains(searchText) ||
+                this.address.trim().toLowerCase().contains(searchText) ||
+                this.phone.trim().contains(searchText) ||
+                String.valueOf(this.dob).contains(searchText);
     }
 
     public void changeAvatarImg(String url){ this.avatarImg = url;}

@@ -35,24 +35,21 @@ public class Order {
                                 order.status,
                                 entry.getKey().getFullName(),
                                 String.valueOf(entry.getKey().getId()),
-                                ManagerMainPanel.formatCurrency.format(order.totalPrice()),
+                                ManagerMainPanel.formatCurrency.format(order.totalCost()),
                                 String.valueOf(order.totalQuantity())
                         }
                 ))
                 .toArray(String[][]::new);
     }
 
-    private int totalQuantity() {
+    public int totalQuantity() {
         return this.orderDetails.stream()
                 .mapToInt(OrderDetail::getQuantity)
                 .sum();
     }
 
-    private double totalPrice() {
-        return this.orderDetails.stream()
-                .map(OrderDetail::getProduct)
-                .mapToDouble(Product::getPrice)
-                .sum();
+    public double totalCost() {
+        return this.orderDetails.stream().mapToDouble(OrderDetail::totalCost).sum();
     }
 
     @Override
@@ -72,11 +69,12 @@ public class Order {
 
     public boolean containText(String searchText) {
         return String.valueOf(orderId).contains(searchText)
-                || this.customer.contains(searchText)
+                || this.customer.getFullName().contains(searchText)
                 || (orderedAt != null && orderedAt.toString().toLowerCase().contains(searchText))
                 || (shipAddress != null && shipAddress.toLowerCase().contains(searchText))
                 || (status != null && status.toLowerCase().contains(searchText))
-                || this.orderDetails.stream().anyMatch(o -> o.contains(searchText));
+                || this.orderDetails.stream()
+                .anyMatch(o -> (searchText).contains(String.valueOf(o.totalCost())) || searchText.contains(String.valueOf(o.getQuantity())));
     }
 
     public boolean isDispatched() {
@@ -85,5 +83,9 @@ public class Order {
 
     public boolean sameID(int id) {
         return this.orderId == id;
+    }
+
+    public void updateStatus(String status) {
+        this.status = status;
     }
 }

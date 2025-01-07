@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static view.ManagerMainPanel.formatCurrency;
@@ -116,4 +115,14 @@ public class Product {
         this.supplier = sup;
     }
 
+    public boolean filter(String status, String searchText) {
+        return (status == null || status.isEmpty() || status.equals(this.status)) &&
+                (searchText == null || searchText.isEmpty() || contains(searchText.toLowerCase()));
+    }
+
+    public boolean updateStatus(String status) {
+        if (this.status.equals(status)) return false;
+        this.status = status;
+        return true;
+    }
 }

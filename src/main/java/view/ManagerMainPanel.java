@@ -2,10 +2,7 @@ package view;
 
 import com.toedter.calendar.JCalendar;
 import config.*;
-import entity.Manager;
-import entity.Order;
-import entity.Product;
-import entity.Supplier;
+import entity.*;
 import enums.OrderType;
 import enums.TableStatus;
 import lombok.SneakyThrows;
@@ -25,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -163,31 +161,27 @@ public class ManagerMainPanel extends JPanel {
 
     JPanel searchPanel, applicationPanel, mainPanel;
 
-    private static List<entity.Product> productsAll = reloadData();
+    private static List<Product> productsAll = reloadProduct();
 
-    private static List<entity.Product> reloadData() {
+    private static List<Product> reloadProduct() {
       return LoginFrame.COMPUTER_SHOP.getAllProduct();
     }
 
-    public static List<entity.Product> reloadProducts() {
-      return reloadData();
-    }
     // ok
-    public static void upDataProducts(List<entity.Product> products , DefaultTableModel modelProductTable) {
-      String[][] rowData = entity.Product.getDateOnTable(products);
+    public static void upDataProducts(List<Product> products , DefaultTableModel modelProductTable) {
+      String[][] rowData = Product.getDateOnTable(products);
       TablePanel.removeDataTable(modelProductTable);
       for (int i = 0; i < rowData.length; i++) {
         modelProductTable.addRow(rowData[i]);
       }
     }
 
-    public static void deletedProduct(int id){
-     ToastNotification.showToast("delete product",3000,50,-1,-1);
+    public static void deletedProduct(Product product){
+      productsAll.remove(product);
     }
 
-    public static boolean changeStatus(int id, String status) {
-      ToastNotification.showToast("update staus",3000,50,-1,-1);
-      return true;
+    public static boolean changeStatus(Product product, String status) {
+      return product.updateStatus(status);
     }
 
     public ProductPanel() {
@@ -315,7 +309,7 @@ public class ManagerMainPanel extends JPanel {
                     fileName += ".xlsx";
                   }
 
-                  productsAll = reloadData();
+                  productsAll = reloadProduct();
                   ExcelConfig.exportToExcel(productsAll, fileName, columnNamesPRODUCT);
                   if (productsAll.isEmpty())
                     JOptionPane.showMessageDialog(
@@ -509,7 +503,7 @@ public class ManagerMainPanel extends JPanel {
             new ActionListener() {
               @Override
               public void actionPerformed(ActionEvent e) {
-                productsAll = reloadData();
+                productsAll = reloadProduct();
                 upDataProducts(productsAll, modelProductTable);
                 findText.setText("");
               }
@@ -530,7 +524,7 @@ public class ManagerMainPanel extends JPanel {
 
         modelProductTable = (DefaultTableModel) tableProduct.getModel();
 
-        List<entity.Product> productsDemo = LoginFrame.COMPUTER_SHOP.getAllProduct();
+        List<Product> productsDemo = LoginFrame.COMPUTER_SHOP.getAllProduct();
 
         upDataProducts(productsDemo, modelProductTable);
 
@@ -557,9 +551,9 @@ public class ManagerMainPanel extends JPanel {
     private TablePanel tablePanel = new TablePanel();
     //data
 
-    private static List<entity.Supplier> suppliers = reloadData();
+    private static List<Supplier> suppliers = reloadData();
 
-    private static List<entity.Supplier> reloadData() {
+    private static List<Supplier> reloadData() {
       return LoginFrame.COMPUTER_SHOP.getAllSupplier();
     }
 
@@ -1307,8 +1301,8 @@ public class ManagerMainPanel extends JPanel {
     final String[] orderColumnNames = {
       "Order ID",
       "Customer Name",
-      "Order Date",
       "Ship address",
+      "Order Date",
       "Status Item",
       "Saler",
       "Saler ID",
@@ -1329,8 +1323,10 @@ public class ManagerMainPanel extends JPanel {
     private ExportPanel exportPanel;
 
     private String[][] rowData;
-    private Map<Manager, List<Order>> filteredMap;
     private Map<Manager, List<Order>> managerListMap;
+    private List<Manager> managers;
+    private Manager manager;
+    private Order order;
 
     public OrderPanel() {
       setLayout(new BorderLayout());
@@ -1382,11 +1378,17 @@ public class ManagerMainPanel extends JPanel {
               e -> {
                 JTable table = getSelectedTable();
                 if (table != null) {
-//                  ArrayList<CustomerOrderDTO> list =
-//                      orders.values().stream()
-//                          .flatMap(Collection::stream)
-//                          .collect(Collectors.toCollection(ArrayList::new));
-//                  exportExcel(list, orderColumnNames);
+                  List<Order> orders =
+                      managerListMap.values().stream()
+                          .flatMap(Collection::stream)
+                          .collect(Collectors.toList());
+                  exportExcel(orders, new String[]{"Order ID",
+                          "Customer Name",
+                          "Ship address",
+                          "Order Date",
+                          "Status Item",
+                          "Total Price",
+                          "Total Quantity"});
                 }
               });
         }
@@ -1422,7 +1424,7 @@ public class ManagerMainPanel extends JPanel {
         // search bar to find order
         searchOrderField =
             TextFieldConfig.createTextField(
-                "Search Order", Style.FONT_PLAIN_18, Color.GRAY, new Dimension(300, 50));
+                "", Style.FONT_PLAIN_18, Color.GRAY, new Dimension(300, 50));
         searchOrderField.addActionListener(e -> searchBt.doClick());
         searchOrderField.setAlignmentY(SwingConstants.CENTER);
         searchBt = new JButton();
@@ -1458,7 +1460,7 @@ public class ManagerMainPanel extends JPanel {
 
         return switch (index) {
           case 0 -> {
-            reloadOrders(null, "");
+            reloadOrders(null, searchOrderField.getText());
             yield orderTable;
           }
           case 1 -> {
@@ -1478,16 +1480,15 @@ public class ManagerMainPanel extends JPanel {
 
           switch (statusMessage) {
             case OrderType.ACTIVE_MESSAGE -> {
-//              rowData[selectRow][0], rowData[selectRow][6]
-              Manager manager = managerListMap.keySet().stream()
+              manager = managerListMap.keySet().stream()
                               .filter(manager1 -> manager1.sameID(Integer.parseInt(rowData[selectRow][6])))
                               .findAny()
                               .orElse(null);
-              Order order = managerListMap.get(manager).stream().filter(order1 -> order1.sameID(Integer.parseInt(rowData[selectRow][0])))
+              order = managerListMap.get(manager).stream().filter(order1 -> order1.sameID(Integer.parseInt(rowData[selectRow][0])))
                               .findAny()
                               .orElse(null);
               orderTabbedPane.setSelectedIndex(2);
-//              exportPanel.loadOrders(manager, order);
+              exportPanel.loadOrders(manager, order);
             }
             case OrderType.UN_ACTIVE_MESSAGE -> ToastNotification.showToast(
                 "This order has been canceled and cannot be dispatched.", 3000, 50, -1, -1);
@@ -1531,7 +1532,6 @@ public class ManagerMainPanel extends JPanel {
       private CustomButton exportBt, cancelBt;
       private OrderDetailsPanel detailsPanel;
       private PaymentPanel paymentPanel;
-      private int orderID;
 
       private JTextField customerIdTF,
           orderDateTF,
@@ -1575,8 +1575,8 @@ public class ManagerMainPanel extends JPanel {
           add(productDetailsPanel, BorderLayout.CENTER);
         }
 
-        private void addProductPanel(List<Product> list) {
-          productDetailsPanel.addProductToOrders(productDetailsPanel.createProduct(list));
+        private void addProductPanel(List<OrderDetail> orderDetails) {
+          productDetailsPanel.addProductToOrders(productDetailsPanel.createProduct(orderDetails));
         }
       }
       // customer information and details about order
@@ -1684,7 +1684,7 @@ public class ManagerMainPanel extends JPanel {
         ProductsPanel productsPn = new ProductsPanel();
         ProductDetailsPanel productDetailsPn = new ProductDetailsPanel();
         CardLayout cardLayoutOrder = new CardLayout();
-        List<Product> productList;
+        List<OrderDetail> orderDetails;
 
         ProductsMainPanel() {
           setLayout(cardLayoutOrder);
@@ -1764,13 +1764,14 @@ public class ManagerMainPanel extends JPanel {
           }
         }
 
-        public JPanel createProduct(List<Product> productList) {
-          this.productList = productList;
+        public JPanel createProduct(List<OrderDetail> orderDetails) {
+          this.orderDetails = orderDetails;
           JPanel wrapperPn = new JPanel();
           wrapperPn.setLayout(new BoxLayout(wrapperPn, BoxLayout.Y_AXIS));
           wrapperPn.setBackground(Color.WHITE);
 
-          for (Product product : productList) {
+          for (OrderDetail orderDetail : this.orderDetails) {
+            Product product = orderDetail.getProduct();
             JPanel mainPanel = new JPanel(new BorderLayout());
             mainPanel.setBackground(Color.WHITE);
             mainPanel.setPreferredSize(new Dimension(600, 120));
@@ -1887,7 +1888,9 @@ public class ManagerMainPanel extends JPanel {
 
         public void showDetail(int id) {
           Product product =
-              this.productList.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+              this.orderDetails.stream()
+                      .map(OrderDetail::getProduct)
+                      .filter(p -> p.getId() == id).findFirst().orElse(null);
           if (product != null) {
             productIdTF.setText(String.valueOf(product.getId()));
             productNameTF.setText(product.getName());
@@ -2128,10 +2131,10 @@ public class ManagerMainPanel extends JPanel {
 
         private void handleExport() {
           if (clearAllOrders()) {
-
+            manager.updateStatus(order, OrderType.DISPATCHED_MESSAGE);
             updateOrders();
             orderTabbedPane.setSelectedIndex(1);
-            ToastNotification.showToast("Order exported successfully!  chua code", 3000, 50, -1, -1);
+            ToastNotification.showToast("Order exported successfully!", 3000, 50, -1, -1);
           } else {
             ToastNotification.showToast("No orders available to export.", 3000, 50, -1, -1);
           }
@@ -2149,16 +2152,16 @@ public class ManagerMainPanel extends JPanel {
       }
 
       private void loadOrders(Manager manager, Order order) {
-//        setText(
-//            String.valueOf(order.getCustomer().getId()),
-//            String.valueOf(order.getOrderedAt()),
-//            order.getShipAddress(),
-//            order.getStatus(),
-//            manager.getFullName(),
-//            String.valueOf(manager.getId()),
-//            formatCurrency.format(totalCost),
-//            String.valueOf(quantity));
-//        this.detailsPanel.addProductPanel(orderDetails);
+        setText(
+            String.valueOf(order.getCustomer().getId()),
+            String.valueOf(order.getOrderedAt()),
+            order.getShipAddress(),
+            order.getStatus(),
+            manager.getFullName(),
+            String.valueOf(manager.getId()),
+            formatCurrency.format(order.totalCost()),
+            String.valueOf(order.totalQuantity()));
+        this.detailsPanel.addProductPanel(order.getOrderDetails());
       }
 
       private void setText(
@@ -2193,18 +2196,15 @@ public class ManagerMainPanel extends JPanel {
     }
 
     private void reloadOrders(String status, String searchText) {
-      managerListMap = LoginFrame.COMPUTER_SHOP.managerOrderStatistics();
-      filteredMap = managerListMap.entrySet().stream()
+      managers = LoginFrame.COMPUTER_SHOP.getAllManager();
+      managerListMap = managers.stream()
               .collect(Collectors.toMap(
-                      Map.Entry::getKey,
-                      entry -> entry.getValue().stream()
-                              .filter(order ->
-                                      (searchText == null || searchText.isEmpty() || order.containText(searchText)) &&
-                                      ((status != null && order.isDispatched()) || (status == null && !order.isDispatched()))
-                              )
-                              .toList()
+                      manager -> manager,
+                      manager -> manager.filter(status, searchText),
+                      (exist, replace) -> exist,
+                      TreeMap::new
               ));
-      rowData = Order.getData(filteredMap);
+      rowData = Order.getData(managerListMap);
     }
 
     private void upDataOrders(DefaultTableModel tableModel, String status, String searchText) {
@@ -2235,7 +2235,7 @@ public class ManagerMainPanel extends JPanel {
     private JButton setForSaleBt, restockBt, deleteBt, modifyBt, exportExcelBt, reloadBt, searchBt;
     private DefaultTableModel modelInventory, modelImport, modelExport;
     private String searchText;
-    private ArrayList<entity.Product> products;
+    private List<Product> products;
 
     InventoryPanel() {
       setLayout(new BorderLayout(5, 5));
@@ -2349,6 +2349,7 @@ public class ManagerMainPanel extends JPanel {
           exportExcelBt.addActionListener(
               e -> {
                 getSelectedTable();
+
                 exportExcel(products, columnNamesPRODUCT);
               });
           buttonPanel.add(exportExcelBt);
@@ -2426,9 +2427,9 @@ public class ManagerMainPanel extends JPanel {
         if (selectedRows.length > 0 && messages != null) {
           int y = -1, duration = 3000;
           for (int row : selectedRows) {
-            int productId = Integer.parseInt(selectedTable.getValueAt(row, 1).toString());
             String productName = (String) selectedTable.getValueAt(row, 2);
-            if (changeStatus(productId, status)) {
+            Product product1 = products.stream().filter(product -> product.sameName(productName)).findAny().orElse(null);
+            if (changeStatus(product1, status)) {
               ToastNotification.showToast(
                   "Successfully set product " + productName + " to " + messages[0],
                   duration,
@@ -2457,8 +2458,8 @@ public class ManagerMainPanel extends JPanel {
           int selectedRow = selectedTable.getSelectedRow();
           SwingUtilities.invokeLater(
               () -> {
-//                new ProductModifyForm(products.get(selectedRow), InventoryPanel.this::updateProduct)
-//                    .setVisible(true);
+                new ProductModifyForm(products.get(selectedRow), InventoryPanel.this::updateProduct)
+                    .setVisible(true);
               });
         } else {
           ToastNotification.showToast("Please select a row to modify.", 3000, 50, -1, -1);
@@ -2470,9 +2471,9 @@ public class ManagerMainPanel extends JPanel {
 
         if (selectedTable != null && selectedTable.getSelectedRow() != -1) {
           int selectedRow = selectedTable.getSelectedRow();
-          int productId = Integer.parseInt(selectedTable.getValueAt(selectedRow, 1).toString());
           String productName = (String) selectedTable.getValueAt(selectedRow, 2);
-          deletedProduct(productId);
+          Product product1 = products.stream().filter(product -> product.sameName(productName)).findAny().orElse(null);
+          deletedProduct(product1);
           updateProduct();
           ToastNotification.showToast(
               "Successfully delete product " + productName, 3000, 50, -1, -1);
@@ -2533,12 +2534,12 @@ public class ManagerMainPanel extends JPanel {
       return searchPanel;
     }
 
-    private void deletedProduct(int id) {
-      ProductPanel.deletedProduct(id);
+    private void deletedProduct(Product product) {
+      ProductPanel.deletedProduct(product);
     }
 
-    private boolean changeStatus(int id, String status) {
-      return ProductPanel.changeStatus(id, status);
+    private boolean changeStatus(Product product, String status) {
+      return ProductPanel.changeStatus(product, status);
     }
 
     private JButton createSearchButton() {
@@ -2564,13 +2565,9 @@ public class ManagerMainPanel extends JPanel {
     }
 
     private void reloadProducts(String status, String searchText) {
-      products = (ArrayList<entity.Product>) ProductPanel.reloadProducts();
-      if (!(status == null || status.isEmpty()))
-        products.removeIf(product -> !(status.equals(product.getStatus())));
-      if (searchText != null && !searchText.isEmpty()) {
-        products.removeIf(
-            product -> !product.getName().toLowerCase().contains(searchText.toLowerCase()));
-      }
+      products = ProductPanel.reloadProduct().stream()
+              .filter(product -> product.filter(status, searchText))
+              .toList();
     }
 
     private void upDataProducts(DefaultTableModel tableModel, String status, String searchText) {
@@ -3827,8 +3824,8 @@ public class ManagerMainPanel extends JPanel {
     String fileName = JOptionPane.showInputDialog("Enter the name of the Excel file:");
     if (fileName != null && !fileName.trim().isEmpty()) {
       fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
-//      ExcelConfig.exportToExcel(dataList, fileName, headers);
-      JOptionPane.showMessageDialog(null, "Exported to  bug" + fileName);
+      ExcelConfig.exportToExcel(dataList, fileName, headers);
+      JOptionPane.showMessageDialog(null, "Exported to " + fileName);
     } else {
       JOptionPane.showMessageDialog(
           null, "File name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);

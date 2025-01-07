@@ -4,8 +4,10 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ToString
@@ -46,13 +48,13 @@ public class Manager extends User{
         this.orders.remove(order);
     }
     public void updateStatus(Order order,String status){
-
+        this.orders.get(this.orders.indexOf(order)).updateStatus(status);
     }
 
     @Override
     public boolean isManager() {
         return true;
-    };
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -62,5 +64,15 @@ public class Manager extends User{
             entity.Manager that = (entity.Manager) o;
             return this.orders.equals(that.orders);
         }
+    }
+
+    public List<Order> filter(String status, String searchText) {
+        return this.orders.stream()
+                .filter(order ->
+                    (searchText == null || searchText.isEmpty()
+                    || order.containText(searchText) || (searchText).contains(String.valueOf(this.id)) || (searchText).contains(this.fullName)) &&
+                    ((status != null && order.isDispatched()) || (status == null && !order.isDispatched()))
+                )
+                .toList();
     }
 }

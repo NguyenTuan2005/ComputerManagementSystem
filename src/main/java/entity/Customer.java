@@ -1,11 +1,11 @@
 package  entity;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import javax.swing.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static view.otherComponent.ImageInJTable.resizeImageIcon;
@@ -53,7 +53,4 @@ public class Customer extends User{
         }
         return datass;
     }
-
-
-
 }

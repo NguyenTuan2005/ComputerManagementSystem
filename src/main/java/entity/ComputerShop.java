@@ -7,8 +7,6 @@ import enums.LoginStatus;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
-
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -107,8 +105,8 @@ public class ComputerShop implements MController {
     }
 
     @Override
-    public Map<Manager, List<Order>> managerOrderStatistics() {
-        return null;
+    public List<Manager> getAllManager() {
+        return this.managers;
     }
 
     @Override

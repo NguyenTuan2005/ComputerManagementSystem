@@ -1,164 +1,184 @@
 package view;
 
-import Config.CurrentUser;
-import view.OverrideComponent.CircularImage;
-
-import javax.swing.*;
+import config.ButtonConfig;
+import config.CurrentUser;
+import config.LabelConfig;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import javax.swing.*;
+import view.overrideComponent.CircularImage;
+import view.overrideComponent.CustomButton;
 
 public class CustomerMenuPanel extends JPanel {
-    LoginFrame loginFrame;
-    CustomerFrame userFrame;
-    JLabel role, name, credit;
-    CircularImage avatar;
-    JButton productCatalogBt, orderHistoryBt, notificationBt, changeInfoBt, logoutBt;
-    GridBagConstraints gbc;
+  private JLabel role, name, credit;
+  private CircularImage avatar;
+  public CustomButton productCatalogBt, orderHistoryBt, notificationBt, changeInfoBt, logoutBt;
+  private GridBagConstraints gbc;
 
-    public CustomerMenuPanel() {
-        this.loginFrame = loginFrame;
-        this.userFrame = userFrame;
-        setLayout(new GridBagLayout());
-        gbc = new GridBagConstraints();
-        setBackground(Style.BACKGROUND_COLOR);
+  public CustomerMenuPanel() {
+    setLayout(new GridBagLayout());
+    setPreferredSize(new Dimension(250, 900));
+    gbc = new GridBagConstraints();
+    gbc.gridx = 1;
+    gbc.insets = new Insets(5, 15, 5, 15);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        ComponentTop componentTop = new ComponentTop();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weighty = 30;
-        add(componentTop, gbc);
+    setBackground(new Color(227, 242, 253));
 
-        ComponentButton componentButton = new ComponentButton();
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.weighty = 20;
-        gbc.fill = GridBagConstraints.BOTH;
-        add(componentButton, gbc);
+    ComponentTop componentTop = new ComponentTop();
 
-        ComponentBottom componentBottom = new ComponentBottom();
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.weighty = 30;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.PAGE_END;
-        add(componentBottom, gbc);
+    gbc.gridy = 0;
+    gbc.weighty = 0.4;
+    add(componentTop, gbc);
 
+    ComponentButton componentButton = new ComponentButton();
+    gbc.gridy++;
+    gbc.weighty = 0.4;
+    gbc.fill = GridBagConstraints.BOTH;
+    add(componentButton, gbc);
+
+    ComponentBottom componentBottom = new ComponentBottom();
+    gbc.gridy++;
+    gbc.weighty = 0.4;
+
+    gbc.anchor = GridBagConstraints.PAGE_END;
+    add(componentBottom, gbc);
+  }
+
+  private class ComponentTop extends JPanel {
+    public ComponentTop() {
+      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+      setBackground(new Color(227, 242, 253)); // good
+      setAlignmentX(Component.CENTER_ALIGNMENT);
+
+      avatar = new CircularImage(CurrentUser.URL, 100, 100, true);
+      avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+      name =
+          LabelConfig.createLabel(
+              "<html>" + CurrentUser.CURRENT_USER_V2.getFullName() + "<html>",
+              Style.FONT_BOLD_20,
+              Color.BLACK,
+              SwingConstants.CENTER);
+      name.setPreferredSize(new Dimension(230, 50));
+      name.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+      role =
+          LabelConfig.createLabel("Customer", Style.FONT_PLAIN_15, Color.GRAY, SwingConstants.LEFT);
+      role.setPreferredSize(new Dimension(100, 100));
+      role.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+      JSeparator separatorTop = new JSeparator(SwingConstants.HORIZONTAL);
+      separatorTop.setPreferredSize(new Dimension(320, 5));
+
+      add(avatar);
+      add(Box.createRigidArea(new Dimension(0, 10)));
+      add(name);
+      add(role);
+      add(Box.createRigidArea(new Dimension(0, 5)));
+      add(separatorTop);
     }
+  }
 
-    // panel cac nút trên cùng
-    class ComponentTop extends JPanel {
-        public ComponentTop() {
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            setBackground(Style.BACKGROUND_COLOR);
-            setBorder(BorderFactory.createEmptyBorder());
+  private class ComponentButton extends JPanel {
+    public ComponentButton() {
+      setLayout(new GridLayout(5, 1, 5, 10));
+      setBackground(Style.MENU_BACKGROUND_COLOR);
 
-            role = new JLabel("Customer");
-            role.setFont(Style.FONT_PLAIN_25);
-            role.setForeground(Color.GREEN);
-            role.setAlignmentX(Component.CENTER_ALIGNMENT);
-            add(role);
+      productCatalogBt =
+          ButtonConfig.createCustomButton(
+              " Product Catalog",
+              Style.FONT_PLAIN_18,
+              Color.BLACK,
+              Style.MENU_BUTTON_COLOR,
+              Style.LIGHT_BlUE,
+              20,
+              SwingConstants.LEFT,
+              new Dimension(180, 25));
+      ButtonConfig.setButtonIcon("src/main/java/Icon/catalog_Icon.png", productCatalogBt, 5);
+      add(productCatalogBt);
 
-            avatar = new CircularImage(CurrentUser.URL, 100, 100, true);
-            avatar.setAlignmentX(Component.CENTER_ALIGNMENT);
-            add(Box.createRigidArea(new Dimension(0, 5)));
-            add(avatar);
+      orderHistoryBt =
+          ButtonConfig.createCustomButton(
+              " Order History",
+              Style.FONT_PLAIN_18,
+              Color.BLACK,
+              Style.MENU_BACKGROUND_COLOR,
+              Style.LIGHT_BlUE,
+              20,
+              SwingConstants.LEFT,
+              new Dimension(180, 25));
+      ButtonConfig.setButtonIcon("src/main/java/Icon/purchasedList_Icon.png", orderHistoryBt, 5);
+      add(orderHistoryBt);
 
-            name = new JLabel("<html>" + CurrentUser.USER_NAME + "<html>");
-            name.setFont(Style.FONT_PLAIN_25);
-            name.setForeground(Color.GREEN);
-            name.setAlignmentX(Component.CENTER_ALIGNMENT);
-            add(Box.createRigidArea(new Dimension(0, 5)));
-            add(name);
-        }
+      notificationBt =
+          ButtonConfig.createCustomButton(
+              " Notification",
+              Style.FONT_PLAIN_18,
+              Color.BLACK,
+              Style.MENU_BACKGROUND_COLOR,
+              Style.LIGHT_BlUE,
+              20,
+              SwingConstants.LEFT,
+              new Dimension(180, 25));
+      ButtonConfig.setButtonIcon("src/main/java/Icon/iconNotification.png", notificationBt, 5);
+      add(notificationBt);
+
+      changeInfoBt =
+          ButtonConfig.createCustomButton(
+              " Profile Settings",
+              Style.FONT_PLAIN_18,
+              Color.BLACK,
+              Style.MENU_BACKGROUND_COLOR,
+              Style.LIGHT_BlUE,
+              20,
+              SwingConstants.LEFT,
+              new Dimension(180, 25));
+      ButtonConfig.setButtonIcon("src/main/java/Icon/iconChangeInform.png", changeInfoBt, 5);
+      add(changeInfoBt);
+      add(Box.createRigidArea(new Dimension(0, 50)));
     }
+  }
 
-    // panel cho cac nút chức năng của người dùng ở giữa
-    class ComponentButton extends JPanel {
-        public ComponentButton() {
-            setLayout(new GridLayout(0, 1, 0, 10));
-            setBackground(Style.BACKGROUND_COLOR);
+  private class ComponentBottom extends JPanel {
+    public ComponentBottom() {
+      setLayout(new GridLayout(2, 1, 2, 0));
+      setBackground(new Color(227, 242, 253));
+      logoutBt =
+          ButtonConfig.createCustomButton(
+              " Logout",
+              Style.FONT_PLAIN_18,
+              Style.CANCEL_BUTTON_COLOR_RED,
+              Style.MENU_BACKGROUND_COLOR,
+              Style.LIGHT_RED,
+              20,
+              SwingConstants.LEFT,
+              new Dimension(180, 25));
+      ButtonConfig.setButtonIcon("src/main/java/Icon/exit-sign.png", logoutBt, 5);
+      add(logoutBt);
 
-            productCatalogBt = new JButton("PRODUCT CATALOG");
-            setFormatButton(productCatalogBt);
-            productCatalogBt.setBackground(Style.MENU_BUTTON_COLOR_GREEN);
-            setIcon("src/main/java/Icon/catalog_Icon.png", productCatalogBt);
-            add(productCatalogBt);
-
-            orderHistoryBt = new JButton("ORDER HISTORY");
-            setFormatButton(orderHistoryBt);
-            setIcon("src/main/java/Icon/purchasedList_Icon.png", orderHistoryBt);
-            add(orderHistoryBt);
-
-            notificationBt = new JButton("NOTIFICATION");
-            setFormatButton(notificationBt);
-            setIcon("src/main/java/Icon/iconNotification.png", notificationBt);
-            add(notificationBt);
-        }
+      credit = new JLabel(" Group 2");
+      add(credit);
     }
+  }
 
-    //panel cho cac nút dưới cùng
-    class ComponentBottom extends JPanel {
-        public ComponentBottom() {
-            setLayout(new GridLayout(3, 1, 0, 10));
-            setBackground(Style.BACKGROUND_COLOR);
+  public void setProductCatalogBtListener(ActionListener listener) {
+    productCatalogBt.addActionListener(listener);
+  }
 
-            changeInfoBt = new JButton("CHANGE INFORMATION");
-            setFormatButton(changeInfoBt);
-            setIcon("src/main/java/Icon/iconChangeInform.png", changeInfoBt);
-            add(changeInfoBt);
+  public void setNotificationBtListener(ActionListener listener) {
+    notificationBt.addActionListener(listener);
+  }
 
-            logoutBt = new JButton("LOGOUT");
+  public void setPurchasedBtListener(ActionListener listener) {
+    orderHistoryBt.addActionListener(listener);
+  }
 
-            setFormatButton(logoutBt);
-            logoutBt.setForeground(new Color(176, 52, 52));
-            logoutBt.setFont(new Font("Arial", Font.BOLD, 15));
-            setIcon("src/main/java/Icon/exit-sign.png", logoutBt);
-            add(logoutBt);
+  public void setChangeInfoBtListener(ActionListener listener) {
+    changeInfoBt.addActionListener(listener);
+  }
 
-            credit = new JLabel("     Group 2");
-            add(credit);
-
-        }
-    }
-
-    // set Icon cho button
-    private void setIcon(String filePath, JButton that) {
-        ImageIcon iconButton = new ImageIcon(filePath);
-        Image image = iconButton.getImage(); // Lấy Image từ ImageIcon
-        Dimension buttonSize = that.getPreferredSize();
-        Image resizedImage = image.getScaledInstance(buttonSize.height, buttonSize.height, java.awt.Image.SCALE_SMOOTH); // Resize
-        that.setIcon(new ImageIcon(resizedImage));
-    }
-
-    // format lai dinh dang button
-    private void setFormatButton(JButton that) {
-        that.setFocusable(false);
-        that.setBackground(Style.BACKGROUND_COLOR);
-        that.setForeground(Style.WORD_COLOR_WHITE);
-        that.setFont(Style.FONT_BOLD_15);
-        that.setHorizontalAlignment(SwingConstants.LEFT);
-        that.setBorderPainted(false);
-    }
-
-    // thiết lập ActionListener cho nút "Mua Sắm":))
-    public void setProductCatalogBtListener(ActionListener listener) {
-        productCatalogBt.addActionListener(listener);
-    }
-
-    public void setNotificationBtListener(ActionListener listener) {
-        notificationBt.addActionListener(listener);
-    }
-
-    public void setPurchasedBtListener(ActionListener listener) {
-        orderHistoryBt.addActionListener(listener);
-    }
-
-    public void setChangeInfoBtListener(ActionListener listener) {
-        changeInfoBt.addActionListener(listener);
-    }
-
-    //thiết lập ActionListener cho nút "log out"
-    public void setLogoutBtListener(ActionListener listener) {
-        logoutBt.addActionListener(listener);
-    }
+  public void setLogoutBtListener(ActionListener listener) {
+    logoutBt.addActionListener(listener);
+  }
 }

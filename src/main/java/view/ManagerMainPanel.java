@@ -87,6 +87,12 @@ public class ManagerMainPanel extends JPanel {
     "Monitor",
     "Card"
   };
+  private static  String [] columStatisticsProduct ={
+          "Serial Number",
+          "Product Name",
+          "Sold Quantity",
+          "Quantity In Stock"
+  };
   private static final String[] columnNamesSUPPLIER = {
     "Serial Number",
     "Supplier Name:",
@@ -146,14 +152,15 @@ public class ManagerMainPanel extends JPanel {
         deleteBt,
         sortBt,
         exportExcelBt,
-        importExcelBt,
+
+        statisticsBt,
         searchBt,
         reloadBt;
     private JTextField findText;
 
     private TablePanel tablePanel = new TablePanel();
-    private JTable tableProduct;
-    private DefaultTableModel modelProductTable;
+    private JTable tableProduct,tableStatisticsProduct;
+    private DefaultTableModel modelProductTable, modelStatisticsProductTable;
     private JScrollPane scrollPaneProductTable;
     private JTabbedPane tabbedPaneProductTable;
     private JPanel sortPanel;
@@ -166,6 +173,35 @@ public class ManagerMainPanel extends JPanel {
 
     private static List<Product> reloadProduct() {
       return LoginFrame.COMPUTER_SHOP.getAllProduct();
+    }
+    private void upDataProductsStatistics(Map<Product, Long> stringLongMap, DefaultTableModel modelStatisticsProductTable) {
+        removeProductStatistics(modelStatisticsProductTable);
+        int i=0 , tatolSold=0,tatolInStock=0;
+        for (Map.Entry<Product,Long> data : stringLongMap.entrySet()){
+          System.out.println(data.getKey());
+          modelStatisticsProductTable.addRow(new Object[]{i++,data.getKey().getName(),data.getValue(),data.getKey().getQuantity()});
+          tatolSold += data.getValue();
+          tatolInStock += data.getKey().getQuantity();
+        }
+        modelStatisticsProductTable.addRow(new Object[]{"","TATOL :",tatolSold,tatolInStock});
+    }
+
+    private void upDataProductsStatistics(Map<Product, Long> productLongMap, String text, DefaultTableModel modelStatisticsProductTable) {
+          removeProductStatistics(modelStatisticsProductTable);
+          int i=0 , tatolSold=0,tatolInStock=0;
+          for (Map.Entry<Product,Long> data : productLongMap.entrySet()){
+              System.out.println(data.getKey());
+
+              if (data.getKey().getName().toLowerCase().contains(text)) {
+                  modelStatisticsProductTable.addRow(new Object[]{i++, data.getKey().getName(), data.getValue(), data.getKey().getQuantity()});
+                  tatolSold += data.getValue();
+                  tatolInStock += data.getKey().getQuantity();
+              }
+          }
+          modelStatisticsProductTable.addRow(new Object[]{"","TATOL :",tatolSold,tatolInStock});
+      }
+    private void removeProductStatistics(DefaultTableModel modelStatisticsProductTable){
+      modelStatisticsProductTable.setRowCount(0);
     }
 
     // ok
@@ -212,7 +248,12 @@ public class ManagerMainPanel extends JPanel {
             new ActionListener() {
               @Override
               public void actionPerformed(ActionEvent e) {
-                new ProductInputForm();
+                new ProductInputForm(()-> {
+                    productsAll = reloadProduct();
+                    upDataProducts(productsAll, modelProductTable);
+                });
+
+
               }
             });
 
@@ -236,7 +277,10 @@ public class ManagerMainPanel extends JPanel {
               if (selectedRow != -1) {
                 SwingUtilities.invokeLater(
                     () -> {
-//                      new ProductModifyForm(productsAll.get(selectedRow)).setVisible(true);
+                      new ProductModifyForm(productsAll.get(selectedRow),()->{
+                            productsAll = reloadProduct();
+                            upDataProducts(productsAll,modelProductTable);
+                        }).setVisible(true);
                     });
               }else{
                 ToastNotification.showToast("Please select a row to modify.", 3000, 50, -1, -1);
@@ -261,14 +305,17 @@ public class ManagerMainPanel extends JPanel {
               @Override
               public void actionPerformed(ActionEvent e) {
                 int selectedRow = tableProduct.getSelectedRow();
-                int columnIndex = 1;
+                int columnIndex = 0;
                 if (selectedRow != -1) {
                   Object value = tableProduct.getValueAt(selectedRow, columnIndex);
 
-                  int productId = Integer.parseInt(value.toString());
-//                  productController.setDeleteRow(productId, false);
-                  System.out.println("viet hamf timf kiem");
-                  modelProductTable.removeRow(selectedRow);
+                  int index = Integer.parseInt(value.toString());
+                    System.out.println(index);
+                  LoginFrame.COMPUTER_SHOP.removeProductByIndex(index);
+//                  modelProductTable.removeRow(selectedRow);
+                    productsAll = reloadProduct();
+                    upDataProducts(productsAll,modelProductTable);
+
                 }
               }
             });
@@ -323,20 +370,22 @@ public class ManagerMainPanel extends JPanel {
               }
             });
 
-        importExcelBt = new JButton("Import");
+       statisticsBt = new JButton("statistics");
         ButtonConfig.addButtonHoverEffect(
-            importExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+                statisticsBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
         ButtonConfig.setStyleButton(
-            importExcelBt,
+                statisticsBt,
             Style.FONT_PLAIN_13,
             Style.WORD_COLOR_BLACK,
             Style.WORD_COLOR_WHITE,
             SwingConstants.CENTER,
             new Dimension(80, 80));
         ButtonConfig.setButtonIcon(
-            "src/main/java/Icon/icons8-export-excel-50.png", importExcelBt, 35);
-        KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.importExcelKey, importExcelBt);
-
+            "src/main/java/Icon/icons8-export-excel-50.png",statisticsBt, 35);
+        KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.importExcelKey, statisticsBt);
+        statisticsBt.addActionListener(e->{
+          upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),  modelStatisticsProductTable);
+        });
 
         findText =
             TextFieldConfig.createTextField(
@@ -460,7 +509,7 @@ public class ManagerMainPanel extends JPanel {
         applicationPanel.add(ButtonConfig.createVerticalSeparator());
         applicationPanel.add(exportExcelBt);
 
-        applicationPanel.add(importExcelBt);
+        applicationPanel.add(statisticsBt);
         applicationPanel.add(ButtonConfig.createVerticalSeparator());
         applicationPanel.add(reloadBt);
         applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
@@ -492,10 +541,11 @@ public class ManagerMainPanel extends JPanel {
                 System.out.println(productsAll);
                 productsAll = LoginFrame.COMPUTER_SHOP.findProductByName(findText.getText().trim());
 
-//                if (productsAll.isEmpty()) {
-//                  JOptionPane.showMessageDialog(tablePanel, "Product not found in the List!");
-//                  return;
-//                }
+                if (productsAll.isEmpty()) {
+                  JOptionPane.showMessageDialog(tablePanel, "Product not found in the List!");
+                  return;
+                }
+                upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),findText.getText(),  modelStatisticsProductTable);
                 upDataProducts(productsAll, modelProductTable);
               }
             });
@@ -507,31 +557,43 @@ public class ManagerMainPanel extends JPanel {
                 productsAll = reloadProduct();
                 upDataProducts(productsAll, modelProductTable);
                 findText.setText("");
+                upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),  modelStatisticsProductTable);
+
               }
             });
       }
     }
 
-    private class TablePanel extends JPanel {
+
+
+      private class TablePanel extends JPanel {
       public TablePanel() {
         setLayout(new BorderLayout());
         setBackground(Style.WORD_COLOR_WHITE);
 
 
         tableProduct = createTable(modelProductTable, columnNamesPRODUCT);
+        tableStatisticsProduct = createTable(modelStatisticsProductTable, columStatisticsProduct);
         tableProduct.setRowHeight(30);
+        tableStatisticsProduct.setRowHeight(30);
 
         resizeColumnWidth(tableProduct, 150);
+        resizeColumnWidth(tableStatisticsProduct, 150);
 
         modelProductTable = (DefaultTableModel) tableProduct.getModel();
+        modelStatisticsProductTable = (DefaultTableModel) tableStatisticsProduct.getModel();
 
 //        List<entity.Product> productsDemo = LoginFrame.COMPUTER_SHOP.getAllProduct();
 
         upDataProducts(productsAll, modelProductTable);
+        upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),  modelStatisticsProductTable);
 
         scrollPaneProductTable = new JScrollPane(tableProduct);
+        JScrollPane scrollPaneProductStatisticsTable = new JScrollPane(tableStatisticsProduct);
+//        scrollPaneProductTable.add();
         tabbedPaneProductTable =
             createTabbedPane(scrollPaneProductTable, "Product for Sales", Style.FONT_BOLD_16);
+        tabbedPaneProductTable.add("Product statistics",scrollPaneProductStatisticsTable);
 
         add(tabbedPaneProductTable, BorderLayout.CENTER);
       }
@@ -540,6 +602,8 @@ public class ManagerMainPanel extends JPanel {
         modelProductTable.setRowCount(0);
       }
     }
+
+
   }
 
   private class SupplierPanel extends JPanel {

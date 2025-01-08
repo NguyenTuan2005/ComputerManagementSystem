@@ -8,10 +8,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -36,7 +33,7 @@ public class ComputerShop implements MController {
     public static void main(String[] args) {
         ComputerShop c = new ComputerShop();
         Supplier phongVuComputer = Supplier.builder().id(1).companyName("Phong ").email("duynguyen@gamil.com").phoneNumber("18006865").address("Tầng 2, số 2A Trần Đại Nghĩa, Hai Bà Trưng, Hà Nội").contractDate(LocalDate.of(2024, 10, 17)).isActive(true).build();
-        System.out.println(c.analyzeQuantityOfImportedGoods());
+        System.out.println(c.productOrderStatistics());
     }
 
     @Override
@@ -118,11 +115,27 @@ public class ComputerShop implements MController {
 
     @Override
     public List<Product> findProductByName(String name) {
-        products = this.products.stream()
+        return this.products.stream()
                 .filter(p -> p.like(name))
                 .collect(Collectors.toList());
-        System.out.println(this.products);
-        return this.products;
+
+    }
+
+    @Override
+    public Map<Product,Long> productOrderStatistics() {
+        Map<Product, Long> quantityOrder = new HashMap<>();
+
+
+        for ( var  p : this.products){
+            long sumQuantity =0;
+            for(var manager : this.managers){
+                sumQuantity +=  manager.getQuantityOfProduct(p);
+            }
+            quantityOrder.put(p,sumQuantity);
+
+        }
+
+        return quantityOrder;
 
     }
 
@@ -178,6 +191,24 @@ public class ComputerShop implements MController {
     public void removeProduct(Product p){
         this.products.remove(p);
     }
+
+    @Override
+    public void removeProductByIndex(int index) {
+        this.products.remove(index);
+    }
+
+    @Override
+    public void updateProduct(Product product) {
+        ListIterator<Product> iterator = this.products.listIterator();
+        while (iterator.hasNext()){
+           var p = iterator.next();
+           if (p.sameId(product)){
+               iterator.set(product);
+               return;
+           }
+        }
+    }
+
     public void addProduct(Product p){
         this.products.add(p);
     }

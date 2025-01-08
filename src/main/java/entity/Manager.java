@@ -29,6 +29,18 @@ public class Manager extends User{
         return map;
     }
 
+    public long getQuantityInOrders(Supplier supplier){
+        long count = this.orders.stream()
+                .map(Order::getOrderDetails)
+                .map(orderDetail ->orderDetail.stream().map(OrderDetail::getProduct).collect(Collectors.toList()))
+                .flatMap(List::stream)
+                .filter(p ->p.sameSupplier(supplier))
+                .count();
+        return count;
+
+    }
+
+
     @Override
     public Map<Product, Integer> productSoldStatistic() {
         return this.orders.stream()
@@ -74,5 +86,11 @@ public class Manager extends User{
                     ((status != null && order.isDispatched()) || (status == null && !order.isDispatched()))
                 )
                 .toList();
+    }
+
+    public void updateSupplier(Supplier supplier){
+        for (var order : this.orders){
+            order. updateSupplier(supplier);
+        }
     }
 }

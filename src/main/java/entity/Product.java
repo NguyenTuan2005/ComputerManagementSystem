@@ -119,4 +119,10 @@ public class Product {
     public boolean sameSupplier(Supplier supplier) {
         return this.supplier.equals(supplier);
     }
+    public boolean sameEmailSupplier(Supplier supplier){
+        return this.supplier.sameEmail(supplier);
+    }
+    public void changeSupplier(Supplier supplier){
+        this.supplier =supplier;
+    }
 }

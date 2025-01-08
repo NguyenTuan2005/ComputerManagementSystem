@@ -166,7 +166,7 @@ public class AddSupplierFrame extends JFrame {
                         .isActive(true).build();
                 LoginFrame.COMPUTER_SHOP.addSupplier(newSupplier);
                 ToastNotification.showToast("OK",3000,30,-1,-1);
-                System.out.println( LoginFrame.COMPUTER_SHOP.getAllSupplier());
+//                System.out.println( LoginFrame.COMPUTER_SHOP.getAllSupplier());
             }
             clearFields();
 

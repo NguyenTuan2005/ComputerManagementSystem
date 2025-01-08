@@ -6,7 +6,10 @@ import config.TextFieldConfig;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -113,6 +116,7 @@ public class ModifySupplierFrame extends JFrame {
         dateField =
             TextFieldConfig.createStyledTextField(String.valueOf(supplier.getContractDate()))
       };
+      emailField.setEnabled(false);
 
       // Initialize history for each field
       for (JTextField field : fields) {
@@ -223,14 +227,16 @@ public class ModifySupplierFrame extends JFrame {
 
     private String saveSupplier() {
       try {
-        supplier.setCompanyName(companyNameField.getText());
-        supplier.setEmail(emailField.getText());
-        supplier.setPhoneNumber( phoneNumberField.getText());
-        supplier.setAddress(addressField.getText());
-        supplier.setContractDate(LocalDate.parse(dateField.getText()));
-
-        LoginFrame.COMPUTER_SHOP.updateSupplier(supplier);
-        return "success";
+        if(isValidDate(dateField.getText())) {
+          supplier.setCompanyName(companyNameField.getText());
+          supplier.setEmail(emailField.getText());
+          supplier.setPhoneNumber(phoneNumberField.getText());
+          supplier.setAddress(addressField.getText());
+          supplier.setContractDate(LocalDate.parse(dateField.getText()));
+          System.out.println("update "+supplier);
+          LoginFrame.COMPUTER_SHOP.updateSupplier(supplier);
+          return "success";
+        }
       } catch (IllegalArgumentException e) {
         showMessageDialog(e.getMessage());
 
@@ -240,6 +246,19 @@ public class ModifySupplierFrame extends JFrame {
           return "date";
         }
         return "error";
+      }
+      return "";
+    }
+    private boolean isValidDate(String inputDate) {
+      String dateFormat = "yyyy-MM-dd";
+      SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+      sdf.setLenient(false);
+      try {
+        Date date = sdf.parse(inputDate);
+        return !date.after(new Date());
+      } catch (ParseException e) {
+        showMessageDialog("format: yyyy-MM-dd");
+        return false;
       }
     }
 

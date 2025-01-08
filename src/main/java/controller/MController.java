@@ -33,6 +33,7 @@ public interface MController {
 
     List<Supplier> findSuppliersByName(String name);
     Map<String,Long> quantitativeAnalysis();
+    Map<String,Long> analyzeQuantityOfImportedGoods();
 
 
     void updateUserInfor(User currentUserV2);

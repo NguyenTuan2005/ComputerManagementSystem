@@ -66,4 +66,9 @@ public class Order {
                 || this.orderDetails.stream().anyMatch(o -> o.contains(searchText));
     }
 
+    public void updateSupplier(Supplier supplier) {
+        for (var orderDetail : this.orderDetails ){
+            orderDetail.updateSupplier(supplier);
+        }
+    }
 }

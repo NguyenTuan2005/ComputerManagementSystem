@@ -75,4 +75,10 @@ public class Manager extends User{
             return this.orders.equals(that.orders);
         }
     }
+
+    public void updateSupplier(Supplier supplier){
+        for (var order : this.orders){
+            order. updateSupplier(supplier);
+        }
+    }
 }

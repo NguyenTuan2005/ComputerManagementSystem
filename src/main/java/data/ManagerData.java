@@ -260,6 +260,7 @@ public class ManagerData {
                 benComputer
         ));
 
+
         products = new ArrayList<>(Arrays.asList(
                 macBookAirM1,
                 macBookAirM2,

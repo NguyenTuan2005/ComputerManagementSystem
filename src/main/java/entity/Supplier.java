@@ -89,5 +89,8 @@ public class Supplier {
      public boolean sameCompanyName(Supplier supplier) {
           return this.companyName.equals(supplier.companyName);
      }
- 
+
+     public boolean sameEmail(Supplier supplier) {
+          return this.email.equals(supplier.email);
+     }
 }

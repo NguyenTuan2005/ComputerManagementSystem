@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 
 import java.sql.SQLOutput;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -36,8 +37,8 @@ public class ComputerShop implements MController {
 
     public static void main(String[] args) {
         ComputerShop c = new ComputerShop();
-//        c.findProductByName("dell");
-        System.out.println(c.quantitativeAnalysis());
+        Supplier phongVuComputer = Supplier.builder().id(1).companyName("Phong ").email("duynguyen@gamil.com").phoneNumber("18006865").address("Tầng 2, số 2A Trần Đại Nghĩa, Hai Bà Trưng, Hà Nội").contractDate(LocalDate.of(2024, 10, 17)).isActive(true).build();
+        System.out.println(c.analyzeQuantityOfImportedGoods());
     }
 
     @Override
@@ -124,9 +125,7 @@ public class ComputerShop implements MController {
                 .collect(Collectors.toList());
         System.out.println(this.products);
         return this.products;
-//        return this.products.stream()
-//                .filter(p -> p.like(name))
-//                .collect(Collectors.toList());
+
     }
 
     @Override
@@ -142,6 +141,20 @@ public class ComputerShop implements MController {
             long sumQuantity =0;
             for(var m : this.managers)
                 sumQuantity= m.getQuantityInOrders(s);
+
+            map.put(s.getCompanyName(),sumQuantity);
+        }
+        return  map;
+    }
+
+    @Override
+    public Map<String, Long> analyzeQuantityOfImportedGoods() {
+        Map<String, Long> map = new HashMap<>();
+        for ( var  s : this.suppliers){
+            long sumQuantity =0;
+            for(var p : this.products)
+                if(p.sameSupplier(s))
+                    sumQuantity++;
 
             map.put(s.getCompanyName(),sumQuantity);
         }
@@ -199,13 +212,17 @@ public class ComputerShop implements MController {
 
     @Override
     public void updateSupplier(Supplier supplier) {
-        for(var sup : this.suppliers){
-            if(sup.sameCompanyName(supplier)){
-                sup = supplier;
-                return;
+        ListIterator<Supplier> iterator = this.suppliers.listIterator();
+        while (iterator.hasNext()){
+            var sup = iterator.next();
+            if( sup.sameEmail(supplier)){
+                iterator.set(supplier);
             }
         }
-        this.suppliers.add(supplier);
+        ListIterator<Manager> managerListIterator = this.managers.listIterator();
+        while( managerListIterator.hasNext()){
+             managerListIterator.next().updateSupplier(supplier);
+        }
     }
 
     @Override

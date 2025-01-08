@@ -24,6 +24,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -508,7 +509,7 @@ public class ManagerMainPanel extends JPanel {
             new ActionListener() {
               @Override
               public void actionPerformed(ActionEvent e) {
-                productsAll = reloadData();
+                productsAll = LoginFrame.COMPUTER_SHOP.getAllProduct();
                 upDataProducts(productsAll, modelProductTable);
                 findText.setText("");
               }
@@ -529,9 +530,9 @@ public class ManagerMainPanel extends JPanel {
 
         modelProductTable = (DefaultTableModel) tableProduct.getModel();
 
-        List<entity.Product> productsDemo = LoginFrame.COMPUTER_SHOP.getAllProduct();
+//        List<entity.Product> productsDemo = LoginFrame.COMPUTER_SHOP.getAllProduct();
 
-        upDataProducts(productsDemo, modelProductTable);
+        upDataProducts(productsAll, modelProductTable);
 
         scrollPaneProductTable = new JScrollPane(tableProduct);
         tabbedPaneProductTable =
@@ -547,7 +548,7 @@ public class ManagerMainPanel extends JPanel {
   }
 
   private class SupplierPanel extends JPanel {
-    private JButton addBt, modifyBt, deleteBt, exportExcelBt, reloadBt, searchBt, analysisBt;
+    private JButton addBt, modifyBt, deleteBt, exportExcelBt, reloadBt, searchBt, analysisBt, sumItemBt;
     private JTextField findText;
     private JTable tableSupplier,tableQuantity;
     private DefaultTableModel modelSupplier ,modelQuantity;
@@ -595,6 +596,28 @@ public class ManagerMainPanel extends JPanel {
                     new AddSupplierFrame(() -> updateSuppliers(selectedOption));
                 addSupplierFrame.showFrame();
               });
+        }
+        {
+          sumItemBt = new JButton("Imported");
+          ButtonConfig.setStyleButton(
+                  sumItemBt,
+                  Style.FONT_PLAIN_13,
+                  Style.WORD_COLOR_BLACK,
+                  Style.WORD_COLOR_WHITE,
+                  SwingConstants.CENTER,
+                  new Dimension(80, 80));
+          ButtonConfig.addButtonHoverEffect(
+                  sumItemBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+          ButtonConfig.setButtonIcon("src/main/java/Icon/database-add-icon.png", sumItemBt, 35);
+          KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.addKey, sumItemBt);
+          sumItemBt.addActionListener(
+                  e -> {
+                      analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.analyzeQuantityOfImportedGoods();
+                    System.out.println(LoginFrame.COMPUTER_SHOP.analyzeQuantityOfImportedGoods());
+                    System.out.println(LoginFrame.COMPUTER_SHOP.getAllProduct());
+                      modelQuantity.setRowCount(0);
+                      upDataTable(modelQuantity);
+                  });
         }
 
         {
@@ -693,9 +716,9 @@ public class ManagerMainPanel extends JPanel {
                 updateSuppliers(selectedOption);
                 findText.setText("");
 
-                analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
+//                analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
                 modelQuantity.setRowCount(0);
-                upDataTable(modelQuantity);
+//                upDataTable(modelQuantity);
               });
         }
         findText =
@@ -755,6 +778,7 @@ public class ManagerMainPanel extends JPanel {
         applicationPanel.add(ButtonConfig.createVerticalSeparator());
         applicationPanel.add(exportExcelBt);
         applicationPanel.add(analysisBt);
+        applicationPanel.add(sumItemBt);
         applicationPanel.add(reloadBt);
         applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
 
@@ -786,10 +810,16 @@ public class ManagerMainPanel extends JPanel {
       private void modifyHandle() {
         int selectedRow = tableSupplier.getSelectedRow();
         if (selectedRow != -1) {
-          int supplierId = Integer.parseInt((String) modelSupplier.getValueAt(selectedRow, 1));
-//          ModifySupplierFrame modifySupplierFrame =
-//              new ModifySupplierFrame;
-//          modifySupplierFrame.showFrame();
+//          int supplierId = Integer.parseInt((String) modelSupplier.getValueAt(selectedRow, 1));
+          int columnCount = tableSupplier.getColumnCount(); // Số lượng cột
+          String[] rowData = new String[columnCount];
+
+          for (int i = 0; i < columnCount; i++) {
+            rowData[i] = (String) tableSupplier.getValueAt(selectedRow, i);
+          }
+          ModifySupplierFrame modifySupplierFrame =
+              new ModifySupplierFrame(() -> updateSuppliers(selectedOption), Supplier.builder().companyName(rowData[1]).email(rowData[2]).phoneNumber(rowData[3]).address(rowData[4]).contractDate(LocalDate.parse(rowData[5])).build() );
+          modifySupplierFrame.showFrame();
           ToastNotification.showToast(" modify.", 3000, 50, -1, -1);
         } else {
           ToastNotification.showToast("Please select a row to modify.", 3000, 50, -1, -1);
@@ -852,7 +882,7 @@ public class ManagerMainPanel extends JPanel {
 
         JTabbedPane tabbedPaneSupplier =
             createTabbedPane(scrollPaneSupplier, "Supplier List", Style.FONT_BOLD_16);
-        tabbedPaneSupplier.add("Analyze sales volume",scrollPaneSupplierQuantity);
+        tabbedPaneSupplier.add("Analyze ",scrollPaneSupplierQuantity);
 
         add(tabbedPaneSupplier, BorderLayout.CENTER);
 
@@ -886,14 +916,14 @@ public class ManagerMainPanel extends JPanel {
     public static void upDataTable(List<entity.Supplier> suppliers, DefaultTableModel modelSupplier) {
       String[][] rowData = Supplier.getData(suppliers);
       for (String[] strings : rowData) {
-        System.out.println(strings);
+//        System.out.println(strings);
         modelSupplier.addRow(strings);
       }
     }
     public static void upDataTable( DefaultTableModel modelQuantity) {
       int index =0;
       for(Map.Entry<String, Long> data: analyzeSalesVolume.entrySet()) {
-        modelQuantity.addRow(new Object[]{index++,data.getKey(),data.getValue()});
+        modelQuantity.addRow(new Object[]{index++ +" ",data.getKey(),data.getValue()});
       }
     }
   }

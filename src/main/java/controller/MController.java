@@ -23,7 +23,7 @@ public interface MController {
     Map<Customer, List<Order>> userOrderStatistics();
     void addOrder(Customer customer , Order newOrder);
 
-    Map<Manager , List<Order>>  managerOrderStatistics();
+    List<Manager> getAllManager();
     Manager findManagerByEmail(String email);
 
 
@@ -32,9 +32,15 @@ public interface MController {
 
 
     List<Supplier> findSuppliersByName(String name);
+    Map<String,Long> quantitativeAnalysis();
+    Map<String,Long> analyzeQuantityOfImportedGoods();
 
 
     void updateUserInfor(User currentUserV2);
 
     void updateSupplier(Supplier supplier);
+
+    void addSupplier(Supplier newSupplier);
+
+    void removeSupplierByIndex(int index);
 }

@@ -46,4 +46,13 @@ public class OrderDetail {
         return this.product.contains(searchText)
                 || searchText.contains(String.valueOf(this.quantity));
     }
+
+    public double totalCost() {
+        return this.quantity * this.product.getPrice();
+    }
+
+    public void updateSupplier(Supplier supplier) {
+        if(product.sameEmailSupplier(supplier))
+            this.product.changeSupplier(supplier);
+    }
 }

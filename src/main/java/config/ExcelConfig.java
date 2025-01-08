@@ -1,17 +1,12 @@
 package config;
 
 
-import entity.Customer;
-import entity.Manager;
-import entity.Product;
-import entity.Supplier;
+import entity.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExcelConfig {
@@ -103,6 +98,15 @@ public class ExcelConfig {
                 row.createCell(3).setCellValue(customer.getAddress());
                 row.createCell(4).setCellValue(customer.getPassword());
                 row.createCell(5).setCellValue(customer.getAvatarImg());
+            } else if (data.getClass().equals(Order.class)) {
+                Order order = (Order) data;
+                row.createCell(0).setCellValue(order.getOrderId());
+                row.createCell(1).setCellValue(order.getCustomer().getFullName());
+                row.createCell(2).setCellValue(order.getOrderedAt());
+                row.createCell(3).setCellValue(order.getShipAddress());
+                row.createCell(4).setCellValue(order.getStatus());
+                row.createCell(5).setCellValue(order.totalCost());
+                row.createCell(6).setCellValue(order.totalQuantity());
             }
             else {
                 throw new IllegalArgumentException("Unsupported class type: " + data.getClass().getName());

@@ -50,4 +50,9 @@ public class OrderDetail {
     public double totalCost() {
         return this.quantity * this.product.getPrice();
     }
+
+    public void updateSupplier(Supplier supplier) {
+        if(product.sameEmailSupplier(supplier))
+            this.product.changeSupplier(supplier);
+    }
 }

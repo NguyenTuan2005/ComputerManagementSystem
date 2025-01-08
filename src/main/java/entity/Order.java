@@ -88,4 +88,9 @@ public class Order {
     public void updateStatus(String status) {
         this.status = status;
     }
+    public void updateSupplier(Supplier supplier) {
+        for (var orderDetail : this.orderDetails ){
+            orderDetail.updateSupplier(supplier);
+        }
+    }
 }

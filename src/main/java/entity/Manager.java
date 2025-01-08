@@ -93,4 +93,12 @@ public class Manager extends User{
             order. updateSupplier(supplier);
         }
     }
+
+    public long getQuantityOfProduct(Product p) {
+        return this.orders.stream().map(order -> order.getOrderDetails())
+                .flatMap(List::stream)
+                .map(orderDetail -> orderDetail.getProduct())
+                .filter(product -> product.sameName(p))
+                .collect(Collectors.counting());
+    }
 }

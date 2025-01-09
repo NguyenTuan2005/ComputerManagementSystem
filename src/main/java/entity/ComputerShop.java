@@ -33,7 +33,7 @@ public class ComputerShop implements MController {
     public static void main(String[] args) {
         ComputerShop c = new ComputerShop();
         Supplier phongVuComputer = Supplier.builder().id(1).companyName("Phong ").email("duynguyen@gamil.com").phoneNumber("18006865").address("Tầng 2, số 2A Trần Đại Nghĩa, Hai Bà Trưng, Hà Nội").contractDate(LocalDate.of(2024, 10, 17)).isActive(true).build();
-        System.out.println(c.productOrderStatistics());
+
     }
 
     @Override
@@ -113,12 +113,15 @@ public class ComputerShop implements MController {
         return this.managers.stream().filter(m ->m.sameEmail(email)).findAny().orElse(null);
     }
 
+    public List<Manager> findManagerByName(String name){
+        return this.managers.stream().filter(m ->m.findName(name)).collect(Collectors.toList());
+    }
+
     @Override
     public List<Product> findProductByName(String name) {
         return this.products.stream()
                 .filter(p -> p.like(name))
                 .collect(Collectors.toList());
-
     }
 
     @Override
@@ -293,6 +296,15 @@ public class ComputerShop implements MController {
             }
         }
     }
+    //Manager
+    public void removeManager(Manager m){
+        this.managers.remove(m);
+    }
+    public void addManager(Manager m){
+        this.managers.add(m);
+    }
+
+
 
     public List<Customer> findCustomerByName(String customerName){
         return this.customers.stream().filter(customer -> customer.getFullName().toLowerCase().contains(customerName.toLowerCase()))

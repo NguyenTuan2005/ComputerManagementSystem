@@ -787,15 +787,15 @@ public class LoginFrame extends JFrame {
     }
   }
 
-  private class SignInPanel extends JPanel {
-    private LoginFrame loginFrame;
-    private JLabel signInLabel;
-    private JTextField nameField;
-    private JPasswordField passwdFieldSignin;
-    private JComboBox<String> roleComboBox;
-    private CustomButton signInButton;
-    private JCheckBox showPasswdCB;
-    private JButton forgotPasswdBt;
+    class SignInPanel extends JPanel {
+        private LoginFrame loginFrame;
+        private JLabel signInLabel;
+        private JTextField nameField, emailField;
+        private JPasswordField passwdFieldSignin;
+        private JComboBox<String> roleComboBox;
+        private CustomButton signInButton;
+        private JCheckBox showPasswdCB;
+        private JButton forgotPasswdBt;
 
     SignInPanel(LoginFrame loginFrame) {
       this.loginFrame = loginFrame;
@@ -963,14 +963,14 @@ public class LoginFrame extends JFrame {
                     {
 
 
-                      if (COMPUTER_SHOP.login(username,password,LoginStatus.CUSTOMR)) {
+                      if (COMPUTER_SHOP.login(username,password,LoginStatus.CUSTOMER)) {
                         loginFrame.setVisible(false);
                         try {
                           customerFrame = new CustomerFrame();
                         } catch (SQLException ex) {
                           throw new RuntimeException(ex);
                         }
-                      } else ToastNotification.showToast("deo",3000,30,-1,-1 );
+                      } else sayError("Wrong login information!");
                       break;
                     }
                 }
@@ -1009,12 +1009,11 @@ public class LoginFrame extends JFrame {
       add(forgotPasswdBt, gbc);
     }
 
-    private void sayError(String message) {
-      JOptionPane.showMessageDialog(loginFrame, message, "Error", JOptionPane.ERROR_MESSAGE);
-      passwdFieldSignin.setText("");
-      nameField.setText("");
-    }
+
   }
+    private void sayError(String message) {
+      JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
 
   private class ForgotPasswdPanel extends JPanel {
     private InputEmail inputEmail;

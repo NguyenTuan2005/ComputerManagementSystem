@@ -2,7 +2,7 @@ package view;
 
 import config.ProductOrderConfig;
 import verifier.EmailVerifier;
-import verifier.NotNullVerifier;
+import verifier.NotEmptyVerifier;
 import verifier.UserNameAccountVerifier;
 import com.toedter.calendar.JCalendar;
 import config.*;
@@ -211,16 +211,16 @@ public class CustomerMainPanel extends JPanel {
         gbc.insets = new Insets(5, 15, 0, 10);
         searchBar.add(cartButton, gbc);
 
-        JPanel TabBar = new JPanel();
-        TabBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        TabBar.setBackground(Color.WHITE);
+        JPanel sortBar = new JPanel();
+        sortBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+        sortBar.setBackground(Color.WHITE);
 
         allBt =
             ButtonConfig.createCustomButton(
                 "All",
                 Style.FONT_BOLD_15,
                 Color.BLACK,
-                Color.white,
+                Style.BACKGROUND_COLOR,
                 Style.LIGHT_BlUE,
                 Style.BACKGROUND_COLOR,
                 2,
@@ -389,15 +389,15 @@ public class CustomerMainPanel extends JPanel {
               }
             });
 
-        TabBar.add(allBt);
-        TabBar.add(gaming);
-        TabBar.add(office);
-        TabBar.add(pcCase);
-        TabBar.add(luxury);
-        TabBar.add(cheapest);
+        sortBar.add(allBt);
+        sortBar.add(gaming);
+        sortBar.add(office);
+        sortBar.add(pcCase);
+        sortBar.add(luxury);
+        sortBar.add(cheapest);
 
         add(searchBar, BorderLayout.CENTER);
-        add(TabBar, BorderLayout.SOUTH);
+        add(sortBar, BorderLayout.SOUTH);
       }
 
       public void displayProductOnCatalogContainer(List<Product> products) {
@@ -412,7 +412,12 @@ public class CustomerMainPanel extends JPanel {
         Color defaultColor = Color.WHITE;
         Color selectedColor = Style.BACKGROUND_COLOR;
 
-        if (selectedButton != null) {
+        if(selectedButton == null){
+          allBt.setBackgroundColor(defaultColor);
+          allBt.setHoverColor(Style.LIGHT_BlUE);
+        }
+
+        if (selectedButton != null ) {
           selectedButton.setBackgroundColor(defaultColor);
           selectedButton.setHoverColor(Style.LIGHT_BlUE);
         }
@@ -1129,11 +1134,11 @@ public class CustomerMainPanel extends JPanel {
       }
       Map<JTextField, InputVerifier[]> fieldVerifierMap = new HashMap<>();
       fieldVerifierMap.put(
-          emailField, new InputVerifier[] {new NotNullVerifier(), new EmailVerifier()});
+          emailField, new InputVerifier[] {new NotEmptyVerifier(), new EmailVerifier()});
       fieldVerifierMap.put(
           fullNameField,
-          new InputVerifier[] {new NotNullVerifier(), new UserNameAccountVerifier()});
-      fieldVerifierMap.put(addressField, new InputVerifier[] {new NotNullVerifier()});
+          new InputVerifier[] {new NotEmptyVerifier()});
+      fieldVerifierMap.put(addressField, new InputVerifier[] {new NotEmptyVerifier()});
 
       for (Map.Entry<JTextField, InputVerifier[]> entry : fieldVerifierMap.entrySet()) {
         JTextField field = entry.getKey();

@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 import java.util.List;
 import java.util.Objects;
 
-import static view.ManagerMainPanel.formatCurrency;
+import static view.ManagerMainPanel.currencyFormatter;
 
 @ToString
 @Getter
@@ -79,7 +79,7 @@ public class Product {
                 String.valueOf(id),
                 name,
                 String.valueOf(quantity),
-                formatCurrency.format(price),
+                currencyFormatter.format(price),
                 brand,
                 brand,
                 operatingSystem,

@@ -3,7 +3,13 @@ package view.otherComponent;
 import config.ButtonConfig;
 import config.TextFieldConfig;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +49,9 @@ public class ProductInputForm extends JFrame {
 
   private JPanel mainPanel;
   private Runnable runnable;
+  private List<String> imagePaths;
+  private final String destinationFolder = "src/main/java/img/";
+  private JPanel dropImagePanel;
   private ScrollPane scrollPane;
 
   //data
@@ -107,11 +116,14 @@ public class ProductInputForm extends JFrame {
 
     JPanel buttonPanel = createButtonPanel();
 
+    dropImagePanel = createDropImagePanel();
 
     this.mainPanel.add(contentPanel, BorderLayout.CENTER);
+    this.mainPanel.add(dropImagePanel, BorderLayout.SOUTH);
 
     scrollPane = new ScrollPane();
     scrollPane.setPreferredSize(new Dimension(700, 9050));
+    scrollPane.setPreferredSize(new Dimension(700, 90000));
     mainPanel.add(titlePanel);
     mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -285,12 +297,111 @@ public class ProductInputForm extends JFrame {
     return panel;
   }
 
+  private JPanel createDropImagePanel() {
 
+    JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+    imagePanel.setPreferredSize(new Dimension(900, 300));
+    imagePanel.setBackground(Color.WHITE);
 
+    JLabel guideLabel = new JLabel("Drop product images here!", SwingConstants.CENTER);
+    guideLabel.setBackground(Color.WHITE);
+    Border dashedBorder =
+        BorderFactory.createDashedBorder(Style.CONFIRM_BUTTON_COLOR_GREEN, 2, 10, 20, true);
+    Border margin = BorderFactory.createEmptyBorder(5, 10, 8, 10);
+    Border compoundBorder = BorderFactory.createCompoundBorder(margin, dashedBorder);
+    guideLabel.setBorder(compoundBorder);
+    guideLabel.setPreferredSize(new Dimension(700, 300));
+
+    imagePanel.add(guideLabel);
+
+    File folder = new File(destinationFolder);
+    if (!folder.exists()) {
+      folder.mkdirs();
+    }
+
+    imagePaths = new ArrayList<>();
+
+    JScrollPane scrollPane = new JScrollPane(imagePanel);
+    add(scrollPane);
+
+    // Kích hoạt kéo thả
+    //    JPanel finalImagePanel = imagePanel;
+    new DropTarget(
+        imagePanel,
+        new DropTargetListener() {
+          @Override
+          public void dragEnter(DropTargetDragEvent dtde) {}
+
+          @Override
+          public void dragOver(DropTargetDragEvent dtde) {}
+
+          @Override
+          public void dropActionChanged(DropTargetDragEvent dtde) {}
+
+          @Override
+          public void dragExit(DropTargetEvent dte) {}
+
+          @Override
+          public void drop(DropTargetDropEvent dtde) {
+            try {
+              imagePanel.remove(guideLabel);
+              if (dtde.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                dtde.acceptDrop(DnDConstants.ACTION_COPY);
+                java.util.List<File> files =
+                    (java.util.List<File>)
+                        dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+
+                for (File file : files) {
+                  saveAndDisplayImage(imagePanel, file);
+                }
+
+                dtde.dropComplete(true);
+              } else {
+                dtde.rejectDrop();
+              }
+            } catch (Exception ex) {
+              ex.printStackTrace();
+            }
+          }
+        });
+    return imagePanel;
+  }
+
+  // luu hinh
+  private void saveAndDisplayImage(JPanel imagePanel, File file) {
+    try {
+      // Xác định tệp đích trong thư mục chỉ định
+      File destinationFile = new File(destinationFolder, file.getName());
+
+      // Sao chép tệp vào thư mục đích
+      Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+      // Lưu đường dẫn của hình ảnh vào danh sách
+      var contextPath = "src/main/java/img/" + file.getName();
+      imagePaths.add(contextPath);
+
+      // Tạo ImageIcon từ tệp đích
+      ImageIcon imageIcon = new ImageIcon(destinationFile.getAbsolutePath());
+      // Resize ảnh nếu quá lớn
+      Image scaledImage = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+      JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+
+      // Thêm JLabel vào panel
+      imagePanel.add(imageLabel);
+      imagePanel.revalidate(); // Cập nhật giao diện
+      imagePanel.repaint();
+    } catch (IOException ex) {
+      JOptionPane.showMessageDialog(this, "Error saving file: " + file.getName());
+    }
+  }
 
   private void saveProduct() {
     try {
 
+      List<entity.Image> images = new ArrayList<>();
+      for (var img : this.imagePaths) {
+        images.add(new entity.Image(1,img));
+      }
 
 
       Product product = Product.builder()
@@ -312,13 +423,13 @@ public class ProductInputForm extends JFrame {
               .status(cmbStatus.getSelectedItem().toString())
               .isActive(true)
               .images(new ArrayList<>())
+//              .images(images)
               .build();
 
 
       LoginFrame.COMPUTER_SHOP.addProduct(product);
       if( runnable != null) runnable.run();
-
-      ToastNotification.showToast("Successfully", 30,3000,-1,-1);
+      ToastNotification.showToast("Saved successfully!", 30,3000,-1,-1);
       clearForm();
 
     } catch (NumberFormatException ex) {
@@ -342,6 +453,9 @@ public class ProductInputForm extends JFrame {
     txtDisk.setText("");
     txtMonitor.setText("");
 
+    dropImagePanel.removeAll();
+    dropImagePanel.revalidate();
+    dropImagePanel.repaint();
   }
 
   private void showSuccessDialog(String message) {

@@ -1,6 +1,6 @@
 package view.otherComponent;
 
-import static view.ManagerMainPanel.formatCurrency;
+import static view.ManagerMainPanel.currencyFormatter;
 
 import config.ButtonConfig;
 import config.ProductConfig;
@@ -222,7 +222,7 @@ public class ProductModifyForm extends JFrame {
 
     txtName.setText(product.getName());
     txtQuantity.setText("" + product.getQuantity());
-    txtPrice.setText("" + formatCurrency.format(product.getPrice()).replaceAll(",",""));
+    txtPrice.setText("" + currencyFormatter.format(product.getPrice()).replaceAll(",",""));
     txtGenre.setText(product.getType());
     txtBrand.setText(product.getBrand());
     txtOS.setText(product.getOperatingSystem());
@@ -358,7 +358,7 @@ public class ProductModifyForm extends JFrame {
   private void clearForm() {
     txtName.setText(product.getName());
     txtQuantity.setText("" + product.getQuantity());
-    txtPrice.setText("" + formatCurrency.format(product.getPrice()));
+    txtPrice.setText("" + currencyFormatter.format(product.getPrice()));
     txtGenre.setText(product.getType());
     txtBrand.setText(product.getBrand());
     txtOS.setText(product.getOperatingSystem());

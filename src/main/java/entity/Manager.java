@@ -63,6 +63,10 @@ public class Manager extends User{
         this.orders.get(this.orders.indexOf(order)).updateStatus(status);
     }
 
+    public boolean findName(String name){
+        return this.fullName.toLowerCase().contains(name.trim().toLowerCase());
+    }
+
     @Override
     public boolean isManager() {
         return true;
@@ -76,6 +80,14 @@ public class Manager extends User{
             entity.Manager that = (entity.Manager) o;
             return this.orders.equals(that.orders);
         }
+    }
+
+    public static Object[][] getDataOnTable(ArrayList<Customer> customers) {
+        Object[][] datass = new Object[customers.size()][];
+        for (int i = 0; i < customers.size(); i++) {
+            datass[i] = customers.get(i).convertToObjects(i + 1);
+        }
+        return datass;
     }
 
     public List<Order> filter(String status, String searchText) {

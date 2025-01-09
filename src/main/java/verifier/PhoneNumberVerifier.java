@@ -2,26 +2,29 @@ package verifier;
 
 
 
+import view.Style;
 import view.overrideComponent.ToastNotification;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 public class PhoneNumberVerifier extends InputVerifier {
     @Override
     public boolean verify(JComponent input) {
-        String phonenum = ((JTextField) input).getText().trim();
-        boolean isPhonenum =phonenum.length() == 10 && phonenum.charAt(0) =='0'&& isNumeric(phonenum);
-        if( !isPhonenum){
-            input.setBackground(Color.PINK);
-            ToastNotification.showToast( "Wrong phone number"+ phonenum,2500,50,-1,-1);
-            return false;
-        }else {
-            input.setBackground(Color.WHITE);
+        JTextField phoneField = (JTextField) input;
+        Border defaultBorder = phoneField.getBorder();
+        String phoneNumber = phoneField.getText();
+        if (isPhoneNumber(phoneNumber)) {
+            phoneField.setBorder(defaultBorder);
             return true;
+        } else {
+            ToastNotification.showToast( "Invalid phone number format",2500,50,-1,-1);
+            phoneField.setBorder( BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 3));
+            return false;
         }
     }
-    private  boolean isNumeric(String str) {
-        return str != null && str.matches("\\d+");
+    private  boolean isPhoneNumber(String phoneNumber) {
+        return phoneNumber.matches("0\\d{9}");
     }
 }

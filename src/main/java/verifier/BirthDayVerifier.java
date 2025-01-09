@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class BirthDayVerifier extends InputVerifier {
+    private static final String[] DATE_FORMATS = {"yyyy-MM-dd", "dd/MM/yyyy"};
     @Override
     public boolean verify(JComponent input) {
         JTextField birthDateField = (JTextField) input;

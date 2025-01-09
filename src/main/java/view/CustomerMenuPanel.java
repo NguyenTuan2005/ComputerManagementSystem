@@ -90,7 +90,7 @@ public class CustomerMenuPanel extends JPanel {
               " Product Catalog",
               Style.FONT_PLAIN_18,
               Color.BLACK,
-              Style.MENU_BUTTON_COLOR,
+              Style.MENU_BACKGROUND_COLOR,
               Style.LIGHT_BlUE,
               20,
               SwingConstants.LEFT,
@@ -126,7 +126,7 @@ public class CustomerMenuPanel extends JPanel {
 
       changeInfoBt =
           ButtonConfig.createCustomButton(
-              " Profile Settings",
+              " Change Information",
               Style.FONT_PLAIN_18,
               Color.BLACK,
               Style.MENU_BACKGROUND_COLOR,

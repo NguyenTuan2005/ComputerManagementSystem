@@ -5,8 +5,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+import java.util.Objects;
 
-import static view.ManagerMainPanel.formatCurrency;
+import static view.ManagerMainPanel.currencyFormatter;
 
 @ToString
 @Getter
@@ -78,7 +79,7 @@ public class Product {
                 String.valueOf(id),
                 name,
                 String.valueOf(quantity),
-                formatCurrency.format(price),
+                currencyFormatter.format(price),
                 brand,
                 brand,
                 operatingSystem,
@@ -133,5 +134,18 @@ public class Product {
     }
     public void changeSupplier(Supplier supplier){
         this.supplier =supplier;
+    }
+
+    public boolean sameName(Product p) {
+        return this.name.equals(p.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, supplier, name, quantity, price, type, brand, operatingSystem, cpu, memory, ram, madeIn, disk, monitor, weight, card, images, status, isActive);
+    }
+
+    public boolean sameId(Product product) {
+        return this.id == product.id;
     }
 }

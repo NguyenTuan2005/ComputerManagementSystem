@@ -1,9 +1,12 @@
 package view;
 
-import verifier.*;
+import config.ProductOrderConfig;
+import verifier.EmailVerifier;
+import verifier.NotEmptyVerifier;
+import verifier.UserNameAccountVerifier;
 import com.toedter.calendar.JCalendar;
 import config.*;
-
+import enums.*;
 import java.awt.*;
 import java.awt.Image;
 import java.awt.event.ActionEvent;

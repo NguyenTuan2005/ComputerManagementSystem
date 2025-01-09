@@ -35,7 +35,7 @@ public class Order {
                                 order.status,
                                 entry.getKey().getFullName(),
                                 String.valueOf(entry.getKey().getId()),
-                                ManagerMainPanel.formatCurrency.format(order.totalCost()),
+                                ManagerMainPanel.currencyFormatter.format(order.totalCost()),
                                 String.valueOf(order.totalQuantity())
                         }
                 ))

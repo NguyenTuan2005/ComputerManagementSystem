@@ -787,15 +787,15 @@ public class LoginFrame extends JFrame {
     }
   }
 
-  private class SignInPanel extends JPanel {
-    private LoginFrame loginFrame;
-    private JLabel signInLabel;
-    private JTextField emailField;
-    private JPasswordField passwdFieldSignin;
-    private JComboBox<String> roleComboBox;
-    private CustomButton signInButton;
-    private JCheckBox showPasswdCB;
-    private JButton forgotPasswdBt;
+    class SignInPanel extends JPanel {
+        private LoginFrame loginFrame;
+        private JLabel signInLabel;
+        private JTextField nameField, emailField;
+        private JPasswordField passwdFieldSignin;
+        private JComboBox<String> roleComboBox;
+        private CustomButton signInButton;
+        private JCheckBox showPasswdCB;
+        private JButton forgotPasswdBt;
 
     SignInPanel(LoginFrame loginFrame) {
       this.loginFrame = loginFrame;
@@ -851,34 +851,34 @@ public class LoginFrame extends JFrame {
       add(nameIcon, gbc);
 
       gbc.gridx = 1;
-      emailField =
+      nameField =
           TextFieldConfig.createTextField(
               "User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
-      emailField.addFocusListener(
+      nameField.addFocusListener(
           new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-              if (emailField.getText().equals("User Email")) {
-                emailField.setText("");
-                emailField.setForeground(Color.BLACK);
+              if (nameField.getText().equals("User Email")) {
+                nameField.setText("");
+                nameField.setForeground(Color.BLACK);
               }
-              emailField.setBorder(
+              nameField.setBorder(
                   BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-              if (emailField.getText().isEmpty()) {
-                emailField.setForeground(Color.GRAY);
-                emailField.setText("User Email");
+              if (nameField.getText().isEmpty()) {
+                nameField.setForeground(Color.GRAY);
+                nameField.setText("User Email");
 
               }
-              emailField.setBorder(
+              nameField.setBorder(
                   BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
             }
           });
-      emailField.addActionListener(e -> signInButton.doClick());
-      add(emailField, gbc);
+      nameField.addActionListener(e -> signInButton.doClick());
+      add(nameField, gbc);
 
       gbc.gridy++;
       gbc.gridx = 0;
@@ -927,7 +927,7 @@ public class LoginFrame extends JFrame {
           new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-              String username = emailField.getText();
+              String username = nameField.getText();
               String password = new String(passwdFieldSignin.getPassword());
               if (username.isEmpty()
                   || password.isEmpty()
@@ -935,9 +935,9 @@ public class LoginFrame extends JFrame {
                   || password.equals("Password")) {
                 if (username.isEmpty()
                     || username.equals("User Email")) {
-                  emailField.setBorder(
+                  nameField.setBorder(
                       BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-                  emailField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                  nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
                 }
                 if (password.isEmpty() || password.equals("Password")) {
                   passwdFieldSignin.setBorder(
@@ -949,6 +949,7 @@ public class LoginFrame extends JFrame {
                 switch ((String) roleComboBox.getSelectedItem()) {
                   case MANAGER_ROLE:
                     {
+
                       if (COMPUTER_SHOP.login(username,password,LoginStatus.MANAGER)) {
                         loginFrame.setVisible(false);
                         managerFrame = new ManagerFrame();
@@ -1008,10 +1009,11 @@ public class LoginFrame extends JFrame {
       add(forgotPasswdBt, gbc);
     }
 
-    private void sayError(String message) {
-      JOptionPane.showMessageDialog(loginFrame, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
+
   }
+    private void sayError(String message) {
+      JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
 
   private class ForgotPasswdPanel extends JPanel {
     private InputEmail inputEmail;

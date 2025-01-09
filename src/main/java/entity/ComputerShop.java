@@ -3,6 +3,7 @@ package entity;
 import config.CurrentUser;
 import controller.MController;
 import data.ManagerData;
+import enums.DisplayProductType;
 import enums.LoginStatus;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -207,6 +208,29 @@ public class ComputerShop implements MController {
                return;
            }
         }
+    }
+
+    @Override
+    public List<Product> filterBy(DisplayProductType type) {
+       switch (type){
+           case ALL -> {
+               return this.getAllProduct();
+           }
+           case PC_CASE -> {
+               return this.products.stream().filter(p->p.isPc()).collect(Collectors.toList());
+           }
+           case LAPTOP_GAMING -> {
+               return this.products.stream().filter(p->p.isLapGaming()).collect(Collectors.toList());
+           }
+           case LAPTOP_OFFICE -> {
+               return this.products.stream().filter(p->p.isLapOffice()).collect(Collectors.toList());
+           }
+           case PRICE_IN_AMOUNT_10M_20M -> {
+               return this.products.stream().filter(p->p.priceInAmount(DisplayProductType.TEN_MILION,DisplayProductType.TWENTY_MILION)).collect(Collectors.toList());
+           }
+
+       }
+        return List.of();
     }
 
     public void addProduct(Product p){

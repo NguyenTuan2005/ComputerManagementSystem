@@ -1,5 +1,6 @@
 package  entity;
 
+import enums.DisplayProductType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -147,5 +148,24 @@ public class Product {
 
     public boolean sameId(Product product) {
         return this.id == product.id;
+    }
+
+
+    public boolean isPc() {
+        return this.type.toLowerCase().contains(DisplayProductType.PC_CASE.getType().toLowerCase());
+    }
+    public boolean isLapOffice() {
+        return this.type.toLowerCase().contains(DisplayProductType.LAPTOP_OFFICE.getType().toLowerCase());
+    }
+    public boolean isLapGaming() {
+        return this.type.toLowerCase().contains(DisplayProductType.LAPTOP_OFFICE.getType().toLowerCase());
+    }
+
+
+    public boolean priceInAmount(int from, int to) {
+        return  (this.price > from) && (this.price<=to);
+    }
+    public boolean priceSmall(int price){
+        return this.price <= price;
     }
 }

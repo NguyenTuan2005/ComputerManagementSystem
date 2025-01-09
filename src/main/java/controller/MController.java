@@ -1,6 +1,7 @@
 package controller;
 
 import entity.*;
+import enums.DisplayProductType;
 import enums.LoginStatus;
 
 import java.util.List;
@@ -33,6 +34,8 @@ public interface MController {
     void removeProduct(Product p);
     void removeProductByIndex(int index);
     void updateProduct(Product product);
+    List<Product> filterBy(DisplayProductType type);
+
 
     List<Supplier> findSuppliersByName(String name);
     Map<String,Long> quantitativeAnalysis();

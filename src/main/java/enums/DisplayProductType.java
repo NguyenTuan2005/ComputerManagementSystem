@@ -5,13 +5,19 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum DisplayProductOnPageType {
+public enum DisplayProductType  {
   ALL("Get full product"),
   LAPTOP_GAMING("Gaming"),
   LAPTOP_OFFICE("Laptop"),
   PC_CASE("pc"),
   LUXURY(""),
-  CHEAP("");
+  CHEAP(""),
+  PRICE_IN_AMOUNT_10M_20M("10M to 20M"),
+  PRICE_IN_AMOUNT_20M_30M("10M to 20M")
+  ;
+  public static final int TEN_MILION =10000000;
+  public static final int TWENTY_MILION =20000000;
+  public static final int THIRTY_MILION =30000000;
 
   private final String type;
 

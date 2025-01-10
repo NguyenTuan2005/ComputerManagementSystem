@@ -29,6 +29,18 @@ public class Manager extends User{
         return map;
     }
 
+    public long getQuantityInOrders(Supplier supplier){
+        long count = this.orders.stream()
+                .map(Order::getOrderDetails)
+                .map(orderDetail ->orderDetail.stream().map(OrderDetail::getProduct).collect(Collectors.toList()))
+                .flatMap(List::stream)
+                .filter(p ->p.sameSupplier(supplier))
+                .count();
+        return count;
+
+    }
+
+
     @Override
     public Map<Product, Integer> productSoldStatistic() {
         return this.orders.stream()
@@ -51,6 +63,10 @@ public class Manager extends User{
         this.orders.get(this.orders.indexOf(order)).updateStatus(status);
     }
 
+    public boolean findName(String name){
+        return this.fullName.toLowerCase().contains(name.trim().toLowerCase());
+    }
+
     @Override
     public boolean isManager() {
         return true;
@@ -66,6 +82,14 @@ public class Manager extends User{
         }
     }
 
+    public static Object[][] getDataOnTable(ArrayList<Customer> customers) {
+        Object[][] datass = new Object[customers.size()][];
+        for (int i = 0; i < customers.size(); i++) {
+            datass[i] = customers.get(i).convertToObjects(i + 1);
+        }
+        return datass;
+    }
+
     public List<Order> filter(String status, String searchText) {
         return this.orders.stream()
                 .filter(order ->
@@ -74,5 +98,19 @@ public class Manager extends User{
                     ((status != null && order.isDispatched()) || (status == null && !order.isDispatched()))
                 )
                 .toList();
+    }
+
+    public void updateSupplier(Supplier supplier){
+        for (var order : this.orders){
+            order. updateSupplier(supplier);
+        }
+    }
+
+    public long getQuantityOfProduct(Product p) {
+        return this.orders.stream().map(order -> order.getOrderDetails())
+                .flatMap(List::stream)
+                .map(orderDetail -> orderDetail.getProduct())
+                .filter(product -> product.sameName(p))
+                .collect(Collectors.counting());
     }
 }

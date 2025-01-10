@@ -1,6 +1,6 @@
 package view.otherComponent;
 
-import static view.ManagerMainPanel.formatCurrency;
+import static view.ManagerMainPanel.currencyFormatter;
 
 import config.ButtonConfig;
 import config.ProductConfig;
@@ -42,7 +42,7 @@ public class ProductModifyForm extends JFrame {
   private JButton btnClear;
   private JButton btnExit;
 
-  private int supplierId;
+  private int productId;
   private entity.Product product;
 
   private String firstDataOfCompany;
@@ -68,6 +68,7 @@ public class ProductModifyForm extends JFrame {
 
   public ProductModifyForm(Product product, Runnable updateCallback) {
     this.product = product;
+    this.productId = product.getId();
     this.updateCallback = updateCallback;
     initializeFrame();
   }
@@ -201,17 +202,6 @@ public class ProductModifyForm extends JFrame {
     cmbSupplierId.addActionListener(
             e -> {
               suppliersMap.get(cmbSupplierId.getSelectedItem());
-              // update supplier
-
-//              for(Supplier sup : suppliers){
-//
-//
-//                if(sup.exactlySameCompanyName(suppliersMap.get(cmbSupplierId.getSelectedItem()))){
-//                  product.updateSupplier(sup);
-//                }
-//              }
-
-
             });
 
     String[] statusOptions = {"In Stock", "Available"};
@@ -232,7 +222,7 @@ public class ProductModifyForm extends JFrame {
 
     txtName.setText(product.getName());
     txtQuantity.setText("" + product.getQuantity());
-    txtPrice.setText("" + formatCurrency.format(product.getPrice()));
+    txtPrice.setText("" + currencyFormatter.format(product.getPrice()).replaceAll(",",""));
     txtGenre.setText(product.getType());
     txtBrand.setText(product.getBrand());
     txtOS.setText(product.getOperatingSystem());
@@ -334,24 +324,27 @@ public class ProductModifyForm extends JFrame {
 
   private void saveProduct() {
     try {
-//      product.setName(txtName.getText());
-//      product.setQuantity(Integer.parseInt(txtQuantity.getText()));
-//      product.setPrice(Integer.parseInt(txtPrice.getText().replaceAll(",", "")));
-//      product.setGenre(txtGenre.getText());
-//      product.setBrand(txtBrand.getText());
-//      product.setOperatingSystem(txtOS.getText());
-//      product.setCpu(txtCPU.getText());
-//      product.setMemory(txtMemory.getText());
-//      product.setRam(txtRAM.getText());
-//      product.setMadeIn(txtMadeIn.getText());
-//      product.setStatus(cmbStatus.getSelectedItem().toString());
-//      product.setDisk(txtDisk.getText());
-//      product.setMonitor(txtMonitor.getText());
-//      product.setCard(txtCard.getText());
-//      product.setWeight(txtWeight.getText());
-//      productDAO.update(product);
-//      showSuccessDialog("saved successfully!");
-//      clearForm();
+      Product product = Product.builder()
+              .id(productId)
+              .supplier(LoginFrame.COMPUTER_SHOP.findSupplier((String) cmbSupplierId.getSelectedItem()))
+              .name(txtName.getText())
+              .quantity(Integer.parseInt(txtQuantity.getText()))
+              .price(Integer.parseInt(txtPrice.getText()))
+              .type(txtGenre.getText())
+              .brand(txtBrand.getText())
+              .monitor(txtMonitor.getText())
+              .operatingSystem(txtOS.getText())
+              .cpu(txtCPU.getText())
+              .memory(txtMemory.getText())
+              .ram(txtRAM.getText())
+              .madeIn(txtMadeIn.getText())
+              .weight(Float.parseFloat(txtWeight.getText()))
+              .card(txtCard.getText())
+              .status(cmbStatus.getSelectedItem().toString())
+              .isActive(true)
+              .images(new ArrayList<>())
+              .build();
+      LoginFrame.COMPUTER_SHOP.updateProduct(product);
       dispose();
       if (updateCallback != null) {
         updateCallback.run();
@@ -365,7 +358,7 @@ public class ProductModifyForm extends JFrame {
   private void clearForm() {
     txtName.setText(product.getName());
     txtQuantity.setText("" + product.getQuantity());
-    txtPrice.setText("" + formatCurrency.format(product.getPrice()));
+    txtPrice.setText("" + currencyFormatter.format(product.getPrice()));
     txtGenre.setText(product.getType());
     txtBrand.setText(product.getBrand());
     txtOS.setText(product.getOperatingSystem());

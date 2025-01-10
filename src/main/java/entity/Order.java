@@ -35,7 +35,7 @@ public class Order {
                                 order.status,
                                 entry.getKey().getFullName(),
                                 String.valueOf(entry.getKey().getId()),
-                                ManagerMainPanel.formatCurrency.format(order.totalCost()),
+                                ManagerMainPanel.currencyFormatter.format(order.totalCost()),
                                 String.valueOf(order.totalQuantity())
                         }
                 ))
@@ -87,5 +87,14 @@ public class Order {
 
     public void updateStatus(String status) {
         this.status = status;
+    }
+    public void updateSupplier(Supplier supplier) {
+        for (var orderDetail : this.orderDetails ){
+            orderDetail.updateSupplier(supplier);
+        }
+    }
+
+    public boolean isActive() {
+        return this.status.equals(OrderType.ACTIVE_MESSAGE);
     }
 }

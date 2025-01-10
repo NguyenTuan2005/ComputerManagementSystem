@@ -93,7 +93,7 @@ public abstract class User implements Comparable<User>{
         return false;
     }
 
-    protected boolean isBlock() {
+    public boolean isBlock() {
         return this.isActive == false;
     }
 

@@ -20,6 +20,7 @@ import entity.Product;
 import entity.Supplier;
 import view.LoginFrame;
 import view.Style;
+import view.overrideComponent.ToastNotification;
 
 public class ProductInputForm extends JFrame {
 
@@ -47,6 +48,7 @@ public class ProductInputForm extends JFrame {
   private int mouseX, mouseY;
 
   private JPanel mainPanel;
+  private Runnable runnable;
   private List<String> imagePaths;
   private final String destinationFolder = "src/main/java/img/";
   private JPanel dropImagePanel;
@@ -63,7 +65,9 @@ public class ProductInputForm extends JFrame {
   private final Color BUTTON_COLOR = new Color(41, 128, 185);
   private final Color BUTTON_HOVER_COLOR = new Color(52, 152, 219);
 
-  public ProductInputForm() {
+  public ProductInputForm(Runnable updateCallback) {
+    this.runnable = updateCallback;
+
     setUndecorated(true);
     setTitle("Add product");
     setSize(900, 750);
@@ -118,6 +122,7 @@ public class ProductInputForm extends JFrame {
     this.mainPanel.add(dropImagePanel, BorderLayout.SOUTH);
 
     scrollPane = new ScrollPane();
+    scrollPane.setPreferredSize(new Dimension(700, 9050));
     scrollPane.setPreferredSize(new Dimension(700, 90000));
     mainPanel.add(titlePanel);
     mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -398,6 +403,7 @@ public class ProductInputForm extends JFrame {
         images.add(new entity.Image(1,img));
       }
 
+
       Product product = Product.builder()
               .id(LoginFrame.COMPUTER_SHOP.getTotalProduct()+1)
               .supplier(LoginFrame.COMPUTER_SHOP.findSupplier((String) cmbSupplierId.getSelectedItem()))
@@ -416,18 +422,14 @@ public class ProductInputForm extends JFrame {
               .card(txtCard.getText())
               .status(cmbStatus.getSelectedItem().toString())
               .isActive(true)
-              .images(images)
+              .images(new ArrayList<>())
+//              .images(images)
               .build();
 
 
       LoginFrame.COMPUTER_SHOP.addProduct(product);
-//      var newProduct = productDAO.save(product);
-//      imageDAO = new ImageDAO();
-//      for (var img : this.imagePaths) {
-//        imageDAO.save(new model.Image(newProduct.getId(), img, "Hình demo cho san pham"));
-//      }
-
-      showSuccessDialog("saved successfully!");
+      if( runnable != null) runnable.run();
+      ToastNotification.showToast("Saved successfully!", 30,3000,-1,-1);
       clearForm();
 
     } catch (NumberFormatException ex) {
@@ -450,6 +452,7 @@ public class ProductInputForm extends JFrame {
     txtWeight.setText("");
     txtDisk.setText("");
     txtMonitor.setText("");
+
     dropImagePanel.removeAll();
     dropImagePanel.revalidate();
     dropImagePanel.repaint();
@@ -464,6 +467,5 @@ public class ProductInputForm extends JFrame {
   }
 
   public static void main(String[] args) {
-    new ProductInputForm();
   }
 }

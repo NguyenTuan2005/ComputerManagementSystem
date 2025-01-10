@@ -11,6 +11,7 @@ public interface MController {
     boolean login(String email, String pass, LoginStatus loginStatus);
 
     List<Product> getAllProduct();
+
     List<Supplier> getAllSupplier();
     List<Customer> getAllCustomer();
 
@@ -28,13 +29,22 @@ public interface MController {
 
 
     List<Product> findProductByName(String name);
-
-
+    Map<Product, Long> productOrderStatistics();
+    void removeProduct(Product p);
+    void removeProductByIndex(int index);
+    void updateProduct(Product product);
 
     List<Supplier> findSuppliersByName(String name);
+    Map<String,Long> quantitativeAnalysis();
+    Map<String,Long> analyzeQuantityOfImportedGoods();
 
 
     void updateUserInfor(User currentUserV2);
 
     void updateSupplier(Supplier supplier);
+
+    void addSupplier(Supplier newSupplier);
+
+    void removeSupplierByIndex(int index);
+
 }

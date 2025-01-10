@@ -164,7 +164,6 @@ public class ExcelConfig {
             row.createCell(2).setCellValue(manager.getAddress());
             row.createCell(3).setCellValue(manager.getDob().toString());
             row.createCell(4).setCellValue(manager.getPhone());
-            row.createCell(5).setCellValue("null");
             row.createCell(6).setCellValue(manager.getFullName());
             row.createCell(7).setCellValue(manager.getPassword());
             row.createCell(8).setCellValue(manager.getEmail());

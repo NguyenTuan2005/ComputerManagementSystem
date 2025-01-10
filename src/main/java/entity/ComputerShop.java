@@ -319,7 +319,10 @@ public class ComputerShop implements MController {
 
 
     public List<Order> getAllOrders() {
-        return this.managers.get(0).getOrders();
+        return this.managers.stream()
+                .map(Manager::getOrders)
+                .flatMap(List::stream)
+                .toList();
     }
 
 //    public void setAllOrders(List<Order> allOrders) {

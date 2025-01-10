@@ -15,8 +15,10 @@ import verifier.*;
 import view.otherComponent.*;
 import view.overrideComponent.CircularImage;
 import view.overrideComponent.CustomButton;
+import view.overrideComponent.RoundedBorder;
 import view.overrideComponent.ToastNotification;
 
+import javax.swing.Timer;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -38,6 +40,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Date;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -3711,159 +3714,136 @@ public class ManagerMainPanel extends JPanel {
     }
 
   private class NotificationPanel extends JPanel {
-//    private JScrollPane scrollPane;
-//    private Map<Customer, List<Order>> customerOrders;
-//    private Timer timer;
-//
-//    public NotificationPanel() {
-//      setLayout(new BorderLayout());
-//
-//      notificationContainer = new JPanel();
-//      notificationContainer.setBackground(Color.WHITE);
-//      notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
-//
-//      addAllNotification();
-//
-//      scrollPane = new JScrollPane(notificationContainer);
-//      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//      setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
-//      add(scrollPane, BorderLayout.CENTER);
-//
-//      startTimer();
-//    }
-//
-//    public void reloadNotification() {
-//      customerOrders = getAllCustomerOrder();
-//      notificationContainer.removeAll();
-//      addAllNotification();
-//      notificationContainer.revalidate();
-//      notificationContainer.repaint();
-//    }
-//
-//    private void startTimer() {
-//      timer = new Timer(30000, e -> reloadNotification());
-//      timer.start();
-//    }
-//
-//    private void addAllNotification() {
-//      customerOrders = getAllCustomerOrder();
-//
-//      JPanel main = new JPanel(new GridBagLayout());
-//      main.setBackground(Color.WHITE);
-//      GridBagConstraints gbc = new GridBagConstraints();
-//      gbc.insets = new Insets(5, 15, 5, 15);
-//      gbc.anchor = GridBagConstraints.WEST;
-//      int x = 0, y = 0;
-////      if (!customerOrders.isEmpty()) {
-////        for (Map.Entry<Customer, List<CustomerOrderDTO>> entry : customerOrders.entrySet()) {
-////          Customer customer = entry.getKey();
-////
-////          // Single grouping loop: group orders by date and ID together
-////          Map<Date, Map<Integer, List<CustomerOrderDTO>>> groupedOrders =
-////              new TreeMap<>(Collections.reverseOrder());
-////          for (CustomerOrderDTO order : entry.getValue()) {
-////            groupedOrders
-////                .computeIfAbsent(
-////                    (Date) order.getOrderDate(), date -> new TreeMap<>(Collections.reverseOrder()))
-////                .computeIfAbsent(order.getOrderId(), id -> new ArrayList<>())
-////                .add(order);
-////          }
-////
-////          // Process grouped orders directly
-////          for (Map.Entry<Date, Map<Integer, List<CustomerOrderDTO>>> dateEntry :
-////              groupedOrders.entrySet()) {
-////            Date orderDate = dateEntry.getKey();
-////
-////            for (Map.Entry<Integer, List<CustomerOrderDTO>> orderEntry :
-////                dateEntry.getValue().entrySet()) {
-////              int orderId = orderEntry.getKey();
-////              List<CustomerOrderDTO> orders = orderEntry.getValue();
-////
-////              double totalCost = orders.stream().mapToDouble(CustomerOrderDTO::totalCost).sum();
-////
-////              StringBuilder notificationText = new StringBuilder();
-////              notificationText.append(
-////                  String.format(
-//                      "New Orders from %s\nOrder ID: %d", customer.getFullName(), orderId));
-////              for (CustomerOrderDTO order : orders) {
-////                notificationText.append(
-////                    String.format(
-////                        "\nOrder Date: %s\nShipping Address: %s\nOrder Status: %s\nProduct Name: %s\nQuantity: %d\n-----------------------------\n",
-////                        order.getOrderDate().toString(),
-////                        order.getShipAddress(),
-////                        order.getStatusItem(),
-////                        order.getProductName(),
-////                        order.getQuantity()));
-////              }
-////              notificationText.append(
-////                  String.format(
-////                      "\nTotal: %s VNĐ",
-////                      NumberFormat.getInstance(new Locale("vi", "VN")).format(totalCost)));
-////
-////              CircularImage avatar = new CircularImage(customer.getAvataImg(), 80, 80, false);
-////              JLabel timeLabel = new JLabel(String.format("<html>%s</html>", orderDate.toString()));
-////
-////              JTextArea message = createMessageArea(notificationText.toString());
-////              JScrollPane scrollPane = createScrollPane(message);
-//
-////              gbc.gridx = x;
-////              gbc.gridy = y;
-////              gbc.anchor = GridBagConstraints.WEST;
-////              main.add(avatar, gbc);
-////
-////              gbc.gridx = x;
-////              gbc.gridy = ++y;
-////              gbc.anchor = GridBagConstraints.EAST;
-////              main.add(scrollPane, gbc);
-////
-////              gbc.gridx = x + 1;
-////              main.add(timeLabel, gbc);
-////              y++;
-////            }
-////          }
-////        }
-////      } else {
-////        JPanel emptyNotificationPn = new JPanel(new BorderLayout());
-////        emptyNotificationPn.setBackground(Color.WHITE);
-////        emptyNotificationPn.add(
-////            new JLabel(
-////                createImageForProduct("src/main/java/img/no_Notification_Img.png", 500, 500)));
-////        main.add(emptyNotificationPn, gbc);
-////      }
-////
-////      notificationContainer.add(main);
-////      notificationContainer.revalidate();
-////      notificationContainer.repaint();
-//    }
-//
-//    private JTextArea createMessageArea(String text) {
-//      JTextArea message = new JTextArea(text);
-//      message.setBackground(Color.WHITE);
-//      message.setForeground(Color.BLACK);
-//      message.setFont(new Font("Arial", Font.PLAIN, 16));
-//      message.setBorder(
-//          BorderFactory.createCompoundBorder(
-//              new RoundedBorder(20, 2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE),
-//              BorderFactory.createEmptyBorder(3, 3, 3, 8)));
-//      message.setLineWrap(true);
-//      message.setWrapStyleWord(true);
-//      message.setEditable(false);
-//      message.setOpaque(true);
-//      message.setPreferredSize(new Dimension(600, message.getPreferredSize().height));
-//      return message;
-//    }
-//
-//    private JScrollPane createScrollPane(JTextArea message) {
-//      JScrollPane scrollPane = new JScrollPane(message);
-//      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-//      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-//      scrollPane.setBorder(BorderFactory.createEmptyBorder());
-//      return scrollPane;
-//    }
-//
-//    private Map<Customer, List<Order>> getAllCustomerOrder() {
-//      return LoginFrame.COMPUTER_SHOP.userOrderStatistics();
-//    }
+    private JScrollPane scrollPane;
+    private List<Order> orders;
+    private Timer timer;
+
+    public NotificationPanel() {
+      setLayout(new BorderLayout());
+
+      notificationContainer = new JPanel();
+      notificationContainer.setBackground(Color.WHITE);
+      notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
+
+      addAllNotification();
+
+      scrollPane = new JScrollPane(notificationContainer);
+      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
+      add(scrollPane, BorderLayout.CENTER);
+
+      startTimer();
+    }
+
+    public void reloadNotification() {
+      orders = getAllOrders();
+      notificationContainer.removeAll();
+      addAllNotification();
+      notificationContainer.revalidate();
+      notificationContainer.repaint();
+    }
+
+    private void startTimer() {
+      timer = new Timer(30000, e -> reloadNotification());
+      timer.start();
+    }
+
+    private void addAllNotification() {
+      orders = getAllOrders();
+
+      JPanel main = new JPanel(new GridBagLayout());
+      main.setBackground(Color.WHITE);
+      GridBagConstraints gbc = new GridBagConstraints();
+      gbc.insets = new Insets(5, 15, 5, 15);
+      gbc.anchor = GridBagConstraints.WEST;
+      int x = 0, y = 0;
+      if (!orders.isEmpty()) {
+        for (Order order : orders) {
+          Customer customer = order.getCustomer();
+
+          StringBuilder notificationText = new StringBuilder();
+          notificationText.append(
+              String.format(
+                  "New Orders from %s\nOrder ID: %d\nOrder Date: %s\nShipping Address: %s\n-----------------------------\n",
+                      customer.getFullName(),
+                      order.getOrderId(),
+                      order.getOrderedAt().toString(),
+                      order.getShipAddress()));
+          for (OrderDetail orderDetail : order.getOrderDetails()) {
+            notificationText.append(
+                String.format(
+                    "\nOrder Status: %s\nProduct Name: %s\nQuantity: %d\n-----------------------------\n",
+                        order.getStatus(),
+                        orderDetail.getProductName(),
+                        orderDetail.getQuantity()));
+          }
+          notificationText.append(
+              String.format("\nTotal: %s VNĐ", NumberFormat.getInstance(new Locale("vi", "VN")).format(order.totalCost())));
+
+          CircularImage avatar = new CircularImage(customer.getAvatarImg(), 80, 80, false);
+          JLabel timeLabel = new JLabel(String.format("<html>%s</html>", order.getOrderedAt().toString()));
+
+          JTextArea message = createMessageArea(notificationText.toString());
+          JScrollPane scrollPane = createScrollPane(message);
+
+          gbc.gridx = x;
+          gbc.gridy = y;
+          gbc.anchor = GridBagConstraints.WEST;
+          main.add(avatar, gbc);
+
+          gbc.gridx = x;
+          gbc.gridy = ++y;
+          gbc.anchor = GridBagConstraints.EAST;
+          main.add(scrollPane, gbc);
+
+          gbc.gridx = x + 1;
+          main.add(timeLabel, gbc);
+          y++;
+        }
+      } else {
+        JPanel emptyNotificationPn = new JPanel(new BorderLayout());
+        emptyNotificationPn.setBackground(Color.WHITE);
+        emptyNotificationPn.add(
+            new JLabel(
+                createImageForProduct("src/main/java/img/no_Notification_Img.png", 500, 500)));
+        main.add(emptyNotificationPn, gbc);
+      }
+
+      notificationContainer.add(main);
+      notificationContainer.revalidate();
+      notificationContainer.repaint();
+    }
+
+    private JTextArea createMessageArea(String text) {
+      JTextArea message = new JTextArea(text);
+      message.setBackground(Color.WHITE);
+      message.setForeground(Color.BLACK);
+      message.setFont(new Font("Arial", Font.PLAIN, 16));
+      message.setBorder(
+          BorderFactory.createCompoundBorder(
+              new RoundedBorder(20, 2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE),
+              BorderFactory.createEmptyBorder(3, 3, 3, 8)));
+      message.setLineWrap(true);
+      message.setWrapStyleWord(true);
+      message.setEditable(false);
+      message.setOpaque(true);
+      message.setPreferredSize(new Dimension(600, message.getPreferredSize().height));
+      return message;
+    }
+
+    private JScrollPane createScrollPane(JTextArea message) {
+      JScrollPane scrollPane = new JScrollPane(message);
+      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+      scrollPane.setBorder(BorderFactory.createEmptyBorder());
+      return scrollPane;
+    }
+
+    private List<Order> getAllOrders() {
+      return LoginFrame.COMPUTER_SHOP.getAllOrders().stream()
+              .filter(Order::isActive)
+              .toList();
+    }
   }
 
   private class ChangeInformationPanel extends JPanel {

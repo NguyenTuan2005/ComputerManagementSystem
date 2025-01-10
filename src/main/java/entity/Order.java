@@ -93,4 +93,8 @@ public class Order {
             orderDetail.updateSupplier(supplier);
         }
     }
+
+    public boolean isActive() {
+        return this.status.equals(OrderType.ACTIVE_MESSAGE);
+    }
 }

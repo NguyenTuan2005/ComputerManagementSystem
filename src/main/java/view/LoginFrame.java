@@ -1,11 +1,9 @@
 package view;
 
-import verifier.EmailVerifier;
 import config.ButtonConfig;
 import config.EmailConfig;
 import config.PasswordFieldConfig;
 import config.TextFieldConfig;
-import model.ComputerShop;
 import enums.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -15,9 +13,10 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
+import model.ComputerShop;
 import model.Customer;
 import security.PasswordSecurity;
-
+import verifier.EmailVerifier;
 import view.overrideComponent.CircularImage;
 import view.overrideComponent.CustomButton;
 import view.overrideComponent.ToastNotification;
@@ -29,7 +28,6 @@ public class LoginFrame extends JFrame {
   private InputFormPanel inputFormPanel;
 
   public static ComputerShop COMPUTER_SHOP = new ComputerShop();
-
 
   private final String SignUpString =
       "<html>You don't have an Account?<br>Please Sign Up to connect with us!</html>";
@@ -670,7 +668,13 @@ public class LoginFrame extends JFrame {
                 inputFormPanel.signUpPanel.showPanelSignUp("registrationSuccess");
 
                 Customer newCustomer =
-                        Customer.builder().fullName(name).avatarImg(  "src/main/java/img/default-avt.png").address(address).email(email).password(  new PasswordSecurity(newPassword).generatePassword()).build();
+                    Customer.builder()
+                        .fullName(name)
+                        .avatarImg("src/main/java/img/default-avt.png")
+                        .address(address)
+                        .email(email)
+                        .password(new PasswordSecurity(newPassword).generatePassword())
+                        .build();
                 LoginFrame.COMPUTER_SHOP.addCustomer(newCustomer);
                 System.out.println("ok");
 
@@ -788,15 +792,15 @@ public class LoginFrame extends JFrame {
     }
   }
 
-    class SignInPanel extends JPanel {
-        private LoginFrame loginFrame;
-        private JLabel signInLabel;
-        private JTextField emailField;
-        private JPasswordField passwdFieldSignin;
-        private JComboBox<String> roleComboBox;
-        private CustomButton signInButton;
-        private JCheckBox showPasswdCB;
-        private JButton forgotPasswdBt;
+  class SignInPanel extends JPanel {
+    private LoginFrame loginFrame;
+    private JLabel signInLabel;
+    private JTextField emailField;
+    private JPasswordField passwdFieldSignin;
+    private JComboBox<String> roleComboBox;
+    private CustomButton signInButton;
+    private JCheckBox showPasswdCB;
+    private JButton forgotPasswdBt;
 
     SignInPanel(LoginFrame loginFrame) {
       this.loginFrame = loginFrame;
@@ -872,7 +876,6 @@ public class LoginFrame extends JFrame {
               if (emailField.getText().isEmpty()) {
                 emailField.setForeground(Color.GRAY);
                 emailField.setText("User Email");
-
               }
               emailField.setBorder(
                   BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
@@ -934,8 +937,7 @@ public class LoginFrame extends JFrame {
                   || password.isEmpty()
                   || username.equals("User Email")
                   || password.equals("Password")) {
-                if (username.isEmpty()
-                    || username.equals("User Email")) {
+                if (username.isEmpty() || username.equals("User Email")) {
                   emailField.setBorder(
                       BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
                   emailField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
@@ -950,20 +952,17 @@ public class LoginFrame extends JFrame {
                 switch ((String) roleComboBox.getSelectedItem()) {
                   case MANAGER_ROLE:
                     {
-
-                      if (COMPUTER_SHOP.login(username,password,LoginStatus.MANAGER)) {
+                      if (COMPUTER_SHOP.login(username, password, LoginStatus.MANAGER)) {
                         loginFrame.setVisible(false);
                         managerFrame = new ManagerFrame();
                       } else {
-                       sayError("Wrong login information!");
+                        sayError("Wrong login information!");
                       }
                       break;
                     }
                   case CUSTOMER_ROLE:
                     {
-
-
-                      if (COMPUTER_SHOP.login(username,password,LoginStatus.CUSTOMER)) {
+                      if (COMPUTER_SHOP.login(username, password, LoginStatus.CUSTOMER)) {
                         loginFrame.setVisible(false);
                         try {
                           customerFrame = new CustomerFrame();
@@ -996,22 +995,21 @@ public class LoginFrame extends JFrame {
             }
           });
       forgotPasswdBt.addActionListener(
-              e -> {
-                inputFormPanel.showPanel("forgotPasswd");
-                TextFieldConfig.resetTextField(
-                    inputFormPanel.forgotPasswdPanel.inputEmail.emailField, "User Email");
-              });
+          e -> {
+            inputFormPanel.showPanel("forgotPasswd");
+            TextFieldConfig.resetTextField(
+                inputFormPanel.forgotPasswdPanel.inputEmail.emailField, "User Email");
+          });
       gbc.gridy++;
       gbc.gridx = 0;
       gbc.gridwidth = 2;
       add(forgotPasswdBt, gbc);
     }
-
-
   }
-    private void sayError(String message) {
-      JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
+
+  private void sayError(String message) {
+    JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+  }
 
   private class ForgotPasswdPanel extends JPanel {
     private InputEmail inputEmail;
@@ -1054,7 +1052,7 @@ public class LoginFrame extends JFrame {
       private CustomButton sendCodeBt, backBt;
       private JRadioButton managerBt, customerBt;
 
-     public InputEmail() {
+      public InputEmail() {
         setBackground(Color.WHITE);
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -1114,27 +1112,28 @@ public class LoginFrame extends JFrame {
                 20,
                 SwingConstants.CENTER,
                 new Dimension(350, 50));
-        sendCodeBt.addActionListener(e -> {
-            email = emailField.getText();
-            if (managerBt.isSelected()){
-              forgotPasswordStatus = ForgotPasswordStatus.MANAGER;
-               var manager = COMPUTER_SHOP.findManagerByEmail(email);
-              if ( manager == null) ToastNotification.showToast("Not found user",3000,30,-1,-1);
-              name = manager.getFullName();
+        sendCodeBt.addActionListener(
+            e -> {
+              email = emailField.getText();
+              if (managerBt.isSelected()) {
+                forgotPasswordStatus = ForgotPasswordStatus.MANAGER;
+                var manager = COMPUTER_SHOP.findManagerByEmail(email);
+                if (manager == null)
+                  ToastNotification.showToast("Not found user", 3000, 30, -1, -1);
+                name = manager.getFullName();
 
-            }else {
-              forgotPasswordStatus = ForgotPasswordStatus.CUSTOMER;
-              var customer = COMPUTER_SHOP.findCustomerByEmail(email);
-              if ( customer == null) ToastNotification.showToast("Not found user",3000,30,-1,-1);
-              name = customer.getFullName();
-
-            }
-            otp = new EmailConfig().generateOTP();
-            System.out.println("otp "+otp);
-            sendOTP(email,name, otp);
-            showInnerPanel("verificationCode");
-
-        });
+              } else {
+                forgotPasswordStatus = ForgotPasswordStatus.CUSTOMER;
+                var customer = COMPUTER_SHOP.findCustomerByEmail(email);
+                if (customer == null)
+                  ToastNotification.showToast("Not found user", 3000, 30, -1, -1);
+                name = customer.getFullName();
+              }
+              otp = new EmailConfig().generateOTP();
+              System.out.println("otp " + otp);
+              sendOTP(email, name, otp);
+              showInnerPanel("verificationCode");
+            });
 
         gbc.gridwidth = 1;
         gbc.gridy++;
@@ -1521,18 +1520,19 @@ public class LoginFrame extends JFrame {
 
                 } else {
                   if (forgotPasswordStatus == ForgotPasswordStatus.CUSTOMER) {
-                    //set pass customer
-//                    CustomerController cusController = new CustomerController();
-//                    cusController.updatePassword(newPassword, id);
-                    COMPUTER_SHOP.changePassword(UserType.CUSTOMER,email,newPassword);
+                    // set pass customer
+                    //                    CustomerController cusController = new
+                    // CustomerController();
+                    //                    cusController.updatePassword(newPassword, id);
+                    COMPUTER_SHOP.changePassword(UserType.CUSTOMER, email, newPassword);
                     resetTextPassword();
 
                   } else if (forgotPasswordStatus == ForgotPasswordStatus.MANAGER) {
-                      // setPass manager
-                    COMPUTER_SHOP.changePassword(UserType.MANAGER,email,newPassword);
-//                    AccountController accController = new AccountController();
-//                    accController.updatePassword(newPassword, id);
-//                    resetTextPassword();
+                    // setPass manager
+                    COMPUTER_SHOP.changePassword(UserType.MANAGER, email, newPassword);
+                    //                    AccountController accController = new AccountController();
+                    //                    accController.updatePassword(newPassword, id);
+                    //                    resetTextPassword();
                   }
                   JOptionPane.showMessageDialog(null, "Password reset successfully!");
                   showInnerPanel("inputEmail");

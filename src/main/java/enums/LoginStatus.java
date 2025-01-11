@@ -18,7 +18,12 @@ public enum LoginStatus {
   public String getMessager() {
     return this.messager;
   }
-  public boolean isCustomer(){return  this == CUSTOMER;}
-  public boolean isManager(){return  this == MANAGER;}
 
+  public boolean isCustomer() {
+    return this == CUSTOMER;
+  }
+
+  public boolean isManager() {
+    return this == MANAGER;
+  }
 }

@@ -4,28 +4,21 @@ import static view.CustomerMainPanel.createImageForProduct;
 import static view.CustomerMainPanel.formatCurrency;
 
 import config.*;
-
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-import lombok.NoArgsConstructor;
 import view.Style;
 import view.overrideComponent.CustomButton;
-
 
 public class ShowOrder extends JPanel {
   private int orderId;
 
-
   public ShowOrder() {
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    for (int i =0 ; i< 10; i++) {
+    for (int i = 0; i < 10; i++) {
       System.out.println(">>>>>>>>>>>>>");
       add(showOrder());
     }
@@ -33,7 +26,7 @@ public class ShowOrder extends JPanel {
 
   public JPanel showOrder() {
     this.orderId = orderId;
-//    this.customerOrderDTOs = customerOrderDTOS;
+    //    this.customerOrderDTOs = customerOrderDTOS;
     JPanel main = new JPanel(new BorderLayout());
     main.setPreferredSize(new Dimension(1270, 400));
 
@@ -49,10 +42,7 @@ public class ShowOrder extends JPanel {
     datePn.setBackground(Color.WHITE);
     JLabel orderDate =
         LabelConfig.createLabel(
-            "    Order Date: " ,
-            Style.FONT_BOLD_18,
-            Color.BLACK,
-            SwingConstants.LEFT);
+            "    Order Date: ", Style.FONT_BOLD_18, Color.BLACK, SwingConstants.LEFT);
     datePn.add(orderDate, BorderLayout.WEST);
 
     JPanel top = new JPanel(new GridLayout(2, 1));
@@ -63,10 +53,11 @@ public class ShowOrder extends JPanel {
     JPanel mid = new JPanel(new GridLayout(0, 2));
     mid.setBackground(Color.WHITE);
     int totalPrice = 0;
-//    for (var item : customerOrderDTOs) {
-//      totalPrice += item.customerOrderDTO().getQuantity() * item.customerOrderDTO().getUnitPrice();
-//      mid.add(productOrderPn(item));
-//    }
+    //    for (var item : customerOrderDTOs) {
+    //      totalPrice += item.customerOrderDTO().getQuantity() *
+    // item.customerOrderDTO().getUnitPrice();
+    //      mid.add(productOrderPn(item));
+    //    }
 
     main.add(mid, BorderLayout.CENTER);
 
@@ -96,7 +87,7 @@ public class ShowOrder extends JPanel {
     ButtonConfig.setButtonIcon("src/main/java/Icon/bill_Icon.png", viewBill, 15);
     viewBill.addActionListener(
         e -> {
-//          var a = new BillFrame(order);
+          //          var a = new BillFrame(order);
         });
 
     bottomLeft.add(viewBill);
@@ -105,10 +96,7 @@ public class ShowOrder extends JPanel {
     bottomRight.setBackground(Color.WHITE);
     JLabel items =
         LabelConfig.createLabel(
-            "size" + " items:  ",
-            Style.FONT_BOLD_25,
-            Color.BLACK,
-            SwingConstants.RIGHT);
+            "size" + " items:  ", Style.FONT_BOLD_25, Color.BLACK, SwingConstants.RIGHT);
     String priceFormated = formatCurrency.format(totalPrice);
     JLabel totalPriceLabel =
         LabelConfig.createLabel(
@@ -126,7 +114,7 @@ public class ShowOrder extends JPanel {
     return main;
   }
 
-  public JPanel productOrderPn( ) {
+  public JPanel productOrderPn() {
 
     JPanel mainPanel = new JPanel(new BorderLayout());
     mainPanel.setBackground(Color.WHITE);
@@ -135,8 +123,7 @@ public class ShowOrder extends JPanel {
 
     JPanel imgPn = new JPanel();
     imgPn.setBackground(Color.WHITE);
-    JLabel proImg =
-        new JLabel(createImageForProduct("", 150, 150));
+    JLabel proImg = new JLabel(createImageForProduct("", 150, 150));
     imgPn.add(proImg);
     mainPanel.add(imgPn, BorderLayout.WEST);
 
@@ -154,41 +141,24 @@ public class ShowOrder extends JPanel {
     gbc.weighty = 0.4;
     JLabel proName =
         LabelConfig.createLabel(
-           "name product",
-            Style.FONT_BOLD_18,
-            Color.BLACK,
-            SwingConstants.LEFT);
+            "name product", Style.FONT_BOLD_18, Color.BLACK, SwingConstants.LEFT);
     proDetails.add(proName, gbc);
 
     gbc.gridy++;
     gbc.weighty = 0.1;
     JLabel proID =
         LabelConfig.createLabel(
-            "Product ID:  " ,
-            Style.FONT_PLAIN_13,
-            Color.BLACK,
-            SwingConstants.LEFT);
+            "Product ID:  ", Style.FONT_PLAIN_13, Color.BLACK, SwingConstants.LEFT);
     proDetails.add(proID, gbc);
     gbc.gridy++;
     JLabel proBrand =
-        LabelConfig.createLabel(
-            "Brand: "  ,
-            Style.FONT_PLAIN_13,
-            Color.BLACK,
-            SwingConstants.LEFT);
+        LabelConfig.createLabel("Brand: ", Style.FONT_PLAIN_13, Color.BLACK, SwingConstants.LEFT);
     proDetails.add(proBrand, gbc);
 
     gbc.gridy++;
     JLabel proTechnicalDetail =
         LabelConfig.createLabel(
-            "CPU "
-                + "cpu"
-                + " / "
-                + "RAM "
-                + "ram"
-                + " / "
-                + "Storage "
-                + "memory",
+            "CPU " + "cpu" + " / " + "RAM " + "ram" + " / " + "Storage " + "memory",
             Style.FONT_PLAIN_13,
             Color.BLACK,
             SwingConstants.LEFT);
@@ -213,10 +183,7 @@ public class ShowOrder extends JPanel {
     quantityPn.setBackground(Color.WHITE);
     JLabel proQuantity =
         LabelConfig.createLabel(
-            "x" + "quantity product",
-            Style.FONT_BOLD_18,
-            Color.BLACK,
-            SwingConstants.RIGHT);
+            "x" + "quantity product", Style.FONT_BOLD_18, Color.BLACK, SwingConstants.RIGHT);
     quantityPn.add(proQuantity);
 
     bottomPn.add(pricePn);

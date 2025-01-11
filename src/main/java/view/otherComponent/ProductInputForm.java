@@ -54,10 +54,9 @@ public class ProductInputForm extends JFrame {
   private JPanel dropImagePanel;
   private ScrollPane scrollPane;
 
-  //data
+  // data
   private Map<String, Integer> suppliersMap;
   private List<model.Supplier> suppliers = LoginFrame.COMPUTER_SHOP.getAllSupplier();
-
 
   private final Color SECONDARY_COLOR = new Color(52, 152, 219);
   private final Color BACKGROUND_COLOR = new Color(236, 240, 241);
@@ -400,13 +399,14 @@ public class ProductInputForm extends JFrame {
 
       List<model.Image> images = new ArrayList<>();
       for (var img : this.imagePaths) {
-        images.add(new model.Image(1,img));
+        images.add(new model.Image(1, img));
       }
 
-
-      Product product = Product.builder()
-              .id(LoginFrame.COMPUTER_SHOP.getTotalProduct()+1)
-              .supplier(LoginFrame.COMPUTER_SHOP.findSupplier((String) cmbSupplierId.getSelectedItem()))
+      Product product =
+          Product.builder()
+              .id(LoginFrame.COMPUTER_SHOP.getTotalProduct() + 1)
+              .supplier(
+                  LoginFrame.COMPUTER_SHOP.findSupplier((String) cmbSupplierId.getSelectedItem()))
               .name(txtName.getText())
               .quantity(Integer.parseInt(txtQuantity.getText()))
               .price(Integer.parseInt(txtPrice.getText()))
@@ -428,8 +428,8 @@ public class ProductInputForm extends JFrame {
       System.out.println(product);
 
       LoginFrame.COMPUTER_SHOP.addProduct(product);
-      if( runnable != null) runnable.run();
-      ToastNotification.showToast("Saved successfully!", 30,3000,-1,-1);
+      if (runnable != null) runnable.run();
+      ToastNotification.showToast("Saved successfully!", 30, 3000, -1, -1);
       clearForm();
 
     } catch (NumberFormatException ex) {
@@ -467,6 +467,6 @@ public class ProductInputForm extends JFrame {
   }
 
   public static void main(String[] args) {
-    new ProductInputForm(()->{});
+    new ProductInputForm(() -> {});
   }
 }

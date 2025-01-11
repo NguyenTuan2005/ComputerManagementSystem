@@ -77,7 +77,4 @@ public class Style {
   public static final Color CHART_BACKGROUND_COLOR = new Color(240, 248, 255);
   public static final Color CHART_BAR_COLOR_ORANGE = new Color(253, 126, 20);
   public static final Color CHART_BAR_COLOR_YELLOW = new Color(255, 235, 59);
-
-
-
 }

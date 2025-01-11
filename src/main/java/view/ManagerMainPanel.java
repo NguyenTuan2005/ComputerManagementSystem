@@ -1919,6 +1919,7 @@ public class ManagerMainPanel extends JPanel {
     };
 
     private JButton exportExcelBt, reloadBt, searchBt, deliveryOrderBt;
+      private CustomButton sort1Bt, sort2Bt, selectedBt;
     private JTextField searchOrderField;
 
     private JTable orderTable, dispatchedOrderTable;
@@ -2115,9 +2116,46 @@ public class ManagerMainPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         // orders table
+        JPanel  orderTablePn = new JPanel(new BorderLayout());
+        JPanel sortBarPn = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        sortBarPn.setBackground(Color.WHITE);
+        sort1Bt = ButtonConfig.createCustomButton(
+                "Sort by receiced",
+                Style.FONT_BOLD_15,
+                Color.BLACK,
+                Style.MENU_BUTTON_COLOR,
+                Style.LIGHT_BlUE,
+                Style.MENU_BUTTON_COLOR,
+                2,
+                25,
+                SwingConstants.CENTER,
+                new Dimension(180, 25));
+          sort1Bt.addActionListener(e ->{
+              updateSelectedButtonColor(sort1Bt);
+          });
+
+          sort2Bt = ButtonConfig.createCustomButton(
+                  "Order Quantity",
+                  Style.FONT_BOLD_15,
+                  Color.BLACK,
+                  Color.white,
+                  Style.LIGHT_BlUE,
+                  Style.MENU_BUTTON_COLOR,
+                  2,
+                  25,
+                  SwingConstants.CENTER,
+                  new Dimension(180, 25));
+          sort2Bt.addActionListener(e ->{
+              updateSelectedButtonColor(sort2Bt);
+          });
+          sortBarPn.add(sort1Bt);
+          sortBarPn.add(sort2Bt);
+          orderTablePn.add(sortBarPn, BorderLayout.NORTH);
+
         orderTable = createTable(orderModel, orderColumnNames);
         orderModel = (DefaultTableModel) orderTable.getModel();
         orderScrollPane = new JScrollPane(orderTable);
+          orderTablePn.add(orderScrollPane, BorderLayout.CENTER);
         // Dispatched orders table
         dispatchedOrderTable = createTable(dispatchedOrderModel, orderColumnNames);
         dispatchedOrderModel = (DefaultTableModel) dispatchedOrderTable.getModel();
@@ -2125,14 +2163,31 @@ public class ManagerMainPanel extends JPanel {
 
         updateOrders();
 
-        // panel export products for each order
-        exportPanel = new ExportPanel();
-
-        orderTabbedPane = createTabbedPane(orderScrollPane, "Customer's Order", Style.FONT_BOLD_16);
-        orderTabbedPane.add("Dispatched Orders", dispatchedOrderScroll);
+        orderTabbedPane = createTabbedPane(dispatchedOrderScroll, "Dispatched Order", Style.FONT_BOLD_16);
+        orderTabbedPane.insertTab("Customer's Order", null, orderTablePn, "Customer's Order", 0);
+          // panel export products for each order
+          exportPanel = new ExportPanel();
         orderTabbedPane.add("Export Product", exportPanel);
         add(orderTabbedPane, BorderLayout.CENTER);
       }
+        private void updateSelectedButtonColor(CustomButton button) {
+            Color defaultColor = Color.WHITE;
+            Color selectedColor = Style.MENU_BUTTON_COLOR;
+
+            if(selectedBt == null){
+                sort1Bt.setBackgroundColor(defaultColor);
+                sort1Bt.setHoverColor(Style.LIGHT_BlUE);
+            }
+
+            if (selectedBt != null ) {
+                selectedBt.setBackgroundColor(defaultColor);
+                selectedBt.setHoverColor(Style.LIGHT_BlUE);
+            }
+
+            button.setBackgroundColor(selectedColor);
+            button.setHoverColor(selectedColor);
+            selectedBt = button;
+        }
     }
 
     private class ExportPanel extends JPanel {
@@ -4688,9 +4743,17 @@ public class ManagerMainPanel extends JPanel {
     return tabbedPane;
   }
 
-  public void setProductButtonListener(){
-
+  public void setDashBoardProductBtListener(ActionListener listener){
+      dashBoardPanel.productsBt.addActionListener(listener);
   }
+  public void setDashBoardCustomerBtListener(ActionListener listener){
+        dashBoardPanel.customersBt.addActionListener(listener);
+    }
+    public void setDashBoardSupplierListener(ActionListener listener){
+        dashBoardPanel.suppliersBt.addActionListener(listener);
+    }public void setDashBoardManagerBtListener(ActionListener listener){
+        dashBoardPanel.managersBt.addActionListener(listener);
+    }
 
 
 }

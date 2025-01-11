@@ -6,14 +6,16 @@ import config.LabelConfig;
 import java.awt.*;
 
 import javax.swing.*;
+
+import entity.Order;
 import view.Style;
 
 public class BillFrame extends JFrame {
 
   private JTextArea billTextArea;
-//  private ArrayList<CustomerOrderDTO> customerOrderDTOS;
 
-  public BillFrame() {
+
+  public BillFrame(Order order) {
 
 
     setTitle("Computer Management System");
@@ -34,7 +36,7 @@ public class BillFrame extends JFrame {
     billTextArea.setFont(new Font("Monospaced", Font.PLAIN, 10));
     billTextArea.setEditable(false);
 
-//    billTextArea.setText(BillConfig.generateBill(this.customerOrderDTOS));
+    billTextArea.setText(BillConfig.generateBill(order));
 
     JScrollPane scrollPane = new JScrollPane(billTextArea);
     scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

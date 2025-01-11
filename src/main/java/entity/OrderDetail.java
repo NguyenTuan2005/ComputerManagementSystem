@@ -5,6 +5,7 @@ import lombok.experimental.SuperBuilder;
 
 @ToString
 @Getter
+@Setter
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,7 +32,8 @@ public class OrderDetail {
         return this.product.getId();
     }public String getProductBrand() {
         return this.product.getBrand();
-    }public String getProductCpu() {
+    }
+    public String getProductCpu() {
         return this.product.getName();
     }public String getProductRam() {
         return this.product.getName();

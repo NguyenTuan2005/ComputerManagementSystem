@@ -790,7 +790,7 @@ public class LoginFrame extends JFrame {
     class SignInPanel extends JPanel {
         private LoginFrame loginFrame;
         private JLabel signInLabel;
-        private JTextField nameField, emailField;
+        private JTextField emailField;
         private JPasswordField passwdFieldSignin;
         private JComboBox<String> roleComboBox;
         private CustomButton signInButton;
@@ -851,34 +851,34 @@ public class LoginFrame extends JFrame {
       add(nameIcon, gbc);
 
       gbc.gridx = 1;
-      nameField =
+      emailField =
           TextFieldConfig.createTextField(
               "User Email", Style.FONT_PLAIN_20, Color.GRAY, new Dimension(300, 45));
-      nameField.addFocusListener(
+      emailField.addFocusListener(
           new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-              if (nameField.getText().equals("User Email")) {
-                nameField.setText("");
-                nameField.setForeground(Color.BLACK);
+              if (emailField.getText().equals("User Email")) {
+                emailField.setText("");
+                emailField.setForeground(Color.BLACK);
               }
-              nameField.setBorder(
+              emailField.setBorder(
                   BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-              if (nameField.getText().isEmpty()) {
-                nameField.setForeground(Color.GRAY);
-                nameField.setText("User Email");
+              if (emailField.getText().isEmpty()) {
+                emailField.setForeground(Color.GRAY);
+                emailField.setText("User Email");
 
               }
-              nameField.setBorder(
+              emailField.setBorder(
                   BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
             }
           });
-      nameField.addActionListener(e -> signInButton.doClick());
-      add(nameField, gbc);
+      emailField.addActionListener(e -> signInButton.doClick());
+      add(emailField, gbc);
 
       gbc.gridy++;
       gbc.gridx = 0;
@@ -927,7 +927,7 @@ public class LoginFrame extends JFrame {
           new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-              String username = nameField.getText();
+              String username = emailField.getText();
               String password = new String(passwdFieldSignin.getPassword());
               if (username.isEmpty()
                   || password.isEmpty()
@@ -935,9 +935,9 @@ public class LoginFrame extends JFrame {
                   || password.equals("Password")) {
                 if (username.isEmpty()
                     || username.equals("User Email")) {
-                  nameField.setBorder(
+                  emailField.setBorder(
                       BorderFactory.createLineBorder(Style.DELETE_BUTTON_COLOR_RED, 4));
-                  nameField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
+                  emailField.setForeground(Style.DELETE_BUTTON_COLOR_RED);
                 }
                 if (password.isEmpty() || password.equals("Password")) {
                   passwdFieldSignin.setBorder(
@@ -954,8 +954,7 @@ public class LoginFrame extends JFrame {
                         loginFrame.setVisible(false);
                         managerFrame = new ManagerFrame();
                       } else {
-//                        sayError(AccountController.loginStatus.getMessager());
-                         //Thông báo lỗi
+                       sayError("Wrong login information!");
                       }
                       break;
                     }
@@ -996,13 +995,11 @@ public class LoginFrame extends JFrame {
             }
           });
       forgotPasswdBt.addActionListener(
-          new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              inputFormPanel.showPanel("forgotPasswd");
-              TextFieldConfig.resetTextField(
-                  inputFormPanel.forgotPasswdPanel.inputEmail.emailField, "User Email");
-            }
-          });
+              e -> {
+                inputFormPanel.showPanel("forgotPasswd");
+                TextFieldConfig.resetTextField(
+                    inputFormPanel.forgotPasswdPanel.inputEmail.emailField, "User Email");
+              });
       gbc.gridy++;
       gbc.gridx = 0;
       gbc.gridwidth = 2;

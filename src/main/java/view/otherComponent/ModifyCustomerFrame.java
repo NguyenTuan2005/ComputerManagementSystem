@@ -23,7 +23,7 @@ public class ModifyCustomerFrame extends JFrame {
   private String contextPath = "";
   boolean cancel = true;
   private Customer customer;
-
+  private Runnable callMethodReload;
 
 
   private static final Color DARK_BLUE = new Color(0, 75, 150);
@@ -31,8 +31,9 @@ public class ModifyCustomerFrame extends JFrame {
   private static final Color LIGHT_BLUE = new Color(235, 245, 255);
   private static final Color HOVER_BLUE = new Color(30, 144, 255);
 
-  public ModifyCustomerFrame(Customer customer) {
+  public ModifyCustomerFrame(Customer customer,Runnable callMethodReload) {
     this.customer = customer;
+    this.callMethodReload = callMethodReload;
     this.contextPath = customer.getAvatarImg();
     System.out.println(" before :" + customer);
     setTitle("Customer Information");
@@ -181,10 +182,11 @@ public class ModifyCustomerFrame extends JFrame {
 
   private void handleSave() {
     // Add your save logic here
-    JOptionPane.showMessageDialog(this, "Update button clicked!");
+//    JOptionPane.showMessageDialog(this, "Update button clicked!");
     LoginFrame.COMPUTER_SHOP.updateUserInfor(createCustomer());
     System.out.println("update :" + createCustomer());
-    JOptionPane.showMessageDialog(this, "Updated successfully");
+//    JOptionPane.showMessageDialog(this, "Updated successfully");
+    if(callMethodReload!= null) callMethodReload.run();
     setVisible(false);
   }
 

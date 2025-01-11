@@ -3,8 +3,11 @@ package entity;
 import config.CurrentUser;
 import controller.MController;
 import data.ManagerData;
+import enums.DisplayProductType;
 import enums.LoginStatus;
+import enums.OrderType;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 import java.text.DateFormatSymbols;
@@ -13,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ComputerShop implements MController {
@@ -35,7 +39,25 @@ public class ComputerShop implements MController {
 
     public static void main(String[] args) {
         ComputerShop c = new ComputerShop();
-        Supplier phongVuComputer = Supplier.builder().id(1).companyName("Phong ").email("duynguyen@gamil.com").phoneNumber("18006865").address("Tầng 2, số 2A Trần Đại Nghĩa, Hai Bà Trưng, Hà Nội").contractDate(LocalDate.of(2024, 10, 17)).isActive(true).build();
+        Customer hieu = Customer.builder()
+                .id(3)
+                .fullName("Nguyen Van Hieu")
+                .email("a")
+                .address("TPHCM, Thu Duc, NLU, Duong So 6")
+                .phone("0934567890") // Số điện thoại giả định
+                .dob(LocalDate.of(1999, 11, 12))
+                .avatarImg("src/main/java/img/hieu2.png")
+                .password("$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO")
+                .createdAt(LocalDate.of(2024, 2, 2))
+                .isActive(true)
+                .build();
+
+
+        Order order3 = Order.builder().orderId(3).customer(hieu).shipAddress("###########").orderedAt(LocalDate.of(2025, 1, 1)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>()).build();
+
+//        List<Order> orders3 = new ArrayList<>(Arrays.asList(order3));
+        c.addOrder(order3);
+        c.getAllOrderByCustomer(hieu).forEach(System.out::println);
 
     }
 
@@ -49,6 +71,7 @@ public class ComputerShop implements MController {
                 if(isNotFound) return false;
                 if(manager.isValidPassword(pass)){
                     CurrentUser.CURRENT_USER_V2 = manager;
+                    CurrentUser.CURRENT_MANAGER_V2 = manager;
                     CurrentUser.URL = manager.getAvatarImg();
 
                     return true;
@@ -102,8 +125,19 @@ public class ComputerShop implements MController {
     }
 
     @Override
-    public void addOrder(Customer customer, Order newOrder) {
+    public void addOrder( Order newOrder) {
+        for (int i = 0; i < managers.size(); i++) {
+            if(managers.get(i).equals(CurrentUser.CURRENT_MANAGER_V2)){
+                managers.get(i).addOrder(newOrder);
+                System.out.println("add thanh cong");
+                break;
+            }
+        }
+    }
 
+    @Override
+    public void sigUpCustomer(Customer newCustomer) {
+        this.customers.add(newCustomer);
     }
 
     @Override
@@ -115,6 +149,16 @@ public class ComputerShop implements MController {
     public Manager findManagerByEmail(String email) {
         return this.managers.stream().filter(m ->m.sameEmail(email)).findAny().orElse(null);
     }
+
+    @Override
+    public int getNextIdOfCustomer() {
+        return this.customers.get(customers.size()-1).getId()+1;
+    }
+    @Override
+    public int getNextIdOfManage() {
+        return this.customers.get(customers.size()-1).getId()+1;
+    }
+
 
     public List<Manager> findManagerByName(String name){
         return this.managers.stream().filter(m ->m.findName(name)).collect(Collectors.toList());
@@ -284,6 +328,32 @@ public class ComputerShop implements MController {
         }
     }
 
+    @Override
+    public List<Product> filterBy(DisplayProductType type) {
+       switch (type){
+           case ALL -> {
+               return this.getAllProduct();
+           }
+           case PC_CASE -> {
+               return this.products.stream().filter(p->p.isPc()).collect(Collectors.toList());
+           }
+           case LAPTOP_GAMING -> {
+               return this.products.stream().filter(p->p.isLapGaming()).collect(Collectors.toList());
+           }
+           case LAPTOP_OFFICE -> {
+               return this.products.stream().filter(p->p.isLapOffice()).collect(Collectors.toList());
+           }
+           case PRICE_IN_AMOUNT_10M_20M -> {
+               return this.products.stream().filter(p->p.priceInAmount(DisplayProductType.TEN_MILION,DisplayProductType.TWENTY_MILION)).collect(Collectors.toList());
+           }
+           case PRICE_IN_AMOUNT_20M_30M -> {
+               return this.products.stream().filter(p->p.priceInAmount(DisplayProductType.TWENTY_MILION,DisplayProductType.THIRTY_MILION)).collect(Collectors.toList());
+           }
+
+       }
+        return List.of();
+    }
+
     public void addProduct(Product p){
         this.products.add(p);
     }
@@ -393,6 +463,49 @@ public class ComputerShop implements MController {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void blockCustomerById(int id) {
+        for (int i = 0; i < this.customers.size(); i++) {
+            if(customers.get(i).isId(id)){
+                customers.get(i).changeActive(false);
+                System.out.println(customers.get(i));
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void unBlockCustomerById(int id) {
+        for (int i = 0; i < this.customers.size(); i++) {
+            if(customers.get(i).isId(id)){
+                customers.get(i).changeActive(true);
+                System.out.println(customers.get(i));
+                break;
+            }
+        }
+    }
+
+    @Override
+    public Map<Customer, Long> customerOrderStatistics() {
+        Map<Customer,Long> map = new HashMap<>();
+        for(var customer : this.customers){
+            long totalOrder =0;
+            for (var manager : this.managers){
+                totalOrder += manager.getTotalOrderOfCustomer(customer);
+            }
+            map.put(customer, totalOrder);
+        }
+        return map;
+    }
+
+    @Override
+    public List<Order> getAllOrderByCustomer(Customer customer) {
+        return this.managers.stream()
+                .map(m -> m.getOrders())
+                .flatMap(List::stream)
+                .filter(order -> order.isCustomer(customer)).toList();
+    }
+
 
     public List<Supplier> findSupplierByName(String suppilerName){
         return this.suppliers.stream().filter(supp -> supp.getCompanyName().toLowerCase().contains(suppilerName.toLowerCase()))
@@ -401,7 +514,10 @@ public class ComputerShop implements MController {
 
 
     public List<Order> getAllOrders() {
-        return this.managers.get(0).getOrders();
+        return this.managers.stream()
+                .map(Manager::getOrders)
+                .flatMap(List::stream)
+                .toList();
     }
 
     public int totalProductQuantity(){

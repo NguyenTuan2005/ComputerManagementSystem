@@ -112,10 +112,20 @@ public class Manager extends User{
     }
 
     public long getQuantityOfProduct(Product p) {
-        return this.orders.stream().map(order -> order.getOrderDetails())
+        return this.orders.stream()
+                .filter(order -> order.isCurrentMonth())
+                .map(order -> order.getOrderDetails())
                 .flatMap(List::stream)
                 .map(orderDetail -> orderDetail.getProduct())
                 .filter(product -> product.sameName(p))
+                .collect(Collectors.counting());
+    }
+
+    public long getTotalOrderOfCustomer(Customer customer) {
+        return this.orders.stream()
+                .filter(order -> order.isCurrentMonth() && order.of(customer))
+                .map(order -> order.getOrderDetails())
+                .flatMap(List::stream)
                 .collect(Collectors.counting());
     }
 

@@ -1,16 +1,14 @@
 package verifier;
 
 import view.Style;
-import view.overrideComponent.ToastNotification;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class BirthDayVerifier extends InputVerifier {
-    private static final String[] DATE_FORMATS = {"yyyy-MM-dd", "dd/MM/yyyy"};
+    private static final String[] DATE_FORMATS = {"yyyy-MM-dd"};
     @Override
     public boolean verify(JComponent input) {
         JTextField birthDateField = (JTextField) input;
@@ -26,14 +24,17 @@ public class BirthDayVerifier extends InputVerifier {
     }
 
     private static boolean isValidDate(String date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        dateFormat.setLenient(false);
         try {
-            dateFormat.parse(date);
-            return true;
-        } catch (ParseException e) {
+            for (String s : DATE_FORMATS) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat(s);
+                dateFormat.setLenient(false);
+
+                dateFormat.parse(date);
+                return true;
+            }
+        }   catch (ParseException e) {
             return false;
         }
+        return false;
     }
-
 }

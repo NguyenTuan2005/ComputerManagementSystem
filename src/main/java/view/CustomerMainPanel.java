@@ -2,6 +2,7 @@ package view;
 
 import com.toedter.calendar.JCalendar;
 import config.*;
+import converter.LocalDateConverter;
 import converter.OrderDetailConverter;
 import entity.*;
 import enums.DisplayProductType;
@@ -734,6 +735,7 @@ public class CustomerMainPanel extends JPanel {
                     cartContainer.add(emptyCartPn);
                     cartContainer.revalidate();
                     cartContainer.repaint();
+
                     upLoadOrderHistory();
 
                     updatePriceQuantityInCart(0, 0);
@@ -744,7 +746,7 @@ public class CustomerMainPanel extends JPanel {
                     System.out.println(" clear "+ productOrders.size());
 
                     EmailConfig emailConfig = new EmailConfig();
-                    emailConfig.send(CurrentUser.CURRENT_USER_V2.getEmail(),"Bill", BillConfig.generateBill(newOrder));
+//                    emailConfig.send(CurrentUser.CURRENT_USER_V2.getEmail(),"Bill", BillConfig.generateBill(newOrder));
                   } else {
                     ToastNotification.showToast("Cancel order!", 2500, 50, -1, -1);
                   }
@@ -766,6 +768,7 @@ public class CustomerMainPanel extends JPanel {
     private CustomButton feedbackBt, searchBt, calendarBt, reloadBt;
     private JTextField searchField;
     private Date selectedDate;
+    private  LocalDate selectedLocalDate;
 
     public OrderHistoryPanel() throws SQLException {
       setLayout(new BorderLayout());
@@ -823,8 +826,9 @@ public class CustomerMainPanel extends JPanel {
               public void actionPerformed(ActionEvent e) {
                 selectedDate = new Date(calendar.getDate().getTime());
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 searchField.setText(dateFormat.format(selectedDate));
+                selectedLocalDate = LocalDateConverter.toLocalDate(dateFormat.format(selectedDate));
                 searchField.setForeground(Color.BLACK);
                 calendarDialog.setVisible(false);
               }
@@ -849,7 +853,7 @@ public class CustomerMainPanel extends JPanel {
 
         searchBt.addActionListener(
             e -> {
-              upLoadOrderHistory(selectedDate);
+              upLoadOrderHistory(selectedLocalDate);
             });
 
         feedbackBt =
@@ -920,11 +924,8 @@ public class CustomerMainPanel extends JPanel {
 
       int customerId = CurrentUser. CURRENT_USER_V2.getId();
 
-//      bills = customerController.findCustomerOrderById(customerId); tạo bills
 
-//      showFullBills(new BillConfig(bills).getMetadataMap(), CurrentUser.CURRENT_USER_V2);
-
-      notificationContainer = new JPanel();
+      notificationContainer = new NotFoundItemPanel("Not Notification");
       notificationContainer.setBackground(Color.WHITE);
       notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
       notificationContainer.add(emptyNotificationPn);
@@ -2154,10 +2155,16 @@ public class CustomerMainPanel extends JPanel {
         e -> {
           if (JOptionPane.showConfirmDialog(
                   null, "Would you like to repurchase this order?", "", JOptionPane.YES_NO_OPTION) == 0) {
-            var newOrder = order;
-//            newOrder.changeOrderedAt(LocalDate.now());
+            var newOrder = Order.builder()
+                    .orderDetails(order.getOrderDetails())
+                    .shipAddress(order.getShipAddress())
+                    .orderedAt(LocalDate.now())
+                    .status(OrderType.ACTIVE.getStatus())
+                    .orderId(0)
+                    .customer(order.getCustomer())
+                    .build();
 
-//            LoginFrame.COMPUTER_SHOP.addOrder( newOrder);
+            LoginFrame.COMPUTER_SHOP.addOrder( newOrder);
 
             productOrders.clear();
             ToastNotification.showToast("Successful purchase!", 2500, 50, -1, -1);
@@ -2324,33 +2331,25 @@ public class CustomerMainPanel extends JPanel {
   }
 
   @SneakyThrows
-  private void upLoadOrderHistory(Date orderDate) {
+  private void upLoadOrderHistory(LocalDate orderDate) {
     if (orderDate == null) return;
     ordersContainer.removeAll();
     ordersContainer.revalidate();
     ordersContainer.repaint();
-//    var orderDetailDTOS =
-//        customerController.getCustomerOrderDetail(CurrentUser. CURRENT_USER_V2.getId());
-//    OrderHistoryConfig orderHistoryConfig = new OrderHistoryConfig(orderDetailDTOS);
-    boolean isFound = true;
-//    for (Map.Entry<Integer, List<CustomerOrderDetailDTO>> data :
-//        orderHistoryConfig.get().entrySet()) {
-//      var order = data.getValue().get(0).getOrderDate();
-//      var isValidOrderDate =
-//          order.getDate() == orderDate.getDate()
-//              && order.getMonth() == orderDate.getMonth()
-//              && order.getYear() == order.getYear();
-//
-//      if (isValidOrderDate) {
-//        addOrderToContainer(
-//            createOrderPn(data.getKey(), (ArrayList<CustomerOrderDetailDTO>) data.getValue()));
-//        isFound = false;
-//      }
-//    }
+    System.out.println(orderDate);
+    var orders = LoginFrame.COMPUTER_SHOP.findOrderByCustomerAndDate((Customer) CurrentUser.CURRENT_USER_V2,orderDate);
 
-//    if (isFound) {
-//      System.out.println(" not found ");
-//      addOrderToContainer(new NotFoundItemPanel("--"));
-//    }
+    boolean notFound = orders.isEmpty();
+    if (notFound) {
+      System.out.println(" not found ");
+      addOrderToContainer(new NotFoundItemPanel("--"));
+    }
+
+    for( var order : orders){
+      addOrderToContainer(
+            createOrderPn(order));
+    }
+
+
   }
 }

@@ -112,4 +112,8 @@ public class Order {
     public boolean isActive() {
         return this.status.equals(OrderType.ACTIVE_MESSAGE);
     }
+
+    public boolean orderedAt(LocalDate orderedAt) {
+        return this.orderedAt.equals(orderedAt);
+    }
 }

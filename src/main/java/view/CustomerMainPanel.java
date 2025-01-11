@@ -1,14 +1,32 @@
 package view;
 
-import config.ProductOrderConfig;
-import converter.OrderDetailConverter;
-import verifier.EmailVerifier;
-import verifier.NotEmptyVerifier;
 import com.toedter.calendar.JCalendar;
 import config.*;
-import enums.*;
-import java.awt.*;
+import converter.OrderDetailConverter;
+import entity.*;
+import enums.DisplayProductType;
+import enums.OrderType;
+import lombok.SneakyThrows;
+import verifier.EmailVerifier;
+import verifier.NotEmptyVerifier;
+import view.otherComponent.BillFrame;
+import view.otherComponent.ChangePasswordFrame;
+import view.otherComponent.NotFoundItemPanel;
+import view.overrideComponent.CircularImage;
+import view.overrideComponent.CustomButton;
+import view.overrideComponent.RoundedBorder;
+import view.overrideComponent.ToastNotification;
+
+import javax.swing.Timer;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,25 +37,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import javax.swing.*;
-import javax.swing.Timer;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicScrollBarUI;
-import lombok.SneakyThrows;
-import entity.*;
-
-import view.otherComponent.BillFrame;
-import view.otherComponent.ChangePasswordFrame;
-import view.otherComponent.NotFoundItemPanel;
-import view.overrideComponent.*;
-import view.overrideComponent.CustomButton;
 
 import static config.ProductOrderConfig.getUnqueProductOrder;
 
@@ -1170,10 +1172,6 @@ public class CustomerMainPanel extends JPanel {
               addressField.getText().trim(),
       };
       CurrentUser.CURRENT_USER_V2.update(data);
-      CurrentUser. CURRENT_USER_V2.changeEmail(emailField.getText().trim());
-      CurrentUser. CURRENT_USER_V2.changeFullName(fullNameField.getText().trim());
-      CurrentUser. CURRENT_USER_V2.changeAddress(addressField.getText().trim());
-      LoginFrame.COMPUTER_SHOP.updateUserInfor(CurrentUser. CURRENT_USER_V2);
       ToastNotification.showToast(
           "Your information has been successfully updated.", 2500, 50, -1, -1);
     }
@@ -1410,15 +1408,9 @@ public class CustomerMainPanel extends JPanel {
     JPanel imagePn = new JPanel(new BorderLayout());
 
     var urls = product.getImages();
-    ImageIcon[] images = new ImageIcon[urls.size()];
-
-    for (int i = 0; i < images.length; i++) {
-      images[i] = createImageForProduct(urls.get(i).getUrl(), 350, 350);
-    }
 
     JPanel largeImagePn = new JPanel();
-
-    JLabel largeImageLabel = new JLabel(images[0]);
+    JLabel largeImageLabel = new JLabel(createImageForProduct(urls.get(0).getUrl(), 350, 350));
     largeImagePn.setBackground(Color.WHITE);
     largeImagePn.add(largeImageLabel);
     imagePn.add(largeImagePn, BorderLayout.CENTER);
@@ -1433,10 +1425,9 @@ public class CustomerMainPanel extends JPanel {
     scrollPane.setBorder(null);
 
     final CustomButton[] selectedButton = {null};
-//    for (int i = 0; i < urls.size(); i++) {
-//
-//    }
-    for (ImageIcon icon : images) {
+
+    for (entity.Image url : urls) {
+
 
       CustomButton imageBt =
           ButtonConfig.createCustomButton(
@@ -1448,11 +1439,11 @@ public class CustomerMainPanel extends JPanel {
               10,
               SwingConstants.CENTER,
               new Dimension(80, 70));
-      ButtonConfig.setButtonIcon(" ", imageBt, 5);
+      ButtonConfig.setButtonIcon(url.getUrl(), imageBt, 5);
 
       imageBt.addActionListener(
           e -> {
-            largeImageLabel.setIcon(icon);
+            largeImageLabel.setIcon(createImageForProduct(url.getUrl(), 350, 350));
             if (selectedButton[0] != null) {
               selectedButton[0].setBackgroundColor(Color.WHITE);
             }

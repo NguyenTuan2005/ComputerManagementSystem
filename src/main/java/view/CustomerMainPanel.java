@@ -2206,10 +2206,7 @@ public class CustomerMainPanel extends JPanel {
     JPanel imgPn = new JPanel();
     imgPn.setBackground(Color.WHITE);
     JLabel proImg = new JLabel();
-//        new JLabel(createImageForProduct(
-////                customerOrderDTO.images().get(0).getUrl()
-//                ""
-//                , 150, 150));
+
     imgPn.add(proImg);
     mainPanel.add(imgPn, BorderLayout.WEST);
 

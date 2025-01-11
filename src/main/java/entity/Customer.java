@@ -53,4 +53,12 @@ public class Customer extends User{
         }
         return datass;
     }
+
+    @Override
+    public void update(String[] data) {
+        this.avatarImg = data[0];
+        this.email = data[1];
+        this.fullName = data[2];
+        this.address = data[3];
+    }
 }

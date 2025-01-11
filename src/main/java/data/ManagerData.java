@@ -32,9 +32,9 @@ public class ManagerData {
 
     @Getter(AccessLevel.NONE)
     List<Image> imagesMacM2 = List.of(
-            Image.builder().id(1).url("src/main/java/img/macbook_air_m2_1.png").build(),
-            Image.builder().id(2).url("src/main/java/img/macbook_air_m2_2.png").build(),
-            Image.builder().id(3).url("src/main/java/img/macbook_air_m2_2.png").build()
+            Image.builder().id(1).url("src/main/java/img/MacBook_Air_M2_2023.jpg").build(),
+            Image.builder().id(2).url("src/main/java/img/MacBook_Air_M2_2023.jpg").build(),
+            Image.builder().id(3).url("src/main/java/img/MacBook_Air_M2_2023.jpg").build()
     );
 
     @Getter(AccessLevel.NONE)
@@ -49,9 +49,9 @@ public class ManagerData {
 
     @Getter(AccessLevel.NONE)
     List<Image> imagesSurfaceLaptop5 = List.of(
-            Image.builder().id(4).url("src/main/java/img/lap_surface-v1.png").build(),
-            Image.builder().id(4).url("src/main/java/img/lap_surface-v2.png").build(),
-            Image.builder().id(4).url("src/main/java/img/lap_surface-v3.png").build()
+            Image.builder().id(4).url("src/main/java/img/Surface_Laptop_5.jpg").build(),
+            Image.builder().id(4).url("src/main/java/img/Microsoft_Surface_Pro_9.jpg").build(),
+            Image.builder().id(4).url("src/main/java/img/Microsoft_Surface_Go_3.jpg").build()
     );
     @Getter(AccessLevel.NONE)
     List<Image> imagesAsusROGZephyrusG14 = List.of(

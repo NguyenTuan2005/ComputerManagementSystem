@@ -139,6 +139,14 @@ public abstract class User implements Comparable<User>{
         this.dob = LocalDate.parse(data[5]);
         this.phone = data[6];
     }
+
+    public boolean authenticateOldPassword(String oldPassword) {
+        return this.password.equals(oldPassword);
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }
 
 

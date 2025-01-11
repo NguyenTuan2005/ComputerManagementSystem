@@ -738,9 +738,9 @@ public class CustomerMainPanel extends JPanel {
 
                     upLoadOrderHistory();
 
-                    updatePriceQuantityInCart(0, 0);
-
-
+                    totalItems =0;
+                    totalPrice =0;
+                    updatePriceQuantityInCart(totalItems, totalPrice);
 
                     productOrders.clear();
                     System.out.println(" clear "+ productOrders.size());

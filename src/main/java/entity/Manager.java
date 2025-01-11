@@ -40,6 +40,9 @@ public class Manager extends User{
 
     }
 
+    public int getTotalOrders(){
+        return this.orders.size();
+    }
 
     @Override
     public Map<Product, Integer> productSoldStatistic() {
@@ -56,9 +59,11 @@ public class Manager extends User{
     public void addOrder(List<Order> order) {
         this.orders.addAll(order);
     }
+
     public void removeOrder(Order order){
         this.orders.remove(order);
     }
+
     public void updateStatus(Order order,String status){
         this.orders.get(this.orders.indexOf(order)).updateStatus(status);
     }
@@ -113,4 +118,25 @@ public class Manager extends User{
                 .filter(product -> product.sameName(p))
                 .collect(Collectors.counting());
     }
+
+    public String getAllOrderID(){
+        String result ="";
+        for (var order : this.orders){
+            result += order.getOrderId() +" | ";
+        }
+        return result;
+    }
+
+    public long totalOrderCompleted(){
+        return this.orders.stream().filter(order -> order.isDispatched()).count();
+    }
+    // calculate total quantity of all product in order list
+    public int totalProductQuantity(){
+        return this.orders.stream().mapToInt(order -> order.totalQuantity()).sum();
+    }
+    // calculate total price of all product in order list
+    public double totalProductPrice(){
+        return this.orders.stream().mapToDouble(order ->order.totalCost()).sum();
+    }
+
 }

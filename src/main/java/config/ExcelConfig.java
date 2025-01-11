@@ -118,7 +118,6 @@ public class ExcelConfig {
 
     /**
      * Creates a cell style for the Excel header.
-     *
      * @param workbook the workbook to which the style will be applied
      * @return a cell style for headers
      */
@@ -133,29 +132,25 @@ public class ExcelConfig {
         return style;
     }
 
-/// code moi
+
     public static void writeManagersToExcel(List<Manager> managers, String filePath) {
-
         filePath += (filePath.contains(".xlsx")?"":".xlsx");
-        Workbook workbook = new XSSFWorkbook(); // Tạo file Excel mới
-        Sheet sheet = workbook.createSheet("Managers"); // Tạo sheet tên "Managers"
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Managers");
 
-        // Tạo hàng tiêu đề
         String[] headers = {
                 "Manager ID", "Full Name", "Address", "Birth Day", "Phone Number",
-                "Account ID", "Username", "Password", "Email", "Create Date",
-                "Avatar Image", "Block"
+                "Username", "Password", "Email", "Create Date",
+                "Avatar Image", "Active"
         };
         Row headerRow = sheet.createRow(0);
 
-        // Ghi tiêu đề
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
             cell.setCellStyle(createHeaderCellStyle(workbook));
         }
 
-        // Ghi dữ liệu từ danh sách managers
         int rowIndex = 1;
         for (var manager : managers) {
             Row row = sheet.createRow(rowIndex++);
@@ -164,18 +159,17 @@ public class ExcelConfig {
             row.createCell(2).setCellValue(manager.getAddress());
             row.createCell(3).setCellValue(manager.getDob().toString());
             row.createCell(4).setCellValue(manager.getPhone());
-            row.createCell(6).setCellValue(manager.getFullName());
-            row.createCell(7).setCellValue(manager.getPassword());
-            row.createCell(8).setCellValue(manager.getEmail());
-            row.createCell(9).setCellValue(manager.getCreatedAt().toString());
-            row.createCell(10).setCellValue(manager.getAvatarImg());
-            row.createCell(11).setCellValue(manager.isActive());
+            row.createCell(5).setCellValue(manager.getFullName());
+            row.createCell(6).setCellValue(manager.getPassword());
+            row.createCell(7).setCellValue(manager.getEmail());
+            row.createCell(8).setCellValue(manager.getCreatedAt().toString());
+            row.createCell(9).setCellValue(manager.getAvatarImg());
+            row.createCell(10).setCellValue(manager.isActive());
         }
 
-        // Ghi dữ liệu ra file
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
-            System.out.println("File Excel đã được tạo tại: " + filePath);
+            System.out.println("Excel file has been created at: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -185,13 +179,5 @@ public class ExcelConfig {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static void main(String[] args) {
-        // Ví dụ danh sách ManagerInforDTO
-
-
-        // Ghi danh sách vào file Excel
-
     }
 }

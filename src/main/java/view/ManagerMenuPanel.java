@@ -12,12 +12,13 @@ import view.overrideComponent.CustomButton;
 public class ManagerMenuPanel extends JPanel {
   private JLabel role, name, credit;
   private CircularImage avatar;
-  CustomButton productBt,
+  CustomButton dashBoardBt,
+          productBt,
       supplierBt,
       customerBt,
       orderBt,
       inventoryBt,
-      accountManagementBt,
+          managerBt,
       notificationBt,
       changeInformBt,
       logoutBt,
@@ -94,6 +95,18 @@ public class ManagerMenuPanel extends JPanel {
       setLayout(new GridLayout(0, 1, 0, 5));
       setBackground(Style.MENU_BACKGROUND_COLOR);
 
+      dashBoardBt = ButtonConfig.createCustomButton(
+              " Dashboard",
+              Style.FONT_PLAIN_18,
+              Color.BLACK,
+              Style.MENU_BUTTON_COLOR,
+              Style.LIGHT_BlUE,
+              20,
+              SwingConstants.LEFT,
+              new Dimension(180, 25));
+      ButtonConfig.setButtonIcon("src/main/java/Icon/dashboardIcon.png", dashBoardBt, 5);
+      add(dashBoardBt);
+
       productBt =
           ButtonConfig.createCustomButton(
               " Product",
@@ -130,7 +143,7 @@ public class ManagerMenuPanel extends JPanel {
               20,
               SwingConstants.LEFT,
               new Dimension(180, 25));
-      ButtonConfig.setButtonIcon("src/main/java/Icon/catalog_Icon.png", customerBt, 5);
+      ButtonConfig.setButtonIcon("src/main/java/Icon/customerIcon.png", customerBt, 0);
       add(customerBt);
 
       orderBt =
@@ -159,9 +172,9 @@ public class ManagerMenuPanel extends JPanel {
       ButtonConfig.setButtonIcon("src/main/java/Icon/inventoryIcon.png", inventoryBt, 5);
       add(inventoryBt);
 
-      accountManagementBt =
+      managerBt =
           ButtonConfig.createCustomButton(
-              " Account",
+              " Manager",
               Style.FONT_PLAIN_18,
               Color.BLACK,
               Style.MENU_BACKGROUND_COLOR,
@@ -169,9 +182,9 @@ public class ManagerMenuPanel extends JPanel {
               20,
               SwingConstants.LEFT,
               new Dimension(180, 25));
-      ButtonConfig.setButtonIcon("src/main/java/Icon/user_15094854.png", accountManagementBt, 5);
+      ButtonConfig.setButtonIcon("src/main/java/Icon/user_15094854.png", managerBt, 5);
 
-      add(accountManagementBt);
+      add(managerBt);
 
       notificationBt =
           ButtonConfig.createCustomButton(
@@ -240,6 +253,10 @@ public class ManagerMenuPanel extends JPanel {
     that.setIcon(new ImageIcon(resizedImage));
   }
 
+  public void setDashBoardBtListener(ActionListener listener) {
+    dashBoardBt.addActionListener(listener);
+  }
+
   public void setProductButtonListener(ActionListener listener) {
     productBt.addActionListener(listener);
   }
@@ -261,7 +278,7 @@ public class ManagerMenuPanel extends JPanel {
   }
 
   public void setAccountManagementButtonListener(ActionListener listener) {
-    accountManagementBt.addActionListener(listener);
+    managerBt.addActionListener(listener);
   }
 
   public void setNotificationButtonListener(ActionListener listener) {

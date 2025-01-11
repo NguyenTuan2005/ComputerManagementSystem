@@ -13,12 +13,12 @@ public class ManagerMenuPanel extends JPanel {
   private JLabel role, name, credit;
   private CircularImage avatar;
   CustomButton dashBoardBt,
-          productBt,
+      productBt,
       supplierBt,
       customerBt,
       orderBt,
       inventoryBt,
-          managerBt,
+      managerBt,
       notificationBt,
       changeInformBt,
       logoutBt,
@@ -95,7 +95,8 @@ public class ManagerMenuPanel extends JPanel {
       setLayout(new GridLayout(0, 1, 0, 5));
       setBackground(Style.MENU_BACKGROUND_COLOR);
 
-      dashBoardBt = ButtonConfig.createCustomButton(
+      dashBoardBt =
+          ButtonConfig.createCustomButton(
               " Dashboard",
               Style.FONT_PLAIN_18,
               Color.BLACK,
@@ -224,24 +225,39 @@ public class ManagerMenuPanel extends JPanel {
 
       JPanel wrapperPn = new JPanel(new GridLayout(0, 1, 0, 1));
       wrapperPn.setBackground(Style.MENU_BACKGROUND_COLOR);
-      wrapperPn.setMaximumSize(new Dimension(200,30));
+      wrapperPn.setMaximumSize(new Dimension(200, 30));
 
-      switchToLoginBt = ButtonConfig.createCustomButton(" Switch to Login",Style.FONT_PLAIN_18,Color.BLACK,
-              Style.MENU_BACKGROUND_COLOR,Style.LIGHT_BlUE,20,SwingConstants.LEFT,new Dimension(180,25));
-      ButtonConfig.setButtonIcon("src/main/java/Icon/switchRole_Icon.png",switchToLoginBt,5);
+      switchToLoginBt =
+          ButtonConfig.createCustomButton(
+              " Switch to Login",
+              Style.FONT_PLAIN_18,
+              Color.BLACK,
+              Style.MENU_BACKGROUND_COLOR,
+              Style.LIGHT_BlUE,
+              20,
+              SwingConstants.LEFT,
+              new Dimension(180, 25));
+      ButtonConfig.setButtonIcon("src/main/java/Icon/switchRole_Icon.png", switchToLoginBt, 5);
       wrapperPn.add(switchToLoginBt);
 
-      logoutBt = ButtonConfig.createCustomButton(" Logout",Style.FONT_PLAIN_18,Style.CANCEL_BUTTON_COLOR_RED,
-              Style.MENU_BACKGROUND_COLOR,Style.LIGHT_RED,20,SwingConstants.LEFT,new Dimension(180,25));
-      ButtonConfig.setButtonIcon("src/main/java/Icon/exit-sign.png",logoutBt,5);
+      logoutBt =
+          ButtonConfig.createCustomButton(
+              " Logout",
+              Style.FONT_PLAIN_18,
+              Style.CANCEL_BUTTON_COLOR_RED,
+              Style.MENU_BACKGROUND_COLOR,
+              Style.LIGHT_RED,
+              20,
+              SwingConstants.LEFT,
+              new Dimension(180, 25));
+      ButtonConfig.setButtonIcon("src/main/java/Icon/exit-sign.png", logoutBt, 5);
       wrapperPn.add(logoutBt);
-      add(wrapperPn,BorderLayout.CENTER);
+      add(wrapperPn, BorderLayout.CENTER);
 
       credit = new JLabel(" Group 2");
       add(credit, BorderLayout.SOUTH);
     }
   }
-
 
   public static void setIcon(String url, JButton that) {
     ImageIcon iconButton = new ImageIcon(url);

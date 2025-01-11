@@ -1,33 +1,15 @@
 package view;
 
+import static config.ProductOrderConfig.getUnqueProductOrder;
+
 import com.toedter.calendar.JCalendar;
 import config.*;
 import converter.LocalDateConverter;
 import converter.OrderDetailConverter;
-import model.*;
 import enums.DisplayProductType;
 import enums.OrderType;
-import lombok.SneakyThrows;
-import verifier.EmailVerifier;
-import verifier.NotEmptyVerifier;
-import view.otherComponent.BillFrame;
-import view.otherComponent.ChangePasswordFrame;
-import view.otherComponent.NotFoundItemPanel;
-import view.overrideComponent.CircularImage;
-import view.overrideComponent.CustomButton;
-import view.overrideComponent.RoundedBorder;
-import view.overrideComponent.ToastNotification;
-
-import javax.swing.Timer;
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicScrollBarUI;
-import java.awt.Image;
 import java.awt.*;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -38,11 +20,28 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
-
-import static config.ProductOrderConfig.getUnqueProductOrder;
+import javax.swing.*;
+import javax.swing.Timer;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+import lombok.SneakyThrows;
+import model.*;
+import verifier.EmailVerifier;
+import verifier.NotEmptyVerifier;
+import view.otherComponent.BillFrame;
+import view.otherComponent.ChangePasswordFrame;
+import view.otherComponent.NotFoundItemPanel;
+import view.overrideComponent.CircularImage;
+import view.overrideComponent.CustomButton;
+import view.overrideComponent.RoundedBorder;
+import view.overrideComponent.ToastNotification;
 
 public class CustomerMainPanel extends JPanel {
   JPanel notificationContainer = new JPanel();
@@ -66,7 +65,7 @@ public class CustomerMainPanel extends JPanel {
   static final String STATUS_ORDER = "Received the application";
 
   private static Set<ProductOrderConfig> productOrders = new LinkedHashSet<>();
-  private static  List<Product>  products = new ArrayList<>();
+  private static List<Product> products = new ArrayList<>();
 
   private JTextField emailField, nameField, addressField;
   private static int totalItems = 0, totalPrice = 0;
@@ -113,7 +112,7 @@ public class CustomerMainPanel extends JPanel {
         searchBt;
     JLabel shopName;
     JTextField searchTextField;
-//    private static List<Product> productsAll = LoginFrame.COMPUTER_SHOP.getAllProduct();
+    //    private static List<Product> productsAll = LoginFrame.COMPUTER_SHOP.getAllProduct();
     CardLayout cardLayoutMain = new CardLayout();
 
     public ProductCatalogMainPanel() {
@@ -186,7 +185,6 @@ public class CustomerMainPanel extends JPanel {
 
               products = LoginFrame.COMPUTER_SHOP.findProductByName(searchTextField.getText());
               displayProductOnCatalogContainer(products);
-
             });
 
         gbc.gridx = 2;
@@ -241,7 +239,7 @@ public class CustomerMainPanel extends JPanel {
                 updateSelectedButton(allBt);
                 catalogContainer.removeAll();
 
-                 products = LoginFrame.COMPUTER_SHOP.getAllProduct();
+                products = LoginFrame.COMPUTER_SHOP.getAllProduct();
                 displayProductOnCatalogContainer(products);
               }
             });
@@ -264,7 +262,7 @@ public class CustomerMainPanel extends JPanel {
                 updateSelectedButton(gaming);
                 catalogContainer.removeAll();
 
-         products = LoginFrame.COMPUTER_SHOP.filterBy(DisplayProductType.LAPTOP_GAMING);
+                products = LoginFrame.COMPUTER_SHOP.filterBy(DisplayProductType.LAPTOP_GAMING);
                 displayProductOnCatalogContainer(products);
               }
             });
@@ -287,7 +285,7 @@ public class CustomerMainPanel extends JPanel {
                 updateSelectedButton(office);
                 catalogContainer.removeAll();
 
-           products = LoginFrame.COMPUTER_SHOP.filterBy(DisplayProductType.LAPTOP_OFFICE);
+                products = LoginFrame.COMPUTER_SHOP.filterBy(DisplayProductType.LAPTOP_OFFICE);
                 displayProductOnCatalogContainer(products);
               }
             });
@@ -310,7 +308,7 @@ public class CustomerMainPanel extends JPanel {
                 updateSelectedButton(pcCase);
                 catalogContainer.removeAll();
 
-           products =  LoginFrame.COMPUTER_SHOP.filterBy(DisplayProductType.PC_CASE);
+                products = LoginFrame.COMPUTER_SHOP.filterBy(DisplayProductType.PC_CASE);
                 if (products.isEmpty()) {
                   catalogContainer.add(new NotFoundItemPanel(" not found !!! "));
                   return;
@@ -337,9 +335,10 @@ public class CustomerMainPanel extends JPanel {
                 updateSelectedButton(cheapest);
                 catalogContainer.removeAll();
 
-        products = LoginFrame.COMPUTER_SHOP.getAllProduct().stream()
-                            .sorted(Comparator.comparingDouble(Product::getPrice))
-                            .collect(Collectors.toList());
+                products =
+                    LoginFrame.COMPUTER_SHOP.getAllProduct().stream()
+                        .sorted(Comparator.comparingDouble(Product::getPrice))
+                        .collect(Collectors.toList());
                 if (products.isEmpty()) {
                   catalogContainer.add(new NotFoundItemPanel(" not found !!! "));
                   return;
@@ -367,9 +366,10 @@ public class CustomerMainPanel extends JPanel {
                 updateSelectedButton(luxury);
                 catalogContainer.removeAll();
 
-              products = LoginFrame.COMPUTER_SHOP.getAllProduct().stream()
-                            .sorted(Comparator.comparingDouble(Product::getPrice))
-                            .collect(Collectors.toList());
+                products =
+                    LoginFrame.COMPUTER_SHOP.getAllProduct().stream()
+                        .sorted(Comparator.comparingDouble(Product::getPrice))
+                        .collect(Collectors.toList());
                 if (products.isEmpty()) {
                   catalogContainer.add(new NotFoundItemPanel(" not found !!! "));
                   return;
@@ -388,7 +388,7 @@ public class CustomerMainPanel extends JPanel {
 
         add(searchBar, BorderLayout.CENTER);
         add(sortBar, BorderLayout.SOUTH);
-//        displayProductOnCatalogContainer(LoginFrame.COMPUTER_SHOP.getAllProduct());
+        //        displayProductOnCatalogContainer(LoginFrame.COMPUTER_SHOP.getAllProduct());
       }
 
       public void displayProductOnCatalogContainer(List<Product> products) {
@@ -403,12 +403,12 @@ public class CustomerMainPanel extends JPanel {
         Color defaultColor = Color.WHITE;
         Color selectedColor = Style.BACKGROUND_COLOR;
 
-        if(selectedButton == null){
+        if (selectedButton == null) {
           allBt.setBackgroundColor(defaultColor);
           allBt.setHoverColor(Style.LIGHT_BlUE);
         }
 
-        if (selectedButton != null ) {
+        if (selectedButton != null) {
           selectedButton.setBackgroundColor(defaultColor);
           selectedButton.setHoverColor(Style.LIGHT_BlUE);
         }
@@ -713,18 +713,20 @@ public class CustomerMainPanel extends JPanel {
                     CUSTOMER_ID = CurrentUser.CURRENT_USER_V2.getId();
                     ADDRESS = addressField.getText();
 
-                   var orderDetails = new OrderDetailConverter(getUnqueProductOrder(productOrders)).toOrderDetails();
-                   orderDetails.forEach(System.out::println);
-                   var newOrder = Order.builder()
-                           .customer((Customer) CurrentUser.CURRENT_USER_V2)
-                           .shipAddress(ADDRESS)
-                           .status(OrderType.ACTIVE.getStatus())
-                           .orderedAt(LocalDate.now())
-                           .orderDetails(orderDetails).build();
+                    var orderDetails =
+                        new OrderDetailConverter(getUnqueProductOrder(productOrders))
+                            .toOrderDetails();
+                    orderDetails.forEach(System.out::println);
+                    var newOrder =
+                        Order.builder()
+                            .customer((Customer) CurrentUser.CURRENT_USER_V2)
+                            .shipAddress(ADDRESS)
+                            .status(OrderType.ACTIVE.getStatus())
+                            .orderedAt(LocalDate.now())
+                            .orderDetails(orderDetails)
+                            .build();
 
-                    LoginFrame.COMPUTER_SHOP.addOrder( newOrder);
-
-
+                    LoginFrame.COMPUTER_SHOP.addOrder(newOrder);
 
                     addCustomerNotification(
                         CurrentUser.CURRENT_USER_V2, BillConfig.generateBill(newOrder));
@@ -738,15 +740,17 @@ public class CustomerMainPanel extends JPanel {
 
                     upLoadOrderHistory();
 
-                    totalItems =0;
-                    totalPrice =0;
+                    totalItems = 0;
+                    totalPrice = 0;
                     updatePriceQuantityInCart(totalItems, totalPrice);
 
                     productOrders.clear();
-                    System.out.println(" clear "+ productOrders.size());
+                    System.out.println(" clear " + productOrders.size());
 
                     EmailConfig emailConfig = new EmailConfig();
-//                    emailConfig.send(CurrentUser.CURRENT_USER_V2.getEmail(),"Bill", BillConfig.generateBill(newOrder));
+                    //
+                    // emailConfig.send(CurrentUser.CURRENT_USER_V2.getEmail(),"Bill",
+                    // BillConfig.generateBill(newOrder));
                   } else {
                     ToastNotification.showToast("Cancel order!", 2500, 50, -1, -1);
                   }
@@ -768,7 +772,7 @@ public class CustomerMainPanel extends JPanel {
     private CustomButton feedbackBt, searchBt, calendarBt, reloadBt;
     private JTextField searchField;
     private Date selectedDate;
-    private  LocalDate selectedLocalDate;
+    private LocalDate selectedLocalDate;
 
     public OrderHistoryPanel() throws SQLException {
       setLayout(new BorderLayout());
@@ -907,7 +911,8 @@ public class CustomerMainPanel extends JPanel {
         upLoadOrderHistory();
 
         ordersScrollPane = new JScrollPane(ordersContainer);
-        setColorScrollPane(ordersScrollPane, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE);
+        setColorScrollPane(
+            ordersScrollPane, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, Style.LIGHT_BlUE);
         ordersScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         ordersScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
@@ -922,8 +927,7 @@ public class CustomerMainPanel extends JPanel {
     public NotificationPanel() {
       setLayout(new BorderLayout());
 
-      int customerId = CurrentUser. CURRENT_USER_V2.getId();
-
+      int customerId = CurrentUser.CURRENT_USER_V2.getId();
 
       notificationContainer = new NotFoundItemPanel("Not Notification");
       notificationContainer.setBackground(Color.WHITE);
@@ -1081,9 +1085,9 @@ public class CustomerMainPanel extends JPanel {
 
     private void reloadData() {
       try {
-        emailField.setText(CurrentUser. CURRENT_USER_V2.getEmail());
-        fullNameField.setText(CurrentUser. CURRENT_USER_V2.getFullName());
-        addressField.setText(CurrentUser. CURRENT_USER_V2.getAddress());
+        emailField.setText(CurrentUser.CURRENT_USER_V2.getEmail());
+        fullNameField.setText(CurrentUser.CURRENT_USER_V2.getFullName());
+        addressField.setText(CurrentUser.CURRENT_USER_V2.getAddress());
         avatar.setImage(CurrentUser.URL);
       } catch (Exception e) {
         e.printStackTrace();
@@ -1091,9 +1095,9 @@ public class CustomerMainPanel extends JPanel {
     }
 
     private boolean hasNotChanged() {
-      return emailField.getText().trim().equals(CurrentUser. CURRENT_USER_V2.getEmail())
-          && fullNameField.getText().trim().equals(CurrentUser. CURRENT_USER_V2.getFullName())
-          && addressField.getText().trim().equals(CurrentUser. CURRENT_USER_V2.getAddress())
+      return emailField.getText().trim().equals(CurrentUser.CURRENT_USER_V2.getEmail())
+          && fullNameField.getText().trim().equals(CurrentUser.CURRENT_USER_V2.getFullName())
+          && addressField.getText().trim().equals(CurrentUser.CURRENT_USER_V2.getAddress())
           && avatar.equals(
               new CircularImage(CurrentUser.URL, avatar.getWidth(), avatar.getHeight(), false));
     }
@@ -1140,9 +1144,7 @@ public class CustomerMainPanel extends JPanel {
       Map<JTextField, InputVerifier[]> fieldVerifierMap = new HashMap<>();
       fieldVerifierMap.put(
           emailField, new InputVerifier[] {new NotEmptyVerifier(), new EmailVerifier()});
-      fieldVerifierMap.put(
-          fullNameField,
-          new InputVerifier[] {new NotEmptyVerifier()});
+      fieldVerifierMap.put(fullNameField, new InputVerifier[] {new NotEmptyVerifier()});
       fieldVerifierMap.put(addressField, new InputVerifier[] {new NotEmptyVerifier()});
 
       for (Map.Entry<JTextField, InputVerifier[]> entry : fieldVerifierMap.entrySet()) {
@@ -1167,10 +1169,11 @@ public class CustomerMainPanel extends JPanel {
     }
 
     private void performUpdate() {
-      String[] data = {avatar.getImagePath(),
-              emailField.getText().trim(),
-              fullNameField.getText().trim(),
-              addressField.getText().trim(),
+      String[] data = {
+        avatar.getImagePath(),
+        emailField.getText().trim(),
+        fullNameField.getText().trim(),
+        addressField.getText().trim(),
       };
       CurrentUser.CURRENT_USER_V2.update(data);
       ToastNotification.showToast(
@@ -1429,7 +1432,6 @@ public class CustomerMainPanel extends JPanel {
 
     for (model.Image url : urls) {
 
-
       CustomButton imageBt =
           ButtonConfig.createCustomButton(
               "",
@@ -1590,7 +1592,6 @@ public class CustomerMainPanel extends JPanel {
             new Dimension(200, 50));
     addToCartBt.addActionListener(
         e -> {
-
           if (productOrders.add(new ProductOrderConfig(product, 1))) {
             addNewPanelToCartContainer(createPanelForCart(product));
             ToastNotification.showToast("Product added to Cart!", 3000, 50, -1, -1);
@@ -1670,7 +1671,7 @@ public class CustomerMainPanel extends JPanel {
   }
 
   private JPanel createPanelForCart(Product product) {
-    ProductOrderConfig orderDetail =  new ProductOrderConfig(product,1);
+    ProductOrderConfig orderDetail = new ProductOrderConfig(product, 1);
 
     JPanel wrapperPanel = new JPanel(new FlowLayout());
     wrapperPanel.setBackground(Color.WHITE);
@@ -1793,7 +1794,7 @@ public class CustomerMainPanel extends JPanel {
             orderDetail.setQuantity(countItem[0]);
             productOrders.add(orderDetail);
 
-//            System.out.println( this.productOrders.add(orderDetail));
+            //            System.out.println( this.productOrders.add(orderDetail));
           }
         });
 
@@ -1822,7 +1823,7 @@ public class CustomerMainPanel extends JPanel {
 
             orderDetail.setQuantity(countItem[0]);
             productOrders.add(orderDetail);
-//            System.out.println( this.productOrders.add(orderDetail));
+            //            System.out.println( this.productOrders.add(orderDetail));
           } else {
             JOptionPane.showMessageDialog(
                 null,
@@ -1862,7 +1863,6 @@ public class CustomerMainPanel extends JPanel {
         });
     rightPanel.add(removeBt);
 
-
     mainPanel.add(rightPanel, BorderLayout.EAST);
     return wrapperPanel;
   }
@@ -1877,12 +1877,12 @@ public class CustomerMainPanel extends JPanel {
             + "₫ </font></html>");
   }
   // hiển thị bill
-//  private void showFullBills(Map<Integer, List<CustomerOrderDTO> map, User customer) {
-//    for (Map.Entry<Integer, List<CustomerOrderDTO>> data : map.entrySet()) {
-//      addCustomerNotification(
-//          customer, BillConfig.generateBill((ArrayList<CustomerOrderDTO>) data.getValue()));
-//    }
-//  }
+  //  private void showFullBills(Map<Integer, List<CustomerOrderDTO> map, User customer) {
+  //    for (Map.Entry<Integer, List<CustomerOrderDTO>> data : map.entrySet()) {
+  //      addCustomerNotification(
+  //          customer, BillConfig.generateBill((ArrayList<CustomerOrderDTO>) data.getValue()));
+  //    }
+  //  }
 
   private JPanel createEmptyPanel() {
     productOrders.clear();
@@ -2019,8 +2019,8 @@ public class CustomerMainPanel extends JPanel {
   }
 
   // tạo các panel hiển thị lịch sử order
-  private JPanel createOrderPn( Order order) {
-//    System.out.println(" >>>>>" + order);
+  private JPanel createOrderPn(Order order) {
+    //    System.out.println(" >>>>>" + order);
     JPanel wrapperPn = new JPanel();
     JPanel main = new JPanel(new BorderLayout());
 
@@ -2057,9 +2057,9 @@ public class CustomerMainPanel extends JPanel {
     JPanel mid = new JPanel(new GridLayout(0, 2));
     mid.setBackground(Color.WHITE);
     int totalPrice = (int) (order.totalCost());
-    int totalItem =0;
+    int totalItem = 0;
     for (var item : order.getOrderDetails()) {
-      totalItem +=item.getQuantity();
+      totalItem += item.getQuantity();
       mid.add(productOrderPn(item));
     }
 
@@ -2124,38 +2124,40 @@ public class CustomerMainPanel extends JPanel {
     ButtonConfig.setButtonIcon("src/main/java/Icon/repurchase_Icon.png", repurchase, 15);
     bottomLeft.add(repurchase);
 
-//    var customerOrder = orders.get(0).customerOrderDTO();
+    //    var customerOrder = orders.get(0).customerOrderDTO();
     var isValidCancel = false;
-//            customerOrder.getStatus() != null && customerOrder.getStatus().isActive();
+    //            customerOrder.getStatus() != null && customerOrder.getStatus().isActive();
 
-//    if (DateConfig.cancelOrderLimit(customerOrder.getOrderDate(), 3) && isValidCancel) {
-//      ButtonConfig.setButtonIcon("src/main/java/Icon/cancelOrder_Icon.png", cancelOrder, 15);
-//      bottomLeft.add(cancelOrder);
-//    }
+    //    if (DateConfig.cancelOrderLimit(customerOrder.getOrderDate(), 3) && isValidCancel) {
+    //      ButtonConfig.setButtonIcon("src/main/java/Icon/cancelOrder_Icon.png", cancelOrder, 15);
+    //      bottomLeft.add(cancelOrder);
+    //    }
     bottomLeft.add(repurchase);
 
     // hủy đơn
-//    cancelOrder.addActionListener(
-//        e -> {
-//          if (JOptionPane.showConfirmDialog(
-//                      null,
-//                      "Are you sure want to cancel this order?",
-//                      "",
-//                      JOptionPane.YES_NO_OPTION)
-//                  == 0
-//              && controller.updateStatusOrder(OrderType.UN_ACTIVE, orderId)) {
-//            ToastNotification.showToast("Cancel order", 3000, 30, -1, -1);
-//
-//            cancelOrder.setEnabled(false);
-//          }
-//        });
+    //    cancelOrder.addActionListener(
+    //        e -> {
+    //          if (JOptionPane.showConfirmDialog(
+    //                      null,
+    //                      "Are you sure want to cancel this order?",
+    //                      "",
+    //                      JOptionPane.YES_NO_OPTION)
+    //                  == 0
+    //              && controller.updateStatusOrder(OrderType.UN_ACTIVE, orderId)) {
+    //            ToastNotification.showToast("Cancel order", 3000, 30, -1, -1);
+    //
+    //            cancelOrder.setEnabled(false);
+    //          }
+    //        });
 
     // mua lại
     repurchase.addActionListener(
         e -> {
           if (JOptionPane.showConfirmDialog(
-                  null, "Would you like to repurchase this order?", "", JOptionPane.YES_NO_OPTION) == 0) {
-            var newOrder = Order.builder()
+                  null, "Would you like to repurchase this order?", "", JOptionPane.YES_NO_OPTION)
+              == 0) {
+            var newOrder =
+                Order.builder()
                     .orderDetails(order.getOrderDetails())
                     .shipAddress(order.getShipAddress())
                     .orderedAt(LocalDate.now())
@@ -2164,11 +2166,12 @@ public class CustomerMainPanel extends JPanel {
                     .customer(order.getCustomer())
                     .build();
 
-            LoginFrame.COMPUTER_SHOP.addOrder( newOrder);
+            LoginFrame.COMPUTER_SHOP.addOrder(newOrder);
 
             productOrders.clear();
             ToastNotification.showToast("Successful purchase!", 2500, 50, -1, -1);
-//            bills = customerController.findCustomerOrderById(CurrentUser.CURRENT_USER_V2.getId());
+            //            bills =
+            // customerController.findCustomerOrderById(CurrentUser.CURRENT_USER_V2.getId());
 
             addCustomerNotification(CurrentUser.CURRENT_USER_V2, BillConfig.generateBill(newOrder));
 
@@ -2183,7 +2186,7 @@ public class CustomerMainPanel extends JPanel {
     bottomRight.setBackground(Color.WHITE);
     JLabel items =
         LabelConfig.createLabel(
-                totalItem + " items:  ",//số lượng sản phẩm
+            totalItem + " items:  ", // số lượng sản phẩm
             Style.FONT_BOLD_25,
             Color.BLACK,
             SwingConstants.RIGHT);
@@ -2216,9 +2219,8 @@ public class CustomerMainPanel extends JPanel {
     JPanel imgPn = new JPanel();
     imgPn.setBackground(Color.WHITE);
     JLabel proImg =
-        new JLabel(createImageForProduct(
-                orderDetail.getProduct().getImages().get(0).getUrl()
-                , 150, 150));
+        new JLabel(
+            createImageForProduct(orderDetail.getProduct().getImages().get(0).getUrl(), 150, 150));
     imgPn.add(proImg);
     mainPanel.add(imgPn, BorderLayout.WEST);
 
@@ -2236,10 +2238,7 @@ public class CustomerMainPanel extends JPanel {
     gbc.weighty = 0.4;
     JLabel proName =
         LabelConfig.createLabel(
-                orderDetail.getProductName(),
-            Style.FONT_BOLD_18,
-            Color.BLACK,
-            SwingConstants.LEFT);
+            orderDetail.getProductName(), Style.FONT_BOLD_18, Color.BLACK, SwingConstants.LEFT);
     proDetails.add(proName, gbc);
 
     gbc.gridy++;
@@ -2295,10 +2294,7 @@ public class CustomerMainPanel extends JPanel {
     quantityPn.setBackground(Color.WHITE);
     JLabel proQuantity =
         LabelConfig.createLabel(
-            "x" + orderDetail.getQuantity(),
-            Style.FONT_BOLD_18,
-            Color.BLACK,
-            SwingConstants.RIGHT);
+            "x" + orderDetail.getQuantity(), Style.FONT_BOLD_18, Color.BLACK, SwingConstants.RIGHT);
     quantityPn.add(proQuantity);
 
     bottomPn.add(pricePn);
@@ -2315,19 +2311,19 @@ public class CustomerMainPanel extends JPanel {
     ordersContainer.revalidate();
     ordersContainer.repaint();
     // tải các order lên
-    var orders = LoginFrame.COMPUTER_SHOP.getAllOrderByCustomer((Customer) CurrentUser.CURRENT_USER_V2);
-    for (var data : orders ){
-      addOrderToContainer(
-          createOrderPn(data));
+    var orders =
+        LoginFrame.COMPUTER_SHOP.getAllOrderByCustomer((Customer) CurrentUser.CURRENT_USER_V2);
+    for (var data : orders) {
+      addOrderToContainer(createOrderPn(data));
     }
 
-//    OrderHistoryConfig orderHistoryConfig = new OrderHistoryConfig(orderDetailDTOS);
+    //    OrderHistoryConfig orderHistoryConfig = new OrderHistoryConfig(orderDetailDTOS);
 
-//    for (Map.Entry<Integer, List<CustomerOrderDetailDTO>> data :
-//        orderHistoryConfig.get().entrySet()) {
-//      addOrderToContainer(
-//          createOrderPn(data.getKey(), (ArrayList<CustomerOrderDetailDTO>) data.getValue()));
-//    }
+    //    for (Map.Entry<Integer, List<CustomerOrderDetailDTO>> data :
+    //        orderHistoryConfig.get().entrySet()) {
+    //      addOrderToContainer(
+    //          createOrderPn(data.getKey(), (ArrayList<CustomerOrderDetailDTO>) data.getValue()));
+    //    }
   }
 
   @SneakyThrows
@@ -2337,7 +2333,9 @@ public class CustomerMainPanel extends JPanel {
     ordersContainer.revalidate();
     ordersContainer.repaint();
     System.out.println(orderDate);
-    var orders = LoginFrame.COMPUTER_SHOP.findOrderByCustomerAndDate((Customer) CurrentUser.CURRENT_USER_V2,orderDate);
+    var orders =
+        LoginFrame.COMPUTER_SHOP.findOrderByCustomerAndDate(
+            (Customer) CurrentUser.CURRENT_USER_V2, orderDate);
 
     boolean notFound = orders.isEmpty();
     if (notFound) {
@@ -2345,11 +2343,8 @@ public class CustomerMainPanel extends JPanel {
       addOrderToContainer(new NotFoundItemPanel("--"));
     }
 
-    for( var order : orders){
-      addOrderToContainer(
-            createOrderPn(order));
+    for (var order : orders) {
+      addOrderToContainer(createOrderPn(order));
     }
-
-
   }
 }

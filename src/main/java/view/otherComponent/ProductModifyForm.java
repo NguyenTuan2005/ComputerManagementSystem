@@ -4,10 +4,6 @@ import static view.ManagerMainPanel.currencyFormatter;
 
 import config.ButtonConfig;
 import config.ProductConfig;
-import model.Product;
-import model.Supplier;
-import view.LoginFrame;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -16,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-
+import model.Product;
+import model.Supplier;
+import view.LoginFrame;
 
 public class ProductModifyForm extends JFrame {
 
@@ -52,7 +50,6 @@ public class ProductModifyForm extends JFrame {
   private Runnable updateCallback;
   private Map<String, Integer> suppliersMap;
   private static List<Supplier> suppliers = LoginFrame.COMPUTER_SHOP.getAllSupplier();
-
 
   private final Color PRIMARY_COLOR = new Color(41, 128, 185);
   private final Color SECONDARY_COLOR = new Color(52, 152, 219);
@@ -188,7 +185,6 @@ public class ProductModifyForm extends JFrame {
     txtWeight = createStyledTextField();
     txtCard = createStyledTextField();
 
-
     suppliersMap = new HashMap<>();
     setMapCompany((ArrayList<Supplier>) suppliers, suppliersMap);
     String[] companyNames = new String[suppliers.size()];
@@ -200,9 +196,9 @@ public class ProductModifyForm extends JFrame {
     cmbSupplierId.setSelectedItem(firstDataOfCompany);
     cmbSupplierId.setFont(new Font("Arial", Font.PLAIN, 14));
     cmbSupplierId.addActionListener(
-            e -> {
-              suppliersMap.get(cmbSupplierId.getSelectedItem());
-            });
+        e -> {
+          suppliersMap.get(cmbSupplierId.getSelectedItem());
+        });
 
     String[] statusOptions = {"In Stock", "Available"};
     cmbStatus = new JComboBox<>(statusOptions);
@@ -222,7 +218,7 @@ public class ProductModifyForm extends JFrame {
 
     txtName.setText(product.getName());
     txtQuantity.setText("" + product.getQuantity());
-    txtPrice.setText("" + currencyFormatter.format(product.getPrice()).replaceAll(",",""));
+    txtPrice.setText("" + currencyFormatter.format(product.getPrice()).replaceAll(",", ""));
     txtGenre.setText(product.getType());
     txtBrand.setText(product.getBrand());
     txtOS.setText(product.getOperatingSystem());
@@ -324,9 +320,11 @@ public class ProductModifyForm extends JFrame {
 
   private void saveProduct() {
     try {
-      Product product = Product.builder()
+      Product product =
+          Product.builder()
               .id(productId)
-              .supplier(LoginFrame.COMPUTER_SHOP.findSupplier((String) cmbSupplierId.getSelectedItem()))
+              .supplier(
+                  LoginFrame.COMPUTER_SHOP.findSupplier((String) cmbSupplierId.getSelectedItem()))
               .name(txtName.getText())
               .quantity(Integer.parseInt(txtQuantity.getText()))
               .price(Integer.parseInt(txtPrice.getText()))

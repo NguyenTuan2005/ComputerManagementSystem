@@ -88,10 +88,25 @@ public class Order {
     public void updateStatus(String status) {
         this.status = status;
     }
+
     public void updateSupplier(Supplier supplier) {
         for (var orderDetail : this.orderDetails ){
             orderDetail.updateSupplier(supplier);
         }
+    }
+    public boolean isCurrentMonth(){
+        return this.orderedAt.getMonth().equals(LocalDate.now().getMonth());
+    }
+
+    public boolean of(Customer customer) {
+        return this.customer.equals(customer);
+    }
+
+    public boolean isCustomer(Customer customer) {
+        return this.customer.equals(customer);
+    }
+    public void changeOrderedAt(LocalDate localDate){
+        this.orderedAt = localDate;
     }
 
     public boolean isActive() {

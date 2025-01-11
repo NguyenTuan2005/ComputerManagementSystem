@@ -61,20 +61,17 @@ public class PasswordFieldConfig {
             @Override
             public void focusGained(FocusEvent e) {
                 String passwd = new String(that.getPassword());
-                // Khi người dùng nhấn vào JTextField, nếu vẫn là chữ giống originText, nó sẽ biến mất
                 that.setForeground(Color.BLACK);
                 if (passwd.equals(originText)) {
                     that.setText("");
                     that.setEchoChar('*');
                 }
                 that.setBorder(BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
-
             }
 
             @Override
             public void focusLost(FocusEvent e) {
                 String passwd = new String(that.getPassword());
-                // Khi người dùng rời khỏi JTextField mà chưa nhập gì, sẽ hiển thị lại chữ giống originText
                 if (passwd.isEmpty()) {
                     that.setText(originText);
                     that.setEchoChar((char) 0);

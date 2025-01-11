@@ -50,7 +50,6 @@ public class Style {
   public static final Color BUTTON_HOVER_COLOR = new Color(52, 152, 219);
   public static final Color BUTTON_COLOR = new Color(41, 128, 185);
 
-  public static final Color BUTTON_COLOR_GREEN = new Color(40, 167, 69);
   public static final Color DELETE_BUTTON_COLOR_RED = new Color(204, 88, 88);
   public static final Color CANCEL_BUTTON_COLOR_RED = new Color(143, 66, 66);
   public static final Color LIGHT_RED = new Color(229, 158, 158);
@@ -70,4 +69,15 @@ public class Style {
 
   public static final Color MENU_BUTTON_COLOR = new Color(83, 170, 239);
   public static final Color MENU_BACKGROUND_COLOR = new Color(227, 242, 253);
+
+  public static final Color BUTTON_GREEN_DASHBOARD = new Color(38, 152, 38);
+  public static final Color BUTTON_YELLOW_DASHBOARD = new Color(245, 179, 67);
+  public static final Color LIGHT_YELLOW = new Color(236, 225, 188);
+
+  public static final Color CHART_BACKGROUND_COLOR = new Color(240, 248, 255);
+  public static final Color CHART_BAR_COLOR_ORANGE = new Color(253, 126, 20);
+  public static final Color CHART_BAR_COLOR_YELLOW = new Color(255, 235, 59);
+
+
+
 }

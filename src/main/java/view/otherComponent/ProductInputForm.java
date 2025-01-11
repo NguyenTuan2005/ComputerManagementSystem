@@ -300,7 +300,7 @@ public class ProductInputForm extends JFrame {
   private JPanel createDropImagePanel() {
 
     JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
-    imagePanel.setPreferredSize(new Dimension(900, 300));
+    imagePanel.setPreferredSize(new Dimension(800, 300));
     imagePanel.setBackground(Color.WHITE);
 
     JLabel guideLabel = new JLabel("Drop product images here!", SwingConstants.CENTER);
@@ -423,9 +423,9 @@ public class ProductInputForm extends JFrame {
               .status(cmbStatus.getSelectedItem().toString())
               .isActive(true)
               .images(new ArrayList<>())
-//              .images(images)
+              .images(images)
               .build();
-
+      System.out.println(product);
 
       LoginFrame.COMPUTER_SHOP.addProduct(product);
       if( runnable != null) runnable.run();
@@ -467,5 +467,6 @@ public class ProductInputForm extends JFrame {
   }
 
   public static void main(String[] args) {
+    new ProductInputForm(()->{});
   }
 }

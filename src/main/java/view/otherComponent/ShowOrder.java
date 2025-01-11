@@ -96,7 +96,7 @@ public class ShowOrder extends JPanel {
     ButtonConfig.setButtonIcon("src/main/java/Icon/bill_Icon.png", viewBill, 15);
     viewBill.addActionListener(
         e -> {
-          var a = new BillFrame();
+//          var a = new BillFrame(order);
         });
 
     bottomLeft.add(viewBill);

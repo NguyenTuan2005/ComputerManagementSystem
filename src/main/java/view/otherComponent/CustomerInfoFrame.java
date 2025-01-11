@@ -7,9 +7,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import entity.Customer;
+import security.PasswordSecurity;
+import view.LoginFrame;
 import view.Style;
 
 public class CustomerInfoFrame extends JFrame {
@@ -20,6 +25,8 @@ public class CustomerInfoFrame extends JFrame {
   private String contextPath = "";
   boolean cancel = true;
   private boolean passwordVisible = false;
+  private Runnable callMethodUpdate;
+  private PasswordSecurity passwordSecurity;
 
 
 
@@ -28,11 +35,13 @@ public class CustomerInfoFrame extends JFrame {
   private static final Color LIGHT_BLUE = new Color(235, 245, 255);
   private static final Color HOVER_BLUE = new Color(30, 144, 255);
 
-  public CustomerInfoFrame() {
+  public CustomerInfoFrame( Runnable callMethodUpdate) {
+    this.callMethodUpdate = callMethodUpdate;
     setTitle("Customer Information");
     setSize(500, 650);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setUndecorated(true);
+
 
     JPanel mainPanel = new JPanel();
     mainPanel.setLayout(new BorderLayout(15, 15));
@@ -177,16 +186,32 @@ public class CustomerInfoFrame extends JFrame {
     return button;
   }
 
-
+  public static void main(String[] args) {
+//    new CustomerInfoFrame(()->{});
+  }
 
   private void handleSave() {
-    // Add your save logic here
 
-//    customerController = new CustomerController();
-    JOptionPane.showMessageDialog(this, "Save button clicked!");
-//    customerController.save(createCustomer());
-//    System.out.println("save :" + createCustomer());
-    handleClear();
+
+    if (emailField.getText() != null && passwordField.getPassword().length !=0) {
+      passwordSecurity = new PasswordSecurity(new String(passwordField.getPassword()) );
+      var newCustomer = Customer.builder().fullName(fullNameField.getText())
+              .avatarImg(contextPath)
+              .password(passwordSecurity.generatePassword())
+              .email(emailField.getText())
+              .address(addressField.getText())
+              .createdAt(LocalDate.now())
+              .isActive(true)
+              .id(LoginFrame.COMPUTER_SHOP.getNextIdOfCustomer())
+              .build();
+      System.out.println(newCustomer);
+
+      LoginFrame.COMPUTER_SHOP.addCustomer(newCustomer);
+      if (callMethodUpdate != null) {
+        callMethodUpdate.run();
+      }
+      handleClear();
+    }
   }
 
   private void handleClear() {

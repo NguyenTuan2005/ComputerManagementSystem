@@ -94,6 +94,20 @@ public class Order {
             orderDetail.updateSupplier(supplier);
         }
     }
+    public boolean isCurrentMonth(){
+        return this.orderedAt.getMonth().equals(LocalDate.now().getMonth());
+    }
+
+    public boolean of(Customer customer) {
+        return this.customer.equals(customer);
+    }
+
+    public boolean isCustomer(Customer customer) {
+        return this.customer.equals(customer);
+    }
+    public void changeOrderedAt(LocalDate localDate){
+        this.orderedAt = localDate;
+    }
 
     public boolean isActive() {
         return this.status.equals(OrderType.ACTIVE_MESSAGE);

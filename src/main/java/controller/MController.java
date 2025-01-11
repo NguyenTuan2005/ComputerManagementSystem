@@ -3,6 +3,7 @@ package controller;
 import entity.*;
 import enums.DisplayProductType;
 import enums.LoginStatus;
+import enums.UserType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,7 +16,7 @@ public interface MController {
 
     List<Supplier> getAllSupplier();
     List<Customer> getAllCustomer();
-
+    
     //customer
     Map<Customer, List<Order>> userOrderStatistics();
     void addOrder( Order newOrder);
@@ -27,7 +28,9 @@ public interface MController {
     Map<Customer,Long> customerOrderStatistics();
     List<Order> getAllOrderByCustomer(Customer customer);
     List<Order> findOrderByCustomerAndDate(Customer customer, LocalDate orderedAt);
-
+    
+    void changePassword(UserType type,  String email, String password);
+ 
 
 
     // manager
@@ -57,7 +60,5 @@ public interface MController {
     Map<Supplier, Long> totalProductStatictics();
 
 
-
-
-
+    Customer findCustomerByEmail(String email);
 }

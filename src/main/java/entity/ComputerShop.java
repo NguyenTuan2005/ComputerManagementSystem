@@ -6,9 +6,11 @@ import data.ManagerData;
 import enums.DisplayProductType;
 import enums.LoginStatus;
 import enums.OrderType;
+import enums.UserType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import security.PasswordSecurity;
 
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -408,6 +410,11 @@ public class ComputerShop implements MController {
     }
 
     @Override
+    public Customer findCustomerByEmail(String email) {
+        return   this.customers.stream().filter(customer -> customer.sameEmail(email)).findFirst().orElse(null);
+    }
+
+    @Override
     public void addSupplier(Supplier newSupplier) {
         this.suppliers.add(newSupplier);
     }
@@ -516,9 +523,27 @@ public class ComputerShop implements MController {
 
     @Override
     public List<Order> findOrderByCustomerAndDate(Customer customer, LocalDate orderedAt) {
-        return  this.getAllOrderByCustomer(customer).stream().filter(order -> order.orderedAt(orderedAt)).toList();
+        return this.getAllOrderByCustomer(customer).stream().filter(order -> order.orderedAt(orderedAt)).toList();
     }
 
+    @Override
+    public void changePassword(UserType type, String email, String password) {
+        if(type.isCustomer()) {
+            for (int i = 0; i < this.customers.size(); i++) {
+                if (customers.get(i).sameEmail(email)) {
+                    customers.get(i).updatePassword(new PasswordSecurity(password).generatePassword());
+                    return;
+                }
+            }
+        } else if(type.isManager()){
+            for (int i = 0; i < this.managers.size(); i++) {
+                if (managers.get(i).sameEmail(email)) {
+                    managers.get(i).updatePassword(new PasswordSecurity(password).generatePassword());
+                    return;
+                }
+            }
+        }
+    }
 
     public List<Supplier> findSupplierByName(String suppilerName){
         return this.suppliers.stream().filter(supp -> supp.getCompanyName().toLowerCase().contains(suppilerName.toLowerCase()))

@@ -54,6 +54,7 @@ public interface MController {
     void addSupplier(Supplier newSupplier);
     void removeSupplierByIndex(int index);
     void updateSupplier(Supplier supplier);
+    Map<Supplier, Long> totalProductStatictics();
 
 
 

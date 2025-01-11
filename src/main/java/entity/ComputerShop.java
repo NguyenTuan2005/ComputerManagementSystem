@@ -126,7 +126,7 @@ public class ComputerShop implements MController {
     @Override
     public void addOrder( Order newOrder) {
         for (int i = 0; i < managers.size(); i++) {
-            if(managers.get(i).equals(CurrentUser.CURRENT_MANAGER_V2)){
+            if(managers.get(i).sameEmail(CurrentUser.CURRENT_MANAGER_V2.getEmail())){
                 managers.get(i).addOrder(newOrder);
                 System.out.println("add thanh cong");
                 break;
@@ -394,6 +394,17 @@ public class ComputerShop implements MController {
         while( managerListIterator.hasNext()){
              managerListIterator.next().updateSupplier(supplier);
         }
+    }
+
+    @Override
+    public Map<Supplier, Long> totalProductStatictics() {
+        Map<Supplier,Long> map = new HashMap<>();
+        for (var sup : this.suppliers ){
+            long total=  this.products.stream().filter(p ->p.sameSupplier(sup)).collect(Collectors.summarizingLong(p->p.getQuantity())).getSum();
+            map.put(sup, total);
+        }
+
+        return map;
     }
 
     @Override

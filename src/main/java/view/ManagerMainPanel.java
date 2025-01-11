@@ -2083,17 +2083,17 @@ public class ManagerMainPanel extends JPanel {
       private void dispatchOrder() {
         JTable table = getSelectedTable();
 
-        int selectRow = (table != null) ? table.getSelectedRow() : -1;
-        if (selectRow != -1) {
-          String statusMessage = table.getValueAt(selectRow, 4).toString();
+        int[] selectRow = (table != null) ? table.getSelectedRows() : new int[]{};
+        if (selectRow.length > 0) {
+          String statusMessage = table.getValueAt(selectRow[0], 4).toString();
 
           switch (statusMessage) {
             case OrderType.ACTIVE_MESSAGE -> {
               manager = managerListMap.keySet().stream()
-                              .filter(manager1 -> manager1.sameID(Integer.parseInt(rowData[selectRow][6])))
+                              .filter(manager1 -> manager1.sameID(Integer.parseInt(rowData[selectRow[0]][6])))
                               .findAny()
                               .orElse(null);
-              order = managerListMap.get(manager).stream().filter(order1 -> order1.sameID(Integer.parseInt(rowData[selectRow][0])))
+              order = managerListMap.get(manager).stream().filter(order1 -> order1.sameID(Integer.parseInt(rowData[selectRow[0]][0])))
                               .findAny()
                               .orElse(null);
               orderTabbedPane.setSelectedIndex(2);
@@ -3093,6 +3093,7 @@ public class ManagerMainPanel extends JPanel {
             String productName = (String) selectedTable.getValueAt(row, 2);
             Product product1 = products.stream().filter(product -> product.sameName(productName)).findAny().orElse(null);
             if (changeStatus(product1, status)) {
+                tabbedPaneMain.setSelectedIndex(status.equals(Product.IN_STOCK) ? 1 : 2);
               ToastNotification.showToast(
                   "Successfully set product " + productName + " to " + messages[0],
                   duration,

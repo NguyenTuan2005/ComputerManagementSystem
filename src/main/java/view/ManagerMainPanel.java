@@ -265,6 +265,7 @@ public class ManagerMainPanel extends JPanel {
 
                 yearComboBox = new JComboBox<>();
                 yearComboBox.setFocusable(false);
+                yearComboBox.setPreferredSize(new Dimension(80, 20));
                 yearComboBox.setBorder(BorderFactory.createLineBorder(Style.MENU_BUTTON_COLOR,2));
                 updateYearComboBox();
                 yearComboBox.addActionListener(e -> {

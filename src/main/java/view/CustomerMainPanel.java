@@ -4,7 +4,7 @@ import com.toedter.calendar.JCalendar;
 import config.*;
 import converter.LocalDateConverter;
 import converter.OrderDetailConverter;
-import entity.*;
+import model.*;
 import enums.DisplayProductType;
 import enums.OrderType;
 import lombok.SneakyThrows;
@@ -1427,7 +1427,7 @@ public class CustomerMainPanel extends JPanel {
 
     final CustomButton[] selectedButton = {null};
 
-    for (entity.Image url : urls) {
+    for (model.Image url : urls) {
 
 
       CustomButton imageBt =

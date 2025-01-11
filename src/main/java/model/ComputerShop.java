@@ -1,4 +1,4 @@
-package entity;
+package model;
 
 import config.CurrentUser;
 import controller.MController;
@@ -8,7 +8,6 @@ import enums.LoginStatus;
 import enums.OrderType;
 import enums.UserType;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import security.PasswordSecurity;
 
@@ -18,7 +17,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ComputerShop implements MController {

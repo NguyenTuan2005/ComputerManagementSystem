@@ -1,6 +1,6 @@
 package controller;
 
-import entity.*;
+import model.*;
 import enums.DisplayProductType;
 import enums.LoginStatus;
 import enums.UserType;

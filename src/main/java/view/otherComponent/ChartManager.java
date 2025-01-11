@@ -1,6 +1,6 @@
 package view.otherComponent;
 
-import entity.Product;
+import model.Product;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;

@@ -1,14 +1,13 @@
 package config;
 
 
-import entity.Order;
+import model.Order;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 //@Builder

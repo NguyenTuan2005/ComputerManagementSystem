@@ -4,8 +4,8 @@ import static view.ManagerMainPanel.currencyFormatter;
 
 import config.ButtonConfig;
 import config.ProductConfig;
-import entity.Product;
-import entity.Supplier;
+import model.Product;
+import model.Supplier;
 import view.LoginFrame;
 
 import java.awt.*;
@@ -43,7 +43,7 @@ public class ProductModifyForm extends JFrame {
   private JButton btnExit;
 
   private int productId;
-  private entity.Product product;
+  private model.Product product;
 
   private String firstDataOfCompany;
   private String firstDataOfStatus;

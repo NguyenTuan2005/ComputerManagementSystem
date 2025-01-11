@@ -3,7 +3,7 @@ package view;
 
 import com.toedter.calendar.JCalendar;
 import config.*;
-import entity.*;
+import model.*;
 import enums.DisplayProductType;
 import enums.OrderType;
 import enums.TableStatus;
@@ -1397,7 +1397,7 @@ public class ManagerMainPanel extends JPanel {
       upDataTable(modelQuantity);
     }
 
-    public static void upDataTable(List<entity.Supplier> suppliers, DefaultTableModel modelSupplier) {
+    public static void upDataTable(List<model.Supplier> suppliers, DefaultTableModel modelSupplier) {
       String[][] rowData = Supplier.getData(suppliers);
       for (String[] strings : rowData) {
         modelSupplier.addRow(strings);
@@ -1443,7 +1443,7 @@ public class ManagerMainPanel extends JPanel {
     private final int TAB_DATA_CUSTOMER = 0;
     private final int TAB_BILL = 2;
 
-    private static List<entity.Customer> customers = new ArrayList<>();
+    private static List<model.Customer> customers = new ArrayList<>();
 
     private JPanel searchPanel, applicationPanel, mainPanel;
 
@@ -1819,7 +1819,7 @@ public class ManagerMainPanel extends JPanel {
 
     private void reload() {
       customers = LoginFrame.COMPUTER_SHOP.getAllCustomer();
-      upDataTable((ArrayList<entity.Customer>) customers, modelCustomer, tableCustomer);
+      upDataTable((ArrayList<model.Customer>) customers, modelCustomer, tableCustomer);
       showOrderContainer.removeAll();
       showOrderContainer.revalidate();
       showOrderContainer.repaint();
@@ -1902,8 +1902,8 @@ public class ManagerMainPanel extends JPanel {
           customerStatisticsModel.addRow(new Object[]{"","Total : ",total});
       }
     public static void upDataTable(
-        List<entity.Customer> customers, DefaultTableModel modelCustomerTable, JTable tableCustomer) {
-      Object[][] rowData = entity.Customer.getDataOnTable((ArrayList<entity.Customer>) customers);
+            List<model.Customer> customers, DefaultTableModel modelCustomerTable, JTable tableCustomer) {
+      Object[][] rowData = model.Customer.getDataOnTable((ArrayList<model.Customer>) customers);
       ProductPanel.TablePanel.removeDataTable(modelCustomerTable);
       for (int i = 0; i < rowData.length; i++) {
         modelCustomerTable.addRow(rowData[i]);
@@ -2469,7 +2469,7 @@ public class ManagerMainPanel extends JPanel {
                     createImageForProduct(
                         product.getImages().stream()
                             .findFirst()
-                            .orElse( new entity.Image(0,"src/main/java/img/not-found-image.png"))
+                            .orElse( new model.Image(0,"src/main/java/img/not-found-image.png"))
                             .getUrl(),
                         100,
                         100));
@@ -3311,7 +3311,7 @@ public class ManagerMainPanel extends JPanel {
         private String contextPath = "";
         private int modifyIndex = -1;
         private static TableStatus tableStatus = ADD;
-        private static ArrayList<entity.Manager> managers = (ArrayList<Manager>) LoginFrame.COMPUTER_SHOP.getAllManager();
+        private static ArrayList<model.Manager> managers = (ArrayList<Manager>) LoginFrame.COMPUTER_SHOP.getAllManager();
         private static Manager mutableManager;
 
     public ManagerPanel() {

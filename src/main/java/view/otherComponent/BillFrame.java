@@ -7,7 +7,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import entity.Order;
+import model.Order;
 import view.Style;
 
 public class BillFrame extends JFrame {

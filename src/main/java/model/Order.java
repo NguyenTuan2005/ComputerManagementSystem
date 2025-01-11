@@ -1,4 +1,4 @@
-package  entity;
+package model;
 
 import enums.OrderType;
 import lombok.*;
@@ -54,10 +54,10 @@ public class Order {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj==null || !(obj instanceof entity.Order))
+        if (obj==null || !(obj instanceof model.Order))
             return false;
         else {
-            entity.Order that = (entity.Order) obj;
+            model.Order that = (model.Order) obj;
             return this.orderId == that.orderId &&
                     this.customer.equals(that.customer) &&
                     this.shipAddress.equals(that.shipAddress) &&

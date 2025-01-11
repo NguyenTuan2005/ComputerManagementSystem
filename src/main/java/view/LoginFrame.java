@@ -5,7 +5,7 @@ import config.ButtonConfig;
 import config.EmailConfig;
 import config.PasswordFieldConfig;
 import config.TextFieldConfig;
-import entity.ComputerShop;
+import model.ComputerShop;
 import enums.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
-import entity.Customer;
+import model.Customer;
 import security.PasswordSecurity;
 
 import view.overrideComponent.CircularImage;

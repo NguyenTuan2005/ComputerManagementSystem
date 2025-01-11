@@ -1,4 +1,4 @@
-package  entity;
+package model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -16,10 +16,10 @@ public class OrderDetail {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj==null || !(obj instanceof entity.OrderDetail))
+        if (obj==null || !(obj instanceof model.OrderDetail))
             return false;
         else {
-            entity.OrderDetail that = (entity.OrderDetail) obj;
+            model.OrderDetail that = (model.OrderDetail) obj;
             return this.quantity == that.quantity &&
                     this.product.equals(that.product);
         }

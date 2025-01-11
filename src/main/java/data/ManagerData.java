@@ -1,6 +1,6 @@
 package data;
 
-import entity.*;
+import model.*;
 import enums.OrderType;
 import lombok.AccessLevel;
 import lombok.Getter;

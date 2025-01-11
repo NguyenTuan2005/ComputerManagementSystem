@@ -1,4 +1,4 @@
-package  entity;
+package model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -16,10 +16,10 @@ public class Image {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj==null || !(obj instanceof entity.Image))
+        if (obj==null || !(obj instanceof model.Image))
             return false;
         else {
-            entity.Image that = (entity.Image) obj;
+            model.Image that = (model.Image) obj;
             return this.id == that.id &&
                     this.url.equals(that.url);
         }

@@ -16,7 +16,7 @@ import java.util.Stack;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 
-import entity.Supplier;
+import model.Supplier;
 import view.LoginFrame;
 import view.Style;
 

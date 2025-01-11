@@ -11,7 +11,7 @@ import java.util.Date;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 
-import entity.Supplier;
+import model.Supplier;
 import view.LoginFrame;
 import view.Style;
 import view.overrideComponent.ToastNotification;

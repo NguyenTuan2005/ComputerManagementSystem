@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.*;
-import entity.Product;
-import entity.Supplier;
+import model.Product;
+import model.Supplier;
 import view.LoginFrame;
 import view.Style;
 import view.overrideComponent.ToastNotification;
@@ -56,7 +56,7 @@ public class ProductInputForm extends JFrame {
 
   //data
   private Map<String, Integer> suppliersMap;
-  private List<entity.Supplier> suppliers = LoginFrame.COMPUTER_SHOP.getAllSupplier();
+  private List<model.Supplier> suppliers = LoginFrame.COMPUTER_SHOP.getAllSupplier();
 
 
   private final Color SECONDARY_COLOR = new Color(52, 152, 219);
@@ -231,13 +231,13 @@ public class ProductInputForm extends JFrame {
     ButtonConfig.addButtonHoverEffect(btnExit, BUTTON_HOVER_COLOR, BUTTON_COLOR);
   }
 
-  private static void setCompany(ArrayList<entity.Supplier> suppliers, String[] companyNames) {
+  private static void setCompany(ArrayList<model.Supplier> suppliers, String[] companyNames) {
     for (int i = 0; i < suppliers.size(); i++) {
       companyNames[i] = suppliers.get(i).getCompanyName();
     }
   }
 
-  private static void setMapCompany(ArrayList<entity.Supplier> suppliers, Map<String, Integer> map) {
+  private static void setMapCompany(ArrayList<model.Supplier> suppliers, Map<String, Integer> map) {
     for (int i = 0; i < suppliers.size(); i++) {
       map.put(suppliers.get(i).getCompanyName(), suppliers.get(i).getId());
     }
@@ -398,9 +398,9 @@ public class ProductInputForm extends JFrame {
   private void saveProduct() {
     try {
 
-      List<entity.Image> images = new ArrayList<>();
+      List<model.Image> images = new ArrayList<>();
       for (var img : this.imagePaths) {
-        images.add(new entity.Image(1,img));
+        images.add(new model.Image(1,img));
       }
 
 

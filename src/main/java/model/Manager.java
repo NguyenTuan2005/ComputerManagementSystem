@@ -1,4 +1,4 @@
-package  entity;
+package model;
 
 import enums.OrderType;
 import lombok.*;
@@ -80,10 +80,10 @@ public class Manager extends User{
 
     @Override
     public boolean equals(Object o) {
-        if (o==null || !(o instanceof entity.Manager))
+        if (o==null || !(o instanceof model.Manager))
             return false;
         else {
-            entity.Manager that = (entity.Manager) o;
+            model.Manager that = (model.Manager) o;
             return this.orders.equals(that.orders);
         }
     }

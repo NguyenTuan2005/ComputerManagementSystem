@@ -1,8 +1,8 @@
 package config;
 
-import entity.Image;
-import entity.Product;
-import entity.Supplier;
+import model.Image;
+import model.Product;
+import model.Supplier;
 import lombok.*;
 
 import java.time.LocalDate;

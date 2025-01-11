@@ -1,5 +1,6 @@
 package  entity;
 
+import enums.OrderType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -97,13 +98,29 @@ public class Manager extends User{
 
     public List<Order> filter(String status, String searchText) {
         return this.orders.stream()
-                .filter(order ->
-                    (searchText == null || searchText.isEmpty()
-                    || order.containText(searchText) || (searchText).contains(String.valueOf(this.id)) || (searchText).contains(this.fullName)) &&
-                    ((status != null && order.isDispatched()) || (status == null && !order.isDispatched()))
-                )
+                .filter(order -> {
+                    boolean matchesSearchText = searchText == null || searchText.isEmpty()
+                            || order.containText(searchText)
+                            || searchText.contains(String.valueOf(this.id))
+                            || searchText.contains(this.fullName);
+
+                    boolean matchesStatus = false;
+                    if (status != null) {
+                        matchesStatus = switch (status) {
+                            case OrderType.ACTIVE_MESSAGE -> order.isActive();
+                            case OrderType.UN_ACTIVE_MESSAGE -> order.isUnActive();
+                            case OrderType.DISPATCHED_MESSAGE -> order.isDispatched();
+                            default -> false;
+                        };
+                    } else {
+                        matchesStatus = true;
+                    }
+
+                    return matchesSearchText && matchesStatus;
+                })
                 .toList();
     }
+
 
     public void updateSupplier(Supplier supplier){
         for (var order : this.orders){

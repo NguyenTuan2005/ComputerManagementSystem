@@ -1931,6 +1931,7 @@ public class ManagerMainPanel extends JPanel {
 
     private ExportPanel exportPanel;
 
+    private String statusFilter;
     private String[][] rowData;
     private Map<Manager, List<Order>> managerListMap;
     private List<Manager> managers;
@@ -2018,6 +2019,9 @@ public class ManagerMainPanel extends JPanel {
           reloadBt.setVerticalTextPosition(SwingConstants.BOTTOM);
           reloadBt.addActionListener(
               e -> {
+                  sort1Bt.setBackgroundColor(Style.WORD_COLOR_WHITE);
+                  sort2Bt.setBackgroundColor(Style.WORD_COLOR_WHITE);
+                  statusFilter = null;
                 searchOrderField.setText("");
                 updateOrders();
               });
@@ -2061,6 +2065,9 @@ public class ManagerMainPanel extends JPanel {
 
       private void searchHandle() {
         String searchText = searchOrderField.getText().trim().toLowerCase();
+        sort1Bt.setBackgroundColor(Style.WORD_COLOR_WHITE);
+        sort1Bt.setBackgroundColor(Style.WORD_COLOR_WHITE);
+        statusFilter = null;
         updateOrders(searchText);
       }
 
@@ -2069,7 +2076,7 @@ public class ManagerMainPanel extends JPanel {
 
         return switch (index) {
           case 0 -> {
-            reloadOrders(null, searchOrderField.getText());
+            reloadOrders(statusFilter, searchOrderField.getText());
             yield orderTable;
           }
           case 1 -> {
@@ -2120,22 +2127,24 @@ public class ManagerMainPanel extends JPanel {
         JPanel sortBarPn = new JPanel(new FlowLayout(FlowLayout.LEFT));
         sortBarPn.setBackground(Color.WHITE);
         sort1Bt = ButtonConfig.createCustomButton(
-                "Sort by receiced",
+                OrderType.ACTIVE_MESSAGE,
                 Style.FONT_BOLD_15,
                 Color.BLACK,
-                Style.MENU_BUTTON_COLOR,
+                Style.WORD_COLOR_WHITE,
                 Style.LIGHT_BlUE,
                 Style.MENU_BUTTON_COLOR,
                 2,
                 25,
                 SwingConstants.CENTER,
-                new Dimension(180, 25));
+                new Dimension(220, 25));
           sort1Bt.addActionListener(e ->{
+              statusFilter = OrderType.ACTIVE_MESSAGE;
               updateSelectedButtonColor(sort1Bt);
+              filterOrders(statusFilter);
           });
 
           sort2Bt = ButtonConfig.createCustomButton(
-                  "Order Quantity",
+                  OrderType.UN_ACTIVE_MESSAGE,
                   Style.FONT_BOLD_15,
                   Color.BLACK,
                   Color.white,
@@ -2146,7 +2155,9 @@ public class ManagerMainPanel extends JPanel {
                   SwingConstants.CENTER,
                   new Dimension(180, 25));
           sort2Bt.addActionListener(e ->{
+              statusFilter = OrderType.UN_ACTIVE_MESSAGE;
               updateSelectedButtonColor(sort2Bt);
+              filterOrders(statusFilter);
           });
           sortBarPn.add(sort1Bt);
           sortBarPn.add(sort2Bt);
@@ -2168,16 +2179,13 @@ public class ManagerMainPanel extends JPanel {
           // panel export products for each order
           exportPanel = new ExportPanel();
         orderTabbedPane.add("Export Product", exportPanel);
+        orderTabbedPane.setSelectedIndex(0);
         add(orderTabbedPane, BorderLayout.CENTER);
       }
         private void updateSelectedButtonColor(CustomButton button) {
             Color defaultColor = Color.WHITE;
             Color selectedColor = Style.MENU_BUTTON_COLOR;
 
-            if(selectedBt == null){
-                sort1Bt.setBackgroundColor(defaultColor);
-                sort1Bt.setHoverColor(Style.LIGHT_BlUE);
-            }
 
             if (selectedBt != null ) {
                 selectedBt.setBackgroundColor(defaultColor);
@@ -2190,7 +2198,7 @@ public class ManagerMainPanel extends JPanel {
         }
     }
 
-    private class ExportPanel extends JPanel {
+      private class ExportPanel extends JPanel {
       private JLabel totalPriceLabel, quantityLabel;
       private CustomButton exportBt, cancelBt;
       private OrderDetailsPanel detailsPanel;
@@ -2887,6 +2895,10 @@ public class ManagerMainPanel extends JPanel {
       upDataOrders(orderModel, null, searchText);
       upDataOrders(dispatchedOrderModel, OrderType.DISPATCHED_MESSAGE, searchText);
     }
+
+      private void filterOrders(String status) {
+        upDataOrders(orderModel, status, searchOrderField.getText());
+      }
   }
 
   private class InventoryPanel extends JPanel {

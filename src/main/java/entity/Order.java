@@ -112,4 +112,8 @@ public class Order {
     public boolean isActive() {
         return this.status.equals(OrderType.ACTIVE_MESSAGE);
     }
+
+    public boolean isUnActive() {
+        return this.status.equals(OrderType.UN_ACTIVE_MESSAGE);
+    }
 }

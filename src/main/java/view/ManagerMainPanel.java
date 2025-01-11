@@ -157,7 +157,7 @@ public class ManagerMainPanel extends JPanel {
   }
 
   private class DashBoardPanel extends JPanel {
-    private CustomButton productsBt, customersBt, suppliersBt, ordersBt, managersBt;
+    private CustomButton productsBt, customersBt, suppliersBt, managersBt;
     private CenterPanel centerPanel = new CenterPanel();
     public DashBoardPanel() {
       setLayout(new BorderLayout());
@@ -169,35 +169,22 @@ public class ManagerMainPanel extends JPanel {
       productsBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
               LoginFrame.COMPUTER_SHOP.getTotalProduct() +
               "<br>Products</div></html>", Style.FONT_BOLD_30,Color.white,Style.BUTTON_GREEN_DASHBOARD,Style.LIGHT_GREEN,20,SwingConstants.CENTER,new Dimension(250,100));
-      productsBt.addActionListener(e -> {
-          showPanel(ManagerMainPanel.PRODUCT_CONSTRAINT);
-
-      });
       statisticsBarPn.add(productsBt);
+
       customersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
               LoginFrame.COMPUTER_SHOP.getTotalCustomer() +
               "<br>Customers</div></html>", Style.FONT_BOLD_30,Color.white,Style.BUTTON_YELLOW_DASHBOARD,Style.LIGHT_YELLOW,20,SwingConstants.CENTER,new Dimension(250,100));
-      customersBt.addActionListener(e -> {
-          showPanel(ManagerMainPanel.CUSTOMER_CONSTRAINT);
-        });
       statisticsBarPn.add(customersBt);
+
       suppliersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
               LoginFrame.COMPUTER_SHOP.getTotalSupplier() +
               "<br>Suppliers</div></html>", Style.FONT_BOLD_30,Color.white,Style.MENU_BUTTON_COLOR,Style.LIGHT_BlUE,20,SwingConstants.CENTER,new Dimension(250,100));
-      suppliersBt.addActionListener(e -> {
-          showPanel(ManagerMainPanel.SUPPLIER_CONSTRAINT);
-
-      });
       statisticsBarPn.add(suppliersBt);
 
       managersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
                 LoginFrame.COMPUTER_SHOP.getTotalManager() +
                 "<br>Managers</div></html>", Style.FONT_BOLD_30,Color.white,Style.DELETE_BUTTON_COLOR_RED,Style.LIGHT_RED,20,SwingConstants.CENTER,new Dimension(250,100));
-      managersBt.addActionListener(e -> {
-            showPanel(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
-        });
       statisticsBarPn.add(managersBt);
-
       add(statisticsBarPn, BorderLayout.NORTH);
       add(centerPanel,BorderLayout.CENTER);
     }
@@ -2168,6 +2155,7 @@ public class ManagerMainPanel extends JPanel {
           // panel export products for each order
           exportPanel = new ExportPanel();
         orderTabbedPane.add("Export Product", exportPanel);
+          orderTabbedPane.setSelectedIndex(0);
         add(orderTabbedPane, BorderLayout.CENTER);
       }
         private void updateSelectedButtonColor(CustomButton button) {
@@ -4750,9 +4738,10 @@ public class ManagerMainPanel extends JPanel {
   public void setDashBoardCustomerBtListener(ActionListener listener){
         dashBoardPanel.customersBt.addActionListener(listener);
     }
-    public void setDashBoardSupplierListener(ActionListener listener){
+  public void setDashBoardSupplierListener(ActionListener listener){
         dashBoardPanel.suppliersBt.addActionListener(listener);
-    }public void setDashBoardManagerBtListener(ActionListener listener){
+    }
+  public void setDashBoardManagerBtListener(ActionListener listener){
         dashBoardPanel.managersBt.addActionListener(listener);
     }
 

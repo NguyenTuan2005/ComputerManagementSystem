@@ -1,17 +1,16 @@
 package view;
 
 
-import static org.apache.commons.collections4.CollectionUtils.collect;
-import static view.CustomerMainPanel.createImageForProduct;
-
 import com.toedter.calendar.JCalendar;
 import config.*;
 import entity.*;
 import enums.OrderType;
 import enums.TableStatus;
-import static enums.TableStatus.*;
 import lombok.SneakyThrows;
-import verifier.*;
+import verifier.BirthDayVerifier;
+import verifier.EmailVerifier;
+import verifier.NotEmptyVerifier;
+import verifier.PhoneNumberVerifier;
 import view.otherComponent.*;
 import view.overrideComponent.CircularImage;
 import view.overrideComponent.CustomButton;
@@ -44,9 +43,13 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static enums.TableStatus.ADD;
+import static enums.TableStatus.MODIFY;
+import static view.CustomerMainPanel.createImageForProduct;
 
 public class ManagerMainPanel extends JPanel {
   private CardLayout cardLayout = new CardLayout();
@@ -187,7 +190,6 @@ public class ManagerMainPanel extends JPanel {
         removeProductStatistics(modelStatisticsProductTable);
         int i=0 , tatolSold=0,tatolInStock=0;
         for (Map.Entry<Product,Long> data : stringLongMap.entrySet()){
-          System.out.println(data.getKey());
           modelStatisticsProductTable.addRow(new Object[]{i++,data.getKey().getName(),data.getValue(),data.getKey().getQuantity()});
           tatolSold += data.getValue();
           tatolInStock += data.getKey().getQuantity();
@@ -199,7 +201,6 @@ public class ManagerMainPanel extends JPanel {
           removeProductStatistics(modelStatisticsProductTable);
           int i=0 , tatolSold=0,tatolInStock=0;
           for (Map.Entry<Product,Long> data : productLongMap.entrySet()){
-              System.out.println(data.getKey());
 
               if (data.getKey().getName().toLowerCase().contains(text)) {
                   modelStatisticsProductTable.addRow(new Object[]{i++, data.getKey().getName(), data.getValue(), data.getKey().getQuantity()});
@@ -319,7 +320,6 @@ public class ManagerMainPanel extends JPanel {
                   Object value = tableProduct.getValueAt(selectedRow, columnIndex);
 
                   int index = Integer.parseInt(value.toString());
-                    System.out.println(index);
                   LoginFrame.COMPUTER_SHOP.removeProductByIndex(index);
 //                  modelProductTable.removeRow(selectedRow);
                     productsAll = reloadProduct();
@@ -546,8 +546,6 @@ public class ManagerMainPanel extends JPanel {
               @Override
               public void actionPerformed(ActionEvent e) {
                 if (findText.getText().trim().isEmpty()) return;
-                System.out.println(findText.getText());
-                System.out.println(productsAll);
                 productsAll = LoginFrame.COMPUTER_SHOP.findProductByName(findText.getText().trim());
 
                 if (productsAll.isEmpty()) {
@@ -816,8 +814,6 @@ public class ManagerMainPanel extends JPanel {
           sumItemBt.addActionListener(
                   e -> {
                       analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.analyzeQuantityOfImportedGoods();
-                    System.out.println(LoginFrame.COMPUTER_SHOP.analyzeQuantityOfImportedGoods());
-                    System.out.println(LoginFrame.COMPUTER_SHOP.getAllProduct());
                       modelQuantity.setRowCount(0);
                       upDataTable(modelQuantity);
                   });
@@ -1119,7 +1115,6 @@ public class ManagerMainPanel extends JPanel {
     public static void upDataTable(List<entity.Supplier> suppliers, DefaultTableModel modelSupplier) {
       String[][] rowData = Supplier.getData(suppliers);
       for (String[] strings : rowData) {
-//        System.out.println(strings);
         modelSupplier.addRow(strings);
       }
     }

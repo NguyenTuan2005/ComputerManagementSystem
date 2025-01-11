@@ -58,7 +58,6 @@ public class ComputerShop implements MController {
                 boolean isNotFound =( customer== null);
                 if(isNotFound) return false;
                 if(customer.isValidPassword(pass)){
-                    System.out.println(customer);
                     CurrentUser.CURRENT_USER_V2 = customer;
                     CurrentUser.URL = customer.getAvatarImg();
                     return true;
@@ -227,7 +226,6 @@ public class ComputerShop implements MController {
                     break;
                 }
             }
-            this.managers.forEach(System.out::println);
         } else {
             ListIterator<Customer> iterator = this.customers.listIterator();
             while(iterator.hasNext()) {
@@ -237,7 +235,6 @@ public class ComputerShop implements MController {
                     break;
                 }
             }
-            this.customers.forEach(System.out::println);
         }
 
     }

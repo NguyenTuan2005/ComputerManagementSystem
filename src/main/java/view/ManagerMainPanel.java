@@ -1,9 +1,6 @@
 package view;
 
-
-import static org.apache.commons.collections4.CollectionUtils.collect;
 import static view.CustomerMainPanel.createImageForProduct;
-
 import com.toedter.calendar.JCalendar;
 import config.*;
 import entity.*;
@@ -11,22 +8,30 @@ import enums.DisplayProductType;
 import enums.OrderType;
 import enums.TableStatus;
 import static enums.TableStatus.*;
+import static view.CustomerMainPanel.formatCurrency;
+
 import lombok.SneakyThrows;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
+import org.jfree.chart.*;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+import org.jfree.chart.plot.*;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 import verifier.*;
 import view.otherComponent.*;
 import view.overrideComponent.CircularImage;
 import view.overrideComponent.CustomButton;
+import view.overrideComponent.RoundedBorder;
 import view.overrideComponent.ToastNotification;
 
+import javax.swing.Timer;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -46,6 +51,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Date;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -56,19 +62,18 @@ import java.util.stream.Collectors;
 
 public class ManagerMainPanel extends JPanel {
   private CardLayout cardLayout = new CardLayout();
-  private WelcomePanel welcomePanel;
+  private DashBoardPanel dashBoardPanel;
   private ProductPanel productPanel = new ProductPanel();
   private SupplierPanel supplierPanel = new SupplierPanel();
   private CustomerPanel customerPanel = new CustomerPanel();
   private OrderPanel orderPanel = new OrderPanel();
   private InventoryPanel inventoryPanel = new InventoryPanel();
-  private AccManagementPanel accManagePanel = new AccManagementPanel();
+  private ManagerPanel managerPanel = new ManagerPanel();
   private NotificationPanel notificationPanel = new NotificationPanel();
   private ChangeInformationPanel changeInformationPanel = new ChangeInformationPanel();
-
   private JPanel notificationContainer;
-
-  static final String WELCOME_CONSTRAINT = "welcome";
+  //constraint
+  public static final String DASHBOARD_CONSTRAINT = "dashboard";
   static final String PRODUCT_CONSTRAINT = "product";
   static final String SUPPLIER_CONSTRAINT = "supplier";
   static final String CUSTOMER_CONSTRAINT = "customer";
@@ -105,14 +110,14 @@ public class ManagerMainPanel extends JPanel {
   };
   private static final String[] columnNamesSUPPLIER = {
     "Serial Number",
-    "Supplier Name:",
-    "Email:",
-    "Phone number:",
-    "Address:",
-    "Contract Start Date:"
+    "Supplier Name",
+    "Email",
+    "Phone number",
+    "Address",
+    "Contract Start Date"
   };
-  private static final String[] columnNamesQuanTityOfSupplier ={"Serial Number","Company name :", "Quantity :"};
-  static final String[] columnNamesCUSTOMER = {
+  private static final String[] columnNamesQuantityOfSupplier ={"Serial Number","Company name :", "Quantity :"};
+  private static final String[] columnNamesCUSTOMER = {
     "Customer ID:", "Customer Name:", "Phone Number:", "Email:", "Address:", "Date of Birth:"
   };
 
@@ -121,100 +126,338 @@ public class ManagerMainPanel extends JPanel {
 
   public ManagerMainPanel() {
 
-    welcomePanel = new WelcomePanel();
+    dashBoardPanel = new DashBoardPanel();
     setLayout(cardLayout);
-    add(welcomePanel, WELCOME_CONSTRAINT);
+    add(dashBoardPanel, DASHBOARD_CONSTRAINT);
     add(productPanel, PRODUCT_CONSTRAINT);
     add(supplierPanel, SUPPLIER_CONSTRAINT);
     add(customerPanel, CUSTOMER_CONSTRAINT);
     add(orderPanel, ORDER_CONSTRAINT);
     add(inventoryPanel, INVENTORY_CONSTRAINT);
-    add(accManagePanel, ACC_MANAGEMENT_CONSTRAINT);
+    add(managerPanel, ACC_MANAGEMENT_CONSTRAINT);
     add(notificationPanel, NOTIFICATION_CONSTRAINT);
     add(changeInformationPanel, CHANGE_INFORMATION_CONSTRAINT);
-
-    cardLayout.show(this, WELCOME_CONSTRAINT);
+    cardLayout.show(this, DASHBOARD_CONSTRAINT);
   }
 
   public void showPanel(String panelName) {
     cardLayout.show(this, panelName);
   }
 
-  private class WelcomePanel extends JPanel {
-    JLabel welcomeLabel;
-
-    public WelcomePanel() {
+  private class DashBoardPanel extends JPanel {
+    private CustomButton productsBt, customersBt, suppliersBt, ordersBt, managersBt;
+    private CenterPanel centerPanel = new CenterPanel();
+    public DashBoardPanel() {
       setLayout(new BorderLayout());
       setBackground(Color.WHITE);
-      ImageIcon welcomeImg = new ImageIcon("src/main/java/img/welcomeImage.png");
-      welcomeLabel = new JLabel();
-      welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-      welcomeLabel.setVerticalAlignment(SwingConstants.CENTER);
-      welcomeLabel.setIcon(welcomeImg);
 
-      add(welcomeLabel, BorderLayout.CENTER);
+      JPanel statisticsBarPn = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      statisticsBarPn.setBackground(Color.WHITE);
+
+      productsBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
+              LoginFrame.COMPUTER_SHOP.getTotalProduct() +
+              "<br>Products</div></html>", Style.FONT_BOLD_30,Color.white,Style.BUTTON_GREEN_DASHBOARD,Style.LIGHT_GREEN,20,SwingConstants.CENTER,new Dimension(250,100));
+      productsBt.addActionListener(e -> {
+          showPanel(ManagerMainPanel.PRODUCT_CONSTRAINT);
+
+      });
+      statisticsBarPn.add(productsBt);
+      customersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
+              LoginFrame.COMPUTER_SHOP.getTotalCustomer() +
+              "<br>Customers</div></html>", Style.FONT_BOLD_30,Color.white,Style.BUTTON_YELLOW_DASHBOARD,Style.LIGHT_YELLOW,20,SwingConstants.CENTER,new Dimension(250,100));
+      customersBt.addActionListener(e -> {
+          showPanel(ManagerMainPanel.CUSTOMER_CONSTRAINT);
+        });
+      statisticsBarPn.add(customersBt);
+      suppliersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
+              LoginFrame.COMPUTER_SHOP.getTotalSupplier() +
+              "<br>Suppliers</div></html>", Style.FONT_BOLD_30,Color.white,Style.MENU_BUTTON_COLOR,Style.LIGHT_BlUE,20,SwingConstants.CENTER,new Dimension(250,100));
+      suppliersBt.addActionListener(e -> {
+          showPanel(ManagerMainPanel.SUPPLIER_CONSTRAINT);
+
+      });
+      statisticsBarPn.add(suppliersBt);
+
+      managersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
+                LoginFrame.COMPUTER_SHOP.getTotalManager() +
+                "<br>Managers</div></html>", Style.FONT_BOLD_30,Color.white,Style.DELETE_BUTTON_COLOR_RED,Style.LIGHT_RED,20,SwingConstants.CENTER,new Dimension(250,100));
+      managersBt.addActionListener(e -> {
+            showPanel(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
+        });
+      statisticsBarPn.add(managersBt);
+
+      add(statisticsBarPn, BorderLayout.NORTH);
+      add(centerPanel,BorderLayout.CENTER);
+    }
+    public class CenterPanel extends JPanel{
+        private JLabel welcomeLabel;
+        private CardLayout dashBCardLayout = new CardLayout();
+        private ChartContainerPanel chartContainerPanel = new ChartContainerPanel();
+        private RevenueChartPanel revenueChartPanel;
+        CenterPanel(){
+            setLayout(dashBCardLayout);
+
+            Timer timer = new Timer(3000, e -> dashBCardLayout.show(CenterPanel.this, "statisticsTable"));
+            timer.setRepeats(false);
+
+            JPanel welcomePn = new JPanel(new BorderLayout());
+            welcomePn.setBackground(Color.WHITE);
+            ImageIcon welcomeImg = new ImageIcon("src/main/java/img/welcomeImage.png");
+            welcomeLabel = new JLabel();
+            welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            welcomeLabel.setVerticalAlignment(SwingConstants.CENTER);
+            welcomeLabel.setIcon(welcomeImg);
+            welcomePn.add(welcomeLabel, BorderLayout.CENTER);
+            welcomePn.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    timer.stop();
+                    dashBCardLayout.show(CenterPanel.this, "statisticsTable");
+                }
+            });
+            add(welcomePn, "welcome");
+            add(chartContainerPanel,"statisticsTable");
+            dashBCardLayout.show(this, "welcome");
+
+            timer.start();
+        }
+        class ChartContainerPanel extends JPanel{
+            ChartContainerPanel(){
+                setLayout(new BorderLayout());
+
+                revenueChartPanel = new RevenueChartPanel();
+                add(revenueChartPanel, BorderLayout.CENTER);
+                add(new RightPn(), BorderLayout.EAST);
+            }
+        }
+        // Revenue Chart
+        class RevenueChartPanel extends JPanel {
+            private DefaultCategoryDataset revenueData = new DefaultCategoryDataset();
+            private JFreeChart revenueChart;
+            private CategoryPlot revenuePlot;
+            private ChartPanel revenueChartPanel;
+            private JComboBox<Integer> yearComboBox;
+            private ArrayList<Integer> years = new ArrayList<>();
+            private Map<String, Double> data = LoginFrame.COMPUTER_SHOP.analyzeRevenueByMonth(LocalDate.now().getYear());
+
+            RevenueChartPanel() {
+                setLayout(new BorderLayout());
+
+                JPanel sortBarPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                sortBarPn.setBackground(Color.WHITE);
+                JLabel yearLabel = LabelConfig.createLabel("Year", Style.FONT_BOLD_16, Color.BLACK, SwingConstants.CENTER);
+                years.add(2025);
+                years.add(2024);
+                years.add(2023);
+
+                yearComboBox = new JComboBox<>();
+                yearComboBox.setFocusable(false);
+                yearComboBox.setBorder(BorderFactory.createLineBorder(Style.MENU_BUTTON_COLOR,2));
+                updateYearComboBox();
+                yearComboBox.addActionListener(e -> {
+                    Integer selectedYear = (Integer) yearComboBox.getSelectedItem();
+                    if (selectedYear != null) {
+                        updateData(selectedYear);
+                        revenueChartPanel.repaint();
+                    }
+                });
+
+                updateData(LocalDate.now().getYear());
+
+                revenueChart = createChart(revenueData);
+                revenueChartPanel = new ChartPanel(revenueChart);
+
+                add(revenueChartPanel, BorderLayout.CENTER);
+                sortBarPn.add(yearLabel);
+                sortBarPn.add(yearComboBox);
+                add(sortBarPn, BorderLayout.NORTH);
+            }
+
+            private void updateData(int year) {
+                revenueData.clear();
+
+                data = LoginFrame.COMPUTER_SHOP.analyzeRevenueByMonth(year);
+
+                for (Map.Entry<String, Double> entry : data.entrySet()) {
+                    revenueData.addValue(entry.getValue(), "Revenue", entry.getKey());
+                }
+
+                revenueChart = createChart(revenueData);
+
+                revenueChartPanel = new ChartPanel(revenueChart);
+            }
+
+            private JFreeChart createChart(DefaultCategoryDataset dataset) {
+                JFreeChart chart = ChartFactory.createLineChart(
+                        "Monthly revenue chart",
+                        "Month",
+                        "Revenue (VND)",
+                        dataset
+                );
+                chart.setBackgroundPaint(Color.white);
+
+                NumberAxis yAxis = (NumberAxis) chart.getCategoryPlot().getRangeAxis();
+                yAxis.setNumberFormatOverride(formatCurrency); // Format currency to VND
+
+                revenuePlot = chart.getCategoryPlot();
+                revenuePlot.setBackgroundPaint(Style.CHART_BACKGROUND_COLOR);
+                LineAndShapeRenderer renderer = new LineAndShapeRenderer();
+                renderer.setSeriesPaint(0, new Color(27, 199, 27));
+                renderer.setSeriesStroke(0, new BasicStroke(4.0f));
+                renderer.setDefaultItemLabelsVisible(true);
+                renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+                revenuePlot.setRenderer(renderer);
+
+                return chart;
+            }
+
+            private void updateYearComboBox() {
+                yearComboBox.removeAllItems();
+                for (Integer year : years) {
+                    yearComboBox.addItem(year);
+                }
+            }
+        }
+
+        class RightPn extends JPanel{
+            RightPn(){
+                setLayout(new GridLayout(2,1,0,10));
+                setBackground(Color.WHITE);
+                OrderStatisticsPanel orderStatisticsPanel= new OrderStatisticsPanel();
+                BestSellingProductsPanel bestSellingProductsPanel = new BestSellingProductsPanel();
+                add(orderStatisticsPanel);
+                add(bestSellingProductsPanel);
+            }
+        }
+
+        class OrderStatisticsPanel extends JPanel{
+            private Map<String, Integer> orderData =LoginFrame.COMPUTER_SHOP.analyzeOrderStatus();
+
+            OrderStatisticsPanel(){
+                setLayout(new BorderLayout());
+
+                DefaultPieDataset dataset = new DefaultPieDataset();
+                for (Map.Entry<String, Integer> entry : orderData.entrySet()) {
+                    dataset.setValue(entry.getKey(), entry.getValue());
+                }
+                JFreeChart pieChart = ChartFactory.createPieChart(
+                        "Order status statistics chart",
+                        dataset,
+                        true,
+                        true,
+                        true
+                );
+
+                PiePlot ordersPlot = (PiePlot) pieChart.getPlot();
+                ordersPlot.setBackgroundPaint(Style.CHART_BACKGROUND_COLOR);
+                ordersPlot.setLabelGenerator(new StandardPieSectionLabelGenerator(
+                        "{0}: {2}",
+                        new DecimalFormat("0"),
+                        new DecimalFormat("0.00%")
+                ));
+
+                ChartPanel chartPanel = new ChartPanel(pieChart);
+                chartPanel.setPreferredSize(new Dimension(500, 300));
+                add(chartPanel);
+            }
+        }
+
+        class BestSellingProductsPanel extends JPanel{
+            private Map<String, Integer> productData = LoginFrame.COMPUTER_SHOP.bestSellingProductStatistics( 4);
+
+            BestSellingProductsPanel(){
+                setLayout(new BorderLayout());
+
+                DefaultCategoryDataset productDataset = new DefaultCategoryDataset();
+                for (Map.Entry<String, Integer> entry : productData.entrySet()) {
+                    productDataset.addValue(entry.getValue(),entry.getKey(), entry.getKey());
+                }
+
+                JFreeChart barChart = ChartFactory.createBarChart(
+                        "Best-selling product statistics chart",
+                        "Product name",
+                        "Quantity sold (Items)",
+                        productDataset
+                );
+
+                CategoryPlot plot = barChart.getCategoryPlot();
+                plot.setBackgroundPaint(Style.CHART_BACKGROUND_COLOR);
+                BarRenderer renderer = (BarRenderer) plot.getRenderer();
+
+                renderer.setBarPainter(new StandardBarPainter());
+                renderer.setSeriesPaint(0, Style.CHART_BAR_COLOR_ORANGE);
+                renderer.setSeriesPaint(1, Style.CHART_BAR_COLOR_YELLOW);
+                renderer.setSeriesPaint(2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+                renderer.setSeriesPaint(3, Style.CONFIRM_BUTTON_COLOR_GREEN);
+                renderer.setDrawBarOutline(false);
+
+                ChartPanel chartPanel = new ChartPanel(barChart);
+                chartPanel.setPreferredSize(new Dimension(500, 300));
+                add(chartPanel);
+            }
+        }
     }
   }
 
   private class ProductPanel extends JPanel {
-    private ToolPanel toolPanel = new ToolPanel();
-    private JButton addBt,
-        modifyBt,
-        deleteBt,
-        sortBt,
-        exportExcelBt,
-        statisticsBt,
-        searchBt,
-        reloadBt;
-    private CustomButton allBt, gaming,
+      private ToolPanel toolPanel = new ToolPanel();
+      private JButton addBt,
+              modifyBt,
+              deleteBt,
+              sortBt,
+              exportExcelBt,
+              statisticsBt,
+              searchBt,
+              reloadBt;
+      private CustomButton allBt, gaming,
               office,
               pcCase,
               cheapest,
               luxury,
               selectedButton;
-    private JTextField findText;
-    private TablePanel tablePanel = new TablePanel();
-    private JTable tableProduct,tableStatisticsProduct;
-    private DefaultTableModel modelProductTable, modelStatisticsProductTable;
-    private JScrollPane scrollPaneProductTable;
-    private JTabbedPane tabbedPaneProductTable;
-    private JPanel sortPanel;
-    private JLabel sortLabel;
-    private JComboBox<String> sortComboBox;
-    private JFreeChart chartPanel ;
-    private DefaultCategoryDataset barDataset;
-    private ChartPanel barChartPanel;
-    private JPanel statisticsProductPn;
+      private JTextField findText;
+      private TablePanel tablePanel = new TablePanel();
+      private JTable tableProduct, tableStatisticsProduct;
+      private DefaultTableModel modelProductTable, modelStatisticsProductTable;
+      private JScrollPane scrollPaneProductTable;
+      private JTabbedPane tabbedPaneProductTable;
+      private JPanel sortPanel;
+      private JLabel sortLabel;
+      private JComboBox<String> sortComboBox;
+      private JFreeChart chartPanel;
+      private DefaultCategoryDataset barDataset;
+      private ChartPanel barChartPanel;
+      private JPanel statisticsProductPn;
 
-    JPanel searchPanel, applicationPanel, mainPanel;
+      JPanel searchPanel, applicationPanel, mainPanel;
 
-    private static List<Product> productsAll = reloadProduct();
+      private static List<Product> productsAll = reloadProduct();
 
-    private static List<Product> reloadProduct() {
-      return LoginFrame.COMPUTER_SHOP.getAllProduct();
-    }
+      private static List<Product> reloadProduct() {
+          return LoginFrame.COMPUTER_SHOP.getAllProduct();
+      }
 
-    private void upDataProductsStatistics(Map<Product, Long> stringLongMap, DefaultTableModel modelStatisticsProductTable) {
-        removeProductStatistics(modelStatisticsProductTable);
-        int i=0 , tatolSold=0,tatolInStock=0;
-        for (Map.Entry<Product,Long> data : stringLongMap.entrySet()){
-          modelStatisticsProductTable.addRow(new Object[]{i++,data.getKey().getName(),data.getValue(),data.getKey().getQuantity()});
-          tatolSold += data.getValue();
-          tatolInStock += data.getKey().getQuantity();
-        }
-        modelStatisticsProductTable.addRow(new Object[]{"","Total of " +LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) ,tatolSold,tatolInStock});
-    }
+      private void upDataProductsStatistics(Map<Product, Long> stringLongMap, DefaultTableModel modelStatisticsProductTable) {
+          removeProductStatistics(modelStatisticsProductTable);
+          int i = 0, totalSold = 0, totaInStock = 0;
+          for (Map.Entry<Product, Long> data : stringLongMap.entrySet()) {
+              modelStatisticsProductTable.addRow(new Object[]{i++, data.getKey().getName(), data.getValue(), data.getKey().getQuantity()});
+              totalSold += data.getValue();
+              totaInStock += data.getKey().getQuantity();
+          }
+          modelStatisticsProductTable.addRow(new Object[]{"", "Total of " + LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH), totalSold, totaInStock});
+      }
 
-    private void updateDataForChart(Map<Product ,Long> data){
-          for(Map.Entry<Product,Long> value :data.entrySet()) {
-              barDataset.addValue( value.getValue(), value.getKey().getName(),value.getKey().getName());
+      private void updateDataForChart(Map<Product, Long> data) {
+          for (Map.Entry<Product, Long> value : data.entrySet()) {
+              barDataset.addValue(value.getValue(), value.getKey().getName(), value.getKey().getName());
           }
       }
 
-    private void upDataProductsStatistics(Map<Product, Long> productLongMap, String text, DefaultTableModel modelStatisticsProductTable) {
+      private void upDataProductsStatistics(Map<Product, Long> productLongMap, String text, DefaultTableModel modelStatisticsProductTable) {
           removeProductStatistics(modelStatisticsProductTable);
-          int i=0 , tatolSold=0,tatolInStock=0;
-          for (Map.Entry<Product,Long> data : productLongMap.entrySet()){
+          int i = 0, tatolSold = 0, tatolInStock = 0;
+          for (Map.Entry<Product, Long> data : productLongMap.entrySet()) {
               System.out.println(data.getKey());
 
               if (data.getKey().getName().toLowerCase().contains(text)) {
@@ -223,589 +466,572 @@ public class ManagerMainPanel extends JPanel {
                   tatolInStock += data.getKey().getQuantity();
               }
           }
-          modelStatisticsProductTable.addRow(new Object[]{"","Total of " +LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) ,tatolSold,tatolInStock});
+          modelStatisticsProductTable.addRow(new Object[]{"", "Total of " + LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH), tatolSold, tatolInStock});
       }
 
-    private void removeProductStatistics(DefaultTableModel modelStatisticsProductTable){
-      modelStatisticsProductTable.setRowCount(0);
-    }
-
-    // ok
-    public static void upDataProducts(List<Product> products , DefaultTableModel modelProductTable) {
-      String[][] rowData = Product.getDateOnTable(products);
-      TablePanel.removeDataTable(modelProductTable);
-      for (int i = 0; i < rowData.length; i++) {
-        modelProductTable.addRow(rowData[i]);
+      private void removeProductStatistics(DefaultTableModel modelStatisticsProductTable) {
+          modelStatisticsProductTable.setRowCount(0);
       }
-    }
 
-    public static void deletedProduct(Product product){
-      productsAll.remove(product);
-    }
+      // ok
+      public static void upDataProducts(List<Product> products, DefaultTableModel modelProductTable) {
+          String[][] rowData = Product.getDateOnTable(products);
+          TablePanel.removeDataTable(modelProductTable);
+          for (int i = 0; i < rowData.length; i++) {
+              modelProductTable.addRow(rowData[i]);
+          }
+      }
 
-    public static boolean changeStatus(Product product, String status) {
-      return product.updateStatus(status);
-    }
+      public static void deletedProduct(Product product) {
+          productsAll.remove(product);
+      }
 
-    public ProductPanel() {
-      setLayout(new BorderLayout());
-      toolPanel.setBorder(BorderFactory.createTitledBorder("Tools"));
-      add(toolPanel, BorderLayout.NORTH);
-      add(tablePanel, BorderLayout.CENTER);
-    }
+      public static boolean changeStatus(Product product, String status) {
+          return product.updateStatus(status);
+      }
 
-    private class ToolPanel extends JPanel {
+      public ProductPanel() {
+          setLayout(new BorderLayout());
+          toolPanel.setBorder(BorderFactory.createTitledBorder("Tools"));
+          add(toolPanel, BorderLayout.NORTH);
+          add(tablePanel, BorderLayout.CENTER);
+      }
 
-      public ToolPanel() {
-        setLayout(new BorderLayout());
-        setBackground(Style.WORD_COLOR_WHITE);
-        addBt = new JButton("Add");
-        ButtonConfig.addButtonHoverEffect(addBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-        ButtonConfig.setStyleButton(
-            addBt,
-            Style.FONT_PLAIN_13,
-            Style.WORD_COLOR_BLACK,
-            Style.WORD_COLOR_WHITE,
-            SwingConstants.CENTER,
-            new Dimension(80, 80));
-        ButtonConfig.setButtonIcon("src/main/java/Icon/database-add-icon.png", addBt, 35);
-        KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.addKey, addBt);
-        addBt.addActionListener(
-            new ActionListener() {
-              @Override
-              public void actionPerformed(ActionEvent e) {
-                new ProductInputForm(()-> {
-                    productsAll = reloadProduct();
-                    upDataProducts(productsAll, modelProductTable);
-                });
+      private class ToolPanel extends JPanel {
 
+          public ToolPanel() {
+              setLayout(new BorderLayout());
+              setBackground(Style.WORD_COLOR_WHITE);
+              addBt = new JButton("Add");
+              ButtonConfig.addButtonHoverEffect(addBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+              ButtonConfig.setStyleButton(
+                      addBt,
+                      Style.FONT_PLAIN_13,
+                      Style.WORD_COLOR_BLACK,
+                      Style.WORD_COLOR_WHITE,
+                      SwingConstants.CENTER,
+                      new Dimension(80, 80));
+              ButtonConfig.setButtonIcon("src/main/java/Icon/database-add-icon.png", addBt, 35);
+              KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.addKey, addBt);
+              addBt.addActionListener(
+                      e -> new ProductInputForm(() -> {
+                          productsAll = reloadProduct();
+                          upDataProducts(productsAll, modelProductTable);
+                      }));
 
-              }
-            });
+              modifyBt = new JButton("Modify");
+              ButtonConfig.addButtonHoverEffect(
+                      modifyBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+              ButtonConfig.setStyleButton(
+                      modifyBt,
+                      Style.FONT_PLAIN_13,
+                      Style.WORD_COLOR_BLACK,
+                      Style.WORD_COLOR_WHITE,
+                      SwingConstants.CENTER,
+                      new Dimension(80, 80));
+              ButtonConfig.setButtonIcon("src/main/java/Icon/modify.png", modifyBt, 35);
+              KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.modifyKey, modifyBt);
+              modifyBt.setHorizontalTextPosition(SwingConstants.CENTER);
+              modifyBt.addActionListener(
+                      e -> {
 
-        modifyBt = new JButton("Modify");
-        ButtonConfig.addButtonHoverEffect(
-            modifyBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-        ButtonConfig.setStyleButton(
-            modifyBt,
-            Style.FONT_PLAIN_13,
-            Style.WORD_COLOR_BLACK,
-            Style.WORD_COLOR_WHITE,
-            SwingConstants.CENTER,
-            new Dimension(80, 80));
-        ButtonConfig.setButtonIcon("src/main/java/Icon/modify.png", modifyBt, 35);
-        KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.modifyKey, modifyBt);
-        modifyBt.setHorizontalTextPosition(SwingConstants.CENTER);
-        modifyBt.addActionListener(
-            e -> {
+                          int selectedRow = tableProduct.getSelectedRow();
+                          if (selectedRow != -1) {
+                              SwingUtilities.invokeLater(
+                                      () -> {
+                                          new ProductModifyForm(productsAll.get(selectedRow), () -> {
+                                              productsAll = reloadProduct();
+                                              upDataProducts(productsAll, modelProductTable);
+                                          }).setVisible(true);
+                                      });
+                          } else {
+                              ToastNotification.showToast("Please select a row to modify.", 3000, 50, -1, -1);
+                          }
+                      });
 
-              int selectedRow = tableProduct.getSelectedRow();
-              if (selectedRow != -1) {
-                SwingUtilities.invokeLater(
-                    () -> {
-                      new ProductModifyForm(productsAll.get(selectedRow),()->{
-                            productsAll = reloadProduct();
-                            upDataProducts(productsAll,modelProductTable);
-                        }).setVisible(true);
-                    });
-              }else{
-                ToastNotification.showToast("Please select a row to modify.", 3000, 50, -1, -1);
-              }
-            });
+              deleteBt = new JButton("Delete");
+              ButtonConfig.addButtonHoverEffect(
+                      deleteBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+              ButtonConfig.setStyleButton(
+                      deleteBt,
+                      Style.FONT_PLAIN_13,
+                      Style.WORD_COLOR_BLACK,
+                      Style.WORD_COLOR_WHITE,
+                      SwingConstants.CENTER,
+                      new Dimension(80, 80));
+              ButtonConfig.setButtonIcon(
+                      "src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt, 35);
+              KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.deleteKey, deleteBt);
+              deleteBt.addActionListener(
+                      e -> {
+                          int selectedRow = tableProduct.getSelectedRow();
+                          int columnIndex = 0;
+                          if (selectedRow != -1) {
+                              Object value = tableProduct.getValueAt(selectedRow, columnIndex);
 
-        deleteBt = new JButton("Delete");
-        ButtonConfig.addButtonHoverEffect(
-            deleteBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-        ButtonConfig.setStyleButton(
-            deleteBt,
-            Style.FONT_PLAIN_13,
-            Style.WORD_COLOR_BLACK,
-            Style.WORD_COLOR_WHITE,
-            SwingConstants.CENTER,
-            new Dimension(80, 80));
-        ButtonConfig.setButtonIcon(
-            "src/main/java/Icon/delete-icon-removebg-preview.png", deleteBt, 35);
-        KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.deleteKey, deleteBt);
-        deleteBt.addActionListener(
-            new ActionListener() {
-              @Override
-              public void actionPerformed(ActionEvent e) {
-                int selectedRow = tableProduct.getSelectedRow();
-                int columnIndex = 0;
-                if (selectedRow != -1) {
-                  Object value = tableProduct.getValueAt(selectedRow, columnIndex);
+                              int index = Integer.parseInt(value.toString());
+                              System.out.println(index);
+                              LoginFrame.COMPUTER_SHOP.removeProductByIndex(index);
+                              //                  modelProductTable.removeRow(selectedRow);
+                              productsAll = reloadProduct();
+                              upDataProducts(productsAll, modelProductTable);
 
-                  int index = Integer.parseInt(value.toString());
-                    System.out.println(index);
-                  LoginFrame.COMPUTER_SHOP.removeProductByIndex(index);
-//                  modelProductTable.removeRow(selectedRow);
-                    productsAll = reloadProduct();
-                    upDataProducts(productsAll,modelProductTable);
+                          }
+                      });
 
-                }
-              }
-            });
+              sortBt = new JButton("Sort");
+              ButtonConfig.addButtonHoverEffect(sortBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+              ButtonConfig.setStyleButton(
+                      sortBt,
+                      Style.FONT_PLAIN_13,
+                      Style.WORD_COLOR_BLACK,
+                      Style.WORD_COLOR_WHITE,
+                      SwingConstants.CENTER,
+                      new Dimension(80, 80));
+              ButtonConfig.setButtonIcon("src/main/java/Icon/sort.256x204.png", sortBt, 35);
 
-        sortBt = new JButton("Sort");
-        ButtonConfig.addButtonHoverEffect(sortBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-        ButtonConfig.setStyleButton(
-            sortBt,
-            Style.FONT_PLAIN_13,
-            Style.WORD_COLOR_BLACK,
-            Style.WORD_COLOR_WHITE,
-            SwingConstants.CENTER,
-            new Dimension(80, 80));
-        ButtonConfig.setButtonIcon("src/main/java/Icon/sort.256x204.png", sortBt, 35);
+              exportExcelBt = new JButton("Export");
+              ButtonConfig.addButtonHoverEffect(
+                      exportExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+              ButtonConfig.setStyleButton(
+                      exportExcelBt,
+                      Style.FONT_PLAIN_13,
+                      Style.WORD_COLOR_BLACK,
+                      Style.WORD_COLOR_WHITE,
+                      SwingConstants.CENTER,
+                      new Dimension(80, 80));
+              ButtonConfig.setButtonIcon(
+                      "src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt, 35);
+              KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.exportExcelKey, exportExcelBt);
+              exportExcelBt.addActionListener(
+                      e -> {
+                          String fileName =
+                                  JOptionPane.showInputDialog(
+                                          null, "Enter file name excel:", "Input file", JOptionPane.QUESTION_MESSAGE);
+                          if (fileName != null && !fileName.trim().isEmpty()) {
 
-        exportExcelBt = new JButton("Export");
-        ButtonConfig.addButtonHoverEffect(
-            exportExcelBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-        ButtonConfig.setStyleButton(
-            exportExcelBt,
-            Style.FONT_PLAIN_13,
-            Style.WORD_COLOR_BLACK,
-            Style.WORD_COLOR_WHITE,
-            SwingConstants.CENTER,
-            new Dimension(80, 80));
-        ButtonConfig.setButtonIcon(
-            "src/main/java/Icon/icons8-file-excel-32.png", exportExcelBt, 35);
-        KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.exportExcelKey, exportExcelBt);
-        exportExcelBt.addActionListener(
-            new ActionListener() {
-              @Override
-              public void actionPerformed(ActionEvent e) {
-                String fileName =
-                    JOptionPane.showInputDialog(
-                        null, "Enter file name excel:", "Input file", JOptionPane.QUESTION_MESSAGE);
-                if (fileName != null && !fileName.trim().isEmpty()) {
+                              if (!fileName.toLowerCase().endsWith(".xlsx")) {
+                                  fileName += ".xlsx";
+                              }
 
-                  if (!fileName.toLowerCase().endsWith(".xlsx")) {
-                    fileName += ".xlsx";
-                  }
-
-                  productsAll = reloadProduct();
-                  ExcelConfig.exportToExcel(productsAll, fileName, columnNamesPRODUCT);
-                  if (productsAll.isEmpty())
-                    JOptionPane.showMessageDialog(
-                        null, "Not found data", "Notify", JOptionPane.WARNING_MESSAGE);
-                  JOptionPane.showMessageDialog(
-                      null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
-                }
+                              productsAll = reloadProduct();
+                              ExcelConfig.exportToExcel(productsAll, fileName, columnNamesPRODUCT);
+                              if (productsAll.isEmpty())
+                                  JOptionPane.showMessageDialog(
+                                          null, "Not found data", "Notify", JOptionPane.WARNING_MESSAGE);
+                              JOptionPane.showMessageDialog(
+                                      null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
+                          }
 //                JOptionPane.showMessageDialog(
 //                    null, "Are you sure ", "Exit", JOptionPane.ERROR_MESSAGE);
-              }
-            });
+//              }
+                      });
 
-       statisticsBt = new JButton("Statistics");
-        ButtonConfig.addButtonHoverEffect(
-                statisticsBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-        ButtonConfig.setStyleButton(
-                statisticsBt,
-            Style.FONT_PLAIN_13,
-            Style.WORD_COLOR_BLACK,
-            Style.WORD_COLOR_WHITE,
-            SwingConstants.CENTER,
-            new Dimension(80, 80));
-        ButtonConfig.setButtonIcon(
-            "src/main/java/Icon/icons8-export-excel-50.png",statisticsBt, 35);
-        KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.importExcelKey, statisticsBt);
-        statisticsBt.addActionListener(e->{
-          upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),  modelStatisticsProductTable);
-        });
+              statisticsBt = new JButton("Statistics");
+              ButtonConfig.addButtonHoverEffect(
+                      statisticsBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+              ButtonConfig.setStyleButton(
+                      statisticsBt,
+                      Style.FONT_PLAIN_13,
+                      Style.WORD_COLOR_BLACK,
+                      Style.WORD_COLOR_WHITE,
+                      SwingConstants.CENTER,
+                      new Dimension(80, 80));
+              ButtonConfig.setButtonIcon(
+                      "src/main/java/Icon/icons8-export-excel-50.png", statisticsBt, 35);
+              KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.importExcelKey, statisticsBt);
+              statisticsBt.addActionListener(e -> {
+                  upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(), modelStatisticsProductTable);
+              });
 
-        findText =
-            TextFieldConfig.createTextField(
-                "Search by Name",
-                new Font("Arial", Font.PLAIN, 24),
-                Color.GRAY,
-                new Dimension(280, 50));
-        findText.addActionListener(e -> searchBt.doClick());
+              findText =
+                      TextFieldConfig.createTextField(
+                              "Search by Name",
+                              new Font("Arial", Font.PLAIN, 24),
+                              Color.GRAY,
+                              new Dimension(280, 50));
+              findText.addActionListener(e -> searchBt.doClick());
 
-        searchBt = new JButton();
-        ButtonConfig.addButtonHoverEffect(
-            searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-        ButtonConfig.setStyleButton(
-            searchBt,
-            Style.FONT_PLAIN_13,
-            Color.BLACK,
-            Style.WORD_COLOR_WHITE,
-            SwingConstants.CENTER,
-            new Dimension(40, 45));
-        ButtonConfig.setButtonIcon("src/main/java/Icon/106236_search_icon.png", searchBt, 10);
+              searchBt = new JButton();
+              ButtonConfig.addButtonHoverEffect(
+                      searchBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+              ButtonConfig.setStyleButton(
+                      searchBt,
+                      Style.FONT_PLAIN_13,
+                      Color.BLACK,
+                      Style.WORD_COLOR_WHITE,
+                      SwingConstants.CENTER,
+                      new Dimension(40, 45));
+              ButtonConfig.setButtonIcon("src/main/java/Icon/106236_search_icon.png", searchBt, 10);
 
-        reloadBt = new JButton("Reload");
-        ButtonConfig.addButtonHoverEffect(
-            reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
-        ButtonConfig.setStyleButton(
-            reloadBt,
-            Style.FONT_PLAIN_13,
-            Style.WORD_COLOR_BLACK,
-            Style.WORD_COLOR_WHITE,
-            SwingConstants.CENTER,
-            new Dimension(80, 80));
-        ButtonConfig.setButtonIcon("src/main/java/Icon/reload_icon.png", reloadBt, 35);
-        KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.reloadKey, reloadBt);
+              reloadBt = new JButton("Reload");
+              ButtonConfig.addButtonHoverEffect(
+                      reloadBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
+              ButtonConfig.setStyleButton(
+                      reloadBt,
+                      Style.FONT_PLAIN_13,
+                      Style.WORD_COLOR_BLACK,
+                      Style.WORD_COLOR_WHITE,
+                      SwingConstants.CENTER,
+                      new Dimension(80, 80));
+              ButtonConfig.setButtonIcon("src/main/java/Icon/reload_icon.png", reloadBt, 35);
+              KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.reloadKey, reloadBt);
 
-        searchPanel = new JPanel(new FlowLayout());
-        searchPanel.add(findText);
-        searchPanel.add(searchBt);
-        searchPanel.setBackground(Style.WORD_COLOR_WHITE);
+              searchPanel = new JPanel(new FlowLayout());
+              searchPanel.add(findText);
+              searchPanel.add(searchBt);
+              searchPanel.setBackground(Style.WORD_COLOR_WHITE);
 
-        applicationPanel = new JPanel(new FlowLayout());
-        applicationPanel.add(addBt);
-        applicationPanel.add(deleteBt);
-        applicationPanel.add(ButtonConfig.createVerticalSeparator());
-        applicationPanel.add(modifyBt);
-        String[] sortOptions = {"NAME", "MEMORY", "PRICE", "RAM"};
-        sortComboBox = new JComboBox<>(sortOptions);
-        sortComboBox.setPreferredSize(new Dimension(80, 50));
-        sortComboBox.setBackground(Style.WORD_COLOR_WHITE);
-        sortComboBox.setForeground(Style.WORD_COLOR_BLACK);
-        sortComboBox.setFont(Style.FONT_PLAIN_15);
-        sortComboBox.setRenderer(
-            new DefaultListCellRenderer() {
-              @Override
-              public Component getListCellRendererComponent(
-                  JList<?> list,
-                  Object value,
-                  int index,
-                  boolean isSelected,
-                  boolean cellHasFocus) {
-                Component c =
-                    super.getListCellRendererComponent(
-                        list, value, index, isSelected, cellHasFocus);
-                if (isSelected) {
-                  c.setBackground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
-                  c.setForeground(Color.WHITE);
-                } else {
-                  c.setBackground(Color.WHITE);
-                  c.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
-                }
-                return c;
-              }
-            });
-        sortComboBox.addActionListener(
-            new ActionListener() {
-              @Override
-              public void actionPerformed(ActionEvent e) {
-                String item = (String) sortComboBox.getSelectedItem();
-                switch (item) {
-                  case ("PRICE"):
-                    {
-                      productsAll = productsAll.stream().sorted((p1,p2)-> {return (int) (p2.getPrice() - p1.getPrice());}).collect(Collectors.toList());
-                      break;
-                    }
+              applicationPanel = new JPanel(new FlowLayout());
+              applicationPanel.add(addBt);
+              applicationPanel.add(deleteBt);
+              applicationPanel.add(ButtonConfig.createVerticalSeparator());
+              applicationPanel.add(modifyBt);
+              String[] sortOptions = {"NAME", "MEMORY", "PRICE", "RAM"};
+              sortComboBox = new JComboBox<>(sortOptions);
+              sortComboBox.setPreferredSize(new Dimension(80, 50));
+              sortComboBox.setBackground(Style.WORD_COLOR_WHITE);
+              sortComboBox.setForeground(Style.WORD_COLOR_BLACK);
+              sortComboBox.setFont(Style.FONT_PLAIN_15);
+              sortComboBox.setRenderer(
+                      new DefaultListCellRenderer() {
+                          @Override
+                          public Component getListCellRendererComponent(
+                                  JList<?> list,
+                                  Object value,
+                                  int index,
+                                  boolean isSelected,
+                                  boolean cellHasFocus) {
+                              Component c =
+                                      super.getListCellRendererComponent(
+                                              list, value, index, isSelected, cellHasFocus);
+                              if (isSelected) {
+                                  c.setBackground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+                                  c.setForeground(Color.WHITE);
+                              } else {
+                                  c.setBackground(Color.WHITE);
+                                  c.setForeground(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE);
+                              }
+                              return c;
+                          }
+                      });
+              sortComboBox.addActionListener(
+                      new ActionListener() {
+                          @Override
+                          public void actionPerformed(ActionEvent e) {
+                              String item = (String) sortComboBox.getSelectedItem();
+                              switch (item) {
+                                  case ("PRICE"): {
+                                      productsAll = productsAll.stream().sorted((p1, p2) -> {
+                                          return (int) (p2.getPrice() - p1.getPrice());
+                                      }).collect(Collectors.toList());
+                                      break;
+                                  }
 
-                  case ("MEMORY"):
-                    {
-                      productsAll = productsAll.stream()
-                              .sorted((p1,p2)->  p2.getMemory().compareTo(p1.getMemory()))
-                              .collect(Collectors.toList());
-                      break;
-                    }
-                  case ("NAME"):
-                    {
-                      productsAll = productsAll.stream()
-                              .sorted((p1,p2)->  p2.getName().compareTo(p1.getName()))
-                              .collect(Collectors.toList());
-                      break;
-                    }
-                  case ("RAM"):
-                    {
-                      productsAll = productsAll.stream()
-                              .sorted((p1,p2)->  p2.getRam().compareTo(p1.getRam()))
-                              .collect(Collectors.toList());
-                      break;
-                    }
-                }
+                                  case ("MEMORY"): {
+                                      productsAll = productsAll.stream()
+                                              .sorted((p1, p2) -> p2.getMemory().compareTo(p1.getMemory()))
+                                              .collect(Collectors.toList());
+                                      break;
+                                  }
+                                  case ("NAME"): {
+                                      productsAll = productsAll.stream()
+                                              .sorted((p1, p2) -> p2.getName().compareTo(p1.getName()))
+                                              .collect(Collectors.toList());
+                                      break;
+                                  }
+                                  case ("RAM"): {
+                                      productsAll = productsAll.stream()
+                                              .sorted((p1, p2) -> p2.getRam().compareTo(p1.getRam()))
+                                              .collect(Collectors.toList());
+                                      break;
+                                  }
+                              }
 
-                upDataProducts(productsAll, modelProductTable);
-              }
-            });
+                              upDataProducts(productsAll, modelProductTable);
+                          }
+                      });
 
-        sortPanel = new JPanel(new BorderLayout());
-        sortLabel = new JLabel("Sort", SwingConstants.CENTER);
-        sortLabel.setFont(Style.FONT_PLAIN_13);
-        sortPanel.add(sortComboBox, BorderLayout.CENTER);
-        sortPanel.add(sortLabel, BorderLayout.SOUTH);
-        sortPanel.setBackground(Style.WORD_COLOR_WHITE);
+              sortPanel = new JPanel(new BorderLayout());
+              sortLabel = new JLabel("Sort", SwingConstants.CENTER);
+              sortLabel.setFont(Style.FONT_PLAIN_13);
+              sortPanel.add(sortComboBox, BorderLayout.CENTER);
+              sortPanel.add(sortLabel, BorderLayout.SOUTH);
+              sortPanel.setBackground(Style.WORD_COLOR_WHITE);
 
-        applicationPanel.add(sortPanel);
+              applicationPanel.add(sortPanel);
 
-        applicationPanel.add(ButtonConfig.createVerticalSeparator());
-        applicationPanel.add(exportExcelBt);
+              applicationPanel.add(ButtonConfig.createVerticalSeparator());
+              applicationPanel.add(exportExcelBt);
 
-        applicationPanel.add(statisticsBt);
-        applicationPanel.add(ButtonConfig.createVerticalSeparator());
-        applicationPanel.add(reloadBt);
-        applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
+              applicationPanel.add(statisticsBt);
+              applicationPanel.add(ButtonConfig.createVerticalSeparator());
+              applicationPanel.add(reloadBt);
+              applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
 
-        mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(Style.BACKGROUND_COLOR);
-        GridBagConstraints gbc = new GridBagConstraints();
+              mainPanel = new JPanel(new GridBagLayout());
+              GridBagConstraints gbc = new GridBagConstraints();
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        mainPanel.add(applicationPanel, gbc);
+              gbc.gridx = 0;
+              gbc.gridy = 0;
+              gbc.weightx = 1;
+              gbc.anchor = GridBagConstraints.WEST;
+              mainPanel.add(applicationPanel, gbc);
 
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 0;
-        gbc.anchor = GridBagConstraints.EAST;
-        mainPanel.add(searchPanel, gbc);
-        mainPanel.setBackground(Style.WORD_COLOR_WHITE);
-        add(mainPanel);
+              gbc.gridx = 1;
+              gbc.gridy = 0;
+              gbc.weightx = 0;
+              gbc.anchor = GridBagConstraints.EAST;
+              mainPanel.add(searchPanel, gbc);
+              mainPanel.setBackground(Style.WORD_COLOR_WHITE);
+              add(mainPanel);
 
-        searchBt.addActionListener(
-            new ActionListener() {
-              @Override
-              public void actionPerformed(ActionEvent e) {
-                if (findText.getText().trim().isEmpty()) return;
-                System.out.println(findText.getText());
-                System.out.println(productsAll);
-                productsAll = LoginFrame.COMPUTER_SHOP.findProductByName(findText.getText().trim());
+              searchBt.addActionListener(
+                      new ActionListener() {
+                          @Override
+                          public void actionPerformed(ActionEvent e) {
+                              if (findText.getText().trim().isEmpty()) return;
+                              System.out.println(findText.getText());
+                              System.out.println(productsAll);
+                              productsAll = LoginFrame.COMPUTER_SHOP.findProductByName(findText.getText().trim());
 
-                if (productsAll.isEmpty()) {
-                  JOptionPane.showMessageDialog(tablePanel, "Product not found in the List!");
-                  return;
-                }
-                upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),findText.getText(),  modelStatisticsProductTable);
-                upDataProducts(productsAll, modelProductTable);
-              }
-            });
+                              if (productsAll.isEmpty()) {
+                                  JOptionPane.showMessageDialog(tablePanel, "Product not found in the List!");
+                                  return;
+                              }
+                              upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(), findText.getText(), modelStatisticsProductTable);
+                              upDataProducts(productsAll, modelProductTable);
+                          }
+                      });
 
-        reloadBt.addActionListener(
-            new ActionListener() {
-              @Override
-              public void actionPerformed(ActionEvent e) {
-                productsAll = reloadProduct();
+              reloadBt.addActionListener(
+                      new ActionListener() {
+                          @Override
+                          public void actionPerformed(ActionEvent e) {
+                              productsAll = reloadProduct();
 
-                upDataProducts(productsAll, modelProductTable);
-                findText.setText("");
+                              upDataProducts(productsAll, modelProductTable);
+                              findText.setText("");
 
-                upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),  modelStatisticsProductTable);
-                updateDataForChart(LoginFrame.COMPUTER_SHOP.productOrderStatistics());
-              }
-            });
+                              upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(), modelStatisticsProductTable);
+                              updateDataForChart(LoginFrame.COMPUTER_SHOP.productOrderStatistics());
+                          }
+                      });
+          }
       }
-    }
 
-    private class TablePanel extends JPanel {
-      public TablePanel() {
-        setLayout(new BorderLayout());
-        setBackground(Style.WORD_COLOR_WHITE);
+      private class TablePanel extends JPanel {
+          public TablePanel() {
+              setLayout(new BorderLayout());
+              setBackground(Style.WORD_COLOR_WHITE);
 
-        JPanel sortBar = new JPanel();
-        sortBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        sortBar.setBackground(Color.WHITE);
-        allBt = ButtonConfig.createCustomButton(
-                        "All",
-                        Style.FONT_BOLD_15,
-                        Color.BLACK,
-                        Style.MENU_BUTTON_COLOR,
-                        Style.LIGHT_BlUE,
-                        Style.MENU_BUTTON_COLOR,
-                        2,
-                        25,
-                        SwingConstants.CENTER,
-                        new Dimension(120, 25));
-        allBt.addActionListener(
-                e -> {
-                  updateSelectedButtonColor(allBt);
-                    filterProduct(DisplayProductType.ALL);
-                });
-        gaming =
-                ButtonConfig.createCustomButton(
-                        "Laptop Gaming",
-                        Style.FONT_BOLD_15,
-                        Color.BLACK,
-                        Color.white,
-                        Style.LIGHT_BlUE,
-                        Style.MENU_BUTTON_COLOR,
-                        2,
-                        25,
-                        SwingConstants.CENTER,
-                        new Dimension(150, 25));
-        gaming.addActionListener(
-                e -> {
-                  updateSelectedButtonColor(gaming);
-                    filterProduct(DisplayProductType.LAPTOP_GAMING);
+              JPanel sortBar = new JPanel();
+              sortBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+              sortBar.setBackground(Color.WHITE);
+              allBt = ButtonConfig.createCustomButton(
+                      "All",
+                      Style.FONT_BOLD_15,
+                      Color.BLACK,
+                      Style.MENU_BUTTON_COLOR,
+                      Style.LIGHT_BlUE,
+                      Style.MENU_BUTTON_COLOR,
+                      2,
+                      25,
+                      SwingConstants.CENTER,
+                      new Dimension(120, 25));
+              allBt.addActionListener(
+                      e -> {
+                          updateSelectedButtonColor(allBt);
+                          filterProduct(DisplayProductType.ALL);
+                      });
+              gaming =
+                      ButtonConfig.createCustomButton(
+                              "Laptop Gaming",
+                              Style.FONT_BOLD_15,
+                              Color.BLACK,
+                              Color.white,
+                              Style.LIGHT_BlUE,
+                              Style.MENU_BUTTON_COLOR,
+                              2,
+                              25,
+                              SwingConstants.CENTER,
+                              new Dimension(150, 25));
+              gaming.addActionListener(
+                      e -> {
+                          updateSelectedButtonColor(gaming);
+                          filterProduct(DisplayProductType.LAPTOP_GAMING);
 
-                });
-        office =
-                ButtonConfig.createCustomButton(
-                        "Laptop Office",
-                        Style.FONT_BOLD_15,
-                        Color.BLACK,
-                        Color.white,
-                        Style.LIGHT_BlUE,
-                        Style.MENU_BUTTON_COLOR,
-                        2,
-                        25,
-                        SwingConstants.CENTER,
-                        new Dimension(150, 25));
-        office.addActionListener(
-                e -> {
-                  updateSelectedButtonColor(office);
-                    filterProduct(DisplayProductType.LAPTOP_OFFICE);
+                      });
+              office =
+                      ButtonConfig.createCustomButton(
+                              "Laptop Office",
+                              Style.FONT_BOLD_15,
+                              Color.BLACK,
+                              Color.white,
+                              Style.LIGHT_BlUE,
+                              Style.MENU_BUTTON_COLOR,
+                              2,
+                              25,
+                              SwingConstants.CENTER,
+                              new Dimension(150, 25));
+              office.addActionListener(
+                      e -> {
+                          updateSelectedButtonColor(office);
+                          filterProduct(DisplayProductType.LAPTOP_OFFICE);
 
-                });
-        pcCase =
-                ButtonConfig.createCustomButton(
-                        "PC Case",
-                        Style.FONT_BOLD_15,
-                        Color.BLACK,
-                        Color.white,
-                        Style.LIGHT_BlUE,
-                        Style.MENU_BUTTON_COLOR,
-                        2,
-                        25,
-                        SwingConstants.CENTER,
-                        new Dimension(120, 25));
-        pcCase.addActionListener(
-                e -> {
-                  updateSelectedButtonColor(pcCase);
-                  filterProduct(DisplayProductType.PC_CASE);
+                      });
+              pcCase =
+                      ButtonConfig.createCustomButton(
+                              "PC Case",
+                              Style.FONT_BOLD_15,
+                              Color.BLACK,
+                              Color.white,
+                              Style.LIGHT_BlUE,
+                              Style.MENU_BUTTON_COLOR,
+                              2,
+                              25,
+                              SwingConstants.CENTER,
+                              new Dimension(120, 25));
+              pcCase.addActionListener(
+                      e -> {
+                          updateSelectedButtonColor(pcCase);
+                          filterProduct(DisplayProductType.PC_CASE);
 
-                });
-        cheapest =
-                ButtonConfig.createCustomButton(
-                        "10m to 20m",
-                        Style.FONT_BOLD_15,
-                        Color.BLACK,
-                        Color.white,
-                        Style.LIGHT_BlUE,
-                        Style.MENU_BUTTON_COLOR,
-                        2,
-                        25,
-                        SwingConstants.CENTER,
-                        new Dimension(120, 25));
-        cheapest.addActionListener(
-                e -> {
-                  updateSelectedButtonColor(cheapest);
-                    filterProduct(DisplayProductType.PRICE_IN_AMOUNT_10M_20M);
+                      });
+              cheapest =
+                      ButtonConfig.createCustomButton(
+                              "10m to 20m",
+                              Style.FONT_BOLD_15,
+                              Color.BLACK,
+                              Color.white,
+                              Style.LIGHT_BlUE,
+                              Style.MENU_BUTTON_COLOR,
+                              2,
+                              25,
+                              SwingConstants.CENTER,
+                              new Dimension(120, 25));
+              cheapest.addActionListener(
+                      e -> {
+                          updateSelectedButtonColor(cheapest);
+                          filterProduct(DisplayProductType.PRICE_IN_AMOUNT_10M_20M);
 
-                });
+                      });
 
-        luxury =
-                ButtonConfig.createCustomButton(
-                        "20m to 30m",
-                        Style.FONT_BOLD_15,
-                        Color.BLACK,
-                        Color.white,
-                        Style.LIGHT_BlUE,
-                        Style.MENU_BUTTON_COLOR,
-                        2,
-                        25,
-                        SwingConstants.CENTER,
-                        new Dimension(120, 25));
-        luxury.addActionListener(
-                e -> {
-                  updateSelectedButtonColor(luxury);
-                    filterProduct(DisplayProductType.PRICE_IN_AMOUNT_20M_30M);
-                });
+              luxury =
+                      ButtonConfig.createCustomButton(
+                              "20m to 30m",
+                              Style.FONT_BOLD_15,
+                              Color.BLACK,
+                              Color.white,
+                              Style.LIGHT_BlUE,
+                              Style.MENU_BUTTON_COLOR,
+                              2,
+                              25,
+                              SwingConstants.CENTER,
+                              new Dimension(120, 25));
+              luxury.addActionListener(
+                      e -> {
+                          updateSelectedButtonColor(luxury);
+                          filterProduct(DisplayProductType.PRICE_IN_AMOUNT_20M_30M);
+                      });
 
-        sortBar.add(allBt);
-        sortBar.add(gaming);
-        sortBar.add(office);
-        sortBar.add(pcCase);
-        sortBar.add(luxury);
-        sortBar.add(cheapest);
-        add(sortBar, BorderLayout.NORTH);
+              sortBar.add(allBt);
+              sortBar.add(gaming);
+              sortBar.add(office);
+              sortBar.add(pcCase);
+              sortBar.add(luxury);
+              sortBar.add(cheapest);
+              add(sortBar, BorderLayout.NORTH);
 
 
-          tableProduct = createTable(modelProductTable, columnNamesPRODUCT);
-          tableStatisticsProduct = createTable(modelStatisticsProductTable, columStatisticsProduct);
-          tableProduct.setRowHeight(30);
-          tableStatisticsProduct.setRowHeight(30);
+              tableProduct = createTable(modelProductTable, columnNamesPRODUCT);
+              tableStatisticsProduct = createTable(modelStatisticsProductTable, columStatisticsProduct);
+              tableProduct.setRowHeight(30);
+              tableStatisticsProduct.setRowHeight(30);
 
-          resizeColumnWidth(tableProduct, 150);
-          resizeColumnWidth(tableStatisticsProduct, 150);
+              resizeColumnWidth(tableProduct, 150);
+              resizeColumnWidth(tableStatisticsProduct, 150);
 
-          modelProductTable = (DefaultTableModel) tableProduct.getModel();
-          modelStatisticsProductTable = (DefaultTableModel) tableStatisticsProduct.getModel();
+              modelProductTable = (DefaultTableModel) tableProduct.getModel();
+              modelStatisticsProductTable = (DefaultTableModel) tableStatisticsProduct.getModel();
 
 //        List<entity.Product> productsDemo = LoginFrame.COMPUTER_SHOP.getAllProduct();
 
-          upDataProducts(productsAll, modelProductTable);
-          upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),  modelStatisticsProductTable);
+              upDataProducts(productsAll, modelProductTable);
+              upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(), modelStatisticsProductTable);
 
-          scrollPaneProductTable = new JScrollPane(tableProduct);
-          JScrollPane scrollPaneProductStatisticsTable = new JScrollPane(tableStatisticsProduct);
+              scrollPaneProductTable = new JScrollPane(tableProduct);
+              JScrollPane scrollPaneProductStatisticsTable = new JScrollPane(tableStatisticsProduct);
 
-           statisticsProductPn = new JPanel(new GridLayout(1,2));
+              statisticsProductPn = new JPanel(new GridLayout(1, 2));
 
-          statisticsProductPn.add(scrollPaneProductStatisticsTable);
-          //chart panel
+              statisticsProductPn.add(scrollPaneProductStatisticsTable);
+              //chart panel
 
-          {
-              barDataset = new DefaultCategoryDataset();
+              {
+                  barDataset = new DefaultCategoryDataset();
 
-              String currentMonth = LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-              chartPanel = ChartFactory.createBarChart(
-                      "Chart of the business rating column of "+currentMonth,
-                      "Products",
-                      "Sold",
-                      barDataset,
-                      PlotOrientation.VERTICAL,
-                      true, true, false);
+                  String currentMonth = LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+                  chartPanel = ChartFactory.createBarChart(
+                          "Chart of the business rating column of " + currentMonth,
+                          "Products",
+                          "Sold",
+                          barDataset,
+                          PlotOrientation.VERTICAL,
+                          true, true, false);
 
-              CategoryPlot plot = chartPanel.getCategoryPlot();
+                  CategoryPlot plot = chartPanel.getCategoryPlot();
 
-              NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-              yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+                  NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+                  yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
+              }
+              updateDataForChart(LoginFrame.COMPUTER_SHOP.productOrderStatistics());
+
+              barChartPanel = new ChartPanel(chartPanel);
+              statisticsProductPn.add(barChartPanel);
+
+
+              tabbedPaneProductTable =
+                      createTabbedPane(scrollPaneProductTable, "Product for Sales", Style.FONT_BOLD_16);
+              tabbedPaneProductTable.add("Product statistics", statisticsProductPn);
+              tabbedPaneProductTable.setBorder(BorderFactory.createTitledBorder(""));
+
+              add(tabbedPaneProductTable, BorderLayout.CENTER);
           }
-          updateDataForChart(LoginFrame.COMPUTER_SHOP.productOrderStatistics());
 
-          barChartPanel = new ChartPanel(chartPanel);
-          statisticsProductPn.add(barChartPanel);
+          private void filterProduct(DisplayProductType type) {
+              removeDataTable(modelProductTable);
+              productsAll = LoginFrame.COMPUTER_SHOP.filterBy(type);
+              upDataProducts(productsAll, modelProductTable);
+          }
 
 
-          tabbedPaneProductTable =
-                  createTabbedPane(scrollPaneProductTable, "Product for Sales", Style.FONT_BOLD_16);
-          tabbedPaneProductTable.add("Product statistics",statisticsProductPn);
-          tabbedPaneProductTable.setBorder(BorderFactory.createTitledBorder(""));
-
-          add(tabbedPaneProductTable, BorderLayout.CENTER);
+          public static void removeDataTable(DefaultTableModel modelProductTable) {
+              modelProductTable.setRowCount(0);
+          }
       }
-      private void filterProduct(DisplayProductType type){
-          removeDataTable(modelProductTable);
-          productsAll = LoginFrame.COMPUTER_SHOP.filterBy(type);
-          upDataProducts(productsAll,modelProductTable);
-      }
-
-
-
-      public static void removeDataTable(DefaultTableModel modelProductTable) {
-        modelProductTable.setRowCount(0);
-      }
-    }
 
 
       private void updateSelectedButtonColor(CustomButton button) {
-        Color defaultColor = Color.WHITE;
-        Color selectedColor = Style.MENU_BUTTON_COLOR;
+          Color defaultColor = Color.WHITE;
+          Color selectedColor = Style.MENU_BUTTON_COLOR;
 
-        if(selectedButton == null){
-          allBt.setBackgroundColor(defaultColor);
-          allBt.setHoverColor(Style.LIGHT_BlUE);
-        }
+          if (selectedButton == null) {
+              allBt.setBackgroundColor(defaultColor);
+              allBt.setHoverColor(Style.LIGHT_BlUE);
+          }
 
-        if (selectedButton != null ) {
-          selectedButton.setBackgroundColor(defaultColor);
-          selectedButton.setHoverColor(Style.LIGHT_BlUE);
-        }
+          if (selectedButton != null) {
+              selectedButton.setBackgroundColor(defaultColor);
+              selectedButton.setHoverColor(Style.LIGHT_BlUE);
+          }
 
-        button.setBackgroundColor(selectedColor);
-        button.setHoverColor(selectedColor);
-        selectedButton = button;
+          button.setBackgroundColor(selectedColor);
+          button.setHoverColor(selectedColor);
+          selectedButton = button;
       }
-
-    }
-
+  }
 
   private class SupplierPanel extends JPanel {
     private JButton addBt, modifyBt, deleteBt, exportExcelBt, reloadBt, searchBt, analysisBt, sumItemBt;
@@ -1043,7 +1269,6 @@ public class ManagerMainPanel extends JPanel {
         applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
 
         JPanel mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(Style.BACKGROUND_COLOR);
         mainPanel.setBorder(BorderFactory.createTitledBorder("Tools"));
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -1109,7 +1334,7 @@ public class ManagerMainPanel extends JPanel {
         setBackground(Style.WORD_COLOR_WHITE);
 
         tableSupplier = createTable(modelSupplier, columnNamesSUPPLIER);
-        tableQuantity = createTable(modelQuantity,columnNamesQuanTityOfSupplier);
+        tableQuantity = createTable(modelQuantity, columnNamesQuantityOfSupplier);
 
         tableSupplier.setRowHeight(30);
         tableQuantity.setRowHeight(30);
@@ -1189,7 +1414,7 @@ public class ManagerMainPanel extends JPanel {
   }
 
   private class CustomerPanel extends JPanel {
-    final String[] customerColumnNames = {
+    private final String[] customerColumnNames = {
       "Serial number", "Customer ID", "Customer Name", "Email", "Address", "Password", "Avata"
     };
       final String[] statisticsColumnNames = { "Serial number","Customer Name","Total Purchase"};
@@ -1217,8 +1442,6 @@ public class ManagerMainPanel extends JPanel {
     private TextDisplayPanel billTextDisplayPanal;
     private final int TAB_DATA_CUSTOMER = 0;
     private final int TAB_BILL = 2;
-
-
 
     private static List<entity.Customer> customers = new ArrayList<>();
 
@@ -1530,7 +1753,6 @@ public class ManagerMainPanel extends JPanel {
         applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
 
         mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(Style.BACKGROUND_COLOR);
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.gridx = 0;
@@ -2101,7 +2323,7 @@ public class ManagerMainPanel extends JPanel {
             orderContainer.setBackground(Color.WHITE);
 
             scrollpane = new JScrollPane(orderContainer);
-            setColorScrollPane(scrollpane, Style.BACKGROUND_COLOR, Color.WHITE);
+            setColorScrollPane(scrollpane, Style.MENU_BUTTON_COLOR, Color.WHITE);
             add(scrollpane, BorderLayout.CENTER);
           }
         }
@@ -2430,7 +2652,7 @@ public class ManagerMainPanel extends JPanel {
             detailPn.add(productTFs[i], gbc);
           }
           JScrollPane scrollPane = new JScrollPane(detailPn);
-          setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
+          setColorScrollPane(scrollPane, Style.MENU_BUTTON_COLOR, Style.LIGHT_BlUE);
           scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
           detailsContainer.add(scrollPane);
           detailsContainer.revalidate();
@@ -2969,7 +3191,7 @@ public class ManagerMainPanel extends JPanel {
     }
   }
 
-  private class AccManagementPanel extends JPanel {
+  private class ManagerPanel extends JPanel {
         private final String[] accountColumnNames = {
                 "Serial Number",
                 "Manager ID",
@@ -2981,12 +3203,12 @@ public class ManagerMainPanel extends JPanel {
                 "Account creation date",
                 "Avatar"
         };
-        private JTable tableAccManager;
+        private JTable managerTable;
         private DefaultTableModel modelAccManager;
         private JScrollPane scrollPaneAccManager;
         private JTabbedPane tabbedPaneAccManager;
         private ToolPanel toolPanel = new ToolPanel();
-        private TableCustomerPanel tableAccManagerPanel = new TableCustomerPanel();
+        private ManagerTablePanel managerTablePanel = new ManagerTablePanel();
 
         private JButton addAccBt,
                 removeBt,
@@ -3006,53 +3228,14 @@ public class ManagerMainPanel extends JPanel {
         private int modifyIndex = -1;
         private static TableStatus tableStatus = ADD;
         private static ArrayList<entity.Manager> managers = (ArrayList<Manager>) LoginFrame.COMPUTER_SHOP.getAllManager();
-        private static Manager modifyManager;
+        private static Manager mutableManager;
 
-    public AccManagementPanel() {
+    public ManagerPanel() {
       setLayout(new BorderLayout());
       toolPanel.setBorder(BorderFactory.createTitledBorder("Tool"));
       add(toolPanel, BorderLayout.NORTH);
-      add(tableAccManagerPanel, BorderLayout.CENTER);
+      add(managerTablePanel, BorderLayout.CENTER);
     }
-
-        private void clearField() {
-            fullNameField.setText("");
-            addressField.setText("");
-            birthdayField.setText("");
-            phoneNumberField.setText("");
-            usernameField.setText("");
-            passwordField.setText("");
-            emailField.setText("");
-            label.setIcon(null);
-            label.setText("Drop your image here");
-            addAccBt.setEnabled(true);
-        }
-
-        private void setVisiblePanel(int panel) {
-            tabbedPaneAccManager.setSelectedIndex(panel);
-        }
-
-        private void setDataToModify(Manager manager) {
-            fullNameField.setText(manager.getFullName());
-            addressField.setText(manager.getAddress());
-            birthdayField.setText(manager.getDob().format(dateFormatter));
-            phoneNumberField.setText(manager.getPhone());
-
-            usernameField.setText(manager.getFullName());
-            passwordField.setText(manager.getPassword());
-            emailField.setText(manager.getEmail());
-            contextPath = manager.getAvatarImg();
-            try {
-                Path targetPath = Paths.get(contextPath);
-                ImageIcon avatarIcon = new ImageIcon(targetPath.toString());
-                Image scaledImage = avatarIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-                label.setIcon(new ImageIcon(scaledImage));
-                label.setText("");
-
-            } catch (NullPointerException npe) {
-                npe.printStackTrace();
-            }
-        }
 
         private class ToolPanel extends JPanel {
             public ToolPanel() {
@@ -3073,7 +3256,7 @@ public class ManagerMainPanel extends JPanel {
 
                 addAccBt.addActionListener(
                         e -> {
-                            setVisiblePanel(1);
+                            setVisiblePanel(3);
                             tableStatus = ADD;
                             clearField();
                         });
@@ -3099,8 +3282,8 @@ public class ManagerMainPanel extends JPanel {
                                 JOptionPane.YES_NO_OPTION,
                                 JOptionPane.WARNING_MESSAGE
                         ) == JOptionPane.YES_OPTION){
-                          managers.remove(tableAccManager.getSelectedRow());
-                          reloadData();
+                          managers.remove(managerTable.getSelectedRow());
+                          reloadManagerData();
                           clearField();
                         }
                       });
@@ -3119,14 +3302,14 @@ public class ManagerMainPanel extends JPanel {
 
                 modifyAccBt.addActionListener(
                         e -> {
-                            int selectedRow = tableAccManager.getSelectedRow();
+                            int selectedRow = managerTable.getSelectedRow();
                             if (selectedRow != -1) {
 
-                                modifyManager = managers.get(selectedRow);
-                                if(!modifyManager.isBlock()){
+                                mutableManager = managers.get(selectedRow);
+                                if(!mutableManager.isBlock()){
                                     tableStatus = MODIFY;
                                     setDataToModify(managers.get(selectedRow));
-                                    setVisiblePanel(1);
+                                    setVisiblePanel(3);
                                     addAccBt.setEnabled(false);
                                 }else ToastNotification.showToast("Unlock this manager before starting to modify!",3000,50,-1,-1);
 
@@ -3151,9 +3334,9 @@ public class ManagerMainPanel extends JPanel {
                 KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.blockUserKey, blockManagerBt);
                 blockManagerBt.addActionListener(
                         e -> {
-                            int selectedRow = tableAccManager.getSelectedRow();
+                            int selectedRow = managerTable.getSelectedRow();
                             if (selectedRow != -1) {
-                                String managerName = (String) tableAccManager.getValueAt(selectedRow, 2);
+                                String managerName = (String) managerTable.getValueAt(selectedRow, 2);
                                 boolean isBlocked = managerName.contains("*");
                                 Manager manWillBeBLock = managers.get(selectedRow);
 
@@ -3177,7 +3360,7 @@ public class ManagerMainPanel extends JPanel {
                                     }
                                     ToastNotification.showToast(
                                             managerName + (isBlocked ? " is unblocked !!! " : " is blocked !!!"), 3000, 50, -1, -1);
-                                    reloadData();
+                                    reloadManagerData();
                                 }
                             }else{
                                 ToastNotification.showToast("Please select 1 manager to block!", 3000, 50, -1, -1);
@@ -3202,7 +3385,7 @@ public class ManagerMainPanel extends JPanel {
                                     JOptionPane.showInputDialog(
                                             null, "Enter file name excel:", "Input file", JOptionPane.QUESTION_MESSAGE);
                             if (fileName != null && !fileName.trim().isEmpty()) {
-                                reloadData();
+                                reloadManagerData();
                                 ExcelConfig.writeManagersToExcel(managers, fileName);
                                 ToastNotification.showToast(fileName + " is created!", 2500, 50, -1, -1);
                             } else {
@@ -3230,7 +3413,7 @@ public class ManagerMainPanel extends JPanel {
                 ButtonConfig.setButtonIcon("src/main/java/Icon/106236_search_icon.png", searchAccBt, 10);
                 searchAccBt.addActionListener(
                         e -> {
-                            reloadData();
+                            reloadManagerData();
                             String name = accManagerField.getText().toLowerCase().trim();
                             List<Manager> managerFound =LoginFrame.COMPUTER_SHOP.findManagerByName(name);
                             modelAccManager.setRowCount(0);
@@ -3266,7 +3449,7 @@ public class ManagerMainPanel extends JPanel {
                 KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.reloadKey, reloadAccBt);
                 reloadAccBt.addActionListener(
                         e -> {
-                            reloadData();
+                            reloadManagerData();
                             accManagerField.setText("Search by Name");
                             accManagerField.setForeground(Color.GRAY);
                         });
@@ -3296,7 +3479,6 @@ public class ManagerMainPanel extends JPanel {
                 applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
 
                 mainPanel = new JPanel(new GridBagLayout());
-                mainPanel.setBackground(Style.BACKGROUND_COLOR);
                 GridBagConstraints gbc = new GridBagConstraints();
 
                 gbc.gridx = 0;
@@ -3316,30 +3498,34 @@ public class ManagerMainPanel extends JPanel {
             }
         }
 
-        private class TableCustomerPanel extends JPanel {
-            AddManager addManager;
-
-            public TableCustomerPanel() {
+        private class ManagerTablePanel extends JPanel {
+            private AddManager addManager;
+            private OrderStatisticsTable orderStatisticsTable;
+            private StatisticsChartPanel statisticsChartPanel;
+            public ManagerTablePanel() {
                 setLayout(new BorderLayout());
                 setBackground(Style.WORD_COLOR_WHITE);
-                tableAccManager = createTable(modelAccManager, accountColumnNames);
+                managerTable = createTable(modelAccManager, accountColumnNames);
 
-                tableAccManager
+                managerTable
                         .getColumnModel()
                         .getColumn(accountColumnNames.length - 1)
                         .setCellRenderer(new ImageInJTable.ImageRenderer());
-                tableAccManager.setRowHeight(100);
-                resizeColumnWidth(tableAccManager, 219);
-                modelAccManager = (DefaultTableModel) tableAccManager.getModel();
+                managerTable.setRowHeight(100);
+                resizeColumnWidth(managerTable, 220);
+                modelAccManager = (DefaultTableModel) managerTable.getModel();
 
-                reloadData();
+                reloadManagerData();
 
-                scrollPaneAccManager = new JScrollPane(tableAccManager);
+                scrollPaneAccManager = new JScrollPane(managerTable);
                 tabbedPaneAccManager =
-                        createTabbedPane(scrollPaneAccManager, "Information", Style.FONT_BOLD_16);
-                addManager = new AddManager();
+                        createTabbedPane(scrollPaneAccManager, "Manager Information", Style.FONT_BOLD_16);
+                orderStatisticsTable = new OrderStatisticsTable(); // Statistics manager by order
+                tabbedPaneAccManager.add("Manager Statistics by Orders", orderStatisticsTable);
+                statisticsChartPanel = new StatisticsChartPanel();
+                tabbedPaneAccManager.add("Statistics Chart", statisticsChartPanel);
+                addManager = new AddManager(); // edit manager info tab
                 tabbedPaneAccManager.add("Modify Manager", addManager);
-
                 add(tabbedPaneAccManager, BorderLayout.CENTER);
             }
         }
@@ -3354,23 +3540,6 @@ public class ManagerMainPanel extends JPanel {
                 avatar = new Avatar();
                 add(changeInfo);
                 add(avatar);
-            }
-
-            public static void addFocusListenerForTextField(JTextField textField) {
-                textField.addFocusListener(
-                        new FocusListener() {
-                            @Override
-                            public void focusGained(FocusEvent e) {
-                                textField.setBorder(
-                                        BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
-                            }
-
-                            @Override
-                            public void focusLost(FocusEvent e) {
-                                textField.setBorder(
-                                        BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
-                            }
-                        });
             }
 
             private class ChangeInfo extends JPanel {
@@ -3406,27 +3575,24 @@ public class ManagerMainPanel extends JPanel {
                                 LabelConfig.createLabel(
                                         "Full Name", Style.FONT_BOLD_15, Color.BLACK, SwingConstants.LEFT);
                         fullNameField =
-                                TextFieldConfig.createStyledTextField(
-                                        Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
+                                TextFieldConfig.createTextField("",
+                                        Style.FONT_PLAIN_16, Color.BLACK, Color.white,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(285, 35),true);
                         fullNameField.setInputVerifier(new NotEmptyVerifier());
-                        addFocusListenerForTextField(fullNameField);
 
                         JLabel lblAddress =
                                 LabelConfig.createLabel(
                                         "Address", Style.FONT_BOLD_15, Color.BLACK, SwingConstants.LEFT);
                         addressField =
-                                TextFieldConfig.createStyledTextField(
-                                        Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
-                        addFocusListenerForTextField(addressField);
+                                TextFieldConfig.createTextField("",
+                                        Style.FONT_PLAIN_16, Color.BLACK, Color.white,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(285, 35),true);
 
                         JLabel lblBirthday =
                                 LabelConfig.createLabel(
                                         "Birthday", Style.FONT_BOLD_15, Color.BLACK, SwingConstants.LEFT);
                         birthdayField =
-                                TextFieldConfig.createStyledTextField(
-                                        Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(250, 35));
+                                TextFieldConfig.createTextField("",
+                                        Style.FONT_PLAIN_16, Color.BLACK, Color.white,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(250, 35),true);
                         birthdayField.setInputVerifier(new BirthDayVerifier());
-                        addFocusListenerForTextField(birthdayField);
                         birthdayField.setEditable(false);
                         JButton btnCalendar = new JButton();
                         btnCalendar.setPreferredSize(new Dimension(35, 35));
@@ -3458,28 +3624,24 @@ public class ManagerMainPanel extends JPanel {
                                         SwingConstants.CENTER,
                                         new Dimension(300, 35));
 
-            calendarDialog.add(selectBt, BorderLayout.SOUTH);
+                        calendarDialog.add(selectBt, BorderLayout.SOUTH);
 
                         selectBt.addActionListener(
-                                new ActionListener() {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                        selectedDate = new Date(calendar.getDate().getTime());
+                                e -> {
+                                    selectedDate = new Date(calendar.getDate().getTime());
 
-                                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                                        birthdayField.setText(dateFormat.format(selectedDate));
-                                        calendarDialog.setVisible(false);
-                                    }
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                    birthdayField.setText(dateFormat.format(selectedDate));
+                                    calendarDialog.setVisible(false);
                                 });
 
                         JLabel lblPhoneNumber =
                                 LabelConfig.createLabel(
                                         "Phone Number", Style.FONT_BOLD_15, Color.BLACK, SwingConstants.LEFT);
                         phoneNumberField =
-                                TextFieldConfig.createStyledTextField(
-                                        Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(285, 35));
+                                TextFieldConfig.createTextField("",
+                                        Style.FONT_PLAIN_16, Color.BLACK, Color.white,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(285, 35),true);
                         phoneNumberField.setInputVerifier(new PhoneNumberVerifier());
-                        addFocusListenerForTextField(phoneNumberField);
 
                         gbc.gridx = 0;
                         gbc.gridy = 0;
@@ -3534,9 +3696,7 @@ public class ManagerMainPanel extends JPanel {
                         setBorder(border);
                         GridBagConstraints gbc = new GridBagConstraints();
                         gbc.insets = new Insets(5, 5, 5, 5);
-
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-
+                        gbc.fill = GridBagConstraints.HORIZONTAL;
                         gbc.gridx = 0;
                         gbc.gridy = 0;
                         add(LabelConfig.createLabel(
@@ -3544,46 +3704,28 @@ public class ManagerMainPanel extends JPanel {
                                 gbc);
 
                         gbc.gridy = 1;
-                        add(
-                                LabelConfig.createLabel(
+                        add(LabelConfig.createLabel(
                                         "Password", Style.FONT_BOLD_15, Color.BLACK, SwingConstants.LEFT),
                                 gbc);
 
                         gbc.gridy = 2;
-                        add(
-                                LabelConfig.createLabel(
+                        add(LabelConfig.createLabel(
                                         "Email", Style.FONT_BOLD_15, Color.BLACK, SwingConstants.LEFT),
                                 gbc);
 
                         gbc.gridx = 1;
                         gbc.gridy = 0;
                         usernameField =
-                                TextFieldConfig.createStyledTextField(
-                                        Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
+                                TextFieldConfig.createTextField("",
+                                        Style.FONT_PLAIN_16, Color.BLACK, Color.white,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(285, 35),true);
                         usernameField.setInputVerifier(new NotEmptyVerifier());
-                        addFocusListenerForTextField(usernameField);
                         add(usernameField, gbc);
 
                         gbc.gridy = 1;
                         JPanel passwdPanel = new JPanel(new BorderLayout());
                         passwordField =
-                                PasswordFieldConfig.createStyledJPasswordField(
-                                        Style.FONT_PLAIN_16, Style.MEDIUM_BLUE, new Dimension(250, 35));
-                        passwordField.addFocusListener(
-                                new FocusListener() {
-                                    @Override
-                                    public void focusGained(FocusEvent e) {
-                                        passwordField.setBorder(
-                                                BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 4));
-                                    }
-
-                                    @Override
-                                    public void focusLost(FocusEvent e) {
-                                        passwordField.setBorder(
-                                                BorderFactory.createLineBorder(Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, 1));
-                                    }
-                                });
-
+                                PasswordFieldConfig.createPasswordField("",
+                                        Style.FONT_PLAIN_16, Color.BLACK, new Dimension(250, 35));
                         JButton togglePasswordButton = ButtonConfig.createShowPasswdButton(passwordField);
                         togglePasswordButton.setPreferredSize(new Dimension(45, 35));
                         passwdPanel.setBackground(Color.WHITE);
@@ -3593,10 +3735,9 @@ public class ManagerMainPanel extends JPanel {
 
                         gbc.gridy = 2;
                         emailField =
-                                TextFieldConfig.createStyledTextField(
-                                        Style.FONT_PLAIN_16, Color.BLACK, Style.MEDIUM_BLUE, new Dimension(295, 35));
+                                TextFieldConfig.createTextField("",
+                                        Style.FONT_PLAIN_16, Color.BLACK, Color.white,Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE, new Dimension(285, 35),true);
                         emailField.setInputVerifier(new EmailVerifier());
-                        addFocusListenerForTextField(emailField);
                         add(emailField, gbc);
                     }
                 }
@@ -3645,60 +3786,62 @@ public class ManagerMainPanel extends JPanel {
                     label.setTransferHandler(new ImageTransferHandler());
                     label.setInputVerifier(new NotEmptyVerifier());
 
-                    confirmBt = new CustomButton("Confirm");
-                    confirmBt.setDrawBorder(false);
-                    confirmBt.setPreferredSize(new Dimension(100, 40));
+                    confirmBt = ButtonConfig.createCustomButton("Confirm",Style.FONT_BOLD_16,Color.BLACK,
+                            Style.MENU_BUTTON_COLOR_GREEN,Style.LIGHT_GREEN,15,SwingConstants.CENTER,new Dimension(100, 40));
+
                     confirmBt.addActionListener(e-> {
                         String passwd = new String(passwordField.getPassword());
                         switch (tableStatus) {
                             case ADD -> {
-                                Manager newManager = Manager.builder()
-                                        .id(managers.size()+1)
-                                        .fullName(fullNameField.getText())
-                                        .email(emailField.getText())
-                                        .address(addressField.getText())
-                                        .password(passwd)
-                                        .createdAt(LocalDate.now())
-                                        .dob(LocalDate.parse(birthdayField.getText(), dateFormatter))
-                                        .phone(phoneNumberField.getText())
-                                        .avatarImg(contextPath)
-                                        .isActive(true)
-                                        .orders(new ArrayList<>())
-                                        .build();
-
-                                LoginFrame.COMPUTER_SHOP.addManager(newManager);
-                                managers.add(newManager);
+                                if(birthdayField.getText().isEmpty()){
+                                    ToastNotification.showToast("Please fill in all the required information!",3000,50,-1,-1);
+                                }else {
+                                    Manager newManager = Manager.builder()
+                                            .id(managers.size() + 1)
+                                            .fullName(fullNameField.getText())
+                                            .email(emailField.getText())
+                                            .address(addressField.getText())
+                                            .password(passwd)
+                                            .createdAt(LocalDate.now())
+                                            .dob(LocalDate.parse(birthdayField.getText(), dateFormatter))
+                                            .phone(phoneNumberField.getText())
+                                            .avatarImg(contextPath)
+                                            .isActive(true)
+                                            .orders(new ArrayList<>())
+                                            .build();
+                                    LoginFrame.COMPUTER_SHOP.addManager(newManager);
+                                }
                             }
                             case MODIFY -> {
                                 boolean isUpdated = false;
 
-                                if (!fullNameField.getText().equals(modifyManager.getFullName())) {
-                                    modifyManager.setFullName(fullNameField.getText().trim());
+                                if (!fullNameField.getText().equals(mutableManager.getFullName())) {
+                                    mutableManager.setFullName(fullNameField.getText().trim());
                                     isUpdated = true;
                                 }
-                                if (!addressField.getText().equals(modifyManager.getAddress())) {
-                                    modifyManager.setAddress(addressField.getText());
+                                if (!addressField.getText().equals(mutableManager.getAddress())) {
+                                    mutableManager.setAddress(addressField.getText());
                                     isUpdated = true;
                                 }
-                                if (!birthdayField.getText().equals(modifyManager.getDob().format(dateFormatter))) {
-                                    modifyManager.setDob(LocalDate.parse(birthdayField.getText(), dateFormatter));
+                                if (!birthdayField.getText().equals(mutableManager.getDob().format(dateFormatter))) {
+                                    mutableManager.setDob(LocalDate.parse(birthdayField.getText(), dateFormatter));
                                     isUpdated = true;
                                 }
-                                if (!emailField.getText().equals(modifyManager.getEmail())) {
-                                    modifyManager.setEmail(emailField.getText().trim());
+                                if (!emailField.getText().equals(mutableManager.getEmail())) {
+                                    mutableManager.setEmail(emailField.getText().trim());
                                     isUpdated = true;
                                 }
-                                if (!phoneNumberField.getText().equals(modifyManager.getPhone())) {
-                                    modifyManager.setPhone(phoneNumberField.getText());
+                                if (!phoneNumberField.getText().equals(mutableManager.getPhone())) {
+                                    mutableManager.setPhone(phoneNumberField.getText());
                                     isUpdated = true;
                                 }
 
-                                if (!passwd.equals(modifyManager.getPassword())) {
-                                    modifyManager.setPassword(passwd);
+                                if (!passwd.equals(mutableManager.getPassword())) {
+                                    mutableManager.setPassword(passwd);
                                     isUpdated = true;
                                 }
-                                if(!contextPath.equals(modifyManager.getAvatarImg())){
-                                    modifyManager.setAvatarImg(contextPath);
+                                if(!contextPath.equals(mutableManager.getAvatarImg())){
+                                    mutableManager.setAvatarImg(contextPath);
                                     isUpdated =true;
                                 }
 
@@ -3711,8 +3854,8 @@ public class ManagerMainPanel extends JPanel {
                             }
                         }
 
-                        tabbedPaneAccManager.setSelectedIndex(0);
-                        reloadData();
+                        tabbedPaneAccManager.setSelectedIndex(0);// refresh table to load new data:)
+                        reloadManagerData();
                         clearField();
                     });
 
@@ -3722,12 +3865,13 @@ public class ManagerMainPanel extends JPanel {
                     undoBt.setDrawBorder(false);
                     undoBt.addActionListener(
                             e -> {
-                                setDataToModify(managers.get(modifyIndex));
+                                if( tableStatus == MODIFY){
+                                    setDataToModify(managers.get(managerTable.getSelectedRow()));
+                                }else clearField();
                             });
 
-                    cancelBt = new CustomButton("Cancel");
-                    cancelBt.setPreferredSize(new Dimension(100, 40));
-                    cancelBt.setDrawBorder(false);
+                    cancelBt = ButtonConfig.createCustomButton("Cancel",Style.FONT_BOLD_16,Color.BLACK,
+                            Style.LIGHT_RED,Style.LIGHT_RED,15,SwingConstants.CENTER,new Dimension(100, 40));
                     cancelBt.addActionListener(
                             e -> {
                                 clearField();
@@ -3779,11 +3923,227 @@ public class ManagerMainPanel extends JPanel {
                     }
                 }
             }
+
         }
 
-        private void reloadData() {
+        private class OrderStatisticsTable extends JPanel{
+            private CustomButton sortByOrderBt, sortByTotalPriceBt, sortProcessedBt, selectedBt;
+            private JTable statisticsTable;
+            private DefaultTableModel statisticsTableModel;
+            private JScrollPane scrollPaneStatisticsTable;
+            private static final String[] statisticsColumnNames = {"SN","Manager ID","Manager Name", "Order ID","Total Orders", "Total product quantity","Total Price (VND)","Total Processed Orders"};
+            OrderStatisticsTable(){
+                setLayout(new BorderLayout());
+                JPanel sortBarPn = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+                sortByOrderBt = ButtonConfig.createCustomButton(
+                        "Order Quantity",
+                        Style.FONT_BOLD_15,
+                        Color.BLACK,
+                        Style.MENU_BUTTON_COLOR,
+                        Style.LIGHT_BlUE,
+                        Style.MENU_BUTTON_COLOR,
+                        2,
+                        25,
+                        SwingConstants.CENTER,
+                        new Dimension(180, 25));
+                sortByOrderBt.addActionListener(e ->{
+                    updateSelectedButtonColor(sortByOrderBt);
+                    reloadStatisticsData((ArrayList<Manager>) LoginFrame.COMPUTER_SHOP.sortManagerByOrder());
+                });
+
+                sortByTotalPriceBt = ButtonConfig.createCustomButton(
+                        "Order value",
+                        Style.FONT_BOLD_15,
+                        Color.BLACK,
+                        Color.white,
+                        Style.LIGHT_BlUE,
+                        Style.MENU_BUTTON_COLOR,
+                        2,
+                        25,
+                        SwingConstants.CENTER,
+                        new Dimension(180, 25));
+                sortByTotalPriceBt.addActionListener(e ->{
+                    updateSelectedButtonColor(sortByTotalPriceBt);
+                    reloadStatisticsData((ArrayList<Manager>) LoginFrame.COMPUTER_SHOP.sortManagerByTotalPrice());
+                });
+
+                sortProcessedBt = ButtonConfig.createCustomButton(
+                        "Total processed orders",
+                        Style.FONT_BOLD_15,
+                        Color.BLACK,
+                        Color.white,
+                        Style.LIGHT_BlUE,
+                        Style.MENU_BUTTON_COLOR,
+                        2,
+                        25,
+                        SwingConstants.CENTER,
+                        new Dimension(220, 25));
+                sortProcessedBt.addActionListener(e ->{
+                    updateSelectedButtonColor(sortProcessedBt);
+                    reloadStatisticsData((ArrayList<Manager>) LoginFrame.COMPUTER_SHOP.sortManagerByProcessedOrders());
+                });
+
+
+                sortBarPn.add(sortByOrderBt);
+                sortBarPn.add(sortByTotalPriceBt);
+                sortBarPn.add(sortProcessedBt);
+                add(sortBarPn,BorderLayout.NORTH);
+
+                statisticsTable = createTable(statisticsTableModel, statisticsColumnNames);
+                statisticsTable.setRowHeight(40);
+                resizeColumnWidth(statisticsTable, 180);
+                statisticsTableModel = (DefaultTableModel) statisticsTable.getModel();
+                statisticsTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+                statisticsTable.getColumnModel().getColumn(1).setPreferredWidth(90);
+
+
+                reloadStatisticsData(managers);
+                scrollPaneStatisticsTable = new JScrollPane(statisticsTable);
+                add(scrollPaneStatisticsTable, BorderLayout.CENTER);
+            }
+            private void reloadStatisticsData(ArrayList<Manager> list) {
+                statisticsTableModel.setRowCount(0);
+                int count =1;
+                for (Manager manager : list) {
+                    Object[] rowData = {
+                            count++,
+                            manager.getId(),
+                            manager.getFullName(),
+                            manager.getAllOrderID(),
+                            manager.getTotalOrders(),
+                            manager.totalProductQuantity(),
+                            currencyFormatter.format(manager.totalProductPrice()),
+                            manager.totalOrderCompleted()
+
+                    };
+                    statisticsTableModel.addRow(rowData);
+                }
+            }
+
+            private void updateSelectedButtonColor(CustomButton button) {
+                Color defaultColor = Color.WHITE;
+                Color selectedColor = Style.MENU_BUTTON_COLOR;
+
+                if(selectedBt == null){
+                    sortByOrderBt.setBackgroundColor(defaultColor);
+                    sortByOrderBt.setHoverColor(Style.LIGHT_BlUE);
+                }
+
+                if (selectedBt != null ) {
+                    selectedBt.setBackgroundColor(defaultColor);
+                    selectedBt.setHoverColor(Style.LIGHT_BlUE);
+                }
+
+                button.setBackgroundColor(selectedColor);
+                button.setHoverColor(selectedColor);
+                selectedBt = button;
+            }
+
+        }
+
+        private class StatisticsChartPanel extends JPanel{
+            private JFreeChart performanceChart,kpiChart;
+
+            private Map<Manager,Double> kpiData = LoginFrame.COMPUTER_SHOP.analyzeRevenueByManager();
+            private Map<Manager,Integer> ordersDataByManager = LoginFrame.COMPUTER_SHOP.analyzeOrdersByManager();
+
+            StatisticsChartPanel(){
+                setLayout(new GridLayout(1,2));
+
+                DefaultCategoryDataset kpiDataset = new DefaultCategoryDataset();
+                for (Map.Entry<Manager,Double> entry : kpiData.entrySet()) {
+                    kpiDataset.addValue(entry.getValue(),
+                            entry.getKey().getFullName(), entry.getKey().getFullName());
+                }
+                kpiChart = ChartFactory.createBarChart(
+                        "Total Revenue by Manager",
+                        "Manager",
+                        "Revenue (VND)",
+                        kpiDataset
+                );
+                NumberAxis yAxis = (NumberAxis) kpiChart.getCategoryPlot().getRangeAxis();
+                yAxis.setNumberFormatOverride(formatCurrency); // Format currency to VND
+
+                CategoryPlot plot = kpiChart.getCategoryPlot();
+                plot.setBackgroundPaint(Style.CHART_BACKGROUND_COLOR);
+                BarRenderer renderer = (BarRenderer) plot.getRenderer();
+
+                renderer.setBarPainter(new StandardBarPainter());
+                renderer.setDrawBarOutline(false);
+
+                ChartPanel kpiChartPanel = new ChartPanel(kpiChart);
+                add(kpiChartPanel);
+
+                DefaultPieDataset performanceDataset = new DefaultPieDataset();
+                for (Map.Entry<Manager, Integer> entry : ordersDataByManager.entrySet()) {
+                    performanceDataset.setValue(entry.getKey().getFullName(), entry.getValue());
+                }
+                performanceChart = ChartFactory.createPieChart(
+                        "Manager Performance Chart",
+                        performanceDataset,
+                        true,
+                        true,
+                        true
+                );
+
+                PiePlot ordersPlot = (PiePlot) performanceChart.getPlot();
+                ordersPlot.setBackgroundPaint(Style.CHART_BACKGROUND_COLOR);
+                ordersPlot.setLabelGenerator(new StandardPieSectionLabelGenerator(
+                        "{0}: {2}",
+                        new DecimalFormat("0"),
+                        new DecimalFormat("0.00%")
+                ));
+
+                ChartPanel chartPanel = new ChartPanel(performanceChart);
+                chartPanel.setBorder(new MatteBorder(0,1,0,0,Color.GRAY));
+                add(chartPanel);
+
+            }
+        }
+
+        private void reloadManagerData() {
             loadDataTable(managers, modelAccManager);
         }
+
+        private void clearField() {
+          fullNameField.setText("");
+          addressField.setText("");
+          birthdayField.setText("");
+          phoneNumberField.setText("");
+          usernameField.setText("");
+          passwordField.setText("");
+          emailField.setText("");
+          label.setIcon(null);
+          label.setText("Drop your image here");
+          addAccBt.setEnabled(true);
+      }
+
+        private void setVisiblePanel(int panel) {
+          tabbedPaneAccManager.setSelectedIndex(panel);
+      }
+
+        private void setDataToModify(Manager manager) {
+          fullNameField.setText(manager.getFullName());
+          addressField.setText(manager.getAddress());
+          birthdayField.setText(manager.getDob().format(dateFormatter));
+          phoneNumberField.setText(manager.getPhone());
+
+          usernameField.setText(manager.getFullName());
+          passwordField.setText(manager.getPassword());
+          emailField.setText(manager.getEmail());
+          contextPath = manager.getAvatarImg();
+          try {
+              Path targetPath = Paths.get(contextPath);
+              ImageIcon avatarIcon = new ImageIcon(targetPath.toString());
+              Image scaledImage = avatarIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+              label.setIcon(new ImageIcon(scaledImage));
+              label.setText("");
+
+          } catch (NullPointerException npe) {
+              npe.printStackTrace();
+          }
+      }
 
         private static void loadDataTable(ArrayList<Manager> managers, DefaultTableModel model){
             model.setRowCount(0);
@@ -3806,159 +4166,136 @@ public class ManagerMainPanel extends JPanel {
     }
 
   private class NotificationPanel extends JPanel {
-//    private JScrollPane scrollPane;
-//    private Map<Customer, List<Order>> customerOrders;
-//    private Timer timer;
-//
-//    public NotificationPanel() {
-//      setLayout(new BorderLayout());
-//
-//      notificationContainer = new JPanel();
-//      notificationContainer.setBackground(Color.WHITE);
-//      notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
-//
-//      addAllNotification();
-//
-//      scrollPane = new JScrollPane(notificationContainer);
-//      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//      setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
-//      add(scrollPane, BorderLayout.CENTER);
-//
-//      startTimer();
-//    }
-//
-//    public void reloadNotification() {
-//      customerOrders = getAllCustomerOrder();
-//      notificationContainer.removeAll();
-//      addAllNotification();
-//      notificationContainer.revalidate();
-//      notificationContainer.repaint();
-//    }
-//
-//    private void startTimer() {
-//      timer = new Timer(30000, e -> reloadNotification());
-//      timer.start();
-//    }
-//
-//    private void addAllNotification() {
-//      customerOrders = getAllCustomerOrder();
-//
-//      JPanel main = new JPanel(new GridBagLayout());
-//      main.setBackground(Color.WHITE);
-//      GridBagConstraints gbc = new GridBagConstraints();
-//      gbc.insets = new Insets(5, 15, 5, 15);
-//      gbc.anchor = GridBagConstraints.WEST;
-//      int x = 0, y = 0;
-////      if (!customerOrders.isEmpty()) {
-////        for (Map.Entry<Customer, List<CustomerOrderDTO>> entry : customerOrders.entrySet()) {
-////          Customer customer = entry.getKey();
-////
-////          // Single grouping loop: group orders by date and ID together
-////          Map<Date, Map<Integer, List<CustomerOrderDTO>>> groupedOrders =
-////              new TreeMap<>(Collections.reverseOrder());
-////          for (CustomerOrderDTO order : entry.getValue()) {
-////            groupedOrders
-////                .computeIfAbsent(
-////                    (Date) order.getOrderDate(), date -> new TreeMap<>(Collections.reverseOrder()))
-////                .computeIfAbsent(order.getOrderId(), id -> new ArrayList<>())
-////                .add(order);
-////          }
-////
-////          // Process grouped orders directly
-////          for (Map.Entry<Date, Map<Integer, List<CustomerOrderDTO>>> dateEntry :
-////              groupedOrders.entrySet()) {
-////            Date orderDate = dateEntry.getKey();
-////
-////            for (Map.Entry<Integer, List<CustomerOrderDTO>> orderEntry :
-////                dateEntry.getValue().entrySet()) {
-////              int orderId = orderEntry.getKey();
-////              List<CustomerOrderDTO> orders = orderEntry.getValue();
-////
-////              double totalCost = orders.stream().mapToDouble(CustomerOrderDTO::totalCost).sum();
-////
-////              StringBuilder notificationText = new StringBuilder();
-////              notificationText.append(
-////                  String.format(
-//                      "New Orders from %s\nOrder ID: %d", customer.getFullName(), orderId));
-////              for (CustomerOrderDTO order : orders) {
-////                notificationText.append(
-////                    String.format(
-////                        "\nOrder Date: %s\nShipping Address: %s\nOrder Status: %s\nProduct Name: %s\nQuantity: %d\n-----------------------------\n",
-////                        order.getOrderDate().toString(),
-////                        order.getShipAddress(),
-////                        order.getStatusItem(),
-////                        order.getProductName(),
-////                        order.getQuantity()));
-////              }
-////              notificationText.append(
-////                  String.format(
-////                      "\nTotal: %s VNĐ",
-////                      NumberFormat.getInstance(new Locale("vi", "VN")).format(totalCost)));
-////
-////              CircularImage avatar = new CircularImage(customer.getAvataImg(), 80, 80, false);
-////              JLabel timeLabel = new JLabel(String.format("<html>%s</html>", orderDate.toString()));
-////
-////              JTextArea message = createMessageArea(notificationText.toString());
-////              JScrollPane scrollPane = createScrollPane(message);
-//
-////              gbc.gridx = x;
-////              gbc.gridy = y;
-////              gbc.anchor = GridBagConstraints.WEST;
-////              main.add(avatar, gbc);
-////
-////              gbc.gridx = x;
-////              gbc.gridy = ++y;
-////              gbc.anchor = GridBagConstraints.EAST;
-////              main.add(scrollPane, gbc);
-////
-////              gbc.gridx = x + 1;
-////              main.add(timeLabel, gbc);
-////              y++;
-////            }
-////          }
-////        }
-////      } else {
-////        JPanel emptyNotificationPn = new JPanel(new BorderLayout());
-////        emptyNotificationPn.setBackground(Color.WHITE);
-////        emptyNotificationPn.add(
-////            new JLabel(
-////                createImageForProduct("src/main/java/img/no_Notification_Img.png", 500, 500)));
-////        main.add(emptyNotificationPn, gbc);
-////      }
-////
-////      notificationContainer.add(main);
-////      notificationContainer.revalidate();
-////      notificationContainer.repaint();
-//    }
-//
-//    private JTextArea createMessageArea(String text) {
-//      JTextArea message = new JTextArea(text);
-//      message.setBackground(Color.WHITE);
-//      message.setForeground(Color.BLACK);
-//      message.setFont(new Font("Arial", Font.PLAIN, 16));
-//      message.setBorder(
-//          BorderFactory.createCompoundBorder(
-//              new RoundedBorder(20, 2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE),
-//              BorderFactory.createEmptyBorder(3, 3, 3, 8)));
-//      message.setLineWrap(true);
-//      message.setWrapStyleWord(true);
-//      message.setEditable(false);
-//      message.setOpaque(true);
-//      message.setPreferredSize(new Dimension(600, message.getPreferredSize().height));
-//      return message;
-//    }
-//
-//    private JScrollPane createScrollPane(JTextArea message) {
-//      JScrollPane scrollPane = new JScrollPane(message);
-//      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-//      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-//      scrollPane.setBorder(BorderFactory.createEmptyBorder());
-//      return scrollPane;
-//    }
-//
-//    private Map<Customer, List<Order>> getAllCustomerOrder() {
-//      return LoginFrame.COMPUTER_SHOP.userOrderStatistics();
-//    }
+    private JScrollPane scrollPane;
+    private List<Order> orders;
+    private Timer timer;
+
+    public NotificationPanel() {
+      setLayout(new BorderLayout());
+
+      notificationContainer = new JPanel();
+      notificationContainer.setBackground(Color.WHITE);
+      notificationContainer.setLayout(new BoxLayout(notificationContainer, BoxLayout.Y_AXIS));
+
+      addAllNotification();
+
+      scrollPane = new JScrollPane(notificationContainer);
+      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      setColorScrollPane(scrollPane, Style.BACKGROUND_COLOR, Style.LIGHT_BlUE);
+      add(scrollPane, BorderLayout.CENTER);
+
+      startTimer();
+    }
+
+    public void reloadNotification() {
+      orders = getAllOrders();
+      notificationContainer.removeAll();
+      addAllNotification();
+      notificationContainer.revalidate();
+      notificationContainer.repaint();
+    }
+
+    private void startTimer() {
+      timer = new Timer(30000, e -> reloadNotification());
+      timer.start();
+    }
+
+    private void addAllNotification() {
+      orders = getAllOrders();
+
+      JPanel main = new JPanel(new GridBagLayout());
+      main.setBackground(Color.WHITE);
+      GridBagConstraints gbc = new GridBagConstraints();
+      gbc.insets = new Insets(5, 15, 5, 15);
+      gbc.anchor = GridBagConstraints.WEST;
+      int x = 0, y = 0;
+      if (!orders.isEmpty()) {
+        for (Order order : orders) {
+          Customer customer = order.getCustomer();
+
+          StringBuilder notificationText = new StringBuilder();
+          notificationText.append(
+              String.format(
+                  "New Orders from %s\nOrder ID: %d\nOrder Date: %s\nShipping Address: %s\n-----------------------------\n",
+                      customer.getFullName(),
+                      order.getOrderId(),
+                      order.getOrderedAt().toString(),
+                      order.getShipAddress()));
+          for (OrderDetail orderDetail : order.getOrderDetails()) {
+            notificationText.append(
+                String.format(
+                    "\nOrder Status: %s\nProduct Name: %s\nQuantity: %d\n-----------------------------\n",
+                        order.getStatus(),
+                        orderDetail.getProductName(),
+                        orderDetail.getQuantity()));
+          }
+          notificationText.append(
+              String.format("\nTotal: %s VNĐ", NumberFormat.getInstance(new Locale("vi", "VN")).format(order.totalCost())));
+
+          CircularImage avatar = new CircularImage(customer.getAvatarImg(), 80, 80, false);
+          JLabel timeLabel = new JLabel(String.format("<html>%s</html>", order.getOrderedAt().toString()));
+
+          JTextArea message = createMessageArea(notificationText.toString());
+          JScrollPane scrollPane = createScrollPane(message);
+
+          gbc.gridx = x;
+          gbc.gridy = y;
+          gbc.anchor = GridBagConstraints.WEST;
+          main.add(avatar, gbc);
+
+          gbc.gridx = x;
+          gbc.gridy = ++y;
+          gbc.anchor = GridBagConstraints.EAST;
+          main.add(scrollPane, gbc);
+
+          gbc.gridx = x + 1;
+          main.add(timeLabel, gbc);
+          y++;
+        }
+      } else {
+        JPanel emptyNotificationPn = new JPanel(new BorderLayout());
+        emptyNotificationPn.setBackground(Color.WHITE);
+        emptyNotificationPn.add(
+            new JLabel(
+                createImageForProduct("src/main/java/img/no_Notification_Img.png", 500, 500)));
+        main.add(emptyNotificationPn, gbc);
+      }
+
+      notificationContainer.add(main);
+      notificationContainer.revalidate();
+      notificationContainer.repaint();
+    }
+
+    private JTextArea createMessageArea(String text) {
+      JTextArea message = new JTextArea(text);
+      message.setBackground(Color.WHITE);
+      message.setForeground(Color.BLACK);
+      message.setFont(new Font("Arial", Font.PLAIN, 16));
+      message.setBorder(
+          BorderFactory.createCompoundBorder(
+              new RoundedBorder(20, 2, Style.LOGIN_FRAME_BACKGROUND_COLOR_BLUE),
+              BorderFactory.createEmptyBorder(3, 3, 3, 8)));
+      message.setLineWrap(true);
+      message.setWrapStyleWord(true);
+      message.setEditable(false);
+      message.setOpaque(true);
+      message.setPreferredSize(new Dimension(600, message.getPreferredSize().height));
+      return message;
+    }
+
+    private JScrollPane createScrollPane(JTextArea message) {
+      JScrollPane scrollPane = new JScrollPane(message);
+      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+      scrollPane.setBorder(BorderFactory.createEmptyBorder());
+      return scrollPane;
+    }
+
+    private List<Order> getAllOrders() {
+      return LoginFrame.COMPUTER_SHOP.getAllOrders().stream()
+              .filter(Order::isActive)
+              .toList();
+    }
   }
 
   private class ChangeInformationPanel extends JPanel {
@@ -4217,19 +4554,16 @@ public class ManagerMainPanel extends JPanel {
     }
 
     private void performUpdate() {
-//      Account account = accountController.findById(CurrentUser.CURRENT_USER_V2.getAccountId());
-//      account.setAvataImg(avatar.getImagePath());
-//      account.setEmail(emailField.getText().trim());
-//      account.setCreateDate(Date.valueOf(createDateField.getText().trim()));
-//      Manager manager = managerController.findById(CurrentUser.CURRENT_USER_V2.getManagerId());
-//      manager.setFullName(fullNameField.getText().trim());
-//      manager.setAddress(addressField.getText().trim());
-//      manager.setBirthDay(Date.valueOf(dateOfBirthField.getText().trim()));
-//      manager.setPhoneNumber(phoneNumField.getText().trim());
-
-//      accountController.update(account);
-//      managerController.update(manager);
-
+        User user = LoginFrame.COMPUTER_SHOP.findManagerByEmail(CurrentUser.CURRENT_MANAGER_V2.getEmail());
+        String[] data = {avatar.getImagePath(),
+                        emailField.getText().trim(),
+                        createDateField.getText().trim(),
+                        fullNameField.getText().trim(),
+                        addressField.getText().trim(),
+                        dateOfBirthField.getText().trim(),
+                        phoneNumField.getText().trim()
+        };
+        user.update(data);
       ToastNotification.showToast(
           "Your information has been successfully updated.", 2500, 50, -1, -1);
     }
@@ -4267,6 +4601,11 @@ public class ManagerMainPanel extends JPanel {
             this.trackColor = trackBackGroundColor;
           }
         });
+  }
+
+  private void setColorMenuButton(String Name){
+
+
   }
 
   private JTable createTable(DefaultTableModel model, String[] columnNames) {
@@ -4314,7 +4653,7 @@ public class ManagerMainPanel extends JPanel {
   private void resizeColumnWidth(JTable table, int width) {
     for (int i = 0; i < table.getColumnCount(); i++) {
       table.getColumnModel().getColumn(i).setPreferredWidth(width);
-      table.getColumnModel().getColumn(0).setPreferredWidth(100);
+      table.getColumnModel().getColumn(0).setPreferredWidth(120);
       table.getColumnModel().getColumn(1).setPreferredWidth(120);
       table.getColumnModel().getColumn(2).setPreferredWidth(300);
     }

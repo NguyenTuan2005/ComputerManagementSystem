@@ -88,6 +88,7 @@ public class Order {
     public void updateStatus(String status) {
         this.status = status;
     }
+
     public void updateSupplier(Supplier supplier) {
         for (var orderDetail : this.orderDetails ){
             orderDetail.updateSupplier(supplier);
@@ -106,5 +107,9 @@ public class Order {
     }
     public void changeOrderedAt(LocalDate localDate){
         this.orderedAt = localDate;
+    }
+
+    public boolean isActive() {
+        return this.status.equals(OrderType.ACTIVE_MESSAGE);
     }
 }

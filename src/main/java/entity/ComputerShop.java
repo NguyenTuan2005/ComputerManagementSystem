@@ -10,7 +10,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
+import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,8 +24,8 @@ public class ComputerShop implements MController {
     List<Supplier> suppliers;
     List<Manager> managers;
     List<Customer> customers;
-    
-
+    public DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM", Locale.ENGLISH);
+    public static DecimalFormat currencyFormatter = new DecimalFormat("#,###");
     public static LoginStatus loginStatusManager = LoginStatus.NOT_FOUND;
 
     public ComputerShop() {
@@ -172,7 +175,6 @@ public class ComputerShop implements MController {
     public Map<Product,Long> productOrderStatistics() {
         Map<Product, Long> quantityOrder = new HashMap<>();
 
-
         for ( var  p : this.products){
             long sumQuantity =0;
             for(var manager : this.managers){
@@ -217,6 +219,76 @@ public class ComputerShop implements MController {
             map.put(s.getCompanyName(),sumQuantity);
         }
         return  map;
+    }
+
+    //statistics by monthly revenue
+    public Map<String, Double> analyzeRevenueByMonth(int year) {
+        Map<String, Double> revenueByMonth = this.managers.stream()
+                .flatMap(manager -> manager.getOrders().stream())
+                .filter(order -> order.getOrderedAt().getYear() == year)
+                .collect(Collectors.groupingBy(
+                        order -> monthFormatter.format(order.getOrderedAt().getMonth()),
+                        Collectors.summingDouble(order -> order.totalCost())
+                ));
+
+        List<String> monthsOrder = Arrays.asList(new DateFormatSymbols().getMonths());
+
+        TreeMap result =new TreeMap<>((month1, month2) -> {
+            int index1 = monthsOrder.indexOf(month1);
+            int index2 = monthsOrder.indexOf(month2);
+            return Integer.compare(index1, index2);
+        });
+        result.putAll(revenueByMonth);
+        return result;
+    }
+
+    //statistics by order status by year
+    public Map<String, Integer> analyzeOrderStatusByYear(int year){
+        return this.managers.stream().flatMap(manager -> manager.getOrders().stream())
+                .filter(order -> order.getOrderedAt().getYear() == year)
+                .collect(Collectors.groupingBy(
+                        order -> order.getStatus(),
+                        Collectors.collectingAndThen(Collectors.counting(),
+                                count -> Math.toIntExact(count))));
+    }
+
+    //statistics by order status all the time
+    public Map<String, Integer> analyzeOrderStatus(){
+        return this.managers.stream().flatMap(manager -> manager.getOrders().stream())
+                .collect(Collectors.groupingBy(
+                        order -> order.getStatus(),
+                        Collectors.collectingAndThen(Collectors.counting(),
+                                count -> Math.toIntExact(count))));
+    }
+
+    //statistics best-selling product, Product name - quantity sold
+    public Map<String, Integer> bestSellingProductStatistics(int limit) {
+        Map<String, Integer> productSales = managers.stream()
+                .flatMap(manager -> manager.getOrders().stream())
+                .flatMap(order -> order.getOrderDetails().stream())
+                .collect(Collectors.toMap(
+                        OrderDetail::getProductName,
+                        OrderDetail::getQuantity,
+                        Integer::sum
+                ));
+        return productSales.entrySet().stream()
+                .sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue()))
+                .limit(limit)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    //statistics manager kpi
+    public Map<Manager, Double> analyzeRevenueByManager(){
+        return this.managers.stream().collect(Collectors.toMap(
+                manager -> manager, manager -> manager.totalProductPrice()
+        ));
+    }
+
+    //statistics manager kpi
+    public Map<Manager, Integer> analyzeOrdersByManager(){
+        return this.managers.stream().collect(Collectors.toMap(
+                manager -> manager, manager -> manager.getTotalOrders()
+        ));
     }
 
     public Supplier findSupplier(String name){
@@ -348,6 +420,18 @@ public class ComputerShop implements MController {
     public int getTotalProduct(){
         return this.products.size();
     }
+    public int getTotalSupplier(){
+        return this.suppliers.size();
+    }
+    public int getTotalManager(){
+        return this.managers.size();
+    }
+    public int getTotalCustomer(){
+        return this.customers.size();
+    }
+    public int getTotalOrder(){
+        return this.managers.stream().mapToInt(manager -> manager.getTotalOrders()).sum();
+    }
 
     public void blockManager(Manager m,boolean block){
         for(Manager man : this.managers){
@@ -373,8 +457,6 @@ public class ComputerShop implements MController {
     public void addManager(Manager m){
         this.managers.add(m);
     }
-
-
 
     public List<Customer> findCustomerByName(String customerName){
         return this.customers.stream().filter(customer -> customer.getFullName().toLowerCase().contains(customerName.toLowerCase()))
@@ -432,8 +514,30 @@ public class ComputerShop implements MController {
 
 
     public List<Order> getAllOrders() {
-        return this.managers.get(0).getOrders();
+        return this.managers.stream()
+                .map(Manager::getOrders)
+                .flatMap(List::stream)
+                .toList();
     }
+
+    public int totalProductQuantity(){
+        return this.managers.stream().flatMap(manager -> manager.getOrders().stream())
+                .mapToInt(order -> order.totalQuantity()).sum();
+    }
+
+    //sort manager list by quantity of order
+    public List<Manager> sortManagerByOrder(){
+        return managers.stream().sorted(Comparator.comparingInt(Manager::getTotalOrders).reversed()).collect(Collectors.toList());
+    }
+
+    public List<Manager> sortManagerByTotalPrice(){
+        return managers.stream().sorted(Comparator.comparingDouble(Manager::totalProductPrice).reversed()).collect(Collectors.toList());
+    }
+
+    public List<Manager> sortManagerByProcessedOrders(){
+        return managers.stream().sorted(Comparator.comparingLong(Manager:: totalOrderCompleted).reversed()).collect(Collectors.toList());
+    }
+
 
 //    public void setAllOrders(List<Order> allOrders) {
 //        this.managers. = allOrders;

@@ -1,8 +1,6 @@
 package view;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 import view.overrideComponent.CustomButton;
 
@@ -24,128 +22,105 @@ public class ManagerFrame extends JFrame {
     add(managerMenuPanel, BorderLayout.WEST);
     add(managerMainPanel, BorderLayout.CENTER);
 
+    managerMenuPanel.setDashBoardBtListener(e->{
+                managerMainPanel.showPanel(ManagerMainPanel.DASHBOARD_CONSTRAINT);
+                setHover(ManagerMainPanel.DASHBOARD_CONSTRAINT);
+            });
+
     managerMenuPanel.setProductButtonListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            managerMainPanel.showPanel(ManagerMainPanel.PRODUCT_CONSTRAINT);
-            setHover(ManagerMainPanel.PRODUCT_CONSTRAINT);
-          }
-        });
+            e -> {
+              managerMainPanel.showPanel(ManagerMainPanel.PRODUCT_CONSTRAINT);
+              setHover(ManagerMainPanel.PRODUCT_CONSTRAINT);
+            });
 
     managerMenuPanel.setSupplierButtonListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            managerMainPanel.showPanel(ManagerMainPanel.SUPPLIER_CONSTRAINT);
-            setHover(ManagerMainPanel.SUPPLIER_CONSTRAINT);
-          }
-        });
+            e -> {
+              managerMainPanel.showPanel(ManagerMainPanel.SUPPLIER_CONSTRAINT);
+              setHover(ManagerMainPanel.SUPPLIER_CONSTRAINT);
+            });
 
     managerMenuPanel.setCustomerButtonListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            managerMainPanel.showPanel(ManagerMainPanel.CUSTOMER_CONSTRAINT);
-            setHover(ManagerMainPanel.CUSTOMER_CONSTRAINT);
-          }
-        });
+            e -> {
+              managerMainPanel.showPanel(ManagerMainPanel.CUSTOMER_CONSTRAINT);
+              setHover(ManagerMainPanel.CUSTOMER_CONSTRAINT);
+            });
 
     managerMenuPanel.setOrderButtonListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            managerMainPanel.showPanel(ManagerMainPanel.ORDER_CONSTRAINT);
-            setHover(ManagerMainPanel.ORDER_CONSTRAINT);
-          }
-        });
+            e -> {
+              managerMainPanel.showPanel(ManagerMainPanel.ORDER_CONSTRAINT);
+              setHover(ManagerMainPanel.ORDER_CONSTRAINT);
+            });
 
     managerMenuPanel.setInventoryButtonListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            managerMainPanel.showPanel(ManagerMainPanel.INVENTORY_CONSTRAINT);
-            setHover(ManagerMainPanel.INVENTORY_CONSTRAINT);
-          }
-        });
+            e -> {
+              managerMainPanel.showPanel(ManagerMainPanel.INVENTORY_CONSTRAINT);
+              setHover(ManagerMainPanel.INVENTORY_CONSTRAINT);
+            });
 
     managerMenuPanel.setAccountManagementButtonListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            managerMainPanel.showPanel(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
-            setHover(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
-          }
-        });
+            e -> {
+              managerMainPanel.showPanel(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
+              setHover(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
+            });
 
     managerMenuPanel.setNotificationButtonListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-//            managerMainPanel.reloadNotification();
-            managerMainPanel.showPanel(ManagerMainPanel.NOTIFICATION_CONSTRAINT);
-            setHover(ManagerMainPanel.NOTIFICATION_CONSTRAINT);
-          }
-        });
+            e -> {
+  //            managerMainPanel.reloadNotification();
+              managerMainPanel.showPanel(ManagerMainPanel.NOTIFICATION_CONSTRAINT);
+              setHover(ManagerMainPanel.NOTIFICATION_CONSTRAINT);
+            });
 
     managerMenuPanel.setChangeInformButtonListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            managerMainPanel.showPanel(ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT);
-            setHover(ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT);
-          }
-        });
+            e -> {
+              managerMainPanel.showPanel(ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT);
+              setHover(ManagerMainPanel.CHANGE_INFORMATION_CONSTRAINT);
+            });
 
     managerMenuPanel.setswitchToLoginListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            int confirmed =
-                JOptionPane.showConfirmDialog(
-                    null,
-                    "Are you sure you want to switch to Login Screen?",
-                    "Switch to Login Screen",
-                    JOptionPane.YES_NO_OPTION);
+            e -> {
+              int confirmed =
+                  JOptionPane.showConfirmDialog(
+                      null,
+                      "Are you sure you want to switch to Login Screen?",
+                      "Switch to Login Screen",
+                      JOptionPane.YES_NO_OPTION);
 
-            if (confirmed == JOptionPane.YES_OPTION) {
-              new LoginFrame();
-            }
-          }
-        });
+              if (confirmed == JOptionPane.YES_OPTION) {
+                new LoginFrame();
+              }
+            });
 
     managerMenuPanel.setLogoutButtonListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            int confirmed =
-                JOptionPane.showConfirmDialog(
-                    null,
-                    "Are you sure you want to logout?",
-                    "Logout Confirmation",
-                    JOptionPane.YES_NO_OPTION);
+            e -> {
+              int confirmed =
+                  JOptionPane.showConfirmDialog(
+                      null,
+                      "Are you sure you want to logout?",
+                      "Logout Confirmation",
+                      JOptionPane.YES_NO_OPTION);
 
-            if (confirmed == JOptionPane.YES_OPTION) {
-              dispose();
-              new LoginFrame();
-            }
-          }
-        });
+              if (confirmed == JOptionPane.YES_OPTION) {
+                dispose();
+                new LoginFrame();
+              }
+            });
     setVisible(true);
   }
 
-  private void setHover(String panelName) {
+  public void setHover(String panelName) {
     CustomButton[] buttons = {
+            managerMenuPanel.dashBoardBt,
       managerMenuPanel.productBt,
       managerMenuPanel.supplierBt,
       managerMenuPanel.customerBt,
       managerMenuPanel.orderBt,
       managerMenuPanel.inventoryBt,
-      managerMenuPanel.accountManagementBt,
+      managerMenuPanel.managerBt,
       managerMenuPanel.notificationBt,
       managerMenuPanel.changeInformBt
     };
     String[] constraints = {
+            ManagerMainPanel.DASHBOARD_CONSTRAINT,
       ManagerMainPanel.PRODUCT_CONSTRAINT,
       ManagerMainPanel.SUPPLIER_CONSTRAINT,
       ManagerMainPanel.CUSTOMER_CONSTRAINT,

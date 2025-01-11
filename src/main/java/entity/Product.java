@@ -41,37 +41,21 @@ public class Product {
     boolean isActive;
 
 
-    @Override
-    public boolean equals(Object obj) {
-
-            if (obj==null || !(obj instanceof entity.Product))
-                return false;
-            else {
-                entity.Product that= (entity.Product) obj;
-                return this.id == that.id &&
-                        this.name.equals(that.name) &&
-                        this.supplier.equals(that.supplier) &&
-                        this.quantity == that.quantity &&
-                        this.price == that.price &&
-                        this.type.equals(that.type) &&
-                        this.brand.equals(that.brand) &&
-                        this.operatingSystem.equals(that.operatingSystem) &&
-                        this.cpu.equals(that.cpu) &&
-                        this.memory.equals(that.memory) &&
-                        this.ram.equals(that.ram) &&
-                        this.madeIn.equals(that.madeIn) &&
-                        this.disk.equals(that.disk) &&
-                        this.monitor.equals(that.monitor) &&
-                        this.weight ==that.weight &&
-                        this.card.equals(that.card) &&
-                        this.images.equals(that.images) &&
-                        this.status.equals(that.status) &&
-                        this.isActive == that.isActive;
-            }
-    }
-
     public boolean sameName(String name) {
         return this.name.equals(name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return id == product.id && quantity == product.quantity && Double.compare(price, product.price) == 0 && Float.compare(weight, product.weight) == 0 && isActive == product.isActive && Objects.equals(supplier, product.supplier) && Objects.equals(name, product.name) && Objects.equals(type, product.type) && Objects.equals(brand, product.brand) && Objects.equals(operatingSystem, product.operatingSystem) && Objects.equals(cpu, product.cpu) && Objects.equals(memory, product.memory) && Objects.equals(ram, product.ram) && Objects.equals(madeIn, product.madeIn) && Objects.equals(disk, product.disk) && Objects.equals(monitor, product.monitor) && Objects.equals(card, product.card) && Objects.equals(images, product.images) && Objects.equals(status, product.status);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, supplier, name, quantity, price, type, brand, operatingSystem, cpu, memory, ram, madeIn, disk, monitor, weight, card, images, status, isActive);
     }
 
     private String[] convertToArray(int serial) {
@@ -139,11 +123,6 @@ public class Product {
 
     public boolean sameName(Product p) {
         return this.name.equals(p.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, supplier, name, quantity, price, type, brand, operatingSystem, cpu, memory, ram, madeIn, disk, monitor, weight, card, images, status, isActive);
     }
 
     public boolean sameId(Product product) {

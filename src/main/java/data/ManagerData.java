@@ -203,18 +203,22 @@ public class ManagerData {
 
     //Order
     @Getter(AccessLevel.NONE)
-    Order order1 = Order.builder().orderId(1).customer(huyen).shipAddress("Cu Xa B, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 1, 1)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od2, od3, od5))).build();
+    Order order1 = Order.builder().orderId(1).customer(huyen).shipAddress("Cu Xa B, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 5, 1)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od2, od3, od5))).build();
     @Getter(AccessLevel.NONE)
     Order order2 = Order.builder().orderId(2).customer(hieu).shipAddress("Cu Xa C, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 1, 1)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od9, od10))).build();
     @Getter(AccessLevel.NONE)
-    Order order3 = Order.builder().orderId(3).customer(hieu).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 1, 1)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od7, od10, od9))).build();
+    Order order3 = Order.builder().orderId(3).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 1, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od7, od10, od9))).build();
+    @Getter(AccessLevel.NONE)
+    Order order4 = Order.builder().orderId(4).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 2, 1)).status(OrderType.UN_ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList( od10, od9))).build();
+    @Getter(AccessLevel.NONE)
+    Order order5 = Order.builder().orderId(5).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
 
     @Getter(AccessLevel.NONE)
-    List<Order> orders1 = new ArrayList<>(Arrays.asList(order1));
+    List<Order> orders1 = new ArrayList<>(Arrays.asList(order1,order4));
     @Getter(AccessLevel.NONE)
     List<Order> orders2 = new ArrayList<>(Arrays.asList(order2));
     @Getter(AccessLevel.NONE)
-    List<Order> orders3 = new ArrayList<>(Arrays.asList(order3));
+    List<Order> orders3 = new ArrayList<>(Arrays.asList(order3, order5));
 
     @Getter(AccessLevel.NONE)
     Manager DUY = Manager.builder()
@@ -284,6 +288,8 @@ public class ManagerData {
 
         orderDetails = new ArrayList<>(Arrays.asList(od1, od2, od3, od4, od5, od6, od7, od8, od9, od10));
         DUY.addOrder(orders1);
+        DUY.addOrder(orders2);
+        DUY.addOrder(orders3);
         HOANG.addOrder(orders2);
         TUAN.addOrder(orders3);
         orderId = 3;

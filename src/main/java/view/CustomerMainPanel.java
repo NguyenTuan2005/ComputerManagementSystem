@@ -705,18 +705,23 @@ public class CustomerMainPanel extends JPanel {
                           "Order Confirmation",
                           JOptionPane.YES_NO_OPTION);
                   boolean saved = (i == 0);
+
                   if (saved && !productOrders.isEmpty()) {
                     CUSTOMER_ID = CurrentUser.CURRENT_USER_V2.getId();
                     ADDRESS = addressField.getText();
+
                    var orderDetails = new OrderDetailConverter(getUnqueProductOrder(productOrders)).toOrderDetails();
+                   orderDetails.forEach(System.out::println);
                    var newOrder = Order.builder()
                            .customer((Customer) CurrentUser.CURRENT_USER_V2)
                            .shipAddress(ADDRESS)
                            .status(OrderType.ACTIVE.getStatus())
                            .orderedAt(LocalDate.now())
                            .orderDetails(orderDetails).build();
+
                     LoginFrame.COMPUTER_SHOP.addOrder( newOrder);
-                    productOrders.clear();
+
+
 
                     addCustomerNotification(
                         CurrentUser.CURRENT_USER_V2, BillConfig.generateBill(newOrder));
@@ -734,6 +739,7 @@ public class CustomerMainPanel extends JPanel {
                     EmailConfig emailConfig = new EmailConfig();
                     emailConfig.send(CurrentUser.CURRENT_USER_V2.getEmail(),"Bill", BillConfig.generateBill(newOrder));
 
+                    productOrders.clear();
                   } else {
                     ToastNotification.showToast("Cancel order!", 2500, 50, -1, -1);
                   }
@@ -1155,6 +1161,12 @@ public class CustomerMainPanel extends JPanel {
     }
 
     private void performUpdate() {
+      String[] data = {avatar.getImagePath(),
+              emailField.getText().trim(),
+              fullNameField.getText().trim(),
+              addressField.getText().trim(),
+      };
+      CurrentUser.CURRENT_USER_V2.update(data);
       CurrentUser. CURRENT_USER_V2.changeEmail(emailField.getText().trim());
       CurrentUser. CURRENT_USER_V2.changeFullName(fullNameField.getText().trim());
       CurrentUser. CURRENT_USER_V2.changeAddress(addressField.getText().trim());
@@ -1780,9 +1792,11 @@ public class CustomerMainPanel extends JPanel {
             totalItems--;
             totalPrice -= product.getPrice();
             updatePriceQuantityInCart(totalItems, totalPrice);
-
+            productOrders.remove(orderDetail);
             orderDetail.setQuantity(countItem[0]);
-            this.productOrders.add(orderDetail);
+            productOrders.add(orderDetail);
+
+//            System.out.println( this.productOrders.add(orderDetail));
           }
         });
 
@@ -1807,9 +1821,11 @@ public class CustomerMainPanel extends JPanel {
             totalItems += countItem[0];
             totalPrice += product.getPrice();
             updatePriceQuantityInCart(totalItems, totalPrice);
+            productOrders.remove(orderDetail);
 
             orderDetail.setQuantity(countItem[0]);
-            this.productOrders.add(orderDetail);
+            productOrders.add(orderDetail);
+//            System.out.println( this.productOrders.add(orderDetail));
           } else {
             JOptionPane.showMessageDialog(
                 null,
@@ -1836,6 +1852,7 @@ public class CustomerMainPanel extends JPanel {
             SwingConstants.CENTER,
             new Dimension(60, 50));
     ButtonConfig.setButtonIcon("src/main/java/Icon/remove_Icon.png", removeBt, 10);
+
     removeBt.addActionListener(
         e -> {
           totalItems -= countItem[0];
@@ -1849,7 +1866,7 @@ public class CustomerMainPanel extends JPanel {
     rightPanel.add(removeBt);
 
     // add sau khi da final
-    this.productOrders.add(orderDetail);
+//    System.out.println(this.productOrders.add(orderDetail));
 
     mainPanel.add(rightPanel, BorderLayout.EAST);
     return wrapperPanel;

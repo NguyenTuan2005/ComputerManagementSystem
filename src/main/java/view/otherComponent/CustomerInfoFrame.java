@@ -11,8 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
-import entity.Customer;
+import model.Customer;
 import security.PasswordSecurity;
 import view.LoginFrame;
 import view.Style;
@@ -28,20 +27,17 @@ public class CustomerInfoFrame extends JFrame {
   private Runnable callMethodUpdate;
   private PasswordSecurity passwordSecurity;
 
-
-
   private static final Color DARK_BLUE = new Color(0, 75, 150);
   private static final Color MEDIUM_BLUE = new Color(51, 153, 255);
   private static final Color LIGHT_BLUE = new Color(235, 245, 255);
   private static final Color HOVER_BLUE = new Color(30, 144, 255);
 
-  public CustomerInfoFrame( Runnable callMethodUpdate) {
+  public CustomerInfoFrame(Runnable callMethodUpdate) {
     this.callMethodUpdate = callMethodUpdate;
     setTitle("Customer Information");
     setSize(500, 650);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setUndecorated(true);
-
 
     JPanel mainPanel = new JPanel();
     mainPanel.setLayout(new BorderLayout(15, 15));
@@ -187,15 +183,16 @@ public class CustomerInfoFrame extends JFrame {
   }
 
   public static void main(String[] args) {
-//    new CustomerInfoFrame(()->{});
+    //    new CustomerInfoFrame(()->{});
   }
 
   private void handleSave() {
 
-
-    if (emailField.getText() != null && passwordField.getPassword().length !=0) {
-      passwordSecurity = new PasswordSecurity(new String(passwordField.getPassword()) );
-      var newCustomer = Customer.builder().fullName(fullNameField.getText())
+    if (emailField.getText() != null && passwordField.getPassword().length != 0) {
+      passwordSecurity = new PasswordSecurity(new String(passwordField.getPassword()));
+      var newCustomer =
+          Customer.builder()
+              .fullName(fullNameField.getText())
               .avatarImg(contextPath)
               .password(passwordSecurity.generatePassword())
               .email(emailField.getText())

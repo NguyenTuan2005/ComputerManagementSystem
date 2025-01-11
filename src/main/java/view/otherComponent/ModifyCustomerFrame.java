@@ -11,10 +11,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import entity.Customer;
+import model.Customer;
 import view.LoginFrame;
 import view.Style;
-
 
 public class ModifyCustomerFrame extends JFrame {
 
@@ -25,13 +24,12 @@ public class ModifyCustomerFrame extends JFrame {
   private Customer customer;
   private Runnable callMethodReload;
 
-
   private static final Color DARK_BLUE = new Color(0, 75, 150);
   private static final Color MEDIUM_BLUE = new Color(51, 153, 255);
   private static final Color LIGHT_BLUE = new Color(235, 245, 255);
   private static final Color HOVER_BLUE = new Color(30, 144, 255);
 
-  public ModifyCustomerFrame(Customer customer,Runnable callMethodReload) {
+  public ModifyCustomerFrame(Customer customer, Runnable callMethodReload) {
     this.customer = customer;
     this.callMethodReload = callMethodReload;
     this.contextPath = customer.getAvatarImg();
@@ -182,11 +180,11 @@ public class ModifyCustomerFrame extends JFrame {
 
   private void handleSave() {
     // Add your save logic here
-//    JOptionPane.showMessageDialog(this, "Update button clicked!");
+    //    JOptionPane.showMessageDialog(this, "Update button clicked!");
     LoginFrame.COMPUTER_SHOP.updateUserInfor(createCustomer());
     System.out.println("update :" + createCustomer());
-//    JOptionPane.showMessageDialog(this, "Updated successfully");
-    if(callMethodReload!= null) callMethodReload.run();
+    //    JOptionPane.showMessageDialog(this, "Updated successfully");
+    if (callMethodReload != null) callMethodReload.run();
     setVisible(false);
   }
 

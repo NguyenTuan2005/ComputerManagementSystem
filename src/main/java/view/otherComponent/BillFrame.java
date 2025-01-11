@@ -2,21 +2,16 @@ package view.otherComponent;
 
 import config.BillConfig;
 import config.LabelConfig;
-
 import java.awt.*;
-
 import javax.swing.*;
-
-import entity.Order;
+import model.Order;
 import view.Style;
 
 public class BillFrame extends JFrame {
 
   private JTextArea billTextArea;
 
-
   public BillFrame(Order order) {
-
 
     setTitle("Computer Management System");
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);

@@ -2,7 +2,6 @@ package view.otherComponent;
 
 import config.ButtonConfig;
 import config.TextFieldConfig;
-
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -15,8 +14,7 @@ import java.util.Map;
 import java.util.Stack;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
-
-import entity.Supplier;
+import model.Supplier;
 import view.LoginFrame;
 import view.Style;
 
@@ -34,10 +32,8 @@ public class ModifySupplierFrame extends JFrame {
   private CenterPanel centerPanel;
   private ButtonPanel buttonPanel;
 
-
   private Runnable updateCallback;
   private Supplier supplier;
-
 
   private Map<JTextField, Stack<String>> fieldHistoryMap = new HashMap<>();
   private Stack<JTextField> modificationOrder = new Stack<>();
@@ -82,8 +78,6 @@ public class ModifySupplierFrame extends JFrame {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-
   }
 
   private class TitlePanel extends JPanel {
@@ -227,13 +221,13 @@ public class ModifySupplierFrame extends JFrame {
 
     private String saveSupplier() {
       try {
-        if(isValidDate(dateField.getText())) {
+        if (isValidDate(dateField.getText())) {
           supplier.setCompanyName(companyNameField.getText());
           supplier.setEmail(emailField.getText());
           supplier.setPhoneNumber(phoneNumberField.getText());
           supplier.setAddress(addressField.getText());
           supplier.setContractDate(LocalDate.parse(dateField.getText()));
-          System.out.println("update "+supplier);
+          System.out.println("update " + supplier);
           LoginFrame.COMPUTER_SHOP.updateSupplier(supplier);
           return "success";
         }
@@ -249,6 +243,7 @@ public class ModifySupplierFrame extends JFrame {
       }
       return "";
     }
+
     private boolean isValidDate(String inputDate) {
       String dateFormat = "yyyy-MM-dd";
       SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);

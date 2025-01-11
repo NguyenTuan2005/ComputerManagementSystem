@@ -3,10 +3,9 @@ package view.otherComponent;
 import config.ButtonConfig;
 import config.CurrentUser;
 import config.PasswordFieldConfig;
-import view.Style;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
+import view.Style;
 
 public class ChangePasswordFrame extends JFrame {
   private JPasswordField[] passwordFields;
@@ -143,13 +142,13 @@ public class ChangePasswordFrame extends JFrame {
 
   private boolean updatePassword(String newPassword) {
 
-      switch (role) {
-        case ("Customer") -> CurrentUser.CURRENT_USER_V2.updatePassword(newPassword);
-        case ("Manager") -> CurrentUser.CURRENT_MANAGER_V2.updatePassword(newPassword);
-        default -> JOptionPane.showMessageDialog(
-            this, "Invalid role", "Error", JOptionPane.ERROR_MESSAGE);
-      }
-      return true;
+    switch (role) {
+      case ("Customer") -> CurrentUser.CURRENT_USER_V2.updatePassword(newPassword);
+      case ("Manager") -> CurrentUser.CURRENT_MANAGER_V2.updatePassword(newPassword);
+      default -> JOptionPane.showMessageDialog(
+          this, "Invalid role", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    return true;
   }
 
   private class PasswordInputPanel extends JPanel {

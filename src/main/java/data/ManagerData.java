@@ -211,7 +211,17 @@ public class ManagerData {
     @Getter(AccessLevel.NONE)
     Order order4 = Order.builder().orderId(4).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 2, 1)).status(OrderType.UN_ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList( od10, od9))).build();
     @Getter(AccessLevel.NONE)
-    Order order5 = Order.builder().orderId(5).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    Order order5 = Order.builder().orderId(5).customer(huyen).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    @Getter(AccessLevel.NONE)
+    Order order6 = Order.builder().orderId(6).customer(hieu).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    @Getter(AccessLevel.NONE)
+    Order order7 = Order.builder().orderId(7).customer(nguyenVanChay).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    @Getter(AccessLevel.NONE)
+    Order order8 = Order.builder().orderId(8).customer(nguyenVanChay).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    @Getter(AccessLevel.NONE)
+    Order order9 = Order.builder().orderId(9).customer(huyen).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    @Getter(AccessLevel.NONE)
+    Order order10 = Order.builder().orderId(10).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
 
     @Getter(AccessLevel.NONE)
     List<Order> orders1 = new ArrayList<>(Arrays.asList(order1,order4));

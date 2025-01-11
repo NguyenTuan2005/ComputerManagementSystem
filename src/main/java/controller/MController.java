@@ -4,6 +4,7 @@ import entity.*;
 import enums.DisplayProductType;
 import enums.LoginStatus;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ public interface MController {
     void unBlockCustomerById(int id);
     Map<Customer,Long> customerOrderStatistics();
     List<Order> getAllOrderByCustomer(Customer customer);
+    List<Order> findOrderByCustomerAndDate(Customer customer, LocalDate orderedAt);
 
 
 
@@ -52,6 +54,7 @@ public interface MController {
     void addSupplier(Supplier newSupplier);
     void removeSupplierByIndex(int index);
     void updateSupplier(Supplier supplier);
+    Map<Supplier, Long> totalProductStatictics();
 
 
 

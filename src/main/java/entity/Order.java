@@ -116,4 +116,8 @@ public class Order {
     public boolean isUnActive() {
         return this.status.equals(OrderType.UN_ACTIVE_MESSAGE);
     }
+
+    public boolean orderedAt(LocalDate orderedAt) {
+        return this.orderedAt.equals(orderedAt);
+    }
 }

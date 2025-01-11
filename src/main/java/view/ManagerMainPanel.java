@@ -157,7 +157,7 @@ public class ManagerMainPanel extends JPanel {
   }
 
   private class DashBoardPanel extends JPanel {
-    private CustomButton productsBt, customersBt, suppliersBt, ordersBt, managersBt;
+    private CustomButton productsBt, customersBt, suppliersBt, managersBt;
     private CenterPanel centerPanel = new CenterPanel();
     public DashBoardPanel() {
       setLayout(new BorderLayout());
@@ -169,35 +169,22 @@ public class ManagerMainPanel extends JPanel {
       productsBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
               LoginFrame.COMPUTER_SHOP.getTotalProduct() +
               "<br>Products</div></html>", Style.FONT_BOLD_30,Color.white,Style.BUTTON_GREEN_DASHBOARD,Style.LIGHT_GREEN,20,SwingConstants.CENTER,new Dimension(250,100));
-      productsBt.addActionListener(e -> {
-          showPanel(ManagerMainPanel.PRODUCT_CONSTRAINT);
-
-      });
       statisticsBarPn.add(productsBt);
+
       customersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
               LoginFrame.COMPUTER_SHOP.getTotalCustomer() +
               "<br>Customers</div></html>", Style.FONT_BOLD_30,Color.white,Style.BUTTON_YELLOW_DASHBOARD,Style.LIGHT_YELLOW,20,SwingConstants.CENTER,new Dimension(250,100));
-      customersBt.addActionListener(e -> {
-          showPanel(ManagerMainPanel.CUSTOMER_CONSTRAINT);
-        });
       statisticsBarPn.add(customersBt);
+
       suppliersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
               LoginFrame.COMPUTER_SHOP.getTotalSupplier() +
               "<br>Suppliers</div></html>", Style.FONT_BOLD_30,Color.white,Style.MENU_BUTTON_COLOR,Style.LIGHT_BlUE,20,SwingConstants.CENTER,new Dimension(250,100));
-      suppliersBt.addActionListener(e -> {
-          showPanel(ManagerMainPanel.SUPPLIER_CONSTRAINT);
-
-      });
       statisticsBarPn.add(suppliersBt);
 
       managersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
                 LoginFrame.COMPUTER_SHOP.getTotalManager() +
                 "<br>Managers</div></html>", Style.FONT_BOLD_30,Color.white,Style.DELETE_BUTTON_COLOR_RED,Style.LIGHT_RED,20,SwingConstants.CENTER,new Dimension(250,100));
-      managersBt.addActionListener(e -> {
-            showPanel(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
-        });
       statisticsBarPn.add(managersBt);
-
       add(statisticsBarPn, BorderLayout.NORTH);
       add(centerPanel,BorderLayout.CENTER);
     }
@@ -1054,7 +1041,7 @@ public class ManagerMainPanel extends JPanel {
     //data
 
     private static List<Supplier> suppliers = reloadData();
-    private static  Map<String,Long> analyzeSalesVolume= LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
+    private static  Map<Supplier,Long> analyzeSalesVolume= LoginFrame.COMPUTER_SHOP.totalProductStatictics();
 
     private static List<Supplier> reloadData() {
       return LoginFrame.COMPUTER_SHOP.getAllSupplier();
@@ -1108,7 +1095,7 @@ public class ManagerMainPanel extends JPanel {
           KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.addKey, sumItemBt);
           sumItemBt.addActionListener(
                   e -> {
-                      analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.analyzeQuantityOfImportedGoods();
+//                      analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.analyzeQuantityOfImportedGoods();
                       modelQuantity.setRowCount(0);
                       upDataTable(modelQuantity);
                   });
@@ -1185,7 +1172,7 @@ public class ManagerMainPanel extends JPanel {
           analysisBt.addActionListener( e ->{
              LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
              modelQuantity.setRowCount(0);
-             analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
+             analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.totalProductStatictics();
             upDataTable(modelQuantity);
           });
 
@@ -1210,9 +1197,9 @@ public class ManagerMainPanel extends JPanel {
                 updateSuppliers(selectedOption);
                 findText.setText("");
 
-//                analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
+                analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.totalProductStatictics();
                 modelQuantity.setRowCount(0);
-//                upDataTable(modelQuantity);
+                upDataTable(modelQuantity);
               });
         }
         findText =
@@ -1272,7 +1259,7 @@ public class ManagerMainPanel extends JPanel {
         applicationPanel.add(ButtonConfig.createVerticalSeparator());
         applicationPanel.add(exportExcelBt);
         applicationPanel.add(analysisBt);
-        applicationPanel.add(sumItemBt);
+//        applicationPanel.add(sumItemBt);
         applicationPanel.add(reloadBt);
         applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
 
@@ -1378,7 +1365,8 @@ public class ManagerMainPanel extends JPanel {
         tabbedPaneSupplier.add("Supply Statistics",scrollPaneSupplierQuantity);
 
         add(tabbedPaneSupplier, BorderLayout.CENTER);
-
+          modelQuantity.setRowCount(0);
+          upDataTable(modelQuantity);
       }
     }
 
@@ -1396,9 +1384,12 @@ public class ManagerMainPanel extends JPanel {
 
       modelQuantity.setRowCount(0);
 
-      Iterator<String> iterator =analyzeSalesVolume.keySet().iterator();
+
+
+        var iterator = analyzeSalesVolume.entrySet().iterator();
+
       while (iterator.hasNext()) {
-        String key = iterator.next();
+        var key = iterator.next().getKey().getCompanyName();
         if(!key.toLowerCase().contains(text.toLowerCase())) {
           iterator.remove();
         }
@@ -1413,10 +1404,12 @@ public class ManagerMainPanel extends JPanel {
       }
     }
     public static void upDataTable( DefaultTableModel modelQuantity) {
-      int index =0;
-      for(Map.Entry<String, Long> data: analyzeSalesVolume.entrySet()) {
-        modelQuantity.addRow(new Object[]{index++ +" ",data.getKey(),data.getValue()});
+      int index =0 , total =0;
+      for(Map.Entry<Supplier, Long> data: analyzeSalesVolume.entrySet()) {
+        modelQuantity.addRow(new Object[]{index++ +" ",data.getKey().getCompanyName(),data.getValue()});
+        total += data.getValue();
       }
+      modelQuantity.addRow(new Object[]{" ","Total :",total});
     }
   }
 
@@ -1676,7 +1669,7 @@ public class ManagerMainPanel extends JPanel {
               @Override
               public void actionPerformed(ActionEvent e) {
 
-                switch (getIndexSelectedTab()) {
+                  switch (getIndexSelectedTab()) {
                   case TAB_DATA_CUSTOMER:
                     {
                       if (findCustomerField.getText().trim().isEmpty()) return;
@@ -1712,6 +1705,20 @@ public class ManagerMainPanel extends JPanel {
                       break;
                     }
                 }
+
+
+                  ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
+                  int i=0, total=0;
+                  for(Map.Entry<Customer,Long> value : LoginFrame.COMPUTER_SHOP.customerOrderStatistics().entrySet()){
+                      boolean isValidName = value.getKey().getFullName().toLowerCase().contains(findCustomerField.getText().trim().toLowerCase());
+                      if(isValidName) {
+                          customerStatisticsModel.addRow(new Object[]{i++, value.getKey().getFullName(), value.getValue()});
+                          barDatasetCustomer.addValue(value.getValue(), value.getKey().getFullName(), value.getKey().getFullName());
+                          total += value.getValue();
+                      }
+                  }
+                  customerStatisticsModel.addRow(new Object[]{"","Total : ",total});
+
               }
             });
 
@@ -1730,8 +1737,9 @@ public class ManagerMainPanel extends JPanel {
         reloadCustomerBt.addActionListener(
             e -> {
               reload();
-
               findCustomerField.setText("");
+
+
             });
 
         searchPanel = new JPanel(new FlowLayout());
@@ -1883,11 +1891,12 @@ public class ManagerMainPanel extends JPanel {
 
       }
       public void upDataCustomerStatisticsTable(Map<Customer,Long> data){
-          ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
+        ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
         int i=0, total=0;
         for(Map.Entry<Customer,Long> value : data.entrySet()){
             customerStatisticsModel.addRow(new Object[]{i++,value.getKey().getFullName(),value.getValue()});
-            barDatasetCustomer.addValue(value.getValue(),value.getKey().getFullName(),value.getKey());
+
+            barDatasetCustomer.addValue(value.getValue(),value.getKey().getFullName(),value.getKey().getFullName());
             total+= value.getValue();
         }
           customerStatisticsModel.addRow(new Object[]{"","Total : ",total});
@@ -4649,10 +4658,8 @@ public class ManagerMainPanel extends JPanel {
       fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
       ExcelConfig.exportToExcel(dataList, fileName, headers);
       JOptionPane.showMessageDialog(null, "Exported to " + fileName);
-    } else {
-      JOptionPane.showMessageDialog(
-          null, "File name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
     }
+
   }
 
 //  public void reloadNotification() {
@@ -4762,9 +4769,10 @@ public class ManagerMainPanel extends JPanel {
   public void setDashBoardCustomerBtListener(ActionListener listener){
         dashBoardPanel.customersBt.addActionListener(listener);
     }
-    public void setDashBoardSupplierListener(ActionListener listener){
+  public void setDashBoardSupplierListener(ActionListener listener){
         dashBoardPanel.suppliersBt.addActionListener(listener);
-    }public void setDashBoardManagerBtListener(ActionListener listener){
+    }
+  public void setDashBoardManagerBtListener(ActionListener listener){
         dashBoardPanel.managersBt.addActionListener(listener);
     }
 

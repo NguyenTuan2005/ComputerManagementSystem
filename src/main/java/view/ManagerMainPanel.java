@@ -201,6 +201,7 @@ public class ManagerMainPanel extends JPanel {
       add(statisticsBarPn, BorderLayout.NORTH);
       add(centerPanel,BorderLayout.CENTER);
     }
+
     public class CenterPanel extends JPanel{
         private JLabel welcomeLabel;
         private CardLayout dashBCardLayout = new CardLayout();
@@ -209,7 +210,7 @@ public class ManagerMainPanel extends JPanel {
         CenterPanel(){
             setLayout(dashBCardLayout);
 
-            Timer timer = new Timer(3000, e -> dashBCardLayout.show(CenterPanel.this, "statisticsTable"));
+            Timer timer = new Timer(2500, e -> dashBCardLayout.show(CenterPanel.this, "statisticsTable"));
             timer.setRepeats(false);
 
             JPanel welcomePn = new JPanel(new BorderLayout());
@@ -4607,11 +4608,6 @@ public class ManagerMainPanel extends JPanel {
         });
   }
 
-  private void setColorMenuButton(String Name){
-
-
-  }
-
   private JTable createTable(DefaultTableModel model, String[] columnNames) {
 
     model =
@@ -4690,5 +4686,10 @@ public class ManagerMainPanel extends JPanel {
     tabbedPane.setFocusable(false);
     return tabbedPane;
   }
+
+  public void setProductButtonListener(){
+
+  }
+
 
 }

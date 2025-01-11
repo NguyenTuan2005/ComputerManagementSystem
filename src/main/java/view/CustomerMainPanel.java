@@ -1408,15 +1408,9 @@ public class CustomerMainPanel extends JPanel {
     JPanel imagePn = new JPanel(new BorderLayout());
 
     var urls = product.getImages();
-    ImageIcon[] images = new ImageIcon[urls.size()];
-
-    for (int i = 0; i < images.length; i++) {
-      images[i] = createImageForProduct(urls.get(i).getUrl(), 350, 350);
-    }
 
     JPanel largeImagePn = new JPanel();
-
-    JLabel largeImageLabel = new JLabel(images[0]);
+    JLabel largeImageLabel = new JLabel(createImageForProduct(urls.get(0).getUrl(), 350, 350));
     largeImagePn.setBackground(Color.WHITE);
     largeImagePn.add(largeImageLabel);
     imagePn.add(largeImagePn, BorderLayout.CENTER);
@@ -1431,10 +1425,9 @@ public class CustomerMainPanel extends JPanel {
     scrollPane.setBorder(null);
 
     final CustomButton[] selectedButton = {null};
-//    for (int i = 0; i < urls.size(); i++) {
-//
-//    }
-    for (ImageIcon icon : images) {
+
+    for (entity.Image url : urls) {
+
 
       CustomButton imageBt =
           ButtonConfig.createCustomButton(
@@ -1446,11 +1439,11 @@ public class CustomerMainPanel extends JPanel {
               10,
               SwingConstants.CENTER,
               new Dimension(80, 70));
-      ButtonConfig.setButtonIcon(" ", imageBt, 5);
+      ButtonConfig.setButtonIcon(url.getUrl(), imageBt, 5);
 
       imageBt.addActionListener(
           e -> {
-            largeImageLabel.setIcon(icon);
+            largeImageLabel.setIcon(createImageForProduct(url.getUrl(), 350, 350));
             if (selectedButton[0] != null) {
               selectedButton[0].setBackgroundColor(Color.WHITE);
             }

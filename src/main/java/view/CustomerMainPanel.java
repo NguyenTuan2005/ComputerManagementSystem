@@ -738,10 +738,13 @@ public class CustomerMainPanel extends JPanel {
 
                     updatePriceQuantityInCart(0, 0);
 
-                    EmailConfig emailConfig = new EmailConfig();
-                    emailConfig.send(CurrentUser.CURRENT_USER_V2.getEmail(),"Bill", BillConfig.generateBill(newOrder));
+
 
                     productOrders.clear();
+                    System.out.println(" clear "+ productOrders.size());
+
+                    EmailConfig emailConfig = new EmailConfig();
+                    emailConfig.send(CurrentUser.CURRENT_USER_V2.getEmail(),"Bill", BillConfig.generateBill(newOrder));
                   } else {
                     ToastNotification.showToast("Cancel order!", 2500, 50, -1, -1);
                   }
@@ -1428,7 +1431,9 @@ public class CustomerMainPanel extends JPanel {
     scrollPane.setBorder(null);
 
     final CustomButton[] selectedButton = {null};
-
+//    for (int i = 0; i < urls.size(); i++) {
+//
+//    }
     for (ImageIcon icon : images) {
 
       CustomButton imageBt =
@@ -1441,7 +1446,7 @@ public class CustomerMainPanel extends JPanel {
               10,
               SwingConstants.CENTER,
               new Dimension(80, 70));
-      ButtonConfig.setButtonIcon("src/main/java/img/10534505WIN_20241115_21_54_58_Pro.jpg", imageBt, 5);
+      ButtonConfig.setButtonIcon(" ", imageBt, 5);
 
       imageBt.addActionListener(
           e -> {
@@ -1863,8 +1868,6 @@ public class CustomerMainPanel extends JPanel {
         });
     rightPanel.add(removeBt);
 
-    // add sau khi da final
-//    System.out.println(this.productOrders.add(orderDetail));
 
     mainPanel.add(rightPanel, BorderLayout.EAST);
     return wrapperPanel;

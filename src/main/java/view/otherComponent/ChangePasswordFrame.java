@@ -3,10 +3,10 @@ package view.otherComponent;
 import config.ButtonConfig;
 import config.CurrentUser;
 import config.PasswordFieldConfig;
-
-import java.awt.*;
-import javax.swing.*;
 import view.Style;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class ChangePasswordFrame extends JFrame {
   private JPasswordField[] passwordFields;
@@ -82,12 +82,12 @@ public class ChangePasswordFrame extends JFrame {
     }
 
     try {
-//      if (!CurrentUser.CURRENT_MANAGER.authenticateOldPassword(oldPassword)
-//          || !CurrentUser.CURRENT_CUSTOMER.authenticateOldPassword(oldPassword)) {
-//        JOptionPane.showMessageDialog(
-//            this, "Incorrect old password.", "Authentication Error", JOptionPane.ERROR_MESSAGE);
-//        return;
-//      }
+      if (!CurrentUser.CURRENT_MANAGER_V2.authenticateOldPassword(oldPassword)
+          || !CurrentUser.CURRENT_USER_V2.authenticateOldPassword(oldPassword)) {
+        JOptionPane.showMessageDialog(
+            this, "Incorrect old password.", "Authentication Error", JOptionPane.ERROR_MESSAGE);
+        return;
+      }
 
       boolean passwordChanged = updatePassword(newPassword);
 
@@ -142,21 +142,14 @@ public class ChangePasswordFrame extends JFrame {
   }
 
   private boolean updatePassword(String newPassword) {
-//    try {
-//      switch (role) {
-//        case ("Customer") -> new CustomerController()
-//            .updatePassword(newPassword, CurrentUser.CURRENT_CUSTOMER.getId());
-//        case ("Manager") -> new AccountController()
-//            .updatePassword(newPassword, CurrentUser.CURRENT_MANAGER.getAccountId());
-//        default -> JOptionPane.showMessageDialog(
-//            this, "Invalid role", "Error", JOptionPane.ERROR_MESSAGE);
-//      }
-//
-//      return true;
-//    } catch (Exception e) {
-//      e.printStackTrace();
-      return false;
-//    }
+
+      switch (role) {
+        case ("Customer") -> CurrentUser.CURRENT_USER_V2.updatePassword(newPassword);
+        case ("Manager") -> CurrentUser.CURRENT_MANAGER_V2.updatePassword(newPassword);
+        default -> JOptionPane.showMessageDialog(
+            this, "Invalid role", "Error", JOptionPane.ERROR_MESSAGE);
+      }
+      return true;
   }
 
   private class PasswordInputPanel extends JPanel {

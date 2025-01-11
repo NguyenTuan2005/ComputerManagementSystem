@@ -1669,7 +1669,7 @@ public class ManagerMainPanel extends JPanel {
               @Override
               public void actionPerformed(ActionEvent e) {
 
-                switch (getIndexSelectedTab()) {
+                  switch (getIndexSelectedTab()) {
                   case TAB_DATA_CUSTOMER:
                     {
                       if (findCustomerField.getText().trim().isEmpty()) return;
@@ -1705,6 +1705,20 @@ public class ManagerMainPanel extends JPanel {
                       break;
                     }
                 }
+
+
+                  ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
+                  int i=0, total=0;
+                  for(Map.Entry<Customer,Long> value : LoginFrame.COMPUTER_SHOP.customerOrderStatistics().entrySet()){
+                      boolean isValidName = value.getKey().getFullName().toLowerCase().contains(findCustomerField.getText().trim().toLowerCase());
+                      if(isValidName) {
+                          customerStatisticsModel.addRow(new Object[]{i++, value.getKey().getFullName(), value.getValue()});
+                          barDatasetCustomer.addValue(value.getValue(), value.getKey().getFullName(), value.getKey().getFullName());
+                          total += value.getValue();
+                      }
+                  }
+                  customerStatisticsModel.addRow(new Object[]{"","Total : ",total});
+
               }
             });
 
@@ -1723,8 +1737,9 @@ public class ManagerMainPanel extends JPanel {
         reloadCustomerBt.addActionListener(
             e -> {
               reload();
-
               findCustomerField.setText("");
+
+
             });
 
         searchPanel = new JPanel(new FlowLayout());
@@ -1876,11 +1891,12 @@ public class ManagerMainPanel extends JPanel {
 
       }
       public void upDataCustomerStatisticsTable(Map<Customer,Long> data){
-          ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
+        ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
         int i=0, total=0;
         for(Map.Entry<Customer,Long> value : data.entrySet()){
             customerStatisticsModel.addRow(new Object[]{i++,value.getKey().getFullName(),value.getValue()});
-            barDatasetCustomer.addValue(value.getValue(),value.getKey().getFullName(),value.getKey());
+
+            barDatasetCustomer.addValue(value.getValue(),value.getKey().getFullName(),value.getKey().getFullName());
             total+= value.getValue();
         }
           customerStatisticsModel.addRow(new Object[]{"","Total : ",total});
@@ -4631,10 +4647,8 @@ public class ManagerMainPanel extends JPanel {
       fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
       ExcelConfig.exportToExcel(dataList, fileName, headers);
       JOptionPane.showMessageDialog(null, "Exported to " + fileName);
-    } else {
-      JOptionPane.showMessageDialog(
-          null, "File name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
     }
+
   }
 
 //  public void reloadNotification() {

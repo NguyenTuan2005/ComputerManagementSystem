@@ -1,14 +1,32 @@
 package view;
 
-import config.ProductOrderConfig;
-import converter.OrderDetailConverter;
-import verifier.EmailVerifier;
-import verifier.NotEmptyVerifier;
 import com.toedter.calendar.JCalendar;
 import config.*;
-import enums.*;
-import java.awt.*;
+import converter.OrderDetailConverter;
+import entity.*;
+import enums.DisplayProductType;
+import enums.OrderType;
+import lombok.SneakyThrows;
+import verifier.EmailVerifier;
+import verifier.NotEmptyVerifier;
+import view.otherComponent.BillFrame;
+import view.otherComponent.ChangePasswordFrame;
+import view.otherComponent.NotFoundItemPanel;
+import view.overrideComponent.CircularImage;
+import view.overrideComponent.CustomButton;
+import view.overrideComponent.RoundedBorder;
+import view.overrideComponent.ToastNotification;
+
+import javax.swing.Timer;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,25 +37,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import javax.swing.*;
-import javax.swing.Timer;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicScrollBarUI;
-import lombok.SneakyThrows;
-import entity.*;
-
-import view.otherComponent.BillFrame;
-import view.otherComponent.ChangePasswordFrame;
-import view.otherComponent.NotFoundItemPanel;
-import view.overrideComponent.*;
-import view.overrideComponent.CustomButton;
 
 import static config.ProductOrderConfig.getUnqueProductOrder;
 
@@ -1167,10 +1169,6 @@ public class CustomerMainPanel extends JPanel {
               addressField.getText().trim(),
       };
       CurrentUser.CURRENT_USER_V2.update(data);
-      CurrentUser. CURRENT_USER_V2.changeEmail(emailField.getText().trim());
-      CurrentUser. CURRENT_USER_V2.changeFullName(fullNameField.getText().trim());
-      CurrentUser. CURRENT_USER_V2.changeAddress(addressField.getText().trim());
-      LoginFrame.COMPUTER_SHOP.updateUserInfor(CurrentUser. CURRENT_USER_V2);
       ToastNotification.showToast(
           "Your information has been successfully updated.", 2500, 50, -1, -1);
     }

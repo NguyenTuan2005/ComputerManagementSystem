@@ -1,28 +1,31 @@
 package view;
 
 
-import static view.CustomerMainPanel.createImageForProduct;
 import com.toedter.calendar.JCalendar;
 import config.*;
 import entity.*;
 import enums.DisplayProductType;
 import enums.OrderType;
 import enums.TableStatus;
-import static enums.TableStatus.*;
-import static view.CustomerMainPanel.formatCurrency;
-
 import lombok.SneakyThrows;
-import org.jfree.chart.*;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
-import org.jfree.chart.plot.*;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
-import verifier.*;
+import verifier.BirthDayVerifier;
+import verifier.EmailVerifier;
+import verifier.NotEmptyVerifier;
+import verifier.PhoneNumberVerifier;
 import view.otherComponent.*;
 import view.overrideComponent.CircularImage;
 import view.overrideComponent.CustomButton;
@@ -44,7 +47,10 @@ import java.awt.Image;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,9 +63,14 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static enums.TableStatus.ADD;
+import static enums.TableStatus.MODIFY;
+import static view.CustomerMainPanel.createImageForProduct;
+import static view.CustomerMainPanel.formatCurrency;
 
 public class ManagerMainPanel extends JPanel {
   private CardLayout cardLayout = new CardLayout();
@@ -4548,7 +4559,6 @@ public class ManagerMainPanel extends JPanel {
     }
 
     private void performUpdate() {
-        User user = LoginFrame.COMPUTER_SHOP.findManagerByEmail(CurrentUser.CURRENT_MANAGER_V2.getEmail());
         String[] data = {avatar.getImagePath(),
                         emailField.getText().trim(),
                         createDateField.getText().trim(),
@@ -4557,7 +4567,7 @@ public class ManagerMainPanel extends JPanel {
                         dateOfBirthField.getText().trim(),
                         phoneNumField.getText().trim()
         };
-        user.update(data);
+        CurrentUser.CURRENT_MANAGER_V2.update(data);
       ToastNotification.showToast(
           "Your information has been successfully updated.", 2500, 50, -1, -1);
     }

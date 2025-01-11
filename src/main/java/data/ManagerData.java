@@ -203,32 +203,32 @@ public class ManagerData {
 
     //Order
     @Getter(AccessLevel.NONE)
-    Order order1 = Order.builder().orderId(1).customer(huyen).shipAddress("Cu Xa B, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 5, 1)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od2, od3, od5))).build();
+    Order order1 = Order.builder().orderId(1).customer(huyen).shipAddress("Cu Xa B, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 5, 20)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od2, od3, od5))).build();
     @Getter(AccessLevel.NONE)
-    Order order2 = Order.builder().orderId(2).customer(hieu).shipAddress("Cu Xa C, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 1, 1)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od9, od10))).build();
+    Order order2 = Order.builder().orderId(2).customer(hieu).shipAddress("Cu Xa C, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 5, 13)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od9, od10))).build();
     @Getter(AccessLevel.NONE)
-    Order order3 = Order.builder().orderId(3).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 1, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od7, od10, od9))).build();
+    Order order3 = Order.builder().orderId(3).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 2, 9)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od2, od10, od9))).build();
     @Getter(AccessLevel.NONE)
-    Order order4 = Order.builder().orderId(4).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 2, 1)).status(OrderType.UN_ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList( od10, od9))).build();
+    Order order4 = Order.builder().orderId(4).customer(thanh).shipAddress("Cu Xa D, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 7, 4)).status(OrderType.UN_ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList( od10, od9))).build();
     @Getter(AccessLevel.NONE)
-    Order order5 = Order.builder().orderId(5).customer(huyen).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    Order order5 = Order.builder().orderId(5).customer(huyen).shipAddress("Cu Xa F, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 9, 18)).status(OrderType.UN_ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od1, od8, od5, od2, od9))).build();
     @Getter(AccessLevel.NONE)
-    Order order6 = Order.builder().orderId(6).customer(hieu).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    Order order6 = Order.builder().orderId(6).customer(hieu).shipAddress("Cu Xa G, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 2, 26)).status(OrderType.UN_ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od9, od4, od10, od9))).build();
     @Getter(AccessLevel.NONE)
-    Order order7 = Order.builder().orderId(7).customer(nguyenVanChay).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    Order order7 = Order.builder().orderId(7).customer(nguyenVanChay).shipAddress("Cu Xa H, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 1, 24)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od10))).build();
     @Getter(AccessLevel.NONE)
-    Order order8 = Order.builder().orderId(8).customer(nguyenVanChay).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    Order order8 = Order.builder().orderId(8).customer(nguyenVanChay).shipAddress("Cu Xa K, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 30)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od9, od2))).build();
     @Getter(AccessLevel.NONE)
-    Order order9 = Order.builder().orderId(9).customer(huyen).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    Order order9 = Order.builder().orderId(9).customer(huyen).shipAddress("Cu Xa L, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 1, 2)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od6))).build();
     @Getter(AccessLevel.NONE)
-    Order order10 = Order.builder().orderId(10).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 1)).status(OrderType.DISPATCHED_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
+    Order order10 = Order.builder().orderId(10).customer(thanh).shipAddress("Cu Xa M, Dai hoc Nong Lam").orderedAt(LocalDate.of(2024, 8, 10)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od10, od9))).build();
 
     @Getter(AccessLevel.NONE)
-    List<Order> orders1 = new ArrayList<>(Arrays.asList(order1,order4));
+    List<Order> orders1 = new ArrayList<>(Arrays.asList(order1,order4, order7, order6));
     @Getter(AccessLevel.NONE)
-    List<Order> orders2 = new ArrayList<>(Arrays.asList(order2));
+    List<Order> orders2 = new ArrayList<>(Arrays.asList(order2, order8, order9));
     @Getter(AccessLevel.NONE)
-    List<Order> orders3 = new ArrayList<>(Arrays.asList(order3, order5));
+    List<Order> orders3 = new ArrayList<>(Arrays.asList(order3, order5, order10));
 
     @Getter(AccessLevel.NONE)
     Manager DUY = Manager.builder()

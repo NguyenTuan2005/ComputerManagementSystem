@@ -104,6 +104,28 @@ public class ManagerFrame extends JFrame {
                 new LoginFrame();
               }
             });
+
+      managerMainPanel.setDashBoardProductBtListener(e ->{
+          managerMainPanel.showPanel(ManagerMainPanel.PRODUCT_CONSTRAINT);
+          setHover(ManagerMainPanel.PRODUCT_CONSTRAINT);
+      });
+
+    managerMainPanel.setDashBoardCustomerBtListener(e ->{
+        managerMainPanel.showPanel(ManagerMainPanel.CUSTOMER_CONSTRAINT);
+        setHover(ManagerMainPanel.CUSTOMER_CONSTRAINT);
+    });
+
+
+      managerMainPanel.setDashBoardSupplierListener(e ->{
+          managerMainPanel.showPanel(ManagerMainPanel.SUPPLIER_CONSTRAINT);
+          setHover(ManagerMainPanel.SUPPLIER_CONSTRAINT);
+      });
+      managerMainPanel.setDashBoardManagerBtListener(e ->{
+          managerMainPanel.showPanel(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
+          setHover(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
+      });
+
+
     setVisible(true);
   }
 

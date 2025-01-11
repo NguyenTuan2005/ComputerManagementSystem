@@ -12,7 +12,7 @@ import java.util.*;
 @ToString
 public class ProductOrderConfig {
     private Product product;
-    private int quatity;
+    private int quantity;
 
     public ProductOrderConfig(Product product) {
         this.product = product;
@@ -24,13 +24,13 @@ public class ProductOrderConfig {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductOrderConfig that = (ProductOrderConfig) o;
-        System.out.println( " chay xem cop dungs ko"+this.product.equals(that.product));
+        System.out.println(this.product.equals(that.product));
         return this.product.equals(that.product);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(product, quatity);
+        return Objects.hash(product, quantity);
     }
 
 
@@ -38,7 +38,7 @@ public class ProductOrderConfig {
     public boolean  hasProductName(Set<ProductOrderConfig> productOrderConfigs){
 
         for( var p : productOrderConfigs){
-            boolean isDQuaity = p.getQuatity() != 1 && this.quatity !=1;
+            boolean isDQuaity = p.getQuantity() != 1 && this.quantity !=1;
             boolean isSameName =  p.getProduct().getName().equals(product.getName());
             if ( isDQuaity && isSameName ){
                 return true;
@@ -54,8 +54,8 @@ public class ProductOrderConfig {
             var tamp = pocs.get(i);
             for (int j = 0; j < pocs.size(); j++) {
                 var find = pocs.get(j);
-                boolean leftQuatity =tamp.getQuatity() == 1 && find.getQuatity() != 1;
-                boolean rigthQuatity =tamp.getQuatity() != 1 && find.getQuatity() == 1;
+                boolean leftQuatity =tamp.getQuantity() == 1 && find.getQuantity() != 1;
+                boolean rigthQuatity =tamp.getQuantity() != 1 && find.getQuantity() == 1;
                 boolean isSameName =tamp.getProduct().getName() .equals(find.getProduct().getName());
                 if (isSameName){
                     if (leftQuatity){

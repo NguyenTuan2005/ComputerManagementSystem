@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum DisplayProductType  {
   ALL("Get full product"),
-  LAPTOP_GAMING("Gaming"),
-  LAPTOP_OFFICE("Laptop"),
+  LAPTOP_GAMING("Laptop_gaming"),
+  LAPTOP_OFFICE("Laptop_office"),
   PC_CASE("pc"),
   LUXURY(""),
   CHEAP(""),

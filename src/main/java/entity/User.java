@@ -124,6 +124,11 @@ public abstract class User implements Comparable<User>{
     public boolean sameID(int id) {
         return this.id == id;
     }
+
+
+    public boolean isId(int id) {
+        return this.id == id;
+    }
 }
 
 

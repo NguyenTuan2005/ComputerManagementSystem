@@ -25,9 +25,9 @@ public class ManagerData {
     //IMAGE
     @Getter(AccessLevel.NONE)
     List<Image> imagesMacM1 = List.of(
-            Image.builder().id(1).url("macbook-air-2020-m1-v1.png").build(),
-            Image.builder().id(2).url("macbook-air-2020-m1-v2.png").build(),
-            Image.builder().id(3).url("macbook-air-2020-m1-v3.png").build()
+            Image.builder().id(1).url("src/main/java/img/macbook-air-2020-m1-v1.png").build(),
+            Image.builder().id(2).url("src/main/java/img/macbook-air-2020-m1-v2.png").build(),
+            Image.builder().id(3).url("src/main/java/img/macbook-air-2020-m1-v3.png").build()
     );
 
     @Getter(AccessLevel.NONE)
@@ -97,31 +97,31 @@ public class ManagerData {
 
     //PRODUCT
     @Getter(AccessLevel.NONE)
-    Product macBookAirM1 = Product.builder().id(1).supplier(phongVuComputer).name("MacBook Air M1 2020").quantity(123).price(18190000).type("Laptop").brand("Apple").operatingSystem("macOS").cpu("Apple M1").memory("256GB SSD").ram("8GB").disk("None").monitor("13.3-inch Retina").weight(1.29f).card("Integrated Apple GPU").madeIn("USA").status("In Stock").isActive(true).images(imagesMacM1).build();
+    Product macBookAirM1 = Product.builder().id(1).supplier(phongVuComputer).name("MacBook Air M1 2020").quantity(123).price(18190000).type("Laptop_office").brand("Apple").operatingSystem("macOS").cpu("Apple M1").memory("256GB SSD").ram("8GB").disk("None").monitor("13.3-inch Retina").weight(1.29f).card("Integrated Apple GPU").madeIn("USA").status("In Stock").isActive(true).images(imagesMacM1).build();
 
     @Getter(AccessLevel.NONE)
-    Product macBookAirM2 = Product.builder().id(2).supplier(gearVN).name("MacBook Air M2 2023").quantity(500).price(27690000).type("Laptop").brand("Apple").operatingSystem("macOS").cpu("Apple M2").memory("512GB SSD").ram("8GB").disk("None").monitor("13.6-inch Liquid Retina").weight(1.24f).card("Integrated Apple GPU").madeIn("USA").status("In Stock").isActive(true).images(imagesMacM2).build();
+    Product macBookAirM2 = Product.builder().id(2).supplier(gearVN).name("MacBook Air M2 2023").quantity(500).price(27690000).type("Laptop_office").brand("Apple").operatingSystem("macOS").cpu("Apple M2").memory("512GB SSD").ram("8GB").disk("None").monitor("13.6-inch Liquid Retina").weight(1.24f).card("Integrated Apple GPU").madeIn("USA").status("In Stock").isActive(true).images(imagesMacM2).build();
 
     @Getter(AccessLevel.NONE)
-    Product dellXPS13 = Product.builder().id(3).supplier(phongVuComputer).name("Dell XPS 13").quantity(200).price(30000000).type("Ultrabook").brand("Dell").operatingSystem("Windows 11").cpu("Intel Core i7").memory("512GB SSD").ram("16GB").disk("None").monitor("13.4-inch FHD+").weight(1.2f).card("Integrated Intel Iris Xe").madeIn("USA").status("In Stock").isActive(true).images(imagesDellXPS13).build();
+    Product dellXPS13 = Product.builder().id(3).supplier(phongVuComputer).name("Dell XPS 13").quantity(200).price(30000000).type("Laptop_office").brand("Dell").operatingSystem("Windows 11").cpu("Intel Core i7").memory("512GB SSD").ram("16GB").disk("None").monitor("13.4-inch FHD+").weight(1.2f).card("Integrated Intel Iris Xe").madeIn("USA").status("In Stock").isActive(true).images(imagesDellXPS13).build();
 
     @Getter(AccessLevel.NONE)
-    Product dellXPS15 = Product.builder().id(4).supplier(hanoicomputer).name("Dell XPS 15").quantity(234).price(35000000).type("Ultrabook").brand("Dell").operatingSystem("Windows 11").cpu("Intel Core i7").memory("1TB SSD").ram("16GB").disk("None").monitor("15.6-inch 4K UHD+").weight(1.83f).card("NVIDIA GeForce GTX 1650 Ti").madeIn("USA").status("In Stock").isActive(true).images(imagesDellXPS15).build();
+    Product dellXPS15 = Product.builder().id(4).supplier(hanoicomputer).name("Dell XPS 15").quantity(234).price(35000000).type("Laptop_office").brand("Dell").operatingSystem("Windows 11").cpu("Intel Core i7").memory("1TB SSD").ram("16GB").disk("None").monitor("15.6-inch 4K UHD+").weight(1.83f).card("NVIDIA GeForce GTX 1650 Ti").madeIn("USA").status("In Stock").isActive(true).images(imagesDellXPS15).build();
 
     @Getter(AccessLevel.NONE)
-    Product surfaceLaptop5 = Product.builder().id(5).supplier(gearVN).name("Surface Laptop 5").quantity(567).price(24000000).type("Ultrabook").brand("Microsoft").operatingSystem("Windows 11").cpu("Intel Core i5").memory("256GB SSD").ram("8GB").disk("None").monitor("13.5-inch PixelSense").weight(1.27f).card("Integrated Intel Iris Xe").madeIn("USA").status("In Stock").isActive(true).images(imagesSurfaceLaptop5).build();
+    Product surfaceLaptop5 = Product.builder().id(5).supplier(gearVN).name("Surface Laptop 5").quantity(567).price(24000000).type("Laptop_office").brand("Microsoft").operatingSystem("Windows 11").cpu("Intel Core i5").memory("256GB SSD").ram("8GB").disk("None").monitor("13.5-inch PixelSense").weight(1.27f).card("Integrated Intel Iris Xe").madeIn("USA").status("In Stock").isActive(true).images(imagesSurfaceLaptop5).build();
 
     @Getter(AccessLevel.NONE)
     Product asusROGZephyrusG15 = Product.builder().id(6).supplier(benComputer).name("Asus ROG Zephyrus G15").quantity(456).price(40000000).type("Gaming Laptop").brand("Asus").operatingSystem("Windows 11").cpu("AMD Ryzen 9").memory("1TB SSD").ram("16GB").disk("None").monitor("15.6-inch QHD").weight(1.9f).card("NVIDIA GeForce RTX 3070").madeIn("Taiwan").status("In Stock").isActive(true).images(imagesAsusROGZephyrusG14).build();
 
     @Getter(AccessLevel.NONE)
-    Product lenovoThinkPadX1CarbonGen7 = Product.builder().id(7).supplier(hanoicomputer).name("Lenovo ThinkPad X1 Carbon Gen 7").quantity(464).price(30000000).type("Business Laptop").brand("Lenovo").operatingSystem("Windows 11").cpu("Intel Core i7").memory("512GB SSD").ram("16GB").disk("None").monitor("14-inch FHD").weight(1.09f).card("Integrated Intel UHD Graphics").madeIn("China").status("In Stock").isActive(true).images(imagesThinkPadC).build();
+    Product lenovoThinkPadX1CarbonGen7 = Product.builder().id(7).supplier(hanoicomputer).name("Lenovo ThinkPad X1 Carbon Gen 7").quantity(464).price(30000000).type("Laptop_office").brand("Lenovo").operatingSystem("Windows 11").cpu("Intel Core i7").memory("512GB SSD").ram("16GB").disk("None").monitor("14-inch FHD").weight(1.09f).card("Integrated Intel UHD Graphics").madeIn("China").status("In Stock").isActive(true).images(imagesThinkPadC).build();
 
     @Getter(AccessLevel.NONE)
-    Product hpSpectreX360 = Product.builder().id(8).supplier(phongVuComputer).name("HP Spectre X360").quantity(234).price(27000000).type("Ultrabook").brand("HP").operatingSystem("Windows 11").cpu("Intel Core i7").memory("512GB SSD").ram("16GB").disk("None").monitor("13.3-inch FHD").weight(1.32f).card("Integrated Intel Iris Xe").madeIn("USA").status("In Stock").isActive(true).images(imagesHpX360).build();
+    Product hpSpectreX360 = Product.builder().id(8).supplier(phongVuComputer).name("HP Spectre X360").quantity(234).price(27000000).type("Laptop_gaming").brand("HP").operatingSystem("Windows 11").cpu("Intel Core i7").memory("512GB SSD").ram("16GB").disk("None").monitor("13.3-inch FHD").weight(1.32f).card("Integrated Intel Iris Xe").madeIn("USA").status("In Stock").isActive(true).images(imagesHpX360).build();
 
     @Getter(AccessLevel.NONE)
-    Product lgGram17 = Product.builder().id(9).supplier(benComputer).name("LG Gram 17").quantity(412).price(35000000).type("Ultrabook").brand("LG").operatingSystem("Windows 11").cpu("Intel Core i7").memory("1TB SSD").ram("16GB").disk("None").monitor("17-inch WQXGA").weight(1.35f).card("Integrated Intel Iris Xe").madeIn("South Korea").status("In Stock").isActive(true).images(imagesLgGram17).build();
+    Product lgGram17 = Product.builder().id(9).supplier(benComputer).name("LG Gram 17").quantity(412).price(35000000).type("Laptop_gaming").brand("LG").operatingSystem("Windows 11").cpu("Intel Core i7").memory("1TB SSD").ram("16GB").disk("None").monitor("17-inch WQXGA").weight(1.35f).card("Integrated Intel Iris Xe").madeIn("South Korea").status("In Stock").isActive(true).images(imagesLgGram17).build();
 
     @Getter(AccessLevel.NONE)
     Product macBookPro16M2Pro = Product.builder().id(10).supplier(phongVuComputer).name("MacBook Pro 16 M2 Pro").quantity(123).price(60000000).type("Laptop").brand("Apple").operatingSystem("macOS").cpu("Apple M2 Pro").memory("1TB SSD").ram("16GB").disk("None").monitor("16.2-inch Liquid Retina XDR").weight(2.15f).card("Integrated Apple GPU").madeIn("USA").status("In Stock").isActive(true).images(imagesMacBookPro16M2Pro).build();
@@ -137,7 +137,7 @@ public class ManagerData {
             .avatarImg("src/main/java/img/cus_huyen.jpg")
             .password("$2y$10$iT4bC2hnmfNmouE1KSOCKubEW3MJJWi0mQP50L89K2sLK8ztPCjXO")
             .createdAt(LocalDate.now())
-            .isActive(true)
+            .isActive(false)
             .build();
     @Getter(AccessLevel.NONE)
     Customer thanh = Customer.builder()
@@ -207,7 +207,7 @@ public class ManagerData {
     @Getter(AccessLevel.NONE)
     Order order2 = Order.builder().orderId(2).customer(hieu).shipAddress("Cu Xa C, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 1, 1)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od9, od10))).build();
     @Getter(AccessLevel.NONE)
-    Order order3 = Order.builder().orderId(3).customer(thanh).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 1, 1)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od7, od10, od9))).build();
+    Order order3 = Order.builder().orderId(3).customer(hieu).shipAddress("Cu Xa E, Dai hoc Nong Lam").orderedAt(LocalDate.of(2025, 1, 1)).status(OrderType.ACTIVE_MESSAGE).orderDetails(new ArrayList<>(Arrays.asList(od8, od7, od10, od9))).build();
 
     @Getter(AccessLevel.NONE)
     List<Order> orders1 = new ArrayList<>(Arrays.asList(order1));

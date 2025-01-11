@@ -152,13 +152,13 @@ public class Product {
 
 
     public boolean isPc() {
-        return this.type.toLowerCase().contains(DisplayProductType.PC_CASE.getType().toLowerCase());
+        return this.type.equals(DisplayProductType.PC_CASE.getType() );
     }
     public boolean isLapOffice() {
-        return this.type.toLowerCase().contains(DisplayProductType.LAPTOP_OFFICE.getType().toLowerCase());
+        return this.type.equals(DisplayProductType.LAPTOP_OFFICE.getType() );
     }
     public boolean isLapGaming() {
-        return this.type.toLowerCase().contains(DisplayProductType.LAPTOP_OFFICE.getType().toLowerCase());
+        return this.type.equals(DisplayProductType.LAPTOP_GAMING.getType() );
     }
 
 

@@ -7,10 +7,18 @@ import static view.CustomerMainPanel.createImageForProduct;
 import com.toedter.calendar.JCalendar;
 import config.*;
 import entity.*;
+import enums.DisplayProductType;
 import enums.OrderType;
 import enums.TableStatus;
 import static enums.TableStatus.*;
 import lombok.SneakyThrows;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import verifier.*;
 import view.otherComponent.*;
 import view.overrideComponent.CircularImage;
@@ -41,6 +49,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -172,6 +181,10 @@ public class ManagerMainPanel extends JPanel {
     private JPanel sortPanel;
     private JLabel sortLabel;
     private JComboBox<String> sortComboBox;
+    private JFreeChart chartPanel ;
+    private DefaultCategoryDataset barDataset;
+    private ChartPanel barChartPanel;
+    private JPanel statisticsProductPn;
 
     JPanel searchPanel, applicationPanel, mainPanel;
 
@@ -180,17 +193,23 @@ public class ManagerMainPanel extends JPanel {
     private static List<Product> reloadProduct() {
       return LoginFrame.COMPUTER_SHOP.getAllProduct();
     }
+
     private void upDataProductsStatistics(Map<Product, Long> stringLongMap, DefaultTableModel modelStatisticsProductTable) {
         removeProductStatistics(modelStatisticsProductTable);
         int i=0 , tatolSold=0,tatolInStock=0;
         for (Map.Entry<Product,Long> data : stringLongMap.entrySet()){
-          System.out.println(data.getKey());
           modelStatisticsProductTable.addRow(new Object[]{i++,data.getKey().getName(),data.getValue(),data.getKey().getQuantity()});
           tatolSold += data.getValue();
           tatolInStock += data.getKey().getQuantity();
         }
-        modelStatisticsProductTable.addRow(new Object[]{"","TATOL :",tatolSold,tatolInStock});
+        modelStatisticsProductTable.addRow(new Object[]{"","Total of " +LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) ,tatolSold,tatolInStock});
     }
+
+    private void updateDataForChart(Map<Product ,Long> data){
+          for(Map.Entry<Product,Long> value :data.entrySet()) {
+              barDataset.addValue( value.getValue(), value.getKey().getName(),value.getKey().getName());
+          }
+      }
 
     private void upDataProductsStatistics(Map<Product, Long> productLongMap, String text, DefaultTableModel modelStatisticsProductTable) {
           removeProductStatistics(modelStatisticsProductTable);
@@ -204,8 +223,9 @@ public class ManagerMainPanel extends JPanel {
                   tatolInStock += data.getKey().getQuantity();
               }
           }
-          modelStatisticsProductTable.addRow(new Object[]{"","TATOL :",tatolSold,tatolInStock});
+          modelStatisticsProductTable.addRow(new Object[]{"","Total of " +LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) ,tatolSold,tatolInStock});
       }
+
     private void removeProductStatistics(DefaultTableModel modelStatisticsProductTable){
       modelStatisticsProductTable.setRowCount(0);
     }
@@ -371,8 +391,8 @@ public class ManagerMainPanel extends JPanel {
                   JOptionPane.showMessageDialog(
                       null, "Created file :" + fileName, "Notify", JOptionPane.WARNING_MESSAGE);
                 }
-                JOptionPane.showMessageDialog(
-                    null, "Are you sure ", "Exit", JOptionPane.ERROR_MESSAGE);
+//                JOptionPane.showMessageDialog(
+//                    null, "Are you sure ", "Exit", JOptionPane.ERROR_MESSAGE);
               }
             });
 
@@ -561,10 +581,12 @@ public class ManagerMainPanel extends JPanel {
               @Override
               public void actionPerformed(ActionEvent e) {
                 productsAll = reloadProduct();
+
                 upDataProducts(productsAll, modelProductTable);
                 findText.setText("");
-                upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),  modelStatisticsProductTable);
 
+                upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),  modelStatisticsProductTable);
+                updateDataForChart(LoginFrame.COMPUTER_SHOP.productOrderStatistics());
               }
             });
       }
@@ -592,7 +614,7 @@ public class ManagerMainPanel extends JPanel {
         allBt.addActionListener(
                 e -> {
                   updateSelectedButtonColor(allBt);
-
+                    filterProduct(DisplayProductType.ALL);
                 });
         gaming =
                 ButtonConfig.createCustomButton(
@@ -609,7 +631,7 @@ public class ManagerMainPanel extends JPanel {
         gaming.addActionListener(
                 e -> {
                   updateSelectedButtonColor(gaming);
-
+                    filterProduct(DisplayProductType.LAPTOP_GAMING);
 
                 });
         office =
@@ -627,7 +649,7 @@ public class ManagerMainPanel extends JPanel {
         office.addActionListener(
                 e -> {
                   updateSelectedButtonColor(office);
-
+                    filterProduct(DisplayProductType.LAPTOP_OFFICE);
 
                 });
         pcCase =
@@ -645,11 +667,12 @@ public class ManagerMainPanel extends JPanel {
         pcCase.addActionListener(
                 e -> {
                   updateSelectedButtonColor(pcCase);
+                  filterProduct(DisplayProductType.PC_CASE);
 
                 });
         cheapest =
                 ButtonConfig.createCustomButton(
-                        "Cheapest",
+                        "10m to 20m",
                         Style.FONT_BOLD_15,
                         Color.BLACK,
                         Color.white,
@@ -662,12 +685,13 @@ public class ManagerMainPanel extends JPanel {
         cheapest.addActionListener(
                 e -> {
                   updateSelectedButtonColor(cheapest);
+                    filterProduct(DisplayProductType.PRICE_IN_AMOUNT_10M_20M);
 
                 });
 
         luxury =
                 ButtonConfig.createCustomButton(
-                        "Luxury",
+                        "20m to 30m",
                         Style.FONT_BOLD_15,
                         Color.BLACK,
                         Color.white,
@@ -680,7 +704,7 @@ public class ManagerMainPanel extends JPanel {
         luxury.addActionListener(
                 e -> {
                   updateSelectedButtonColor(luxury);
-
+                    filterProduct(DisplayProductType.PRICE_IN_AMOUNT_20M_30M);
                 });
 
         sortBar.add(allBt);
@@ -691,39 +715,75 @@ public class ManagerMainPanel extends JPanel {
         sortBar.add(cheapest);
         add(sortBar, BorderLayout.NORTH);
 
-        tableProduct = createTable(modelProductTable, columnNamesPRODUCT);
-        tableStatisticsProduct = createTable(modelStatisticsProductTable, columStatisticsProduct);
-        tableProduct.setRowHeight(30);
-        tableStatisticsProduct.setRowHeight(30);
 
-        resizeColumnWidth(tableProduct, 150);
-        resizeColumnWidth(tableStatisticsProduct, 150);
+          tableProduct = createTable(modelProductTable, columnNamesPRODUCT);
+          tableStatisticsProduct = createTable(modelStatisticsProductTable, columStatisticsProduct);
+          tableProduct.setRowHeight(30);
+          tableStatisticsProduct.setRowHeight(30);
 
-        modelProductTable = (DefaultTableModel) tableProduct.getModel();
-        modelStatisticsProductTable = (DefaultTableModel) tableStatisticsProduct.getModel();
+          resizeColumnWidth(tableProduct, 150);
+          resizeColumnWidth(tableStatisticsProduct, 150);
+
+          modelProductTable = (DefaultTableModel) tableProduct.getModel();
+          modelStatisticsProductTable = (DefaultTableModel) tableStatisticsProduct.getModel();
 
 //        List<entity.Product> productsDemo = LoginFrame.COMPUTER_SHOP.getAllProduct();
 
-        upDataProducts(productsAll, modelProductTable);
-        upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),  modelStatisticsProductTable);
+          upDataProducts(productsAll, modelProductTable);
+          upDataProductsStatistics(LoginFrame.COMPUTER_SHOP.productOrderStatistics(),  modelStatisticsProductTable);
 
-        scrollPaneProductTable = new JScrollPane(tableProduct);
-        JScrollPane scrollPaneProductStatisticsTable = new JScrollPane(tableStatisticsProduct);
-        tabbedPaneProductTable =
-            createTabbedPane(scrollPaneProductTable, "Product for Sales", Style.FONT_BOLD_16);
-        tabbedPaneProductTable.add("Product statistics",scrollPaneProductStatisticsTable);
-        tabbedPaneProductTable.setBorder(BorderFactory.createTitledBorder(""));
+          scrollPaneProductTable = new JScrollPane(tableProduct);
+          JScrollPane scrollPaneProductStatisticsTable = new JScrollPane(tableStatisticsProduct);
 
-        add(tabbedPaneProductTable, BorderLayout.CENTER);
+           statisticsProductPn = new JPanel(new GridLayout(1,2));
+
+          statisticsProductPn.add(scrollPaneProductStatisticsTable);
+          //chart panel
+
+          {
+              barDataset = new DefaultCategoryDataset();
+
+              String currentMonth = LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+              chartPanel = ChartFactory.createBarChart(
+                      "Chart of the business rating column of "+currentMonth,
+                      "Products",
+                      "Sold",
+                      barDataset,
+                      PlotOrientation.VERTICAL,
+                      true, true, false);
+
+              CategoryPlot plot = chartPanel.getCategoryPlot();
+
+              NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+              yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+          }
+          updateDataForChart(LoginFrame.COMPUTER_SHOP.productOrderStatistics());
+
+          barChartPanel = new ChartPanel(chartPanel);
+          statisticsProductPn.add(barChartPanel);
+
+
+          tabbedPaneProductTable =
+                  createTabbedPane(scrollPaneProductTable, "Product for Sales", Style.FONT_BOLD_16);
+          tabbedPaneProductTable.add("Product statistics",statisticsProductPn);
+          tabbedPaneProductTable.setBorder(BorderFactory.createTitledBorder(""));
+
+          add(tabbedPaneProductTable, BorderLayout.CENTER);
       }
+      private void filterProduct(DisplayProductType type){
+          removeDataTable(modelProductTable);
+          productsAll = LoginFrame.COMPUTER_SHOP.filterBy(type);
+          upDataProducts(productsAll,modelProductTable);
+      }
+
+
 
       public static void removeDataTable(DefaultTableModel modelProductTable) {
         modelProductTable.setRowCount(0);
       }
     }
-      private static void removeDataTable(DefaultTableModel modelProductTable) {
-        modelProductTable.setRowCount(0);
-      }
+
 
       private void updateSelectedButtonColor(CustomButton button) {
         Color defaultColor = Color.WHITE;
@@ -1132,13 +1192,17 @@ public class ManagerMainPanel extends JPanel {
     final String[] customerColumnNames = {
       "Serial number", "Customer ID", "Customer Name", "Email", "Address", "Password", "Avata"
     };
+      final String[] statisticsColumnNames = { "Serial number","Customer Name","Total Purchase"};
 
-    private JTable tableCustomer;
-    private DefaultTableModel modelCustomer;
-    private JScrollPane scrollPaneCustomer;
-    private JTabbedPane tabbedPaneCustomer;
-    private ToolPanel toolPanel = new ToolPanel();
-    private TableCustomerPanel tableCustomerPanel = new TableCustomerPanel();
+      private JTable tableCustomer, customerStatisticsTable;
+      private DefaultTableModel modelCustomer, customerStatisticsModel;
+      private JScrollPane scrollPaneCustomer, customerStatisticsScrollPane;
+      private JTabbedPane tabbedPaneCustomer;
+      private ToolPanel toolPanel = new ToolPanel();
+      private TableCustomerPanel tableCustomerPanel = new TableCustomerPanel();
+
+      private  DefaultCategoryDataset barDatasetCustomer;
+      private JFreeChart barChartCustomer;
 
     private JButton addCustomerBt,
         modifyCustomerBt,
@@ -1189,9 +1253,9 @@ public class ManagerMainPanel extends JPanel {
               @Override
               @SneakyThrows
               public void actionPerformed(ActionEvent e) {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                SwingUtilities.invokeLater(CustomerInfoFrame::new);
-                reload();
+
+                        new CustomerInfoFrame(()-> {reload();});
+
               }
             });
 
@@ -1220,9 +1284,8 @@ public class ManagerMainPanel extends JPanel {
                   int customerId = Integer.parseInt(value.toString());
                   SwingUtilities.invokeLater(
                       () -> {
-//                        ModifyCustomerFrame modifyCustomerFrame =
-//                            new ModifyCustomerFrame(customers.get(customerId - 1));
-                        reload();
+                        ModifyCustomerFrame modifyCustomerFrame =
+                            new ModifyCustomerFrame(customers.get(customerId - 1),()->{   reload(); });
                       });
                 }
               }
@@ -1255,7 +1318,8 @@ public class ManagerMainPanel extends JPanel {
                   if (customername.contains("*")) {
                     JOptionPane.showMessageDialog(null, "Unblock customerId : " + customerId);
 
-
+                    LoginFrame.COMPUTER_SHOP.unBlockCustomerById(customerId);
+                    tableCustomer.setValueAt( customername.replace(" *",""),selectedRow,2);
 
                     JOptionPane.showMessageDialog(
                         null,
@@ -1265,13 +1329,16 @@ public class ManagerMainPanel extends JPanel {
                   } else {
                     JOptionPane.showMessageDialog(null, "Block customerId : " + customerId);
 
+                    LoginFrame.COMPUTER_SHOP.blockCustomerById(customerId);
+                    tableCustomer.setValueAt( customername+" *",selectedRow,2);
+
                     JOptionPane.showMessageDialog(
                         null,
                         "Customer"
                             + tableCustomer.getValueAt(selectedRow, fullName)
                             + "is blocked! ");
                   }
-                  reload();
+//                  reload();
                 }
               }
             });
@@ -1307,7 +1374,7 @@ public class ManagerMainPanel extends JPanel {
                       fileName.trim().endsWith(".xlsx")
                           ? fileName.trim()
                           : fileName.trim() + ".xlsx";
-//                  ExcelConfig.exportToExcel(customers, fileName, customerColumnNames);
+
 
                   JOptionPane.showMessageDialog(
                       null, "Created!  excel ", "Message", JOptionPane.ERROR_MESSAGE);
@@ -1383,15 +1450,15 @@ public class ManagerMainPanel extends JPanel {
                   case TAB_DATA_CUSTOMER:
                     {
                       if (findCustomerField.getText().trim().isEmpty()) return;
-                      ArrayList<entity.Customer> cuss = null;
-                      if (cuss.isEmpty()) {
+                      customers = LoginFrame.COMPUTER_SHOP.findCustomerByName(findCustomerField.getText());
+                      if (customers.isEmpty()) {
                         JOptionPane.showMessageDialog(
                             tableCustomerPanel, "No customer found as requested!");
                         return;
                       }else{
 
                       }
-                      upDataTable(cuss, modelCustomer, tableCustomer);
+                      upDataTable(  customers , modelCustomer, tableCustomer);
                       break;
                     }
                   case TAB_BILL:
@@ -1402,8 +1469,8 @@ public class ManagerMainPanel extends JPanel {
 
                         showOrderContainer.removeAll();
 
-
-                        showOrderContainer.add(new ShowOrder());
+//bug oi
+//                        showOrderContainer.add(new ShowOrder());
 
                         showOrderContainer.revalidate();
                         showOrderContainer.repaint();
@@ -1493,6 +1560,7 @@ public class ManagerMainPanel extends JPanel {
             .getColumnModel()
             .getColumn(customerColumnNames.length - 1)
             .setCellRenderer(new ImageInJTable.ImageRenderer());
+
         tableCustomer.setRowHeight(100);
         resizeColumnWidth(tableCustomer, 219);
         modelCustomer = (DefaultTableModel) tableCustomer.getModel();
@@ -1504,8 +1572,8 @@ public class ManagerMainPanel extends JPanel {
         tabbedPaneCustomer = createTabbedPane(scrollPaneCustomer, "Customer", Style.FONT_BOLD_16);
         tabbedPaneCustomer.add("Sales Chart", new Schemas());
 
-        showOrderContainer = new JPanel();
-        showOrderContainer.add(new Label("You should continue to find the customer Id!!!"));
+        showOrderContainer = new CustomerBill();
+//        showOrderContainer.add(new Label("You should continue to find the customer Id!!!"));
         JScrollPane scrollShowOrderContainer = new JScrollPane(showOrderContainer);
         tabbedPaneCustomer.add("Customer Bill", scrollShowOrderContainer);
         add(tabbedPaneCustomer, BorderLayout.CENTER);
@@ -1518,56 +1586,83 @@ public class ManagerMainPanel extends JPanel {
       showOrderContainer.removeAll();
       showOrderContainer.revalidate();
       showOrderContainer.repaint();
-      showOrderContainer.add(new Label("You should continue to find the customer Id!!!"));
-      billTextDisplayPanal.setText("You should continue to find the customer Id!!!");
+
+      upDataCustomerStatisticsTable(LoginFrame.COMPUTER_SHOP.customerOrderStatistics());
+//      showOrderContainer.add(new Label("You should continue to find the customer Id!!!"));
+//      billTextDisplayPanal.setText("You should continue to find the customer Id!!!");
     }
 
     public int getIndexSelectedTab() {
       return tabbedPaneCustomer.getSelectedIndex();
     }
+    private class CustomerBill extends JPanel{
+        private JLabel email;
+        private ButtonConfig showBt;
+        private JPanel tool, view;
+        public CustomerBill(){
+            setLayout(new BorderLayout());
+            this.tool = new JPanel();
+            email = new JLabel("email of customer");
+            tool.add(email);
 
-    private class Schemas extends JPanel {
-      public Schemas() {
+            this.view = new JPanel();
+            tool.setBackground(Color.GREEN);
+            view.setBackground(Color.PINK);
 
-//        JFreeChart barChart =
-//            ChartFactory.createBarChart(
-//                "Purchase Quantity by Customer",
-//                "Customer",
-//                "Number of purchased",
-//                createDataset(),
-//                PlotOrientation.VERTICAL,
-//                true,
-//                true,
-//                false);
-//
-//        ChartPanel chartPanel = new ChartPanel(barChart);
-//        chartPanel.setPreferredSize(new Dimension(800, 600));
-//
-//        this.setLayout(new BorderLayout());
-//        this.add(chartPanel, BorderLayout.CENTER);
-      }
+            add(tool,BorderLayout.WEST);
+            add(view,BorderLayout.CENTER);
 
-//      private CategoryDataset createDataset() {
-//        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-//
-//        Map<String, Integer> topCustomers = new HashMap<>();
-//
-//        consertCustomerToMap(customers, topCustomers);
-//
-//        for (Map.Entry<String, Integer> entry : topCustomers.entrySet()) {
-//          dataset.addValue(entry.getValue(), "Số lượng mua", entry.getKey());
-//        }
-//
-//        return dataset;
-//      }
-
-//      private void consertCustomerToMap(ArrayList<entity.Customer> customers, Map<String, Integer> map) {
-//        for (var customer : customers) {
-//          map.put(customer.getFullName(), customer.getNumberOfPurchased());
-//        }
-//      }
+        }
     }
+      private class Schemas extends JPanel {
+          JPanel chartPn;
 
+          public Schemas() {
+              setLayout(new GridLayout(1, 2));
+              customerStatisticsTable = createTable(customerStatisticsModel, statisticsColumnNames);
+              customerStatisticsTable.setRowHeight(40);// độ rộng của hàng:)
+              resizeColumnWidth(customerStatisticsTable, 200);
+              customerStatisticsModel = (DefaultTableModel) customerStatisticsTable.getModel();
+              customerStatisticsScrollPane = new JScrollPane(customerStatisticsTable);
+
+
+              chartPn = new JPanel(new BorderLayout());// panel chứa biểu đồ
+              chartPn.setBackground(Color.GRAY);
+//              chartPn.add();
+
+                  barDatasetCustomer = new DefaultCategoryDataset();
+                  String currentMonth = LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+                   barChartCustomer = ChartFactory.createBarChart(
+                          "Chart of the business rating column of "+currentMonth,
+                          "Customer",
+                          "Purchased",
+                          barDatasetCustomer,
+                          PlotOrientation.VERTICAL,
+                          true, true, false);
+
+                  CategoryPlot plot = barChartCustomer.getCategoryPlot();
+
+                  NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+                  yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+                chartPn.add(new ChartPanel(barChartCustomer));
+              upDataCustomerStatisticsTable(LoginFrame.COMPUTER_SHOP.customerOrderStatistics());
+
+              add(customerStatisticsScrollPane);
+              add(chartPn);
+          }
+
+      }
+      public void upDataCustomerStatisticsTable(Map<Customer,Long> data){
+          ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
+        int i=0, total=0;
+        for(Map.Entry<Customer,Long> value : data.entrySet()){
+            customerStatisticsModel.addRow(new Object[]{i++,value.getKey().getFullName(),value.getValue()});
+            barDatasetCustomer.addValue(value.getValue(),value.getKey().getFullName(),value.getKey());
+            total+= value.getValue();
+        }
+          customerStatisticsModel.addRow(new Object[]{"","Total : ",total});
+      }
     public static void upDataTable(
         List<entity.Customer> customers, DefaultTableModel modelCustomerTable, JTable tableCustomer) {
       Object[][] rowData = entity.Customer.getDataOnTable((ArrayList<entity.Customer>) customers);

@@ -3,7 +3,7 @@ package view;
 
 import com.toedter.calendar.JCalendar;
 import config.*;
-import entity.*;
+import model.*;
 import enums.DisplayProductType;
 import enums.OrderType;
 import enums.TableStatus;
@@ -157,7 +157,7 @@ public class ManagerMainPanel extends JPanel {
   }
 
   private class DashBoardPanel extends JPanel {
-    private CustomButton productsBt, customersBt, suppliersBt, ordersBt, managersBt;
+    private CustomButton productsBt, customersBt, suppliersBt, managersBt;
     private CenterPanel centerPanel = new CenterPanel();
     public DashBoardPanel() {
       setLayout(new BorderLayout());
@@ -169,35 +169,22 @@ public class ManagerMainPanel extends JPanel {
       productsBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
               LoginFrame.COMPUTER_SHOP.getTotalProduct() +
               "<br>Products</div></html>", Style.FONT_BOLD_30,Color.white,Style.BUTTON_GREEN_DASHBOARD,Style.LIGHT_GREEN,20,SwingConstants.CENTER,new Dimension(250,100));
-      productsBt.addActionListener(e -> {
-          showPanel(ManagerMainPanel.PRODUCT_CONSTRAINT);
-
-      });
       statisticsBarPn.add(productsBt);
+
       customersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
               LoginFrame.COMPUTER_SHOP.getTotalCustomer() +
               "<br>Customers</div></html>", Style.FONT_BOLD_30,Color.white,Style.BUTTON_YELLOW_DASHBOARD,Style.LIGHT_YELLOW,20,SwingConstants.CENTER,new Dimension(250,100));
-      customersBt.addActionListener(e -> {
-          showPanel(ManagerMainPanel.CUSTOMER_CONSTRAINT);
-        });
       statisticsBarPn.add(customersBt);
+
       suppliersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
               LoginFrame.COMPUTER_SHOP.getTotalSupplier() +
               "<br>Suppliers</div></html>", Style.FONT_BOLD_30,Color.white,Style.MENU_BUTTON_COLOR,Style.LIGHT_BlUE,20,SwingConstants.CENTER,new Dimension(250,100));
-      suppliersBt.addActionListener(e -> {
-          showPanel(ManagerMainPanel.SUPPLIER_CONSTRAINT);
-
-      });
       statisticsBarPn.add(suppliersBt);
 
       managersBt = ButtonConfig.createCustomButton("<html><div style='text-align: center;'>" +
                 LoginFrame.COMPUTER_SHOP.getTotalManager() +
                 "<br>Managers</div></html>", Style.FONT_BOLD_30,Color.white,Style.DELETE_BUTTON_COLOR_RED,Style.LIGHT_RED,20,SwingConstants.CENTER,new Dimension(250,100));
-      managersBt.addActionListener(e -> {
-            showPanel(ManagerMainPanel.ACC_MANAGEMENT_CONSTRAINT);
-        });
       statisticsBarPn.add(managersBt);
-
       add(statisticsBarPn, BorderLayout.NORTH);
       add(centerPanel,BorderLayout.CENTER);
     }
@@ -265,6 +252,7 @@ public class ManagerMainPanel extends JPanel {
 
                 yearComboBox = new JComboBox<>();
                 yearComboBox.setFocusable(false);
+                yearComboBox.setPreferredSize(new Dimension(80, 20));
                 yearComboBox.setBorder(BorderFactory.createLineBorder(Style.MENU_BUTTON_COLOR,2));
                 updateYearComboBox();
                 yearComboBox.addActionListener(e -> {
@@ -1053,7 +1041,7 @@ public class ManagerMainPanel extends JPanel {
     //data
 
     private static List<Supplier> suppliers = reloadData();
-    private static  Map<String,Long> analyzeSalesVolume= LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
+    private static  Map<Supplier,Long> analyzeSalesVolume= LoginFrame.COMPUTER_SHOP.totalProductStatictics();
 
     private static List<Supplier> reloadData() {
       return LoginFrame.COMPUTER_SHOP.getAllSupplier();
@@ -1107,7 +1095,7 @@ public class ManagerMainPanel extends JPanel {
           KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.addKey, sumItemBt);
           sumItemBt.addActionListener(
                   e -> {
-                      analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.analyzeQuantityOfImportedGoods();
+//                      analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.analyzeQuantityOfImportedGoods();
                       modelQuantity.setRowCount(0);
                       upDataTable(modelQuantity);
                   });
@@ -1184,7 +1172,7 @@ public class ManagerMainPanel extends JPanel {
           analysisBt.addActionListener( e ->{
              LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
              modelQuantity.setRowCount(0);
-             analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
+             analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.totalProductStatictics();
             upDataTable(modelQuantity);
           });
 
@@ -1209,9 +1197,9 @@ public class ManagerMainPanel extends JPanel {
                 updateSuppliers(selectedOption);
                 findText.setText("");
 
-//                analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.quantitativeAnalysis();
+                analyzeSalesVolume = LoginFrame.COMPUTER_SHOP.totalProductStatictics();
                 modelQuantity.setRowCount(0);
-//                upDataTable(modelQuantity);
+                upDataTable(modelQuantity);
               });
         }
         findText =
@@ -1271,7 +1259,7 @@ public class ManagerMainPanel extends JPanel {
         applicationPanel.add(ButtonConfig.createVerticalSeparator());
         applicationPanel.add(exportExcelBt);
         applicationPanel.add(analysisBt);
-        applicationPanel.add(sumItemBt);
+//        applicationPanel.add(sumItemBt);
         applicationPanel.add(reloadBt);
         applicationPanel.setBackground(Style.WORD_COLOR_WHITE);
 
@@ -1377,7 +1365,8 @@ public class ManagerMainPanel extends JPanel {
         tabbedPaneSupplier.add("Supply Statistics",scrollPaneSupplierQuantity);
 
         add(tabbedPaneSupplier, BorderLayout.CENTER);
-
+          modelQuantity.setRowCount(0);
+          upDataTable(modelQuantity);
       }
     }
 
@@ -1395,9 +1384,12 @@ public class ManagerMainPanel extends JPanel {
 
       modelQuantity.setRowCount(0);
 
-      Iterator<String> iterator =analyzeSalesVolume.keySet().iterator();
+
+
+        var iterator = analyzeSalesVolume.entrySet().iterator();
+
       while (iterator.hasNext()) {
-        String key = iterator.next();
+        var key = iterator.next().getKey().getCompanyName();
         if(!key.toLowerCase().contains(text.toLowerCase())) {
           iterator.remove();
         }
@@ -1405,17 +1397,19 @@ public class ManagerMainPanel extends JPanel {
       upDataTable(modelQuantity);
     }
 
-    public static void upDataTable(List<entity.Supplier> suppliers, DefaultTableModel modelSupplier) {
+    public static void upDataTable(List<model.Supplier> suppliers, DefaultTableModel modelSupplier) {
       String[][] rowData = Supplier.getData(suppliers);
       for (String[] strings : rowData) {
         modelSupplier.addRow(strings);
       }
     }
     public static void upDataTable( DefaultTableModel modelQuantity) {
-      int index =0;
-      for(Map.Entry<String, Long> data: analyzeSalesVolume.entrySet()) {
-        modelQuantity.addRow(new Object[]{index++ +" ",data.getKey(),data.getValue()});
+      int index =0 , total =0;
+      for(Map.Entry<Supplier, Long> data: analyzeSalesVolume.entrySet()) {
+        modelQuantity.addRow(new Object[]{index++ +" ",data.getKey().getCompanyName(),data.getValue()});
+        total += data.getValue();
       }
+      modelQuantity.addRow(new Object[]{" ","Total :",total});
     }
   }
 
@@ -1449,7 +1443,7 @@ public class ManagerMainPanel extends JPanel {
     private final int TAB_DATA_CUSTOMER = 0;
     private final int TAB_BILL = 2;
 
-    private static List<entity.Customer> customers = new ArrayList<>();
+    private static List<model.Customer> customers = new ArrayList<>();
 
     private JPanel searchPanel, applicationPanel, mainPanel;
 
@@ -1675,7 +1669,7 @@ public class ManagerMainPanel extends JPanel {
               @Override
               public void actionPerformed(ActionEvent e) {
 
-                switch (getIndexSelectedTab()) {
+                  switch (getIndexSelectedTab()) {
                   case TAB_DATA_CUSTOMER:
                     {
                       if (findCustomerField.getText().trim().isEmpty()) return;
@@ -1711,6 +1705,20 @@ public class ManagerMainPanel extends JPanel {
                       break;
                     }
                 }
+
+
+                  ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
+                  int i=0, total=0;
+                  for(Map.Entry<Customer,Long> value : LoginFrame.COMPUTER_SHOP.customerOrderStatistics().entrySet()){
+                      boolean isValidName = value.getKey().getFullName().toLowerCase().contains(findCustomerField.getText().trim().toLowerCase());
+                      if(isValidName) {
+                          customerStatisticsModel.addRow(new Object[]{i++, value.getKey().getFullName(), value.getValue()});
+                          barDatasetCustomer.addValue(value.getValue(), value.getKey().getFullName(), value.getKey().getFullName());
+                          total += value.getValue();
+                      }
+                  }
+                  customerStatisticsModel.addRow(new Object[]{"","Total : ",total});
+
               }
             });
 
@@ -1729,8 +1737,9 @@ public class ManagerMainPanel extends JPanel {
         reloadCustomerBt.addActionListener(
             e -> {
               reload();
-
               findCustomerField.setText("");
+
+
             });
 
         searchPanel = new JPanel(new FlowLayout());
@@ -1810,7 +1819,7 @@ public class ManagerMainPanel extends JPanel {
 
     private void reload() {
       customers = LoginFrame.COMPUTER_SHOP.getAllCustomer();
-      upDataTable((ArrayList<entity.Customer>) customers, modelCustomer, tableCustomer);
+      upDataTable((ArrayList<model.Customer>) customers, modelCustomer, tableCustomer);
       showOrderContainer.removeAll();
       showOrderContainer.revalidate();
       showOrderContainer.repaint();
@@ -1882,18 +1891,19 @@ public class ManagerMainPanel extends JPanel {
 
       }
       public void upDataCustomerStatisticsTable(Map<Customer,Long> data){
-          ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
+        ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
         int i=0, total=0;
         for(Map.Entry<Customer,Long> value : data.entrySet()){
             customerStatisticsModel.addRow(new Object[]{i++,value.getKey().getFullName(),value.getValue()});
-            barDatasetCustomer.addValue(value.getValue(),value.getKey().getFullName(),value.getKey());
+
+            barDatasetCustomer.addValue(value.getValue(),value.getKey().getFullName(),value.getKey().getFullName());
             total+= value.getValue();
         }
           customerStatisticsModel.addRow(new Object[]{"","Total : ",total});
       }
     public static void upDataTable(
-        List<entity.Customer> customers, DefaultTableModel modelCustomerTable, JTable tableCustomer) {
-      Object[][] rowData = entity.Customer.getDataOnTable((ArrayList<entity.Customer>) customers);
+            List<model.Customer> customers, DefaultTableModel modelCustomerTable, JTable tableCustomer) {
+      Object[][] rowData = model.Customer.getDataOnTable((ArrayList<model.Customer>) customers);
       ProductPanel.TablePanel.removeDataTable(modelCustomerTable);
       for (int i = 0; i < rowData.length; i++) {
         modelCustomerTable.addRow(rowData[i]);
@@ -1918,6 +1928,7 @@ public class ManagerMainPanel extends JPanel {
     };
 
     private JButton exportExcelBt, reloadBt, searchBt, deliveryOrderBt;
+      private CustomButton sort1Bt, sort2Bt, selectedBt;
     private JTextField searchOrderField;
 
     private JTable orderTable, dispatchedOrderTable;
@@ -1929,6 +1940,7 @@ public class ManagerMainPanel extends JPanel {
 
     private ExportPanel exportPanel;
 
+    private String statusFilter;
     private String[][] rowData;
     private Map<Manager, List<Order>> managerListMap;
     private List<Manager> managers;
@@ -2016,6 +2028,9 @@ public class ManagerMainPanel extends JPanel {
           reloadBt.setVerticalTextPosition(SwingConstants.BOTTOM);
           reloadBt.addActionListener(
               e -> {
+                  sort1Bt.setBackgroundColor(Style.WORD_COLOR_WHITE);
+                  sort2Bt.setBackgroundColor(Style.WORD_COLOR_WHITE);
+                  statusFilter = null;
                 searchOrderField.setText("");
                 updateOrders();
               });
@@ -2059,6 +2074,9 @@ public class ManagerMainPanel extends JPanel {
 
       private void searchHandle() {
         String searchText = searchOrderField.getText().trim().toLowerCase();
+        sort1Bt.setBackgroundColor(Style.WORD_COLOR_WHITE);
+        sort1Bt.setBackgroundColor(Style.WORD_COLOR_WHITE);
+        statusFilter = null;
         updateOrders(searchText);
       }
 
@@ -2067,7 +2085,7 @@ public class ManagerMainPanel extends JPanel {
 
         return switch (index) {
           case 0 -> {
-            reloadOrders(null, searchOrderField.getText());
+            reloadOrders(statusFilter, searchOrderField.getText());
             yield orderTable;
           }
           case 1 -> {
@@ -2081,17 +2099,17 @@ public class ManagerMainPanel extends JPanel {
       private void dispatchOrder() {
         JTable table = getSelectedTable();
 
-        int selectRow = (table != null) ? table.getSelectedRow() : -1;
-        if (selectRow != -1) {
-          String statusMessage = table.getValueAt(selectRow, 4).toString();
+        int[] selectRow = (table != null) ? table.getSelectedRows() : new int[]{};
+        if (selectRow.length > 0) {
+          String statusMessage = table.getValueAt(selectRow[0], 4).toString();
 
           switch (statusMessage) {
             case OrderType.ACTIVE_MESSAGE -> {
               manager = managerListMap.keySet().stream()
-                              .filter(manager1 -> manager1.sameID(Integer.parseInt(rowData[selectRow][6])))
+                              .filter(manager1 -> manager1.sameID(Integer.parseInt(rowData[selectRow[0]][6])))
                               .findAny()
                               .orElse(null);
-              order = managerListMap.get(manager).stream().filter(order1 -> order1.sameID(Integer.parseInt(rowData[selectRow][0])))
+              order = managerListMap.get(manager).stream().filter(order1 -> order1.sameID(Integer.parseInt(rowData[selectRow[0]][0])))
                               .findAny()
                               .orElse(null);
               orderTabbedPane.setSelectedIndex(2);
@@ -2114,9 +2132,50 @@ public class ManagerMainPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         // orders table
+        JPanel  orderTablePn = new JPanel(new BorderLayout());
+        JPanel sortBarPn = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        sortBarPn.setBackground(Color.WHITE);
+        sort1Bt = ButtonConfig.createCustomButton(
+                OrderType.ACTIVE_MESSAGE,
+                Style.FONT_BOLD_15,
+                Color.BLACK,
+                Style.WORD_COLOR_WHITE,
+                Style.LIGHT_BlUE,
+                Style.MENU_BUTTON_COLOR,
+                2,
+                25,
+                SwingConstants.CENTER,
+                new Dimension(220, 25));
+          sort1Bt.addActionListener(e ->{
+              statusFilter = OrderType.ACTIVE_MESSAGE;
+              updateSelectedButtonColor(sort1Bt);
+              filterOrders(statusFilter);
+          });
+
+          sort2Bt = ButtonConfig.createCustomButton(
+                  OrderType.UN_ACTIVE_MESSAGE,
+                  Style.FONT_BOLD_15,
+                  Color.BLACK,
+                  Color.white,
+                  Style.LIGHT_BlUE,
+                  Style.MENU_BUTTON_COLOR,
+                  2,
+                  25,
+                  SwingConstants.CENTER,
+                  new Dimension(180, 25));
+          sort2Bt.addActionListener(e ->{
+              statusFilter = OrderType.UN_ACTIVE_MESSAGE;
+              updateSelectedButtonColor(sort2Bt);
+              filterOrders(statusFilter);
+          });
+          sortBarPn.add(sort1Bt);
+          sortBarPn.add(sort2Bt);
+          orderTablePn.add(sortBarPn, BorderLayout.NORTH);
+
         orderTable = createTable(orderModel, orderColumnNames);
         orderModel = (DefaultTableModel) orderTable.getModel();
         orderScrollPane = new JScrollPane(orderTable);
+          orderTablePn.add(orderScrollPane, BorderLayout.CENTER);
         // Dispatched orders table
         dispatchedOrderTable = createTable(dispatchedOrderModel, orderColumnNames);
         dispatchedOrderModel = (DefaultTableModel) dispatchedOrderTable.getModel();
@@ -2124,17 +2183,31 @@ public class ManagerMainPanel extends JPanel {
 
         updateOrders();
 
-        // panel export products for each order
-        exportPanel = new ExportPanel();
-
-        orderTabbedPane = createTabbedPane(orderScrollPane, "Customer's Order", Style.FONT_BOLD_16);
-        orderTabbedPane.add("Dispatched Orders", dispatchedOrderScroll);
+        orderTabbedPane = createTabbedPane(dispatchedOrderScroll, "Dispatched Order", Style.FONT_BOLD_16);
+        orderTabbedPane.insertTab("Customer's Order", null, orderTablePn, "Customer's Order", 0);
+          // panel export products for each order
+          exportPanel = new ExportPanel();
         orderTabbedPane.add("Export Product", exportPanel);
+        orderTabbedPane.setSelectedIndex(0);
         add(orderTabbedPane, BorderLayout.CENTER);
       }
+        private void updateSelectedButtonColor(CustomButton button) {
+            Color defaultColor = Color.WHITE;
+            Color selectedColor = Style.MENU_BUTTON_COLOR;
+
+
+            if (selectedBt != null ) {
+                selectedBt.setBackgroundColor(defaultColor);
+                selectedBt.setHoverColor(Style.LIGHT_BlUE);
+            }
+
+            button.setBackgroundColor(selectedColor);
+            button.setHoverColor(selectedColor);
+            selectedBt = button;
+        }
     }
 
-    private class ExportPanel extends JPanel {
+      private class ExportPanel extends JPanel {
       private JLabel totalPriceLabel, quantityLabel;
       private CustomButton exportBt, cancelBt;
       private OrderDetailsPanel detailsPanel;
@@ -2396,7 +2469,7 @@ public class ManagerMainPanel extends JPanel {
                     createImageForProduct(
                         product.getImages().stream()
                             .findFirst()
-                            .orElse( new entity.Image(0,"src/main/java/img/not-found-image.png"))
+                            .orElse( new model.Image(0,"src/main/java/img/not-found-image.png"))
                             .getUrl(),
                         100,
                         100));
@@ -2831,6 +2904,10 @@ public class ManagerMainPanel extends JPanel {
       upDataOrders(orderModel, null, searchText);
       upDataOrders(dispatchedOrderModel, OrderType.DISPATCHED_MESSAGE, searchText);
     }
+
+      private void filterOrders(String status) {
+        upDataOrders(orderModel, status, searchOrderField.getText());
+      }
   }
 
   private class InventoryPanel extends JPanel {
@@ -3037,6 +3114,7 @@ public class ManagerMainPanel extends JPanel {
             String productName = (String) selectedTable.getValueAt(row, 2);
             Product product1 = products.stream().filter(product -> product.sameName(productName)).findAny().orElse(null);
             if (changeStatus(product1, status)) {
+                tabbedPaneMain.setSelectedIndex(status.equals(Product.IN_STOCK) ? 1 : 2);
               ToastNotification.showToast(
                   "Successfully set product " + productName + " to " + messages[0],
                   duration,
@@ -3233,7 +3311,7 @@ public class ManagerMainPanel extends JPanel {
         private String contextPath = "";
         private int modifyIndex = -1;
         private static TableStatus tableStatus = ADD;
-        private static ArrayList<entity.Manager> managers = (ArrayList<Manager>) LoginFrame.COMPUTER_SHOP.getAllManager();
+        private static ArrayList<model.Manager> managers = (ArrayList<Manager>) LoginFrame.COMPUTER_SHOP.getAllManager();
         private static Manager mutableManager;
 
     public ManagerPanel() {
@@ -4580,10 +4658,8 @@ public class ManagerMainPanel extends JPanel {
       fileName = fileName.trim().endsWith(".xlsx") ? fileName.trim() : fileName.trim() + ".xlsx";
       ExcelConfig.exportToExcel(dataList, fileName, headers);
       JOptionPane.showMessageDialog(null, "Exported to " + fileName);
-    } else {
-      JOptionPane.showMessageDialog(
-          null, "File name cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
     }
+
   }
 
 //  public void reloadNotification() {
@@ -4687,9 +4763,18 @@ public class ManagerMainPanel extends JPanel {
     return tabbedPane;
   }
 
-  public void setProductButtonListener(){
-
+  public void setDashBoardProductBtListener(ActionListener listener){
+      dashBoardPanel.productsBt.addActionListener(listener);
   }
+  public void setDashBoardCustomerBtListener(ActionListener listener){
+        dashBoardPanel.customersBt.addActionListener(listener);
+    }
+  public void setDashBoardSupplierListener(ActionListener listener){
+        dashBoardPanel.suppliersBt.addActionListener(listener);
+    }
+  public void setDashBoardManagerBtListener(ActionListener listener){
+        dashBoardPanel.managersBt.addActionListener(listener);
+    }
 
 
 }

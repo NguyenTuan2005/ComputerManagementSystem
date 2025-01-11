@@ -1,4 +1,4 @@
-package  entity;
+package model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,7 +24,7 @@ public class Supplier {
      boolean isActive;
 
      // Convert data to String
-     public static String[][] getData(List<entity.Supplier> suppliers) {
+     public static String[][] getData(List<model.Supplier> suppliers) {
           String[][] data = new String[suppliers.size()][];
           for (int i = 0; i < suppliers.size(); i++) {
                data[i] = suppliers.get(i).convertToArray(i + 1);
@@ -47,10 +47,10 @@ public class Supplier {
 
      @Override
      public boolean equals(Object obj) {
-          if (obj==null || !(obj instanceof entity.Supplier))
+          if (obj==null || !(obj instanceof model.Supplier))
                return false;
           else {
-               entity.Supplier that = (entity.Supplier) obj;
+               model.Supplier that = (model.Supplier) obj;
                return this.id == that.id &&
                        this.companyName.equals(that.companyName)&&
                        this.email.equals(that.email)&&

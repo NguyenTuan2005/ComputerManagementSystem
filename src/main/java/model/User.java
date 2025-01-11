@@ -1,4 +1,4 @@
-package  entity;
+package model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

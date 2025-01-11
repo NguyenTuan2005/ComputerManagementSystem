@@ -1,7 +1,7 @@
 package config;
 
 
-import entity.Product;
+import model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

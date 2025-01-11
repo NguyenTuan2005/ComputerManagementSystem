@@ -11,7 +11,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import entity.Customer;
+import model.Customer;
 import view.LoginFrame;
 import view.Style;
 

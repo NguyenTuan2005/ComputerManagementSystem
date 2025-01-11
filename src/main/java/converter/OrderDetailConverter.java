@@ -1,7 +1,7 @@
 package converter;
 
 import config.ProductOrderConfig;
-import entity.OrderDetail;
+import model.OrderDetail;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

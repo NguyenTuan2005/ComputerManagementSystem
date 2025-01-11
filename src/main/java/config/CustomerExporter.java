@@ -1,6 +1,6 @@
 package config;
 
-import entity.Customer;
+import model.Customer;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;

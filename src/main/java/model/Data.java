@@ -1,9 +1,7 @@
-package entity;
+package model;
 
 
 
-
-import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

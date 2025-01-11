@@ -5,7 +5,7 @@ import config.ButtonConfig;
 import config.EmailConfig;
 import config.PasswordFieldConfig;
 import config.TextFieldConfig;
-import entity.ComputerShop;
+import model.ComputerShop;
 import enums.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
-import entity.Customer;
+import model.Customer;
 import security.PasswordSecurity;
 
 import view.overrideComponent.CircularImage;
@@ -671,7 +671,8 @@ public class LoginFrame extends JFrame {
 
                 Customer newCustomer =
                         Customer.builder().fullName(name).avatarImg(  "src/main/java/img/default-avt.png").address(address).email(email).password(  new PasswordSecurity(newPassword).generatePassword()).build();
-
+                LoginFrame.COMPUTER_SHOP.addCustomer(newCustomer);
+                System.out.println("ok");
 
               } else {
                 JOptionPane.showConfirmDialog(null, "Wrong Password !!!");
@@ -1020,6 +1021,7 @@ public class LoginFrame extends JFrame {
     private int otp = 0;
     private String to = "";
     private String name = "";
+    private static String email;
     private ForgotPasswordStatus forgotPasswordStatus;
 
     ForgotPasswdPanel() {
@@ -1047,11 +1049,12 @@ public class LoginFrame extends JFrame {
     }
 
     class InputEmail extends JPanel {
-      JTextField emailField;
-      CustomButton sendCodeBt, backBt;
-      JRadioButton managerBt, customerBt;
+      private JTextField emailField;
 
-      InputEmail() {
+      private CustomButton sendCodeBt, backBt;
+      private JRadioButton managerBt, customerBt;
+
+     public InputEmail() {
         setBackground(Color.WHITE);
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -1111,51 +1114,27 @@ public class LoginFrame extends JFrame {
                 20,
                 SwingConstants.CENTER,
                 new Dimension(350, 50));
-//        sendCodeBt.addActionListener( e ->
-                // hàm gửi mã xác nhận
-//
-//                EmailConfig emailConfig = new EmailConfig();
-//                if (customerBt.isSelected()) {
-//                  String email = emailField.getText().trim();
-//                  CustomerController customerController = new CustomerController();
-//                  Customer customer = customerController.findByEmail(email);
-//                  if (customer != null && customer.sameEmail(email)) {
-//                    otp = emailConfig.generateOTP();
-//                    to = email;
-//                    name = customer.getFullName();
-//                    id = customer.getId();
-//                    boolean sent = sendOTP(to, name, otp);
-//                    forgotPasswordStatus = ForgotPasswordStatus.CUSTOMER;
-//                    if (sent) {
-//                      showInnerPanel("verificationCode");
-//                    }
-//                  } else {
-//                    setColorTextField();
-//                  }
-//                } else if (managerBt.isSelected()) {
-//
-//                  AccountController accountController = new AccountController();
-//                  String username = emailField.getText().trim();
-//                  Account account = accountController.findByName(username);
-//                  if (account != null && account.sameUsername(username)) {
-//                    otp = emailConfig.generateOTP();
-//                    System.out.println(account);
-//                    System.out.println(otp);
-//                    to = account.getEmail();
-//                    name = account.getEmail();
-//                    id = account.getId();
-//                    boolean sent = sendOTP(to, name, otp);
-//                    forgotPasswordStatus = ForgotPasswordStatus.MANAGER;
-//                    if (sent) {
-//                      showInnerPanel("verificationCode");
-//                    }
-//
-//                  } else {
-//                    setColorTextField();
-//                  }
-//                }
+        sendCodeBt.addActionListener(e -> {
+            email = emailField.getText();
+            if (managerBt.isSelected()){
+              forgotPasswordStatus = ForgotPasswordStatus.MANAGER;
+               var manager = COMPUTER_SHOP.findManagerByEmail(email);
+              if ( manager == null) ToastNotification.showToast("Not found user",3000,30,-1,-1);
+              name = manager.getFullName();
 
+            }else {
+              forgotPasswordStatus = ForgotPasswordStatus.CUSTOMER;
+              var customer = COMPUTER_SHOP.findCustomerByEmail(email);
+              if ( customer == null) ToastNotification.showToast("Not found user",3000,30,-1,-1);
+              name = customer.getFullName();
 
+            }
+            otp = new EmailConfig().generateOTP();
+            System.out.println("otp "+otp);
+            sendOTP(email,name, otp);
+            showInnerPanel("verificationCode");
+
+        });
 
         gbc.gridwidth = 1;
         gbc.gridy++;
@@ -1545,10 +1524,12 @@ public class LoginFrame extends JFrame {
                     //set pass customer
 //                    CustomerController cusController = new CustomerController();
 //                    cusController.updatePassword(newPassword, id);
+                    COMPUTER_SHOP.changePassword(UserType.CUSTOMER,email,newPassword);
                     resetTextPassword();
 
                   } else if (forgotPasswordStatus == ForgotPasswordStatus.MANAGER) {
                       // setPass manager
+                    COMPUTER_SHOP.changePassword(UserType.MANAGER,email,newPassword);
 //                    AccountController accController = new AccountController();
 //                    accController.updatePassword(newPassword, id);
 //                    resetTextPassword();

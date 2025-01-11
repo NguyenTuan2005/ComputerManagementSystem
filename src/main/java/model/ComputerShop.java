@@ -1,4 +1,4 @@
-package entity;
+package model;
 
 import config.CurrentUser;
 import controller.MController;
@@ -6,9 +6,10 @@ import data.ManagerData;
 import enums.DisplayProductType;
 import enums.LoginStatus;
 import enums.OrderType;
+import enums.UserType;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import security.PasswordSecurity;
 
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -16,7 +17,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ComputerShop implements MController {
@@ -126,7 +126,7 @@ public class ComputerShop implements MController {
     @Override
     public void addOrder( Order newOrder) {
         for (int i = 0; i < managers.size(); i++) {
-            if(managers.get(i).equals(CurrentUser.CURRENT_MANAGER_V2)){
+            if(managers.get(i).sameEmail(CurrentUser.CURRENT_MANAGER_V2.getEmail())){
                 managers.get(i).addOrder(newOrder);
                 System.out.println("add thanh cong");
                 break;
@@ -397,6 +397,22 @@ public class ComputerShop implements MController {
     }
 
     @Override
+    public Map<Supplier, Long> totalProductStatictics() {
+        Map<Supplier,Long> map = new HashMap<>();
+        for (var sup : this.suppliers ){
+            long total=  this.products.stream().filter(p ->p.sameSupplier(sup)).collect(Collectors.summarizingLong(p->p.getQuantity())).getSum();
+            map.put(sup, total);
+        }
+
+        return map;
+    }
+
+    @Override
+    public Customer findCustomerByEmail(String email) {
+        return   this.customers.stream().filter(customer -> customer.sameEmail(email)).findFirst().orElse(null);
+    }
+
+    @Override
     public void addSupplier(Supplier newSupplier) {
         this.suppliers.add(newSupplier);
     }
@@ -503,6 +519,29 @@ public class ComputerShop implements MController {
                 .filter(order -> order.isCustomer(customer)).toList();
     }
 
+    @Override
+    public List<Order> findOrderByCustomerAndDate(Customer customer, LocalDate orderedAt) {
+        return this.getAllOrderByCustomer(customer).stream().filter(order -> order.orderedAt(orderedAt)).toList();
+    }
+
+    @Override
+    public void changePassword(UserType type, String email, String password) {
+        if(type.isCustomer()) {
+            for (int i = 0; i < this.customers.size(); i++) {
+                if (customers.get(i).sameEmail(email)) {
+                    customers.get(i).updatePassword(new PasswordSecurity(password).generatePassword());
+                    return;
+                }
+            }
+        } else if(type.isManager()){
+            for (int i = 0; i < this.managers.size(); i++) {
+                if (managers.get(i).sameEmail(email)) {
+                    managers.get(i).updatePassword(new PasswordSecurity(password).generatePassword());
+                    return;
+                }
+            }
+        }
+    }
 
     public List<Supplier> findSupplierByName(String suppilerName){
         return this.suppliers.stream().filter(supp -> supp.getCompanyName().toLowerCase().contains(suppilerName.toLowerCase()))

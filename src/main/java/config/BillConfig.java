@@ -1,14 +1,13 @@
 package config;
 
 
-import entity.Order;
+import model.Order;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 //@Builder
@@ -16,46 +15,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 //@AllArgsConstructor
 public class BillConfig {
-
-//    private ArrayList<CustomerOrderDTO> bills;
-//
-//    private Map<Integer, List<CustomerOrderDTO>> metadataMap;
-//
-//    public BillConfig(ArrayList<CustomerOrderDTO> bills) {
-//        this.bills = bills;
-//        this.metadataMap = this.getMapByOrderId();
-//    }
-//
-//    private ArrayList<CustomerOrderDTO> getLastItem() {
-//        try {
-//            int len = this.bills.size() - 1;
-//            var id = this.bills.get(len).getOrderId();
-//            var newBills = new ArrayList<CustomerOrderDTO>();
-//
-//
-//            var m = this.bills.stream()
-//                    .filter(item -> item.getOrderId() == id) // Kiểm tra phần tử có giống `targetItem` không
-//                    .collect(Collectors.toList());
-//            return (ArrayList<CustomerOrderDTO>) m;
-//        } catch (Exception e) {
-//
-//        }
-//
-//        return null;
-//    }
-//
-//    public String getNewBill() {
-//        for (Map.Entry<Integer, List<CustomerOrderDTO>> data : this.metadataMap.entrySet()){
-//
-//            System.out.println(generateBill((ArrayList<CustomerOrderDTO>) data.getValue()));
-//            System.out.println("\n");
-//            System.out.println("\n");
-//            System.out.println("\n");
-//            System.out.println("\n");
-//
-//        }
-//        return "co cai nit";
-//    }
 
     public String getBillCurrent(){
 //        for (Map.Entry<Integer,List<CustomerOrderDTO>> bill : this.metadataMap.entrySet()){
@@ -93,11 +52,11 @@ public class BillConfig {
 
         StringBuilder bill = new StringBuilder();
 
-        int columnWidth = 76;
+        int columnWidth = 86;
 
         String headerLine = createDynamicLine(columnWidth, '=');
         bill.append(headerLine).append("\n");
-        bill.append(String.format("%" + (columnWidth / 2) + "s\n", "HÓA ĐƠN BÁN HÀNG"));
+        bill.append(String.format("%" + (columnWidth / 2+ 8) + "s\n", "HÓA ĐƠN BÁN HÀNG"));
         bill.append(headerLine).append("\n");
         bill.append(String.format("Ngày xuất hóa đơn: %-" + columnWidth + "s\n\n", new Date()));
 
@@ -109,20 +68,20 @@ public class BillConfig {
                 truncateText(order.getShipAddress(), columnWidth)));
 
 
-        String productHeader = String.format("%-48s %-37s %-28s %-28s",
-                "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền");
+        String productHeader =  String.format(
+                "%-35s %-18s %-17s %-18s%n", "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền");
         bill.append(productHeader).append("\n");
         bill.append(createDynamicLine(columnWidth, '='));
         bill.append("\n");
 
 
         double totalAmount = 0;
-        int sapce = 50;
         for (var orderdetail : orderDetails) {
             double productTotal = orderdetail.getProduct().getPrice() * orderdetail.getQuantity();
 
-            bill.append(String.format("%-50s %-" + sapce + "d %-20s %-20s\n",
-                    truncateText(orderdetail.getProductName(), 53),
+            bill.append(String.format(
+                    "%-38s %-13d %-18s %-18s%n",
+                    truncateText(orderdetail.getProductName(), 40),
                     orderdetail.getQuantity(),
                     currencyFormatter.format(orderdetail.getProduct().getPrice()),
                     currencyFormatter.format(productTotal)
@@ -133,8 +92,11 @@ public class BillConfig {
 
         bill.append("\n").append(createDynamicLine(columnWidth, '='));
         bill.append("\n");
-        bill.append(String.format("%-" + (columnWidth - String.valueOf(totalAmount).length() * 2) + "s %s\n", "TỔNG CỘNG:",
-                currencyFormatter.format(totalAmount)));
+        bill.append(
+                String.format(
+                        "%-" + (columnWidth - 15) + "s %s\n",
+                        "TỔNG CỘNG:",
+                        currencyFormatter.format(totalAmount)));
 
         bill.append("\nCHI TIẾT SẢN PHẨM:\n");
         bill.append(createDynamicLine(columnWidth, '='));
@@ -165,7 +127,7 @@ public class BillConfig {
                 CurrentUser.CURRENT_MANAGER_V2.getId()));
         bill.append("\n").append(createDynamicLine(columnWidth, '='));
         bill.append("\n");
-        bill.append(String.format("%" + (columnWidth / 2) + "s\n", "CẢM ƠN QUÝ KHÁCH VÀ HẸN GẶP LẠI"));
+        bill.append(String.format("%" + (columnWidth / 2 + 15) + "s\n", "CẢM ƠN QUÝ KHÁCH VÀ HẸN GẶP LẠI"));
         bill.append(createDynamicLine(columnWidth, '='));
 
         return bill.toString();
@@ -198,24 +160,6 @@ public class BillConfig {
                 : text;
     }
 
-
-
-
-//    public Map<Integer, List<CustomerOrderDTO>> getMapByOrderId(){
-//        Comparator<Integer> comparator = new Comparator<>() {
-//            @Override
-//            public int compare(Integer o1, Integer o2) {
-//                return o2-o1;
-//            }
-//        };
-//        TreeMap<Integer,List<CustomerOrderDTO>> map = new TreeMap<>(comparator);
-//        var m =  this.bills.stream().collect(
-//                Collectors.groupingBy(
-//                        p->p.getOrderId(),
-//                        Collectors.toList()));
-//        map.putAll(m);
-//      return map;
-//    }
 
 
 

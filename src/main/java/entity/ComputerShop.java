@@ -506,6 +506,11 @@ public class ComputerShop implements MController {
                 .filter(order -> order.isCustomer(customer)).toList();
     }
 
+    @Override
+    public List<Order> findOrderByCustomerAndDate(Customer customer, LocalDate orderedAt) {
+        return  this.getAllOrderByCustomer(customer).stream().filter(order -> order.orderedAt(orderedAt)).toList();
+    }
+
 
     public List<Supplier> findSupplierByName(String suppilerName){
         return this.suppliers.stream().filter(supp -> supp.getCompanyName().toLowerCase().contains(suppilerName.toLowerCase()))

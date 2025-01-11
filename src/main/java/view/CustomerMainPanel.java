@@ -823,7 +823,7 @@ public class CustomerMainPanel extends JPanel {
               public void actionPerformed(ActionEvent e) {
                 selectedDate = new Date(calendar.getDate().getTime());
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 searchField.setText(dateFormat.format(selectedDate));
                 searchField.setForeground(Color.BLACK);
                 calendarDialog.setVisible(false);
@@ -2348,9 +2348,9 @@ public class CustomerMainPanel extends JPanel {
 //      }
 //    }
 
-//    if (isFound) {
-//      System.out.println(" not found ");
-//      addOrderToContainer(new NotFoundItemPanel("--"));
-//    }
+    if (isFound) {
+      System.out.println(" not found ");
+      addOrderToContainer(new NotFoundItemPanel("--"));
+    }
   }
 }

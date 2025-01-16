@@ -228,7 +228,7 @@ public class ManagerMainPanel extends JPanel {
         setLayout(dashBCardLayout);
 
         Timer timer =
-            new Timer(2500, e -> dashBCardLayout.show(CenterPanel.this, "statisticsTable"));
+            new Timer(1800, e -> dashBCardLayout.show(CenterPanel.this, "statisticsTable"));
         timer.setRepeats(false);
 
         JPanel welcomePn = new JPanel(new BorderLayout());
@@ -447,40 +447,33 @@ public class ManagerMainPanel extends JPanel {
     private JScrollPane scrollPaneProductTable;
     private JTabbedPane tabbedPaneProductTable;
     private JPanel sortPanel;
-    private JLabel sortLabel;
+    private JLabel sortLabel, totalLabel;
     private JComboBox<String> sortComboBox;
     private JFreeChart chartPanel;
     private DefaultCategoryDataset barDataset;
     private ChartPanel barChartPanel;
     private JPanel statisticsProductPn;
-
     JPanel searchPanel, applicationPanel, mainPanel;
 
     private static List<Product> productsAll = reloadProduct();
-
     private static List<Product> reloadProduct() {
       return LoginFrame.COMPUTER_SHOP.getAllProduct();
     }
 
+    private static int totalSold,totalInStock;
+
     private void upDataProductsStatistics(
         Map<Product, Long> stringLongMap, DefaultTableModel modelStatisticsProductTable) {
       removeProductStatistics(modelStatisticsProductTable);
-      int i = 0, totalSold = 0, totaInStock = 0;
+      int i = 0;
       for (Map.Entry<Product, Long> data : stringLongMap.entrySet()) {
         modelStatisticsProductTable.addRow(
             new Object[] {
               i++, data.getKey().getName(), data.getValue(), data.getKey().getQuantity()
             });
         totalSold += data.getValue();
-        totaInStock += data.getKey().getQuantity();
+        totalInStock += data.getKey().getQuantity();
       }
-      modelStatisticsProductTable.addRow(
-          new Object[] {
-            "",
-            "Total of " + LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH),
-            totalSold,
-            totaInStock
-          });
     }
 
     private void updateDataForChart(Map<Product, Long> data) {
@@ -1014,20 +1007,24 @@ public class ManagerMainPanel extends JPanel {
         modelProductTable = (DefaultTableModel) tableProduct.getModel();
         modelStatisticsProductTable = (DefaultTableModel) tableStatisticsProduct.getModel();
 
-        //        List<entity.Product> productsDemo = LoginFrame.COMPUTER_SHOP.getAllProduct();
-
         upDataProducts(productsAll, modelProductTable);
         upDataProductsStatistics(
             LoginFrame.COMPUTER_SHOP.productOrderStatistics(), modelStatisticsProductTable);
-
+        //đang lm
         scrollPaneProductTable = new JScrollPane(tableProduct);
         JScrollPane scrollPaneProductStatisticsTable = new JScrollPane(tableStatisticsProduct);
+        JPanel ProductStatisticsTablePn = new JPanel(new BorderLayout());
+        ProductStatisticsTablePn.add(scrollPaneProductStatisticsTable, BorderLayout.CENTER);
+        JPanel TotalPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        TotalPn.setBackground(Color.WHITE);
+        totalLabel = LabelConfig.createLabel("Total Sold: "+totalSold+", Total In stock: "+totalInStock, Style.FONT_PLAIN_18,Color.BLACK,SwingConstants.CENTER);
+        TotalPn.add(totalLabel);
+        ProductStatisticsTablePn.add(TotalPn, BorderLayout.SOUTH);
+
 
         statisticsProductPn = new JPanel(new GridLayout(1, 2));
-
-        statisticsProductPn.add(scrollPaneProductStatisticsTable);
+        statisticsProductPn.add(ProductStatisticsTablePn);
         // chart panel
-
         {
           barDataset = new DefaultCategoryDataset();
 
@@ -4222,7 +4219,6 @@ public class ManagerMainPanel extends JPanel {
         "SN",
         "Manager ID",
         "Manager Name",
-        "Order ID",
         "Total Orders",
         "Total product quantity",
         "Total Price (VND)",
@@ -4315,7 +4311,6 @@ public class ManagerMainPanel extends JPanel {
             count++,
             manager.getId(),
             manager.getFullName(),
-            manager.getAllOrderID(),
             manager.getTotalOrders(),
             manager.totalProductQuantity(),
             currencyFormatter.format(manager.totalProductPrice()),
@@ -4918,7 +4913,7 @@ public class ManagerMainPanel extends JPanel {
               int row,
               int column) {
             JLabel label = new JLabel(value.toString());
-            label.setBackground(Style.MENU_BUTTON_COLOR_GREEN);
+            label.setBackground(Style.MENU_BUTTON_COLOR);
             label.setForeground(Color.BLACK);
             label.setFont(Style.FONT_BOLD_16);
             label.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -4957,7 +4952,7 @@ public class ManagerMainPanel extends JPanel {
               int h,
               boolean isSelected) {
             if (isSelected) {
-              g.setColor(Style.MENU_BUTTON_COLOR_GREEN);
+              g.setColor(Style.MENU_BUTTON_COLOR);
             } else {
               g.setColor(new Color(227, 224, 224));
             }

@@ -679,7 +679,7 @@ public class ManagerMainPanel extends JPanel {
             SwingConstants.CENTER,
             new Dimension(80, 80));
         ButtonConfig.setButtonIcon(
-            "src/main/java/Icon/icons8-export-excel-50.png", statisticsBt, 35);
+            "src/main/java/Icon/statistic_Icon.png", statisticsBt, 35);
         KeyStrokeConfig.addKeyBindingButton(this, KeyStrokeConfig.importExcelKey, statisticsBt);
         statisticsBt.addActionListener(
             e -> {
@@ -1010,14 +1010,13 @@ public class ManagerMainPanel extends JPanel {
         upDataProducts(productsAll, modelProductTable);
         upDataProductsStatistics(
             LoginFrame.COMPUTER_SHOP.productOrderStatistics(), modelStatisticsProductTable);
-        //đang lm
         scrollPaneProductTable = new JScrollPane(tableProduct);
         JScrollPane scrollPaneProductStatisticsTable = new JScrollPane(tableStatisticsProduct);
         JPanel ProductStatisticsTablePn = new JPanel(new BorderLayout());
         ProductStatisticsTablePn.add(scrollPaneProductStatisticsTable, BorderLayout.CENTER);
         JPanel TotalPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         TotalPn.setBackground(Color.WHITE);
-        totalLabel = LabelConfig.createLabel("Total Sold: "+totalSold+", Total In stock: "+totalInStock, Style.FONT_PLAIN_18,Color.BLACK,SwingConstants.CENTER);
+        totalLabel = LabelConfig.createLabel("Total Sold: "+totalSold+" | Total In stock: "+totalInStock, Style.FONT_PLAIN_18,Color.BLACK,SwingConstants.CENTER);
         TotalPn.add(totalLabel);
         ProductStatisticsTablePn.add(TotalPn, BorderLayout.SOUTH);
 
@@ -1042,6 +1041,7 @@ public class ManagerMainPanel extends JPanel {
                   false);
 
           CategoryPlot plot = chartPanel.getCategoryPlot();
+          plot.setBackgroundPaint(Style.CHART_BACKGROUND_COLOR);
 
           NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
           yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -1100,11 +1100,14 @@ public class ManagerMainPanel extends JPanel {
         analysisBt,
         sumItemBt;
     private JTextField findText;
+    private JLabel totalLabel;
     private JTable tableSupplier, tableQuantity;
     private DefaultTableModel modelSupplier, modelQuantity;
-
     private ToolPanel toolPanel = new ToolPanel();
     private TablePanel tablePanel = new TablePanel();
+    private JFreeChart chartPanel;
+    private DefaultCategoryDataset barDataset;
+    private ChartPanel barChartPanel;
     // data
 
     private static List<Supplier> suppliers = reloadData();
@@ -1116,6 +1119,7 @@ public class ManagerMainPanel extends JPanel {
     }
 
     private String selectedOption = "ALL";
+    private static int totalQuantity;
 
     public SupplierPanel() {
       setLayout(new BorderLayout());
@@ -1224,7 +1228,7 @@ public class ManagerMainPanel extends JPanel {
         }
 
         {
-          analysisBt = new JButton("Quantitative analysis");
+          analysisBt = new JButton("Statistic");
           ButtonConfig.setStyleButton(
               analysisBt,
               Style.FONT_PLAIN_13,
@@ -1233,7 +1237,7 @@ public class ManagerMainPanel extends JPanel {
               SwingConstants.CENTER,
               new Dimension(80, 80));
           ButtonConfig.setButtonIcon(
-              "src/main/java/Icon/icons8-export-excel-50.png", analysisBt, 35);
+              "src/main/java/Icon/statistic_Icon.png", analysisBt, 35);
           ButtonConfig.addButtonHoverEffect(
               analysisBt, Style.BUTTON_COLOR_HOVER, Style.WORD_COLOR_WHITE);
 
@@ -1434,16 +1438,56 @@ public class ManagerMainPanel extends JPanel {
 
         upDataTable(suppliers, modelSupplier);
 
+        {
+          barDataset = new DefaultCategoryDataset();
+          chartPanel =
+                  ChartFactory.createBarChart(
+                          "Chart of Products Supplied by Each Company",
+                          "Products",
+                          "Sold",
+                          barDataset,
+                          PlotOrientation.VERTICAL,
+                          true,
+                          true,
+                          false);
+
+          CategoryPlot plot = chartPanel.getCategoryPlot();
+          plot.setBackgroundPaint(Style.CHART_BACKGROUND_COLOR);
+          BarRenderer renderer = (BarRenderer) plot.getRenderer();
+
+          renderer.setBarPainter(new StandardBarPainter());
+
+          renderer.setSeriesPaint(1, Style.CHART_BAR_COLOR_YELLOW);
+          renderer.setDrawBarOutline(false);
+          NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+          yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+          barChartPanel = new ChartPanel(chartPanel);
+          updateDataForChart(LoginFrame.COMPUTER_SHOP.totalProductsBySupplier());
+        }
+
+        JPanel SupplierQuantityPn = new JPanel(new BorderLayout());
+        upDataTable(modelQuantity);
+        SupplierQuantityPn.add(scrollPaneSupplierQuantity,BorderLayout.CENTER);
+        JPanel TotalPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        TotalPn.setBackground(Color.WHITE);
+        totalLabel = LabelConfig.createLabel("Total products supplied: "+totalQuantity, Style.FONT_PLAIN_18,Color.BLACK,SwingConstants.CENTER);
+        TotalPn.add(totalLabel);
+        SupplierQuantityPn.add(TotalPn, BorderLayout.SOUTH);
+
+
+        JPanel statisticsMainPn = new JPanel(new GridLayout(1,2));
+        statisticsMainPn.add(SupplierQuantityPn);
+        statisticsMainPn.add(barChartPanel);
+
         JTabbedPane tabbedPaneSupplier =
             createTabbedPane(scrollPaneSupplier, "Supplier List", Style.FONT_BOLD_16);
-        tabbedPaneSupplier.add("Supply Statistics", scrollPaneSupplierQuantity);
+        tabbedPaneSupplier.add("Supply Statistics", statisticsMainPn);
 
         add(tabbedPaneSupplier, BorderLayout.CENTER);
         modelQuantity.setRowCount(0);
         upDataTable(modelQuantity);
       }
     }
-
     private void updateSuppliers(String column) {
       modelSupplier.setRowCount(0);
       LoginFrame.COMPUTER_SHOP.sortSupplierByColumn(column, suppliers);
@@ -1477,14 +1521,19 @@ public class ManagerMainPanel extends JPanel {
       }
     }
 
-    public static void upDataTable(DefaultTableModel modelQuantity) {
-      int index = 0, total = 0;
+    public void upDataTable(DefaultTableModel modelQuantity) {
+      int index = 0;
       for (Map.Entry<Supplier, Long> data : analyzeSalesVolume.entrySet()) {
         modelQuantity.addRow(
             new Object[] {index++ + " ", data.getKey().getCompanyName(), data.getValue()});
-        total += data.getValue();
+        totalQuantity += data.getValue();
       }
-      modelQuantity.addRow(new Object[] {" ", "Total :", total});
+    }
+
+    private void updateDataForChart(Map<Supplier, Long> data) {
+      for (Map.Entry<Supplier, Long> value : data.entrySet()) {
+        barDataset.addValue(value.getValue(), value.getKey().getCompanyName(), value.getKey().getCompanyName());
+      }
     }
   }
 
@@ -1500,7 +1549,7 @@ public class ManagerMainPanel extends JPanel {
     private JTabbedPane tabbedPaneCustomer;
     private ToolPanel toolPanel = new ToolPanel();
     private TableCustomerPanel tableCustomerPanel = new TableCustomerPanel();
-
+    private JLabel totalPurchaseLb;
     private DefaultCategoryDataset barDatasetCustomer;
     private JFreeChart barChartCustomer;
 
@@ -1517,7 +1566,7 @@ public class ManagerMainPanel extends JPanel {
     private TextDisplayPanel billTextDisplayPanal;
     private final int TAB_DATA_CUSTOMER = 0;
     private final int TAB_BILL = 2;
-
+    private static int totalPurchase;
     private static List<model.Customer> customers = new ArrayList<>();
 
     private JPanel searchPanel, applicationPanel, mainPanel;
@@ -1934,8 +1983,8 @@ public class ManagerMainPanel extends JPanel {
         tool.add(email);
 
         this.view = new JPanel();
-        tool.setBackground(Color.GREEN);
-        view.setBackground(Color.PINK);
+        tool.setBackground(Style.MENU_BUTTON_COLOR);
+        view.setBackground(Color.WHITE);
 
         add(tool, BorderLayout.WEST);
         add(view, BorderLayout.CENTER);
@@ -1948,15 +1997,14 @@ public class ManagerMainPanel extends JPanel {
       public Schemas() {
         setLayout(new GridLayout(1, 2));
         customerStatisticsTable = createTable(customerStatisticsModel, statisticsColumnNames);
-        customerStatisticsTable.setRowHeight(40); // độ rộng của hàng:)
+        customerStatisticsTable.setRowHeight(40);
         resizeColumnWidth(customerStatisticsTable, 200);
         customerStatisticsModel = (DefaultTableModel) customerStatisticsTable.getModel();
         customerStatisticsScrollPane = new JScrollPane(customerStatisticsTable);
 
-        chartPn = new JPanel(new BorderLayout()); // panel chứa biểu đồ
-        chartPn.setBackground(Color.GRAY);
-        //              chartPn.add();
 
+        chartPn = new JPanel(new BorderLayout());
+        chartPn.setBackground(Color.GRAY);
         barDatasetCustomer = new DefaultCategoryDataset();
         String currentMonth =
             LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
@@ -1972,6 +2020,11 @@ public class ManagerMainPanel extends JPanel {
                 false);
 
         CategoryPlot plot = barChartCustomer.getCategoryPlot();
+        plot.setBackgroundPaint(Style.CHART_BACKGROUND_COLOR);
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setBarPainter(new StandardBarPainter());
+        renderer.setSeriesPaint(3, Style.CHART_BAR_COLOR_YELLOW);
+        renderer.setDrawBarOutline(false);
 
         NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -1979,23 +2032,31 @@ public class ManagerMainPanel extends JPanel {
         chartPn.add(new ChartPanel(barChartCustomer));
         upDataCustomerStatisticsTable(LoginFrame.COMPUTER_SHOP.customerOrderStatistics());
 
-        add(customerStatisticsScrollPane);
+
+        JPanel CustomerQuantityPn = new JPanel(new BorderLayout());
+        CustomerQuantityPn.add(customerStatisticsScrollPane,BorderLayout.CENTER);
+        JPanel TotalPn = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        TotalPn.setBackground(Color.WHITE);
+        totalPurchaseLb = LabelConfig.createLabel("Total purchased: "+totalPurchase, Style.FONT_PLAIN_18,Color.BLACK,SwingConstants.CENTER);
+        TotalPn.add(totalPurchaseLb);
+        CustomerQuantityPn.add(TotalPn, BorderLayout.SOUTH);
+
+        add(CustomerQuantityPn);
         add(chartPn);
       }
     }
 
     public void upDataCustomerStatisticsTable(Map<Customer, Long> data) {
       ProductPanel.TablePanel.removeDataTable(customerStatisticsModel);
-      int i = 0, total = 0;
+      int i = 0;
       for (Map.Entry<Customer, Long> value : data.entrySet()) {
         customerStatisticsModel.addRow(
             new Object[] {i++, value.getKey().getFullName(), value.getValue()});
 
         barDatasetCustomer.addValue(
             value.getValue(), value.getKey().getFullName(), value.getKey().getFullName());
-        total += value.getValue();
+        totalPurchase += value.getValue();
       }
-      customerStatisticsModel.addRow(new Object[] {"", "Total : ", total});
     }
 
     public static void upDataTable(

@@ -421,8 +421,15 @@ public class ComputerShop implements MController {
               .getSum();
       map.put(sup, total);
     }
-
     return map;
+  }
+
+  public Map<Supplier, Long> totalProductsBySupplier() {
+    return this.products.stream()
+            .collect(Collectors.groupingBy(
+                    Product::getSupplier,
+                    Collectors.summingLong(Product::getQuantity)
+            ));
   }
 
   @Override
